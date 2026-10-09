@@ -12,9 +12,10 @@ import math
 G_ACC = 9.80665
 D2R = math.pi / 180
 
-# MK3(KOGUMA MkIIl の Define.h)
-# G: MK3のモーターとタイヤの比。70/41はエンコーダの比なので、ピニオンの歯数が分かったら 70/ピニオン に直す
-MK3 = dict(V=16.0, Kt=2.63e-3, Ke=2.09e-3, R=5.4, G=70 / 41, n=1, r=0.0231 / 2, T=0.055, m=0.078)
+# MK3: NFP-D0816-3-3.4(4.5V版、販売ページの表)を4S(16V)で使う。スパー70T、ピニオンは --mk3-pinion で指定
+# (Define.hのKE 2.09e-3は無負荷回転数から求めた値 2.75e-3 と合わないので、表の値を使う)
+MK3 = dict(V=16.0, Kt=26.8 * G_ACC / 100 / 1000, Ke=(4.5 - 0.008 * 5.4) / (15500 * 2 * math.pi / 60),
+           R=5.4, G=70 / 20, n=1, r=0.0231 / 2, T=0.055, m=0.078)
 
 # NFP-D8620-3665-3-7.4(販売ページの表)
 NFP_KT = 15 * G_ACC / 100 / 1000          # 15 g·cm/A → N·m/A
@@ -72,7 +73,9 @@ def calibrate_iz():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--gear', type=float, nargs='*', default=[3, 4, 5, 6])
+    ap.add_argument('--mk3-pinion', type=int, default=20, help='MK3のピニオンの歯数(未確認、既定20)')
     args = ap.parse_args()
+    MK3['G'] = 70 / args.mk3_pinion
 
     print(f'NFP-D8620 7.4V: Kt={NFP_KT * 1e3:.3f} mNm/A, Ke={NFP_KE * 1e3:.3f} mV/(rad/s), '
           f'Km={NFP_KT / math.sqrt(NFP_R) * 1e3:.2f} (MK3 {MK3["Kt"] / math.sqrt(MK3["R"]) * 1e3:.2f})')
@@ -84,7 +87,7 @@ def main():
         print(f'  ギア比{G:.2f}: 電圧の上限 {accel_voltage_limit(p, 0):.0f} / {accel_voltage_limit(p, 3):.0f} / '
               f'{accel_voltage_limit(p, 6):.0f} m/s² (0/3/6 m/s), 片側3A {accel_current_limit(p, 3):.0f} m/s², '
               f'6m/sで{rpm6:.0f}rpm, 無負荷の最高速 {p["V"] / p["Ke"] * p["r"] / G:.1f} m/s')
-    print(f'  MK3: 電圧の上限 {accel_voltage_limit(MK3, 0):.0f} m/s² (0 m/s)')
+    print(f'  MK3(ピニオン{args.mk3_pinion}T、ギア比{MK3["G"]:.2f}): 電圧の上限 {accel_voltage_limit(MK3, 0):.0f} m/s² (0 m/s)')
 
     mu = 91.5 * MK3['m'] / ((MK3['m'] + 0.4) * G_ACC)
     print(f'\nグリップ(μ ≥ {mu:.2f}: MK3はV90 2200(横91.5m/s²)で滑らず、dutyが先に張り付いたため下限)')
