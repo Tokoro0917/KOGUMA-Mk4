@@ -26,7 +26,7 @@ NFP_KE = (7.4 - 0.14 * NFP_R) / (46000 * 2 * math.pi / 60)   # 無負荷回転�
 
 # MK4の既定値(--tire / --mass で変えられる)
 MK4_TIRE = 0.015
-MK4_MASS = 0.070
+MK4_MASS = 0.040
 
 
 def mk4(G, n=1, m=None, T=0.055, V=7.4, tire=None):
@@ -80,9 +80,9 @@ def calibrate_iz(i_mk3=1.3):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--gear', type=float, nargs='*', default=[2.5, 3, 3.5, 4])
+    ap.add_argument('--gear', type=float, nargs='*', default=[2.5, 3, 3.25, 3.45])
     ap.add_argument('--tire', type=float, default=15, help='MK4のタイヤ径[mm]')
-    ap.add_argument('--mass', type=float, default=70, help='MK4の質量[g]')
+    ap.add_argument('--mass', type=float, default=40, help="MK4の質量[g]")
     ap.add_argument('--mk3-pinion', type=int, default=20, help='MK3のピニオンの歯数(未確認、既定20)')
     args = ap.parse_args()
     MK3['G'] = 70 / args.mk3_pinion
