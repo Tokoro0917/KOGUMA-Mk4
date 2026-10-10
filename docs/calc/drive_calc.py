@@ -4,7 +4,8 @@ python3 docs/calc/drive_calc.py
 python3 docs/calc/drive_calc.py --gear 4.2   # ギア比を指定(スパーの歯数 / ピニオンの歯数)
 
 摩擦・ドライバの損失・電池の電圧降下は入れていない。
-V90のdutyは、MK3がV90 2200でちょうど張り付く(100%)ように慣性モーメントを逆算して求める。
+V90は、MK3がV90 2200の入りで外側のモーターに約1.3A流れていた(頭打ち)として慣性モーメントを逆算し、
+MK4は質量に比例させる。
 """
 import argparse
 import math
@@ -23,8 +24,15 @@ NFP_R = 1.0
 NFP_KE = (7.4 - 0.14 * NFP_R) / (46000 * 2 * math.pi / 60)   # 無負荷回転数から
 
 
-def mk4(G, n=1, m=0.090, T=0.055, V=7.4):
-    return dict(V=V, Kt=NFP_KT, Ke=NFP_KE, R=NFP_R, G=G, n=n, r=0.023 / 2, T=T, m=m)
+# MK4の既定値(--tire / --mass で変えられる)
+MK4_TIRE = 0.015
+MK4_MASS = 0.070
+
+
+def mk4(G, n=1, m=None, T=0.055, V=7.4, tire=None):
+    m = MK4_MASS if m is None else m
+    tire = MK4_TIRE if tire is None else tire
+    return dict(V=V, Kt=NFP_KT, Ke=NFP_KE, R=NFP_R, G=G, n=n, r=tire / 2, T=T, m=m)
 
 
 def accel_voltage_limit(p, v):
@@ -59,28 +67,33 @@ def v90_duty(p, Iz, v):
     return worst * 100
 
 
-def calibrate_iz():
-    lo, hi = 1e-7, 1e-3
-    for _ in range(60):
-        mid = (lo + hi) / 2
-        if v90_duty(MK3, mid, 2.2) > 100:
-            hi = mid
-        else:
-            lo = mid
-    return lo
+def v90_peak_current(p, Iz, v):
+    """V90の入りで外側のモーター1個に流れる電流のピーク[A]"""
+    A = 130000 * (v / 2.0) ** 2 * D2R
+    return Iz * A / p['T'] * p['r'] / (p['n'] * p['Kt'] * p['G'])
+
+
+def calibrate_iz(i_mk3=1.3):
+    """MK3がV90 2200の入りで外側のモーターに i_mk3[A] 流れていたとして慣性モーメントを逆算"""
+    return i_mk3 / v90_peak_current(MK3, 1.0, 2.2)
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--gear', type=float, nargs='*', default=[3, 4, 5, 6])
+    ap.add_argument('--gear', type=float, nargs='*', default=[2.5, 3, 3.5, 4])
+    ap.add_argument('--tire', type=float, default=15, help='MK4のタイヤ径[mm]')
+    ap.add_argument('--mass', type=float, default=70, help='MK4の質量[g]')
     ap.add_argument('--mk3-pinion', type=int, default=20, help='MK3のピニオンの歯数(未確認、既定20)')
     args = ap.parse_args()
     MK3['G'] = 70 / args.mk3_pinion
+    global MK4_TIRE, MK4_MASS
+    MK4_TIRE = args.tire / 1000
+    MK4_MASS = args.mass / 1000
 
     print(f'NFP-D8620 7.4V: Kt={NFP_KT * 1e3:.3f} mNm/A, Ke={NFP_KE * 1e3:.3f} mV/(rad/s), '
           f'Km={NFP_KT / math.sqrt(NFP_R) * 1e3:.2f} (MK3 {MK3["Kt"] / math.sqrt(MK3["R"]) * 1e3:.2f})')
 
-    print('\n直線の加速(片側1個、90g、7.4V)')
+    print(f'\n直線の加速(片側1個、{args.mass:.0f}g、タイヤ径{args.tire:.0f}mm、7.4V)')
     for G in args.gear:
         p = mk4(G)
         rpm6 = 6 / p['r'] * G * 60 / (2 * math.pi)
@@ -91,15 +104,17 @@ def main():
 
     mu = 91.5 * MK3['m'] / ((MK3['m'] + 0.4) * G_ACC)
     print(f'\nグリップ(μ ≥ {mu:.2f}: MK3はV90 2200(横91.5m/s²)で滑らず、dutyが先に張り付いたため下限)')
-    for n, m in [(1, 0.090), (2, 0.102)]:
+    for m in [MK4_MASS, MK4_MASS + 0.012]:
         for s in [400, 600]:
-            print(f'  片側{n}個 {m * 1000:.0f}g 吸引{s}g: {grip_limit(m, s, mu):.0f} m/s² 以上')
+            print(f'  {m * 1000:.0f}g 吸引{s}g: {grip_limit(m, s, mu):.0f} m/s² 以上')
 
     Iz = calibrate_iz()
-    print(f'\nV90の外側の車輪に必要な電圧(MK3から逆算した慣性モーメント {Iz * 1e7:.0f} g·cm²)')
+    iz4 = Iz * MK4_MASS / MK3['m']
+    print(f'\nV90の入りの外側のモーター: 電流 / 必要な電圧(慣性モーメント MK3 {Iz * 1e7:.0f}、MK4 {iz4 * 1e7:.0f} g·cm²)')
     for v in [2.2, 2.4, 2.7, 3.0, 3.3]:
-        cols = ' | '.join(f'ギア比{G:.2f} {v90_duty(mk4(G), Iz * 1.15, v):.0f}%' for G in args.gear)
-        print(f'  V90 {v * 1000:.0f}: MK3 {v90_duty(MK3, Iz, v):.0f}% | {cols}')
+        cols = ' | '.join(f'ギア比{G:.2f} {v90_peak_current(mk4(G), iz4, v):.1f}A/{v90_duty(mk4(G), iz4, v):.0f}%'
+                          for G in args.gear)
+        print(f'  V90 {v * 1000:.0f}: MK3 {v90_peak_current(MK3, Iz, v):.1f}A/{v90_duty(MK3, Iz, v):.0f}% | {cols}')
 
 
 if __name__ == '__main__':
