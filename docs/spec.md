@@ -12,6 +12,8 @@ KOGUMA MkIIl(MK3、[tokoro0917/koguma.mkiil](https://github.com/tokoro0917/kogum
 - ギアは**モジュール0.3**
 - 23mm・90gで決めたこと(モーター、片側1個)は、15mmでも変わらない(下記の計算)。電池は2026-10-11に3Sに変更
 
+関連: ピンの割り当て `docs/pinmap.md`、部品表 `docs/bom.md`、計算 `docs/calc/`
+
 ## 目標
 
 - クラス: **クラシック(16×16)**
