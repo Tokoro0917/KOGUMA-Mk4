@@ -43,6 +43,7 @@ ASSIGN = [
     # 電源・吸引・ブザー
     ('PB1',  'ADC2_INP5', 'BATT',      '電池の電圧(分圧)'),
     ('PB8',  'TIM16_CH1', 'FAN_PWM',   '吸引ファン(PWM)'),
+    ('PB0',  'ADC1_INP9', 'FAN_ISENSE', '吸引ファンの電流(シャント抵抗の電圧をRCで平均)'),
     ('PB9',  'TIM17_CH1', 'BUZZER',    'ブザー(PWM)'),
     # IMU(SPI3)
     ('PC10', 'SPI3_SCK',  'IMU_SCK',   'IMU SPIクロック'),

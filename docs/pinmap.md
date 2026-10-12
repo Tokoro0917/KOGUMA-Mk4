@@ -1,6 +1,6 @@
 # STM32H725RG ピンの割り当て(MK4)
 
-2026-10-12作成、同日モータードライバをMP6551に変えて更新。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
+2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加して更新。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
 
 ## 確かめ方
 
@@ -16,7 +16,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - 同じピン、同じタイマのチャンネル、同じADCの入力を2回使っていないか
 - エンコーダのA/B相が、同じタイマのCH1/CH2になっているか
 
-**結果: OK**。使う41本、残り5本。
+**結果: OK**。使う42本、残り4本。
 
 確かめていないこと(CubeMXで.iocを作るときに確かめる): クロックの設定、DMAの割り当て、ADCを2つ同時に動かす設定、タイマの周波数。
 
@@ -39,6 +39,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 26 | PA7 | ADC1_INP7 | WALL_FR | 壁センサ 右前 |
 | 27 | PC4 | ADC2_INP4 | MOT_L_CM1 | 左モーターの電流(OUT1側の下側FET) |
 | 28 | PC5 | ADC2_INP8 | MOT_L_CM2 | 左モーターの電流(OUT2側の下側FET) |
+| 29 | PB0 | ADC1_INP9 | FAN_ISENSE | 吸引ファンの電流(シャント抵抗の電圧をRCで平均) |
 | 30 | PB1 | ADC2_INP5 | BATT | 電池の電圧(分圧) |
 | 31 | PB2 | GPIO_Output | MOT_EN | ドライバ2個のEN1・EN2(共通。Lでスリープ) |
 | 32 | PB10 | GPIO_Output | LED_NUM1 | ナンバー ビット1 |
@@ -66,11 +67,10 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
 | 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
 
-## 残りのピン(5本)
+## 残りのピン(4本)
 
 | ピン | 使える機能 | 使い道の案 |
 |---|---|---|
-| PB0 | ADC1/2_INP9、TIM3_CH3、COMP1_INP、OPAMP1_VINP | 予備のADC(電池全体の電流やファンの電流を測るなら、ここ) |
 | PD2 | TIM3_ETR | IMUの割り込み(INT) |
 | PA12 | TIM1_ETR | 予備 |
 | PB3 | SWO(デバッグのトレース出力)、TIM2_CH2 | 予備(SWOを使うならここ) |
@@ -80,7 +80,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 
 - **モーター(MP6551 × 2)**: TIM1のCH1〜CH4(PA8〜PA11)で、左右それぞれIN1・IN2の両方をPWMにする。前進はIN1にPWM・IN2を0、後退はIN1を0・IN2にPWM。止めている間(PWMのオフ)はどちらの向きも両側の出力がLになり、下側のFETで減衰する。こうすると、電流の出力(CM)をどちらの向きでも同じように読める(下記)。4本とも同じタイマなので、周期がそろう
 - **モーターの電流**: MP6551のCM1・CM2を別々にADC2で読む(4本)。電流は下側のFETで測られるので、0に固定している側(前進ならOUT2側 = CM2)を読むと、PWMのオンでもオフでもモーターの電流そのものが読める。CM1とCM2をつないで1本にすると、オフの間に打ち消し合って「duty × モーターの電流」(電池から出る電流)になってしまう
-- **ADC**: 壁センサの4本はADC1(INP10・11・3・7)、モーターの電流4本と電池はADC2(INP4・8・18・19・5)。ADC1とADC2を同時に動かせる
+- **ADC**: 壁センサの4本とファンの電流はADC1(INP10・11・3・7・9)、モーターの電流4本と電池はADC2(INP4・8・18・19・5)。ADC1とADC2を同時に動かせる
 - **エンコーダ**: 左はTIM4(PB6・PB7)、右はTIM3(PC6・PC7)。どちらもCH1/CH2の組
 - **吸引ファン・ブザー**: TIM16・TIM17
 - **IMU**: SPI3(PC10・PC11・PC12)、CSはPA15(GPIO)
