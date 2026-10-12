@@ -17,15 +17,17 @@ from collections import Counter
 
 # (ピン, 信号 / 'GPIO_Output' / 'GPIO_Input' / 'RCC_OSC_IN' など, ネット名, 用途)
 ASSIGN = [
-    # モーター(DRV8874 × 2、PH/ENモード)
-    ('PA8',  'TIM1_CH1',  'MOT_L_EN',  '左モーター EN(PWM)'),
-    ('PA11', 'TIM1_CH4',  'MOT_R_EN',  '右モーター EN(PWM)'),
-    ('PB12', 'GPIO_Output', 'MOT_L_PH', '左モーター PH(回転方向)'),
-    ('PB13', 'GPIO_Output', 'MOT_R_PH', '右モーター PH(回転方向)'),
-    ('PB2',  'GPIO_Output', 'DRV_nSLEEP', 'ドライバ2個のnSLEEP(共通)'),
-    ('PC9',  'GPIO_Input',  'DRV_nFAULT', 'ドライバ2個のnFAULT(オープンドレインを共通に)'),
-    ('PC4',  'ADC2_INP4', 'IPROPI_L',  '左モーターの電流'),
-    ('PC5',  'ADC2_INP8', 'IPROPI_R',  '右モーターの電流'),
+    # モーター(MP6551 × 2)。IN1・IN2の両方をPWMにして、止めている側を0にする(減衰はどちらの向きも下側のFET)
+    ('PA8',  'TIM1_CH1',  'MOT_L_IN1', '左モーター IN1(PWM)'),
+    ('PA9',  'TIM1_CH2',  'MOT_L_IN2', '左モーター IN2(PWM)'),
+    ('PA10', 'TIM1_CH3',  'MOT_R_IN1', '右モーター IN1(PWM)'),
+    ('PA11', 'TIM1_CH4',  'MOT_R_IN2', '右モーター IN2(PWM)'),
+    ('PB2',  'GPIO_Output', 'MOT_EN', 'ドライバ2個のEN1・EN2(共通。Lでスリープ)'),
+    ('PC9',  'GPIO_Input',  'MOT_nFAULT', 'ドライバ2個のnFAULT(オープンドレインを共通に)'),
+    ('PC4',  'ADC2_INP4',  'MOT_L_CM1', '左モーターの電流(OUT1側の下側FET)'),
+    ('PC5',  'ADC2_INP8',  'MOT_L_CM2', '左モーターの電流(OUT2側の下側FET)'),
+    ('PA4',  'ADC2_INP18', 'MOT_R_CM1', '右モーターの電流(OUT1側の下側FET)'),
+    ('PA5',  'ADC2_INP19', 'MOT_R_CM2', '右モーターの電流(OUT2側の下側FET)'),
     # エンコーダ(NJL5820R × 2、タイマのエンコーダモード)
     ('PB6',  'TIM4_CH1',  'ENC_L_A',   '左エンコーダ A相'),
     ('PB7',  'TIM4_CH2',  'ENC_L_B',   '左エンコーダ B相'),
@@ -48,8 +50,8 @@ ASSIGN = [
     ('PC12', 'SPI3_MOSI', 'IMU_MOSI',  'IMU MOSI'),
     ('PA15(JTDI)', 'GPIO_Output', 'IMU_CS',  'IMU チップセレクト'),
     # 通信・デバッグ
-    ('PA9',  'USART1_TX', 'UART_TX',   'PCへ(USBシリアル変換)'),
-    ('PA10', 'USART1_RX', 'UART_RX',   'PCから'),
+    ('PB14', 'USART1_TX', 'UART_TX',   'PCへ(USBシリアル変換)'),
+    ('PB15', 'USART1_RX', 'UART_RX',   'PCから'),
     ('PA13(JTMS/SWDIO)', 'DEBUG_JTMS-SWDIO', 'SWDIO', '書き込み・デバッグ'),
     ('PA14(JTCK/SWCLK)', 'DEBUG_JTCK-SWCLK', 'SWCLK', '書き込み・デバッグ'),
     # 表示・入力
@@ -58,8 +60,8 @@ ASSIGN = [
     ('PA2',  'GPIO_Output', 'LED_MODE2', 'モード ビット2'),
     ('PA3',  'GPIO_Output', 'LED_NUM0',  'ナンバー ビット0'),
     ('PB10', 'GPIO_Output', 'LED_NUM1',  'ナンバー ビット1'),
-    ('PB14', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
-    ('PB15', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
+    ('PB12', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
+    ('PB13', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
     ('PC14-OSC32_IN', 'GPIO_Input', 'SW', 'スイッチ'),
     # クロック
     ('PH0-OSC_IN',  'RCC_OSC_IN',  'HSE_IN',  '水晶(HSE)'),
