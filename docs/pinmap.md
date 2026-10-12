@@ -57,8 +57,8 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 54 | PC10 | SPI3_SCK | IMU_SCK | IMU SPIクロック |
 | 55 | PC11 | SPI3_MISO | IMU_MISO | IMU MISO |
 | 56 | PC12 | SPI3_MOSI | IMU_MOSI | IMU MOSI |
-| 59 | PB4(NJTRST) | GPIO_Output | WALL_LED_L | 壁センサの発光 左(NJU6080のPWM端子) |
-| 60 | PB5 | GPIO_Output | WALL_LED_R | 壁センサの発光 右(NJU6080のPWM端子) |
+| 59 | PB4(NJTRST) | GPIO_Output | WALL_LED_L | 壁センサの発光 左(NJU6080 2個のPWM端子) |
+| 60 | PB5 | GPIO_Output | WALL_LED_R | 壁センサの発光 右(NJU6080 2個のPWM端子) |
 | 61 | PB6 | TIM4_CH1 | ENC_L_A | 左エンコーダ A相 |
 | 62 | PB7 | TIM4_CH2 | ENC_L_B | 左エンコーダ B相 |
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
