@@ -64,9 +64,7 @@ ASSIGN = [
     ('PB12', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
     ('PB13', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
     ('PC14-OSC32_IN', 'GPIO_Input', 'SW', 'スイッチ'),
-    # クロック
-    ('PH0-OSC_IN',  'RCC_OSC_IN',  'HSE_IN',  '水晶(HSE)'),
-    ('PH1-OSC_OUT', 'RCC_OSC_OUT', 'HSE_OUT', '水晶(HSE)'),
+    # 水晶(HSE)は付けない(2026-10-12)。内蔵のHSIからPLLで550MHzにする
 ]
 
 ENCODERS = [('ENC_L_A', 'ENC_L_B'), ('ENC_R_A', 'ENC_R_B')]

@@ -1,6 +1,6 @@
 # STM32H725RG ピンの割り当て(MK4)
 
-2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加して更新。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
+2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
 
 ## 確かめ方
 
@@ -16,7 +16,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - 同じピン、同じタイマのチャンネル、同じADCの入力を2回使っていないか
 - エンコーダのA/B相が、同じタイマのCH1/CH2になっているか
 
-**結果: OK**。使う42本、残り4本。
+**結果: OK**。使う40本、残り6本。
 
 確かめていないこと(CubeMXで.iocを作るときに確かめる): クロックの設定、DMAの割り当て、ADCを2つ同時に動かす設定、タイマの周波数。
 
@@ -25,8 +25,6 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | ピン番号 | ピン | 機能 | ネット名 | 用途 |
 |---|---|---|---|---|
 | 2 | PC14-OSC32_IN | GPIO_Input | SW | スイッチ |
-| 10 | PH0-OSC_IN | RCC_OSC_IN | HSE_IN | 水晶(HSE) |
-| 11 | PH1-OSC_OUT | RCC_OSC_OUT | HSE_OUT | 水晶(HSE) |
 | 13 | PC0 | ADC1_INP10 | WALL_FL | 壁センサ 左前 |
 | 14 | PC1 | ADC1_INP11 | WALL_L | 壁センサ 左 |
 | 17 | PA0 | GPIO_Output | LED_MODE0 | モード ビット0 |
@@ -67,7 +65,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
 | 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
 
-## 残りのピン(4本)
+## 残りのピン(6本)
 
 | ピン | 使える機能 | 使い道の案 |
 |---|---|---|
@@ -75,6 +73,8 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | PA12 | TIM1_ETR | 予備 |
 | PB3 | SWO(デバッグのトレース出力)、TIM2_CH2 | 予備(SWOを使うならここ) |
 | PC15 | (OSC32_OUT) | 予備(電流を多く流せないピン) |
+| PH0 | (OSC_IN) | 予備(水晶を付けないため) |
+| PH1 | (OSC_OUT) | 予備(水晶を付けないため) |
 
 ## 割り当ての考え方
 
@@ -87,7 +87,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - **UART**: USART1(PB14・PB15)。PA9・PA10はモーターのPWMに使うので、USART1のもう一組のピンにした
 - **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13
 - **スイッチ**: PC14(OSC32_IN)。入力なので、流せる電流が小さくても問題ない
-- **水晶(HSE)**: PH0・PH1。付けないならこの2本も予備になる
+- **水晶(HSE)**: 付けない(2026-10-12)。内蔵のHSIからPLLで550MHzにする。PH0・PH1は予備
 
 ## 気をつけること
 
