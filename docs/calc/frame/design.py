@@ -8,11 +8,12 @@ XE, YE = 50.5, 25.3          # 前後の端、端の辺の半幅
 XB, YB = 16.7, 35.3          # 真ん中の帯の半幅、最大の半幅
 SX, SY = 30.25, 15.25        # 吸引する面の半分
 FAN_X, FAN_R = 14.2, 7.5     # ファンの穴
-SLOT_L, SLOT_Y0, SLOT_Y1 = 13.5, 23.3, 32.3   # タイヤ(とスパー)の穴: 前後13.5mm、y 23.3〜32.3(幅9mm)
-MOUNT_SCREWS = [(-10.0, 19.2), (4.0, 19.2)]    # モーターマウントのM3ねじ(仮)。左右に写す
+SLOT_L, SLOT_Y0, SLOT_Y1 = 13.0, 25.8, 32.3   # タイヤ・ホイール・41T の穴: 前後13mm、y 25.8〜32.3(マウント v1 に合わせた、2026-10-17)
+MOUNT_SCREWS = [(-17.15, 22.1), (7.85, 22.1)]  # モーターマウント v1 の M3 ねじ。左右に写す
 BOSS_R = 3.7                                    # ねじのまわりの肉(直径7.4mm)
-G_FRONT = (8.0, 18.5)                           # 骨Gの始まり(モーターマウントの前の端のすぐ外)
-G_REAR = (-14.5, 18.5)                          # 骨Gの始まり(モーターマウントの後ろの端のすぐ外)
+G_FRONT = (12.0, 19.0)                          # 骨Gの始まり(モーターマウントの前の耳のすぐ前)
+G_REAR = (-21.5, 19.0)                          # 骨Gの始まり(モーターマウントの後ろの耳のすぐ後ろ)
+MOUNT_PAD = (-22.0, 12.5, SY, SLOT_Y0 + 0.5)    # マウントが載る所は窓を開けない: x0, x1, |y|0, |y|1
 
 DEFAULT = dict(rim=2.5, end_edge=2.5, spine_root=4.0, spine_tip=4.0, inner_spine=4.0,
                land=3.0, fan_ring=3.5, braces=(), brace_w=2.5, fillet=1.5, corner_r=3.0,
@@ -66,7 +67,10 @@ def build(**kw):
     members = [taper(SX, XE, P['spine_root'], P['spine_tip']), taper(-SX, -XE, P['spine_root'], P['spine_tip'])]
     members += [l.buffer(P['brace_w'] / 2, cap_style=2, join_style=2) for l in brace_lines(P)]
     root = box(-P['root_fill'], -50, P['root_fill'], 50)      # ここより内側は窓を開けない(付け根を太くする)
-    ends = inner.difference(band).difference(root).difference(suction).difference(unary_union(members))
+    x0, x1, y0, y1 = MOUNT_PAD
+    pad = unary_union([box(x0, y0, x1, y1), box(x0, -y1, x1, -y0)]
+                      + [Point(x, sy * y).buffer(BOSS_R + 0.8, 32) for (x, y) in MOUNT_SCREWS for sy in (1, -1)])
+    ends = inner.difference(band).difference(root).difference(suction).difference(unary_union(members)).difference(pad)
     holes = [rounded(g, P['fillet']) for g in getattr(ends, 'geoms', [ends]) if g.area > P['end_window_min']]
     holes = [h for g in holes for h in getattr(g, 'geoms', [g]) if not h.is_empty]
     # 吸引する面の中の窓(ポリカーボネートでふさぐ)
