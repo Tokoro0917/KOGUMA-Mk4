@@ -8,7 +8,6 @@ STの公開しているピン定義(STM32CubeMXと同じデータ)を使う:
   - ピンがこのパッケージにあるか
   - そのピンに、割り当てた機能(信号)があるか
   - 同じピンを2回使っていないか
-  - エンコーダの2相が同じタイマのCH1/CH2になっているか
   - 使っていないIOの一覧
 """
 import sys
@@ -28,11 +27,12 @@ ASSIGN = [
     ('PC5',  'ADC2_INP8',  'MOT_L_CM2', '左モーターの電流(OUT2側の下側FET)'),
     ('PA4',  'ADC2_INP18', 'MOT_R_CM1', '右モーターの電流(OUT1側の下側FET)'),
     ('PA5',  'ADC2_INP19', 'MOT_R_CM2', '右モーターの電流(OUT2側の下側FET)'),
-    # エンコーダ(NJL5820R × 2、タイマのエンコーダモード)
-    ('PB6',  'TIM4_CH1',  'ENC_L_A',   '左エンコーダ A相'),
-    ('PB7',  'TIM4_CH2',  'ENC_L_B',   '左エンコーダ B相'),
-    ('PC6',  'TIM3_CH1',  'ENC_R_A',   '右エンコーダ A相'),
-    ('PC7',  'TIM3_CH2',  'ENC_R_B',   '右エンコーダ B相'),
+    # エンコーダ(AS5047P × 2、SPI2。IMUのSPI3とはSPIのモードが違うのでバスを分ける)(2026-10-17)
+    ('PA12', 'SPI2_SCK',  'ENC_SCK',   'エンコーダ SPIクロック'),
+    ('PB14', 'SPI2_MISO', 'ENC_MISO',  'エンコーダ MISO'),
+    ('PB15', 'SPI2_MOSI', 'ENC_MOSI',  'エンコーダ MOSI'),
+    ('PC6',  'GPIO_Output', 'ENC_L_CS', '左エンコーダ チップセレクト'),
+    ('PC7',  'GPIO_Output', 'ENC_R_CS', '右エンコーダ チップセレクト'),
     # 壁センサ(MK3と同じ回路)
     ('PC0',  'ADC1_INP10', 'WALL_FL',  '壁センサ 左前'),
     ('PC1',  'ADC1_INP11', 'WALL_L',   '壁センサ 左'),
@@ -51,8 +51,8 @@ ASSIGN = [
     ('PC12', 'SPI3_MOSI', 'IMU_MOSI',  'IMU MOSI'),
     ('PA15(JTDI)', 'GPIO_Output', 'IMU_CS',  'IMU チップセレクト'),
     # 通信・デバッグ
-    ('PB14', 'USART1_TX', 'UART_TX',   'PCへ(USBシリアル変換)'),
-    ('PB15', 'USART1_RX', 'UART_RX',   'PCから'),
+    ('PB6',  'USART1_TX', 'UART_TX',   'PCへ(USBシリアル変換)'),
+    ('PB7',  'USART1_RX', 'UART_RX',   'PCから'),
     ('PA13(JTMS/SWDIO)', 'DEBUG_JTMS-SWDIO', 'SWDIO', '書き込み・デバッグ'),
     ('PA14(JTCK/SWCLK)', 'DEBUG_JTCK-SWCLK', 'SWCLK', '書き込み・デバッグ'),
     # 表示・入力
@@ -67,7 +67,8 @@ ASSIGN = [
     # 水晶(HSE)は付けない(2026-10-12)。内蔵のHSIからPLLで550MHzにする
 ]
 
-ENCODERS = [('ENC_L_A', 'ENC_L_B'), ('ENC_R_A', 'ENC_R_B')]
+# タイマのエンコーダモードで読むエンコーダ(A相, B相)の組。磁気式(SPI)にしたので今はない
+ENCODERS = []
 
 
 def main(path):
