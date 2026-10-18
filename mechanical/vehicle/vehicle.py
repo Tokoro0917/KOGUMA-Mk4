@@ -3,7 +3,9 @@
 吸引ファン(ケース・羽根・モーター・押さえ)、基板、電池、壁センサ、滑り板、スカート、ねじを並べ、
 ぶつかり・質量・重心・慣性モーメントを計算して、STEP と図を出す。
 座標 [mm]: x 前(+)、y 左(+)、z 上(床 = 0)。車軸 (0, y, 7.5)。
-使い方: python3 vehicle.py [出力のフォルダ(既定はこのフォルダ)]
+使い方: python3 vehicle.py [出力のフォルダ(既定はこのフォルダ)] [版(v0 / v1、既定は v1)]
+  v0: 最初の案(基板0.8mm、鉄のねじ6組、ファンの押さえあり)
+  v1: 軽くした案(基板0.6mm、フレームの下の4本だけ鉄の低頭、ほかはナイロン、ファンのケースを薄く、押さえなし)
 """
 import os, sys, json, math, itertools
 import numpy as np
@@ -21,19 +23,22 @@ import design as dz
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else HERE
+V = sys.argv[2] if len(sys.argv) > 2 else 'v1'
+CFG = dict(v0=dict(pcb_t=0.8, wall=0.8, top=0.8, clamp=True, screws='steel', boss_r=3.0),
+           v1=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='mixed', boss_r=3.4))[V]
 
 # ---------------- 高さ(床から) ----------------
 Z_FB, Z_FT = 2.0, 3.0        # フレームの下面・上面
 Z_PC = 3.2                   # ポリカーボネートの上面
 Z_PCB = 13.6                 # 基板の下面(マウントのモーターの筒の上 13.36 から 0.24)
-T_PCB = 0.8                  # 基板の厚さ
+T_PCB = CFG['pcb_t']         # 基板の厚さ
 Z_PCBT = Z_PCB + T_PCB
 FAN = (dz.FAN_X, 0.0)        # ファンの中心
 BAT = dict(x=-5.0, lx=22.5, ly=32.0, lz=14.0)   # 電池: 1S 180mAh(7.5 × 32 × 14)× 3 を立てて並べる(MK3 の STEP の寸法)
 
 # ---------------- 質量・密度 ----------------
 RHO = dict(carbon=1.55e-3, pc=1.2e-3, resin=1.2e-3, fr4=1.85e-3, steel=7.85e-3, ndfeb=7.5e-3, rubber=1.2e-3,
-           pom=1.42e-3, brass=8.5e-3, ptfe=2.2e-3, film=1.4e-3)          # g/mm³
+           pom=1.42e-3, brass=8.5e-3, ptfe=2.2e-3, film=1.4e-3, nylon=1.14e-3)   # g/mm³
 FIXED = dict(motor=5.3, fan_motor=5.3, battery=14.5, pcb_parts=2.5, sensor=0.1, wiring=0.6)   # g
 
 def ycyl(r, y0, y1, x, z):
@@ -76,7 +81,7 @@ for sx in (1, -1):
     add(f'skid_{"F" if sx > 0 else "R"}', zcyl(2.5, 0.0, Z_FB, sx * 45.0, 0.0), 'ptfe')     # 滑り板(PTFE φ5、接着)
 
 # ---------------- 足回り(右を作って左に写す) ----------------
-P2 = dict(mm.P, pcb_post=Z_PCB)
+P2 = dict(mm.P, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P, pcb_post=Z_PCB, post_r=3.7, post_nut=True)
 mx, mz = mm.motor_center(P2)
 right = {}
 right['mount'] = (mm.build(P2).val(), 'resin')
@@ -110,9 +115,9 @@ for k, (s, m) in right.items():
 
 # ---------------- 吸引ファン ----------------
 fx, fy = FAN
-R_IN, R_OUT = 15.2, 16.0          # ケースの壁
-Z_TOP0, Z_TOP1 = 8.8, 9.6         # ケースの天井(この上にモーターの前の面が載る)
-BOSS_Y, BOSS_R = 12.5, 3.0        # 押さえのねじの柱
+R_OUT = 16.0; R_IN = R_OUT - CFG['wall']   # ケースの壁
+Z_TOP1 = 9.6; Z_TOP0 = Z_TOP1 - CFG['top']   # ケースの天井(この上にモーターの前の面が載る)
+BOSS_Y, BOSS_R = 12.5, CFG['boss_r']   # 基板(と押さえ)のねじの柱
 case = zcyl(R_OUT, Z_PC, Z_TOP1, fx, fy).cut(zcyl(R_IN, Z_PC - 0.1, Z_TOP0, fx, fy))
 case = case.union(zcyl(R_IN, Z_PC, Z_PC + 0.6, fx, fy).cut(zcyl(13.0, Z_PC - 0.1, Z_PC + 0.7, fx, fy)))   # 接着の面(内側のつば)
 for ang in (90, -90):             # 吐き出しの窓(左右)
@@ -120,7 +125,7 @@ for ang in (90, -90):             # 吐き出しの窓(左右)
     win = (cq.Workplane().box(8.0, 4.0, 4.0).translate((fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 5.9))
            .rotate((fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 0), (fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 1), ang - 90))
     case = case.cut(win)
-case = case.union(zcyl(5.15, Z_TOP1, Z_PCB, fx, fy))                    # モーターの筒
+case = case.union(zcyl(4.35 + CFG['wall'], Z_TOP1, Z_PCB, fx, fy))       # モーターの筒(v1 はモーターを接着)
 for sy in (1, -1):
     case = case.union(zcyl(BOSS_R, Z_TOP1, Z_PCB, fx, sy * BOSS_Y))      # 押さえのねじの柱
 case = case.cut(zcyl(4.35, Z_TOP1, Z_PCB + 1, fx, fy))                  # モーターの穴
@@ -140,15 +145,16 @@ imp = imp.cut(zcyl(0.6, 4.4, 8.1, fx, fy))
 add('impeller', imp, 'resin')
 add('fan_motor', zcyl(4.3, Z_TOP1, Z_TOP1 + 20.0, fx, fy).union(zcyl(1.2, Z_TOP1 - 0.3, Z_TOP1, fx, fy)), 'fan_motor')
 add('fan_shaft', zcyl(0.6, Z_TOP1 - 5.1, Z_TOP1 - 0.3, fx, fy), 'steel')
-Z_CL = Z_PCBT + 2.0               # 押さえの上面
-clamp = zcyl(5.6, Z_PCBT, Z_CL, fx, fy)
-for sy in (1, -1):
-    bar = cq.Workplane().box(3.0, BOSS_Y, Z_CL - Z_PCBT, centered=(True, False, False)).translate((fx, 0 if sy > 0 else -BOSS_Y, Z_PCBT))
-    clamp = clamp.union(zcyl(BOSS_R, Z_PCBT, Z_CL, fx, sy * BOSS_Y)).union(bar)
-clamp = clamp.cut(zcyl(4.35, Z_PCBT - 0.1, Z_CL + 0.1, fx, fy))
-for sy in (1, -1):
-    clamp = clamp.cut(zcyl(1.6, Z_PCBT - 0.1, Z_CL + 0.1, fx, sy * BOSS_Y))
-add('fan_clamp', clamp, 'resin')
+Z_CL = Z_PCBT + 2.0 if CFG['clamp'] else Z_PCBT    # 押さえの上面(押さえがなければ、ねじの頭は基板の上)
+if CFG['clamp']:
+    clamp = zcyl(5.6, Z_PCBT, Z_CL, fx, fy)
+    for sy in (1, -1):
+        bar = cq.Workplane().box(3.0, BOSS_Y, Z_CL - Z_PCBT, centered=(True, False, False)).translate((fx, 0 if sy > 0 else -BOSS_Y, Z_PCBT))
+        clamp = clamp.union(zcyl(BOSS_R, Z_PCBT, Z_CL, fx, sy * BOSS_Y)).union(bar)
+    clamp = clamp.cut(zcyl(4.35, Z_PCBT - 0.1, Z_CL + 0.1, fx, fy))
+    for sy in (1, -1):
+        clamp = clamp.cut(zcyl(1.6, Z_PCBT - 0.1, Z_CL + 0.1, fx, sy * BOSS_Y))
+    add('fan_clamp', clamp, 'resin')
 
 # ---------------- 基板 ----------------
 pcb_outline = unary_union([
@@ -190,12 +196,21 @@ def nut(x, y, z0):
 xr, xf = dz.MOUNT_SCREWS[0][0], dz.MOUNT_SCREWS[1][0]      # MOUNT_SCREWS = [後ろ, 前]
 for sy, side in ((1, 'L'), (-1, 'R')):
     y = sy * 22.1
-    add(f'screw_mountF_{side}', screw(xf, y, Z_FB, 5.0), 'steel')                       # 前の耳: L5、ナットは耳の上
-    add(f'nut_mountF_{side}', nut(xf, y, P2['ear_top'] - P2['nut_depth']), 'steel')
-    add(f'screw_post_{side}', screw(xr, y, Z_FB, 15.0), 'steel')                        # 後ろの耳: L15 でフレーム・柱・基板
-    add(f'nut_post_{side}', nut(xr, y, Z_PCBT), 'steel')
-    add(f'screw_fan_{side}', screw(fx, sy * BOSS_Y, Z_CL, 5.0, up=False), 'steel')      # ファンの押さえ: L5、ナットはケースの柱
-    add(f'nut_fan_{side}', nut(fx, sy * BOSS_Y, Z_PCB - 2.45), 'steel')
+    if CFG['screws'] == 'steel':     # v0: 鉄 6組
+        add(f'screw_mountF_{side}', screw(xf, y, Z_FB, 5.0), 'steel')                       # 前の耳: L5、ナットは耳の上
+        add(f'nut_mountF_{side}', nut(xf, y, P2['ear_top'] - P2['nut_depth']), 'steel')
+        add(f'screw_post_{side}', screw(xr, y, Z_FB, 15.0), 'steel')                        # 後ろの耳: L15 でフレーム・柱・基板
+        add(f'nut_post_{side}', nut(xr, y, Z_PCBT), 'steel')
+        add(f'screw_fan_{side}', screw(fx, sy * BOSS_Y, Z_CL, 5.0, up=False), 'steel')      # ファンの押さえ: L5、ナットはケースの柱
+        add(f'nut_fan_{side}', nut(fx, sy * BOSS_Y, Z_PCB - 2.45), 'steel')
+    else:                            # v1: フレームの下は頭の低い鉄(床まで0.5mm)、ナットと基板のねじはナイロン
+        for nm_, x_ in (('mountF', xf), ('mountR', xr)):
+            add(f'screw_{nm_}_{side}', screw(x_, y, Z_FB, 5.0), 'steel')                    # 低頭 L5、ナットは耳(後ろは横から入れる)
+            add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'nylon')
+        add(f'screw_post_{side}', screw(xr, y, Z_PCBT, 5.0, up=False, head_h=2.1), 'nylon')  # なべ L5、柱の上のナット
+        add(f'nut_post_{side}', nut(xr, y, Z_PCB - 2.45), 'nylon')
+        add(f'screw_fan_{side}', screw(fx, sy * BOSS_Y, Z_CL, 5.0, up=False, head_h=2.1), 'nylon')
+        add(f'nut_fan_{side}', nut(fx, sy * BOSS_Y, Z_PCB - 2.45), 'nylon')
 
 # ---------------- 質量 ----------------
 def props(shape):
@@ -226,8 +241,8 @@ GROUP = [('フレーム・ポリカーボネート・スカート・滑り板', 
          ('モーターマウント × 2', ('mount_',)),
          ('走行用モーター × 2', ('motor_',)),
          ('車輪・タイヤ・41T・ピニオン・軸・軸受・磁石・エンコーダ', ('wheel', 'tire', 'spur41', 'pinion', 'pin_', 'shaft_', 'brg_', 'magnet', 'enc_board', 'as5047p')),
-         ('吸引ファン(モーター・ケース・羽根・押さえ)', ('fan_', 'impeller')),
-         ('基板(0.8mm)+ 部品', ('pcb',)),
+         ('吸引ファン(モーター・ケース・羽根' + ('・押さえ' if CFG['clamp'] else '') + ')', ('fan_', 'impeller')),
+         (f'基板({T_PCB}mm)+ 部品', ('pcb',)),
          ('電池(3S 180mAh)', ('battery',)),
          ('壁センサ × 4', ('sensor_',)),
          ('ねじ・ナット', ('screw_', 'nut_')),
@@ -280,27 +295,37 @@ for a, b2 in itertools.combinations(names, 2):
         clear.append(dict(a=a, b=b2, gap=round(v, 3), overlap=round(ov, 3)))
 clear.sort(key=lambda r: r['gap'])
 
-# もしも: ねじ・ナットをナイロン(1.14 g/cm³)に、基板を 0.6mm に
-def whatif(screw_rho=None, pcb_t=None):
+# もしも(部品の重さを何倍にするか)
+def whatif(factors):
     m_tot, iz_tot = 0.0, 0.0
     for r in rows:
         k = 1.0
-        if screw_rho and (r['name'].startswith('screw_') or r['name'].startswith('nut_')):
-            k = screw_rho / RHO['steel']
-        if pcb_t and r['name'] == 'pcb':
-            bare = r['m'] - FIXED['pcb_parts']
-            k = (bare * pcb_t / T_PCB + FIXED['pcb_parts']) / r['m']
+        for pre, f in factors.items():
+            if r['name'].startswith(pre):
+                k = f(r) if callable(f) else f
         m_tot += r['m'] * k
         iz_tot += k * (r['I'][2, 2] + r['m'] * ((r['c'][0] - CG[0])**2 + (r['c'][1] - CG[1])**2))
     return dict(m=round(m_tot, 2), iz=round(iz_tot / 100, 1))
-WHATIF = {'ねじ・ナットをナイロンに': whatif(screw_rho=1.14e-3), '基板を0.6mmに': whatif(pcb_t=0.6),
-          '両方': whatif(screw_rho=1.14e-3, pcb_t=0.6)}
+def pcb06(r):
+    bare = r['m'] - FIXED['pcb_parts']
+    return (bare * 0.6 / T_PCB + FIXED['pcb_parts']) / r['m']
+if V == 'v0':
+    ny = RHO['nylon'] / RHO['steel']
+    WHATIF = {'ねじ・ナットをナイロンに': whatif({'screw_': ny, 'nut_': ny}), '基板を0.6mmに': whatif({'pcb': pcb06}),
+              '両方': whatif({'screw_': ny, 'nut_': ny, 'pcb': pcb06})}
+else:
+    bat = {'battery': 12.5 / FIXED['battery']}
+    fan = {'fan_motor': 2.7 / FIXED['fan_motor']}
+    pa = {'mount_': 1.01 / 1.2}
+    WHATIF = {'電池を12.5gに(3S 150mAh 級)': whatif(bat), 'ファンのモーターを2.7gに(φ7 × 16 級)': whatif(fan),
+              'マウントをPA12に': whatif(pa), '電池 + ファンのモーター': whatif({**bat, **fan}),
+              '全部': whatif({**bat, **fan, **pa})}
 print('もしも:', WHATIF)
 
 res = dict(whatif=WHATIF, mass=round(M, 2), cg=[round(c, 2) for c in CG], iz=round(Izz, 1), groups=grp, clearances=clear,
            parts=[dict(name=r['name'], mat=r['mat'], m=round(r['m'], 3), c=[round(c, 2) for c in r['c']]) for r in rows],
            height=round(max(s.BoundingBox().zmax for s, _ in parts.values()), 2))
-json.dump(res, open(os.path.join(OUT, 'vehicle_v0_result.json'), 'w'), ensure_ascii=False, indent=1)
+json.dump(res, open(os.path.join(OUT, f'vehicle_{V}_result.json'), 'w'), ensure_ascii=False, indent=1)
 print(f"合計 {M:.2f} g、重心 ({CG[0]:.2f}, {CG[1]:.2f}, {CG[2]:.2f}) mm、慣性モーメント(重心まわり) {Izz:.0f} g·cm²、高さ {res['height']} mm")
 for x in grp:
     print(f"  {x['group']:42s} {x['m']:6.2f} g  {x['iz']:6.1f} g·cm²")
@@ -309,13 +334,13 @@ for r in clear:
     print(f"  {r['a']:18s} - {r['b']:18s} {r['gap']:6.3f} mm  重なり {r['overlap']} mm³")
 
 # ---------------- STEP(部品ごとに名前と色) ----------------
-COL = dict(carbon=(0.25, 0.24, 0.22), pc=(0.62, 0.79, 0.88), film=(0.9, 0.9, 0.6), ptfe=(0.95, 0.95, 0.95), resin=(0.95, 0.56, 0.17),
+COL = dict(nylon=(0.95, 0.95, 0.9), carbon=(0.25, 0.24, 0.22), pc=(0.62, 0.79, 0.88), film=(0.9, 0.9, 0.6), ptfe=(0.95, 0.95, 0.95), resin=(0.95, 0.56, 0.17),
            steel=(0.3, 0.3, 0.32), ndfeb=(0.7, 0.7, 0.75), rubber=(0.1, 0.1, 0.1), pom=(0.9, 0.9, 0.85), brass=(0.8, 0.65, 0.2),
            fr4=(0.1, 0.45, 0.2), motor=(0.65, 0.65, 0.68), fan_motor=(0.65, 0.65, 0.68), battery=(0.2, 0.35, 0.75), sensor=(0.85, 0.2, 0.2))
-asm = cq.Assembly(name='MK4_vehicle_v0')
+asm = cq.Assembly(name=f'MK4_vehicle_{V}')
 for name, (shape, mat) in parts.items():
     asm.add(shape, name=name, color=cq.Color(*COL[mat]))
-asm.save(os.path.join(OUT, 'mk4_vehicle_v0.step'))
+asm.save(os.path.join(OUT, f'mk4_vehicle_{V}.step'))
 
 # ---------------- 図 ----------------
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
@@ -333,9 +358,9 @@ def draw3d(ax, elev, azim, title):
     ax.set_xlim(-52, 52); ax.set_ylim(-37, 37); ax.set_zlim(0, 32)
     ax.set_box_aspect((104, 74, 32), zoom=1.15); ax.view_init(elev, azim); ax.set_axis_off(); ax.set_title(title, fontsize=10)
 fig = plt.figure(figsize=(16, 7.5))
-draw3d(fig.add_subplot(1, 2, 1, projection='3d'), 28, -60, 'MK4 vehicle v0 (provisional) from front-left')
+draw3d(fig.add_subplot(1, 2, 1, projection='3d'), 28, -60, f'MK4 vehicle {V} (provisional) from front-left')
 draw3d(fig.add_subplot(1, 2, 2, projection='3d'), 28, -125, 'from rear-left')
-fig.tight_layout(); fig.savefig(os.path.join(OUT, 'vehicle_v0_3d.png'), dpi=110)
+fig.tight_layout(); fig.savefig(os.path.join(OUT, f'vehicle_{V}_3d.png'), dpi=110)
 
 # 上から・横から(輪郭)
 from matplotlib.patches import Polygon as MPoly
@@ -353,4 +378,4 @@ for ax, (i, j), lim in ((axs[0], (0, 1), (-40, 40)), (axs[1], (0, 2), (-1, 33)))
     ax.set_xlim(-55, 55); ax.set_ylim(*lim); ax.set_aspect('equal'); ax.grid(alpha=.3)
 axs[0].set_title('top view (x forward, y left) [mm]'); axs[1].set_title('side view from the right (x forward, z up) [mm]')
 axs[1].axhline(0, color='k', lw=1)
-fig.tight_layout(); fig.savefig(os.path.join(OUT, 'vehicle_v0_views.png'), dpi=100)
+fig.tight_layout(); fig.savefig(os.path.join(OUT, f'vehicle_{V}_views.png'), dpi=100)

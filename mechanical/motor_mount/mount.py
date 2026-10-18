@@ -29,6 +29,8 @@ P = dict(
     boss_r=3.7, ear_top=7.0, nut_af=5.7, nut_depth=2.5, hole_d=3.2,
     pcb_post=None,                    # 後ろの耳を基板の下面まで伸ばす柱の上の z(機体の仮の案、2026-10-18)。None なら作らない
     post_r=3.0,
+    post_nut=False,                   # True: 柱の上に基板のねじのナット、耳にフレームのねじのナット(どちらも後ろから横に入れる)。
+                                      # False: 下から長いねじ1本で、ナットは基板の上
 )
 
 def motor_center(P):
@@ -79,7 +81,13 @@ def build(P=P):
     for (sx_, sy_) in (P['screw_front'], P['screw_rear']):
         body = body.cut(cq.Workplane().center(sx_, sy_).circle(P['hole_d'] / 2).extrude(20).translate((0, 0, ft - 1)))
         if P.get('pcb_post') and (sx_, sy_) == P['screw_rear']:
-            continue          # 柱のある耳はナットを基板の上に置く
+            if not P.get('post_nut'):
+                continue      # 柱のある耳はナットを基板の上に置く
+            hexr = P['nut_af'] / math.cos(math.pi / 6)
+            for z0 in (P['ear_top'] - P['nut_depth'], P['pcb_post'] - P['nut_depth']):   # 耳のナットと、柱の上のナット
+                body = body.cut(cq.Workplane().center(sx_, sy_).polygon(6, hexr).extrude(P['nut_depth']).translate((0, 0, z0)))
+                body = body.cut(box(sx_ - 6.0, sx_, sy_ - P['nut_af'] / 2, sy_ + P['nut_af'] / 2, z0, z0 + P['nut_depth']))
+            continue
         body = body.cut(cq.Workplane().center(sx_, sy_).polygon(6, P['nut_af'] / math.cos(math.pi / 6))
                         .extrude(P['nut_depth'] + 1).translate((0, 0, P['ear_top'] - P['nut_depth'])))
     return body
