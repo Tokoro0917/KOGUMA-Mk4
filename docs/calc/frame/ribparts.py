@@ -4,11 +4,14 @@ from shapely.geometry import Polygon, box, LineString, Point
 from shapely import affinity
 
 TAB_L, TAB_D = 3.0, 1.0        # つめの長さ、深さ(板の厚さ)
-SLOT_W, SLOT_EXTRA = 1.1, 0.6  # 溝の幅(すき間0.05mmずつ)、溝の長さの余り(刃物の丸みの逃げ)
+# 溝: 加工業者の最小の溝幅 1.5mm(カーボンラボ.jp、厚さ5mm以下)に合わせて 1.6mm。
+# 長さは、つめの根元に残る刃物の丸み(R0.75)が入るよう、つめの両側に 0.9mm ずつ余らせる。すき間はエポキシで埋める
+SLOT_W, SLOT_EXTRA = 1.6, 3.4
+TAB_PITCH = 12.0               # つめの間隔の目安(溝と溝の間を広く取る)
 
 def tab_positions(L):
-    """つめの位置(リブの始まりからの距離)。両端から3mm、間は10mm以下"""
-    n = max(2, int(np.ceil((L - 6.0) / 10.0)) + 1)
+    """つめの位置(リブの始まりからの距離)。両端から3mm、間は TAB_PITCH 前後"""
+    n = max(2, int(round((L - 6.0 - TAB_L) / TAB_PITCH)) + 1)
     return np.linspace(3.0, L - 3.0 - TAB_L, n)
 
 def rib_part(L, h):
