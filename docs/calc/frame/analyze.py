@@ -17,7 +17,8 @@ LOADS = dict(
 MASSES = [(49.2, 8, 1.0, 0.4), (49.2, -8, 1.0, 0.4), (49.2, 17, 1.0, 0.35), (49.2, -17, 1.0, 0.35),
           (45, 0, 1.0, 0.3), (-45, 0, 1.0, 0.3)]     # 壁センサ 1.5g、前後の滑り板 0.3g ずつ
 
-def run(params, max_area=0.15, h=0.45, do_buckling=True):
+def run(params, max_area=0.15, h=0.45, do_buckling=True, hook=None):
+    """hook(M, g): Model を作った直後に呼ぶ(要素ごとの厚さを変えるときなど)。dict を返すと結果に足す"""
     params = dict(params); params.pop('base', None)
     t0 = time.time()
     g = dz.build(**params)
@@ -25,6 +26,8 @@ def run(params, max_area=0.15, h=0.45, do_buckling=True):
     mesh = fem.make_mesh(g['domain'], g['pc'], h, max_area)
     M = fem.Model(mesh, g['pc'], g['clamps'], ribs=g['vribs'])
     res = dict(m_carbon=mc, m_pc=mp, iz=iz, nel=mesh.t.shape[1])
+    if hook is not None:
+        res.update(hook(M, g) or {})
     # ---- 面外(曲げ) ----
     K = M.K_bend(); D = M.clamp_dofs_bend()
     FA = M.load_patch(45, 0, 1.0, LOADS['A_front'])
