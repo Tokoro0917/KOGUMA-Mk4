@@ -18,7 +18,7 @@ MOUNT_PAD = (-22.0, 12.5, SY, SLOT_Y0 + 0.5)    # マウントが載る所は窓
 DEFAULT = dict(rim=2.5, end_edge=2.5, spine_root=4.0, spine_tip=4.0, inner_spine=4.0,
                land=3.0, fan_ring=3.5, braces=(), brace_w=2.5, fillet=1.5, corner_r=3.0,
                end_window_min=20.0, rect_ribs=(), rib_w=3.0, root_fill=XB,
-               v_ribs=(), v_rib_h=4.0)
+               v_ribs=(), v_rib_h=4.0, mount_windows=())
 
 def outline(r):
     pts = [(-XE, -YE), (-XB, -YB), (XB, -YB), (XE, -YE), (XE, YE), (XB, YB), (-XB, YB), (-XE, YE)]
@@ -56,6 +56,28 @@ def brace_lines(P):
             for sy in (1, -1):
                 out.append(LineString([(sx * a[0], sy * a[1]), (sx * b[0], sy * b[1])]))
     return out
+
+ENC_BOARD = (-3.0, 3.0, 20.46, 21.06)   # エンコーダ基板が立つ所(x0, x1, |y|0, |y|1)。ここはフレームを残す
+
+def mount_windows(carbon, suction, kinds):
+    """働いていない所の窓(2026-10-18、pocket.py で調べた)。左右に写す
+      'pad' : モーターマウントの下(後ろのねじとエンコーダ基板の間)
+      'side': タイヤの穴の後ろの横の帯(横からの衝突の守り。開けると横の安全率が下がる)"""
+    keep = carbon.boundary.buffer(1.5)                                     # 縁・窓・穴から1.5mm
+    keep = keep.union(suction.boundary.buffer(3.0))                        # スカートを貼る縁
+    for (x, y) in MOUNT_SCREWS:
+        for sy in (1, -1):
+            keep = keep.union(Point(x, sy * y).buffer(BOSS_R + 0.8, 32))   # ねじの頭・マウントの耳
+    x0, x1, y0, y1 = ENC_BOARD
+    keep = keep.union(box(x0 - 1.5, y0 - 1.5, x1 + 1.5, y1 + 1.5)).union(box(x0 - 1.5, -y1 - 1.5, x1 + 1.5, -y0 + 1.5))
+    raw = []
+    if 'pad' in kinds:
+        raw.append(box(-13.0, SY + 2.0, ENC_BOARD[0] - 1.5, SLOT_Y0))
+    if 'side' in kinds:
+        raw.append(box(-16.5, SLOT_Y0 - 0.5, -7.5, YB - 2.5))
+    raw += [affinity.scale(r, 1, -1, origin=(0, 0)) for r in raw]
+    w = unary_union(raw).intersection(carbon).difference(keep)
+    return w.buffer(-1.0).buffer(1.0)                                      # 角は R1(刃物の半径)
 
 def build(**kw):
     P = dict(DEFAULT, **kw)
@@ -100,6 +122,9 @@ def build(**kw):
     slots = [rounded(box(-SLOT_L / 2, s0, SLOT_L / 2, s1), 1.0) for s0, s1 in ((SLOT_Y0, SLOT_Y1), (-SLOT_Y1, -SLOT_Y0))]
     domain = o.difference(unary_union(holes + slots + [fan]))
     carbon = domain.difference(unary_union(pcw))
+    if P['mount_windows']:
+        mw = mount_windows(carbon, suction, P['mount_windows'])
+        domain, carbon = domain.difference(mw), carbon.difference(mw)
     clamps = [Point(x, sy * y).buffer(BOSS_R, 32) for (x, y) in MOUNT_SCREWS for sy in (1, -1)]
     # 縦に立てるリブ(1mm のカーボンを溝に差して接着)。(線, 高さ, 足元の板の幅)
     vr = []
