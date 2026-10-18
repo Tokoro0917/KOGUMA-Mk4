@@ -1,4 +1,4 @@
-"""フレーム v4.1 の3Dモデル(カーボン板・リブ・ポリカーボネート・M3の穴・リブの溝)と、マウント・モーター・タイヤを並べた確認用の STEP と絵を作る。
+"""フレームの3Dモデル(カーボン板・ポリカーボネート・M3の穴。リブがあるときはリブとリブの溝も)と、マウント・モーター・タイヤを並べた確認用の STEP と絵を作る。
 座標 [mm]: x 前(+)、y 左(+)、z 上(床 = 0)。フレームの下面 z = 2.0"""
 import os, sys, json, math
 import numpy as np
@@ -12,6 +12,7 @@ import design as dz, ribparts as rp
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
+TAG = 'frame_v4_2'   # リブなし(2026-10-18)
 P = json.load(open(os.path.join(HERE, '../docs/calc/frame/results/final_params.json')))
 g = dz.build(**P)
 slots = [s for (l, h, w) in g['vribs'] for s in rp.slots_for(l)]
@@ -39,8 +40,9 @@ for (l, h, w) in g['vribs']:
     s = cq.Workplane('XZ').polyline(list(part.exterior.coords)[:-1]).close().extrude(-0.5, both=True)
     s = s.rotate((0, 0, 0), (0, 0, 1), ang).translate((x0, y0, 3.0))
     ribs.append(s.val())
-parts['ribs'] = cq.Compound.makeCompound(ribs)
-cq.exporters.export(cq.Compound.makeCompound([parts['carbon'], parts['pc_sheet'], parts['ribs']]), os.path.join(OUT, 'frame_v4_1_3d.step'))
+if ribs:
+    parts['ribs'] = cq.Compound.makeCompound(ribs)
+cq.exporters.export(cq.Compound.makeCompound(list(parts.values())), os.path.join(OUT, f'{TAG}_3d.step'))
 
 # 確認用: マウント・モーター・タイヤ・ファン(左右)
 m_r = mm.build().val()
@@ -52,7 +54,7 @@ tire = mm.ycyl(7.5, -31.8, -28.3, 0, 7.5).cut(mm.ycyl(5.75, -31.9, -28.2, 0, 7.5
 extra['tire'] = cq.Compound.makeCompound([tire, tire.mirror('XZ')])
 extra['fan'] = cq.Workplane().center(dz.FAN_X, 0).circle(16).extrude(6).translate((0, 0, 3.2)).val()
 # マウントなどを並べた STEP が要るときは、次の行を有効にする
-# cq.exporters.export(cq.Compound.makeCompound(list(parts.values()) + list(extra.values())), os.path.join(OUT, 'frame_v4_1_with_mounts.step'))
+# cq.exporters.export(cq.Compound.makeCompound(list(parts.values()) + list(extra.values())), os.path.join(OUT, f'{TAG}_with_mounts.step'))
 
 # 絵
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
@@ -64,8 +66,8 @@ def tris(shape, tol=0.08):
     return v[np.array(t)] if len(t) else np.zeros((0, 3, 3))
 fig = plt.figure(figsize=(16, 7.5))
 for k, (items, elev, azim, title) in enumerate((
-        (('carbon', 'pc_sheet', 'ribs'), 38, -62, 'frame v4.1 from front-left (carbon 1mm + ribs h3 orange + PC 0.2mm blue)'),
-        (('carbon', 'pc_sheet', 'ribs'), 38, -118, 'from rear-left'))):
+        (tuple(parts), 38, -62, f'{TAG} from front-left (carbon 1mm' + (' + ribs h3 orange' if ribs else ', no ribs') + ' + PC 0.2mm blue)'),
+        (tuple(parts), 38, -118, 'from rear-left'))):
     ax = fig.add_subplot(1, 2, k + 1, projection='3d')
     allp = {**parts, **extra}
     for name in items:
@@ -76,6 +78,6 @@ for k, (items, elev, azim, title) in enumerate((
     ax.set_box_aspect((104, 74, 12), zoom=1.12); ax.view_init(elev, azim); ax.set_axis_off()
     ax.set_title(title, fontsize=10)
     ax.text(52, 0, 4, 'FRONT', fontsize=8)
-fig.tight_layout(); fig.savefig(os.path.join(OUT, 'frame_v4_1_3d.png'), dpi=110)
-v = parts['carbon'].Volume() + parts['ribs'].Volume()
-print(f'カーボン(板 + リブ) {v * 1.55e-3:.2f} g、ポリカーボネート {parts["pc_sheet"].Volume() * 1.2e-3:.2f} g')
+fig.tight_layout(); fig.savefig(os.path.join(OUT, f'{TAG}_3d.png'), dpi=110)
+v = sum(parts[k].Volume() for k in ('carbon', 'ribs') if k in parts)
+print(f'カーボン {v * 1.55e-3:.2f} g、ポリカーボネート {parts["pc_sheet"].Volume() * 1.2e-3:.2f} g')

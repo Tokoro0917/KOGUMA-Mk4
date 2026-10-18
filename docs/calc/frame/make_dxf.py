@@ -1,8 +1,8 @@
 """最終案の製作用 DXF(単位 mm、原点は車軸の中心、+x が前)
   CARBON      : カーボン板の外形と窓
   M3          : M3 の穴(φ3.2)。モーターマウントのねじの位置は仮
-  RIB_SLOT    : リブを差す溝
-  RIB_PARTS   : リブの部品(同じ1mmのカーボン板から切る)。板の下に並べて置く
+  RIB_SLOT    : リブを差す溝(リブがあるときだけ)
+  RIB_PARTS   : リブの部品(同じ1mmのカーボン板から切る)。板の下に並べて置く(リブがあるときだけ)
   PC_SHEET    : ポリカーボネート 0.2mm の板(吸引する面)。板の下に置く
 """
 import json, sys, numpy as np, ezdxf, matplotlib
@@ -72,11 +72,12 @@ note(fc[0], fc[1], f'G end ({fc[0]}, {fc[1]})', -16, 9)
 note(40, 0, f"spine {P['spine_root']}mm", -2, -6)
 note(30, 28.3, f"rim {P['rim']}mm", 3, 6)
 note(dz.XE - 1.5, -12, f"front edge {P['end_edge']}mm", -12, -14)
-note(25, 20.4, f"G brace {P['brace_w']}mm + rib h{P['v_rib_h']:.0f}", -8, 9)
+note(25, 20.4, f"G brace {P['brace_w']}mm" + (f" + rib h{P['v_rib_h']:.0f}" if ribs else ''), -8, 9)
 for x, y in dz.MOUNT_SCREWS:
     note(x, -y, f'M3 ({x}, {-y})', -6, -9)
 note(dz.FAN_X + 11, -11, 'fan dia.32 (dotted)', 4, -8)
 ax.set_aspect('equal'); ax.grid(alpha=.25); ax.set_xlim(-55, 55); ax.set_ylim(-40, 40)
-ax.set_title(f'{tag}: carbon 1mm (gray) + ribs 1mm x h{P["v_rib_h"]:.0f} (orange) + PC 0.2mm windows (blue). origin = axle, +x = front')
+rib_s = f' + ribs 1mm x h{P["v_rib_h"]:.0f} (orange)' if ribs else ' (no ribs)'
+ax.set_title(f'{tag}: carbon 1mm (gray){rib_s} + PC 0.2mm windows (blue). origin = axle, +x = front')
 fig.tight_layout(); fig.savefig(f'{tag}_drawing.png', dpi=120)
 print(json.dumps(parts, indent=1))

@@ -61,6 +61,11 @@ if __name__ == '__main__':
                                                      (('G',), ('G', 'S')), (3.0, 4.0)):
             cands.append(dict(root_fill=16.7, land=3.0, braces=('G',), spine_root=sp[0], spine_tip=sp[1], rim=rim,
                               end_edge=3.0, brace_w=bw, inner_spine=4.0, v_ribs=vr, v_rib_h=hh))
+    elif stage == '7':   # リブなし(2026-10-18 に決定)で、骨の組み合わせと幅を選び直す
+        for br, sp, bw, rim, ee in itertools.product((('G',), ('G', 'H')), ((4, 4), (6, 4)), (3.0, 4.6),
+                                                     (2.5, 3.5), (3.0, 4.0)):
+            cands.append(dict(root_fill=16.7, land=3.0, braces=br, spine_root=sp[0], spine_tip=sp[1], rim=rim,
+                              end_edge=ee, brace_w=bw, inner_spine=4.0, v_ribs=(), end_window_min=40.0, fillet=2.0))
     else:
         tops = json.loads(sys.argv[2])
         for br, rim, ee, sp, bw in itertools.product(tops, (2.5, 3.0, 3.5), (2.5, 3.5, 5.0),

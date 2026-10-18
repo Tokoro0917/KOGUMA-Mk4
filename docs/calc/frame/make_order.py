@@ -1,6 +1,6 @@
 """カーボン板の注文用ファイルを作る(カーボンラボ.jp の入稿ルールに合わせる)
   - DXF: 上から見た外形の実線だけ、1:1、文字・寸法線なし、部品の間は 5mm 以上、ファイル名は半角英数字 20 文字以内
-  - フレーム1枚とリブ4本を1つの DXF に並べる(リブは繊維の向き 0°= X 方向に寝かせる)
+  - フレーム1枚(リブがあるときは、リブも同じ DXF に並べる。リブは繊維の向き 0°= X 方向に寝かせる)
   - ポリカーボネートの板は別の DXF と、1:1 で印刷する型紙(PDF)
 使い方: python3 make_order.py [出力のフォルダ]
 """
@@ -10,6 +10,8 @@ from shapely.geometry import Point, Polygon
 from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp
+
+VER = '42'          # frame v4.2(リブなし、2026-10-18)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'order')
@@ -63,7 +65,7 @@ for (x, yy) in holes:
     msp.add_circle((x, yy), 1.6)
 for p in parts:
     add(p)
-fn = os.path.join(OUT, 'MK4FRAME41_T1.dxf')
+fn = os.path.join(OUT, f'MK4FRAME{VER}_T1.dxf')
 doc.saveas(fn)
 
 # ポリカーボネート
@@ -72,7 +74,7 @@ doc2 = ezdxf.new(units=4); m2 = doc2.modelspace()
 m2.add_lwpolyline(list(sheet.exterior.coords)[:-1], close=True)
 for r in sheet.interiors:
     m2.add_lwpolyline(list(r.coords)[:-1], close=True)
-doc2.saveas(os.path.join(OUT, 'MK4PC41_T02.dxf'))
+doc2.saveas(os.path.join(OUT, f'MK4PC{VER}_T02.dxf'))
 
 # 1:1 の型紙(A4、印刷は「実際のサイズ」で)
 import matplotlib; matplotlib.use('Agg'); import matplotlib.pyplot as plt
@@ -86,10 +88,10 @@ for r in sheet.interiors:
     xs, ys = r.xy; ax.plot(np.array(xs) + ox, np.array(ys) + oy, 'k-', lw=0.5)
 ax.plot([30, 80], [60, 60], 'k-', lw=0.8); ax.text(30, 63, '50 mm (check scale)', fontsize=8)
 ax.plot([30, 30], [60, 110], 'k-', lw=0.8)
-ax.text(20, 280, 'MK4 PC sheet 0.2mm  (frame v4.1, suction area 60.5 x 30.5, fan hole dia.15)', fontsize=9)
+ax.text(20, 280, f'MK4 PC sheet 0.2mm  (frame v{VER[0]}.{VER[1:]}, suction area 60.5 x 30.5, fan hole dia.15)', fontsize=9)
 ax.text(20, 272, 'print at 100% (actual size). +x (front) = right. glue on TOP of carbon.', fontsize=8)
 ax.annotate('FRONT ->', (ox + 25, oy + 18), fontsize=8)
-fig.savefig(os.path.join(OUT, 'MK4PC41_template_A4_1to1.pdf'))
+fig.savefig(os.path.join(OUT, f'MK4PC{VER}_template_A4_1to1.pdf'))
 
 print('書き出し:', os.listdir(OUT))
 print('最小の幅の確認:', 'OK' if not msgs else msgs)
