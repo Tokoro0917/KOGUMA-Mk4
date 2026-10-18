@@ -27,6 +27,8 @@ P = dict(
     pocket=(3.8, 3.7, 14.0),          # AS5047P と内側の軸受のつばの逃げ: x 半幅、z0、z1(上は開ける。基板を上から差す)
     screw_front=(7.85, -22.1), screw_rear=(-17.15, -22.1),
     boss_r=3.7, ear_top=7.0, nut_af=5.7, nut_depth=2.5, hole_d=3.2,
+    pcb_post=None,                    # 後ろの耳を基板の下面まで伸ばす柱の上の z(機体の仮の案、2026-10-18)。None なら作らない
+    post_r=3.0,
 )
 
 def motor_center(P):
@@ -60,6 +62,9 @@ def build(P=P):
         # 耳とマウントをつなぐ
         x_link0, x_link1 = sorted((sx, ax if sx > 0 else mx))
         body = body.union(box(x_link0, x_link1, sy - P['boss_r'], min(sy + P['boss_r'], y_in), ft, P['ear_top']))
+    if P.get('pcb_post'):     # 後ろの耳の上に柱を立て、基板を受ける(下から長いねじで、フレーム・柱・基板をまとめて留める)
+        sx, sy = P['screw_rear']
+        body = body.union(cq.Workplane().center(sx, sy).circle(P['post_r']).extrude(P['pcb_post'] - P['ear_top']).translate((0, 0, P['ear_top'])))
     # ---- 穴 ----
     body = body.cut(ycyl(P['motor_d'] / 2 + P['bore_clear'] / 2, P['motor_face'], P['cradle_end'] + 1, mx, mz))
     body = body.cut(ycyl(P['lip_hole'] / 2, y_out - 1, P['motor_face'] + 0.01, mx, mz))
@@ -73,6 +78,8 @@ def build(P=P):
     body = body.cut(box(-40, 40, -40, y_out, 0, 30).cut(ycyl(P['seat_r'], P['brg_seat_out'], y_out, ax, az)))
     for (sx_, sy_) in (P['screw_front'], P['screw_rear']):
         body = body.cut(cq.Workplane().center(sx_, sy_).circle(P['hole_d'] / 2).extrude(20).translate((0, 0, ft - 1)))
+        if P.get('pcb_post') and (sx_, sy_) == P['screw_rear']:
+            continue          # 柱のある耳はナットを基板の上に置く
         body = body.cut(cq.Workplane().center(sx_, sy_).polygon(6, P['nut_af'] / math.cos(math.pi / 6))
                         .extrude(P['nut_depth'] + 1).translate((0, 0, P['ear_top'] - P['nut_depth'])))
     return body
