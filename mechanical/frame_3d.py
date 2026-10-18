@@ -12,7 +12,7 @@ import design as dz, ribparts as rp
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
-TAG = 'frame_v4_3'   # リブなし、マウントの下に窓(2026-10-18)
+TAG = 'frame_v4_4'   # リブなし、マウントの下に窓、筋交いA 2mm(2026-10-18)
 P = json.load(open(os.path.join(HERE, '../docs/calc/frame/results/final_params.json')))
 g = dz.build(**P)
 slots = [s for (l, h, w) in g['vribs'] for s in rp.slots_for(l)]

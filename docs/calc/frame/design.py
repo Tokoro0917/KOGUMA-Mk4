@@ -18,7 +18,7 @@ MOUNT_PAD = (-22.0, 12.5, SY, SLOT_Y0 + 0.5)    # マウントが載る所は窓
 DEFAULT = dict(rim=2.5, end_edge=2.5, spine_root=4.0, spine_tip=4.0, inner_spine=4.0,
                land=3.0, fan_ring=3.5, braces=(), brace_w=2.5, fillet=1.5, corner_r=3.0,
                end_window_min=20.0, rect_ribs=(), rib_w=3.0, root_fill=XB,
-               v_ribs=(), v_rib_h=4.0, mount_windows=())
+               v_ribs=(), v_rib_h=4.0, mount_windows=(), brace_w_each={})
 
 def outline(r):
     pts = [(-XE, -YE), (-XB, -YB), (XB, -YB), (XE, -YE), (XE, YE), (XB, YB), (-XB, YB), (-XE, YE)]
@@ -87,7 +87,9 @@ def build(**kw):
     suction = box(-SX, -SY, SX, SY)
     band = box(-XB, -50, XB, 50)
     members = [taper(SX, XE, P['spine_root'], P['spine_tip']), taper(-SX, -XE, P['spine_root'], P['spine_tip'])]
-    members += [l.buffer(P['brace_w'] / 2, cap_style=2, join_style=2) for l in brace_lines(P)]
+    for k in P['braces']:      # 骨ごとの幅は brace_w_each で変えられる(ないものは brace_w)
+        w = P['brace_w_each'].get(k, P['brace_w'])
+        members += [l.buffer(w / 2, cap_style=2, join_style=2) for l in brace_lines(dict(P, braces=(k,)))]
     root = box(-P['root_fill'], -50, P['root_fill'], 50)      # ここより内側は窓を開けない(付け根を太くする)
     x0, x1, y0, y1 = MOUNT_PAD
     pad = unary_union([box(x0, y0, x1, y1), box(x0, -y1, x1, -y0)]

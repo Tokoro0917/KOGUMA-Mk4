@@ -75,6 +75,8 @@ note(dz.XE - 1.5, -12, f"front edge {P['end_edge']}mm", -12, -14)
 note(25, 20.4, f"G brace {P['brace_w']}mm" + (f" + rib h{P['v_rib_h']:.0f}" if ribs else ''), -8, 9)
 for x, y in dz.MOUNT_SCREWS:
     note(x, -y, f'M3 ({x}, {-y})', -6, -9)
+if 'A' in P['braces']:
+    note(38.9, 11.4, f"brace A {P.get('brace_w_each', {}).get('A', P['brace_w'])}mm", 4, -3)
 note(dz.FAN_X + 11, -11, 'fan dia.32 (dotted)', 4, -8)
 ax.set_aspect('equal'); ax.grid(alpha=.25); ax.set_xlim(-55, 55); ax.set_ylim(-40, 40)
 rib_s = f' + ribs 1mm x h{P["v_rib_h"]:.0f} (orange)' if ribs else ' (no ribs)'
