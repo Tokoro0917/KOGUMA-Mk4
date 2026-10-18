@@ -28,7 +28,7 @@ msp = doc.modelspace()
 def add_poly(p, layer, dx=0, dy=0):
     for q in getattr(p, 'geoms', [p]):
         for ring in [q.exterior] + list(q.interiors):
-            msp.add_lwpolyline([(x + dx, y + dy) for x, y in ring.coords], close=True, dxfattribs={'layer': layer})
+            msp.add_lwpolyline([(x + dx, y + dy) for x, y in list(ring.coords)[:-1]], close=True, dxfattribs={'layer': layer})
 add_poly(g['carbon'], 'CARBON')
 for s in slots:
     add_poly(s, 'RIB_SLOT')

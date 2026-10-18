@@ -57,7 +57,7 @@ msp = doc.modelspace()
 def add(poly):
     for q in getattr(poly, 'geoms', [poly]):
         for ring in [q.exterior] + list(q.interiors):
-            msp.add_lwpolyline(list(ring.coords), close=True)
+            msp.add_lwpolyline(list(ring.coords)[:-1], close=True)
 add(plate)
 for (x, yy) in holes:
     msp.add_circle((x, yy), 1.6)
@@ -69,9 +69,9 @@ doc.saveas(fn)
 # ポリカーボネート
 sheet = g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 128))
 doc2 = ezdxf.new(units=4); m2 = doc2.modelspace()
-m2.add_lwpolyline(list(sheet.exterior.coords), close=True)
+m2.add_lwpolyline(list(sheet.exterior.coords)[:-1], close=True)
 for r in sheet.interiors:
-    m2.add_lwpolyline(list(r.coords), close=True)
+    m2.add_lwpolyline(list(r.coords)[:-1], close=True)
 doc2.saveas(os.path.join(OUT, 'MK4PC41_T02.dxf'))
 
 # 1:1 の型紙(A4、印刷は「実際のサイズ」で)
