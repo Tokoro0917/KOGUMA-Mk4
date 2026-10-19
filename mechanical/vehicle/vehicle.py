@@ -281,6 +281,8 @@ pcb_outline = unary_union([
     sbox(22.0, -12.0, 40.0, 12.0),      # 首
     sbox(22.0, -15.0, 30.0, 15.0) if SPIDER else sbox(0, 0, 0.1, 0.1),   # v4: ファンの上の穴の横で、前とつなぐ
     sbox(40.0, -23.0, 47.5, 23.0),      # 壁センサの板(フレームの前の辺 50.0 より内側)
+    sbox(36.0, -27.0, 46.0, 27.0),      # 横の壁センサ (41, ±24) の所(2026-10-19)
+    sbox(9.0, -34.0, 17.0, 34.0),       # 前の壁センサ (12, ±30) の耳(タイヤ x ≤ 7.5 より前、41T の上 z 13.95 より上)
 ]).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
 pcb_holes = [Point(FAN).buffer(13.0 if SPIDER else 4.6, 64)] + [Point(p).buffer(SC['hole'] / 2, 24) for p in PCB_FAN_POSTS] \
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
@@ -292,7 +294,8 @@ b = BAT
 add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + b['lz'] / 2)), 'battery')
 
 # ---------------- 壁センサ(発光 OPV332・受光 SFH 229 FA、φ3 × 4.5 を基板の上に寝かせる) ----------------
-SENS = {'FL': ((44.5, 10.5), 0.0), 'FR': ((44.5, -10.5), 0.0), 'L': ((42.0, 18.0), 50.0), 'R': ((42.0, -18.0), -50.0)}
+# 2026-10-19: 前の2本はタイヤの前の耳 (12, ±30) で外へ5°、横の2本は前の角 (41, ±24) から反対側の壁へ 75°(左右で交差)
+SENS = {'FL': ((12.0, 30.0), 5.0), 'FR': ((12.0, -30.0), -5.0), 'R': ((41.0, 24.0), -75.0), 'L': ((41.0, -24.0), 75.0)}
 for nm, ((sx_, sy_), ang) in SENS.items():
     a = math.radians(ang)
     u = np.array([math.cos(a), math.sin(a)]); n = np.array([-u[1], u[0]])
