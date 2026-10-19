@@ -4,7 +4,7 @@
         右: 材料の使い方(破壊の指数 sqrt(Tsai-Hill)。曲げ A/A後ろ/B/C と面内 D/E/F の最大。1 で壊れる)
   sens: 部材の幅を1つずつ変えたときの重さと性能の変化(粗いメッシュ、results/refine_sens.json)
   try : 見直した案をいくつか計算する(粗いメッシュ、results/refine_try.json)
-使い方: python3 refine.py map 図.png | sens | try
+使い方: python3 refine.py map 図.png | sens | try 案.json [出力.json]
 """
 import sys, json
 import numpy as np
@@ -151,7 +151,8 @@ if __name__ == '__main__':
         table(rows, rows[0])
     elif mode == 'try':
         cands = json.loads(open(sys.argv[2]).read())
+        out = sys.argv[3] if len(sys.argv) > 3 else 'results/refine_try.json'
         with Pool(4) as pool:
             rows = pool.map(job, [('base', {})] + list(cands.items()), chunksize=1)
-        json.dump(rows, open('results/refine_try.json', 'w'), ensure_ascii=False, indent=1, default=float)
+        json.dump(rows, open(out, 'w'), ensure_ascii=False, indent=1, default=float)
         table(rows, rows[0])

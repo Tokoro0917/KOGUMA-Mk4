@@ -13,6 +13,7 @@ MOUNT_SCREWS = [(-17.15, 22.1), (7.85, 22.1)]  # モーターマウント v1 の
 BOSS_R = 3.7                                    # ねじのまわりの肉(直径7.4mm。M3 のときに決めた大きさのまま)
 SCREW, HOLE_D = 'M2', 2.3                       # ねじは M2、穴 φ2.3(2026-10-19 に M3 から変更)
 FAN_SCREWS = [(21.5, 17.6), (21.5, -17.6), (32.6, 0.0)]   # 吸引ファンのケースを留めるねじ(2026-10-19。頭がスカートから0.45mm離れる所)
+FAN_BOSS_R = 3.3                                # ファンのねじのまわりに必ず残す肉(穴の縁から2.15mm。窓がここにかからない)
 
 def holes():
     """フレームのねじの穴の中心: モーターマウント(左右) + 吸引ファンのケース"""
@@ -105,6 +106,15 @@ def mount_windows(carbon, suction, kinds):
     w = unary_union(raw).intersection(carbon).difference(keep)
     return w.buffer(-1.0).buffer(1.0)                                      # 角は R1(刃物の半径)
 
+def no_boss(wins, boss, r):
+    """窓がねじのまわりの肉にかかるときだけ、そこを除いてから角を丸め直す(かからない窓はそのまま)"""
+    out = []
+    for w in wins:
+        if w.intersects(boss):
+            w = rounded(w.difference(boss), r)
+        out += [g for g in getattr(w, 'geoms', [w]) if not g.is_empty and g.area > 1.0]
+    return out
+
 def build(**kw):
     P = dict(DEFAULT, **kw)
     o = outline(P['corner_r'])
@@ -125,9 +135,11 @@ def build(**kw):
         y1 = 50.0
     pad = unary_union([box(x0, y0, x1, y1), box(x0, -y1, x1, -y0)]
                       + [Point(x, sy * y).buffer(BOSS_R + 0.8, 32) for (x, y) in MOUNT_SCREWS for sy in (1, -1)])
+    fan_boss = unary_union([Point(x, y).buffer(FAN_BOSS_R, 32) for (x, y) in FAN_SCREWS])
     ends = inner.difference(band).difference(root).difference(suction).difference(unary_union(members)).difference(pad)
     holes = [rounded(g, P['fillet']) for g in getattr(ends, 'geoms', [ends]) if g.area > P['end_window_min']]
     holes = [h for g in holes for h in getattr(g, 'geoms', [g]) if not h.is_empty]
+    holes = no_boss(holes, fan_boss, P['fillet'])
     # 吸引する面の中の窓(ポリカーボネートでふさぐ)
     win = box(-SX + P['land'], -SY + P['land'], SX - P['land'], SY - P['land'])
     if P['inner_spine'] > 0:
@@ -152,6 +164,7 @@ def build(**kw):
     win = win.difference(Point(FAN_X, 0).buffer(FAN_R + P['fan_ring'], 64))
     pcw = [rounded(g, 1.5) for g in getattr(win, 'geoms', [win]) if g.area > 20]
     pcw = [h for g in pcw for h in getattr(g, 'geoms', [g]) if not h.is_empty]
+    pcw = no_boss(pcw, fan_boss, 1.5)
     slots = [rounded(box(-SLOT_L / 2, s0, SLOT_L / 2, s1), 1.0) for s0, s1 in ((SLOT_Y0, SLOT_Y1), (-SLOT_Y1, -SLOT_Y0))]
     domain = o.difference(unary_union(holes + slots + [fan]))
     carbon = domain.difference(unary_union(pcw))
