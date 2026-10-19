@@ -24,7 +24,9 @@ MOUNT_PAD = (-22.0, 12.5, SY, SLOT_Y0 + 0.5)    # マウントが載る所は窓
 DEFAULT = dict(rim=2.5, end_edge=2.5, spine_root=4.0, spine_tip=4.0, inner_spine=4.0,
                land=3.0, fan_ring=3.5, braces=(), brace_w=2.5, fillet=1.5, corner_r=3.0,
                end_window_min=20.0, rect_ribs=(), rib_w=3.0, root_fill=XB,
-               v_ribs=(), v_rib_h=4.0, mount_windows=(), brace_w_each={})
+               v_ribs=(), v_rib_h=4.0, mount_windows=(), brace_w_each={},
+               rim_rear=None, end_edge_rear=None, spine_root_rear=None, spine_tip_rear=None, brace_w_rear=None,
+               pad_full=False)   # *_rear: 後ろ半分だけ変えるとき(None なら前と同じ)。pad_full: マウントの所の窓を前後にまっすぐ切る
 
 def outline(r):
     pts = [(-XE, -YE), (-XB, -YB), (XB, -YB), (XE, -YE), (XE, YE), (XB, YB), (-XB, YB), (-XE, YE)]
@@ -38,27 +40,34 @@ def rounded(p, r):
 def taper(x0, x1, w0, w1):
     return Polygon([(x0, -w0 / 2), (x1, -w1 / 2), (x1, w1 / 2), (x0, w0 / 2)])
 
+def rear(P, k):
+    """後ろ半分の値(*_rear が None なら前と同じ)"""
+    v = P.get(k + '_rear')
+    return P[k] if v is None else v
+
 def brace_lines(P):
-    """筋交いの線(前の右上の四分の一で定義し、上下・前後に写す)"""
-    r = P['rim']
-    fc = (XE - P['end_edge'], YE - r)          # 前の角
-    bc = (XB, YB - r)                          # 帯の角
-    rc = (SX, SY)                              # 吸引する面の角
-    lines = {'A': (fc, (SX, 0.0)),             # 前の角 → 背骨の根元
-             'B': (bc, (XE - P['end_edge'], 0.0)),   # 帯の角 → 背骨の先
-             'C': (fc, rc),                    # 前の角 → 吸引する面の角
-             'D': (bc, rc),                    # 帯の角 → 吸引する面の角
-             'E': (rc, (XE - P['end_edge'], YE * 0.45)),  # 吸引する面の角 → 前の辺の途中
-             'H': (rc, (XE - P['end_edge'], 0.0))}        # 吸引する面の角 → 背骨の先
+    """筋交いの線(前の右上の四分の一で定義し、上下・前後に写す。後ろは後ろの枠・辺の幅で角を決める)"""
+    def side_lines(r, ee):
+        fc = (XE - ee, YE - r)                     # 角
+        bc = (XB, YB - r)                          # 帯の角
+        rc = (SX, SY)                              # 吸引する面の角
+        return fc, {'A': (fc, (SX, 0.0)),          # 角 → 背骨の根元
+                    'B': (bc, (XE - ee, 0.0)),     # 帯の角 → 背骨の先
+                    'C': (fc, rc),                 # 角 → 吸引する面の角
+                    'D': (bc, rc),                 # 帯の角 → 吸引する面の角
+                    'E': (rc, (XE - ee, YE * 0.45)),   # 吸引する面の角 → 辺の途中
+                    'H': (rc, (XE - ee, 0.0))}         # 吸引する面の角 → 背骨の先
+    fcf, lf = side_lines(P['rim'], P['end_edge'])
+    fcr, lr = side_lines(rear(P, 'rim'), rear(P, 'end_edge'))
     out = []
     for k in P['braces']:
         if k == 'G':   # モーターマウントの前後の端 → 前後の角(ファンを避けて、ほぼ前後方向にまっすぐ)
             for sy in (1, -1):
-                out.append(LineString([(G_FRONT[0], sy * G_FRONT[1]), (fc[0], sy * fc[1])]))
-                out.append(LineString([(G_REAR[0], sy * G_REAR[1]), (-fc[0], sy * fc[1])]))
+                out.append(LineString([(G_FRONT[0], sy * G_FRONT[1]), (fcf[0], sy * fcf[1])]))
+                out.append(LineString([(G_REAR[0], sy * G_REAR[1]), (-fcr[0], sy * fcr[1])]))
             continue
-        a, b = lines[k]
-        for sx in (1, -1):
+        for sx, lines in ((1, lf), (-1, lr)):
+            a, b = lines[k]
             for sy in (1, -1):
                 out.append(LineString([(sx * a[0], sy * a[1]), (sx * b[0], sy * b[1])]))
     return out
@@ -88,16 +97,21 @@ def mount_windows(carbon, suction, kinds):
 def build(**kw):
     P = dict(DEFAULT, **kw)
     o = outline(P['corner_r'])
-    inner = o.buffer(-P['rim'], join_style=2)
-    inner = inner.difference(box(XE - P['end_edge'], -50, 60, 50)).difference(box(-60, -50, -XE + P['end_edge'], 50))
+    inner = unary_union([o.buffer(-P['rim'], join_style=2).intersection(box(0, -50, 60, 50)),
+                         o.buffer(-rear(P, 'rim'), join_style=2).intersection(box(-60, -50, 0, 50))])
+    inner = inner.difference(box(XE - P['end_edge'], -50, 60, 50)).difference(box(-60, -50, -XE + rear(P, 'end_edge'), 50))
     suction = box(-SX, -SY, SX, SY)
     band = box(-XB, -50, XB, 50)
-    members = [taper(SX, XE, P['spine_root'], P['spine_tip']), taper(-SX, -XE, P['spine_root'], P['spine_tip'])]
-    for k in P['braces']:      # 骨ごとの幅は brace_w_each で変えられる(ないものは brace_w)
+    members = [taper(SX, XE, P['spine_root'], P['spine_tip']), taper(-SX, -XE, rear(P, 'spine_root'), rear(P, 'spine_tip'))]
+    for k in P['braces']:      # 骨ごとの幅は brace_w_each で変えられる(ないものは brace_w)。後ろの骨Gは brace_w_rear
         w = P['brace_w_each'].get(k, P['brace_w'])
-        members += [l.buffer(w / 2, cap_style=2, join_style=2) for l in brace_lines(dict(P, braces=(k,)))]
+        for l in brace_lines(dict(P, braces=(k,))):
+            wl = rear(P, 'brace_w') if (k == 'G' and l.coords[0][0] < 0) else w
+            members.append(l.buffer(wl / 2, cap_style=2, join_style=2))
     root = box(-P['root_fill'], -50, P['root_fill'], 50)      # ここより内側は窓を開けない(付け根を太くする)
     x0, x1, y0, y1 = MOUNT_PAD
+    if P['pad_full']:
+        y1 = 50.0
     pad = unary_union([box(x0, y0, x1, y1), box(x0, -y1, x1, -y0)]
                       + [Point(x, sy * y).buffer(BOSS_R + 0.8, 32) for (x, y) in MOUNT_SCREWS for sy in (1, -1)])
     ends = inner.difference(band).difference(root).difference(suction).difference(unary_union(members)).difference(pad)

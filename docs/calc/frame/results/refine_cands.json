@@ -1,0 +1,9 @@
+{
+ "C1 すっきり(後ろを細く)": {"mount_windows": [], "pad_full": true, "inner_spine": 3.0, "rim_rear": 2.0, "end_edge_rear": 2.5, "spine_root_rear": 3, "spine_tip_rear": 3, "brace_w_rear": 3.0},
+ "C1 で窓をまっすぐにしない": {"mount_windows": [], "inner_spine": 3.0, "rim_rear": 2.0, "end_edge_rear": 2.5, "spine_root_rear": 3, "spine_tip_rear": 3, "brace_w_rear": 3.0},
+ "C2 = C1 + 前を強く": {"mount_windows": [], "pad_full": true, "inner_spine": 3.0, "rim_rear": 2.0, "end_edge_rear": 2.5, "spine_root_rear": 3, "spine_tip_rear": 3, "brace_w_rear": 3.0, "rim": 3.0, "brace_w": 4.0, "fan_ring": 4.5},
+ "C3 = C2 + 角R3": {"mount_windows": [], "pad_full": true, "inner_spine": 3.0, "rim_rear": 2.0, "end_edge_rear": 2.5, "spine_root_rear": 3, "spine_tip_rear": 3, "brace_w_rear": 3.0, "rim": 3.0, "brace_w": 4.0, "fan_ring": 4.5, "fillet": 3.0},
+ "C4 = C1 + 角R3": {"mount_windows": [], "pad_full": true, "inner_spine": 3.0, "rim_rear": 2.0, "end_edge_rear": 2.5, "spine_root_rear": 3, "spine_tip_rear": 3, "brace_w_rear": 3.0, "fillet": 3.0},
+ "C5 = C2 で筋交いAなし": {"braces": ["G"], "mount_windows": [], "pad_full": true, "inner_spine": 3.0, "rim_rear": 2.0, "end_edge_rear": 2.5, "spine_root_rear": 3, "spine_tip_rear": 3, "brace_w_rear": 3.0, "rim": 3.0, "brace_w": 4.0, "fan_ring": 4.5},
+ "C6 = C2 で前の骨G 4.5": {"mount_windows": [], "pad_full": true, "inner_spine": 3.0, "rim_rear": 2.0, "end_edge_rear": 2.5, "spine_root_rear": 3, "spine_tip_rear": 3, "brace_w_rear": 3.0, "rim": 3.0, "brace_w": 4.5, "fan_ring": 4.5}
+}
