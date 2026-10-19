@@ -12,6 +12,7 @@ import numpy as np
 import cadquery as cq
 from shapely.geometry import Point, Polygon, box as sbox
 from shapely.ops import unary_union
+from shapely import affinity
 from OCP.BRepExtrema import BRepExtrema_DistShapeShape
 from OCP.GProp import GProp_GProps
 from OCP.BRepGProp import BRepGProp
@@ -274,17 +275,21 @@ if CFG['clamp']:
     add('fan_clamp', clamp, 'resin')
 
 # ---------------- 基板 ----------------
-pcb_outline = unary_union([
-    sbox(-22.0 if SPIDER else -21.0, -25.5, -9.0, 25.5),     # 後ろ(マウントの柱の上)
-    sbox(-9.0, -25.0, 9.0, 25.0),       # 車輪の間(41T の上は z 13.95 なので |y| 25.8 より内側)
-    sbox(9.0, -21.0, 25.0 if FRAME_FAN else 22.0, 21.0),       # ファンのまわり(v3・v4 はケースの柱 (22, ±18) まで)
-    sbox(22.0, -12.0, 40.0, 12.0),      # 首
-    sbox(22.0, -15.0, 30.0, 15.0) if SPIDER else sbox(0, 0, 0.1, 0.1),   # v4: ファンの上の穴の横で、前とつなぐ
-    sbox(40.0, -23.0, 47.5, 23.0),      # 壁センサの板(フレームの前の辺 50.0 より内側)
-    sbox(36.0, -27.0, 46.0, 27.0),      # 横の壁センサ (41, ±24) の所(2026-10-19)
-    sbox(9.0, -34.0, 17.0, 34.0),       # 前の壁センサ (12, ±30) の耳(タイヤ x ≤ 7.5 より前、41T の上 z 13.95 より上)
-]).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
-pcb_holes = [Point(FAN).buffer(13.0 if SPIDER else 4.6, 64)] + [Point(p).buffer(SC['hole'] / 2, 24) for p in PCB_FAN_POSTS] \
+if SPIDER:      # 2026-10-19: 絵の形(U字)。後ろは電池の下、左右の腕で前の壁センサの耳と前の角の横の壁センサへ。真ん中の前はファンの上で開ける
+    _half = Polygon([(-19.0, 0.0), (-19.0, 26.0), (-8.0, 26.0), (-8.0, 25.0), (7.0, 25.0), (8.5, 28.0), (9.0, 33.0),   # 41T の上(|x| ≤ 8)は |y| ≤ 25
+                      (16.0, 33.5), (24.0, 31.0), (34.0, 28.5),
+                     (40.0, 27.5), (44.5, 25.0), (45.0, 22.0), (42.0, 18.5), (34.0, 15.0), (22.0, 14.0), (14.2, 14.0), (14.2, 0.0)])
+    pcb_outline = unary_union([_half, affinity.scale(_half, 1, -1, origin=(0, 0))]).difference(Point(FAN).buffer(9.5, 64))
+    pcb_outline = pcb_outline.buffer(-1.5, join_style=1).buffer(1.5, join_style=1).buffer(1.0, join_style=1).buffer(-1.0, join_style=1)
+else:
+    pcb_outline = unary_union([
+        sbox(-21.0, -25.5, -9.0, 25.5),     # 後ろ(マウントの柱の上)
+        sbox(-9.0, -25.0, 9.0, 25.0),       # 車輪の間(41T の上は z 13.95 なので |y| 25.8 より内側)
+        sbox(9.0, -21.0, 25.0 if FRAME_FAN else 22.0, 21.0),       # ファンのまわり(v3 はケースの柱まで)
+        sbox(22.0, -12.0, 40.0, 12.0),      # 首
+        sbox(40.0, -23.0, 47.5, 23.0),      # 壁センサの板(フレームの前の辺より内側)
+    ]).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
+pcb_holes = ([] if SPIDER else [Point(FAN).buffer(4.6, 64)]) + [Point(p).buffer(SC['hole'] / 2, 24) for p in PCB_FAN_POSTS] \
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
 pcb_poly = pcb_outline.difference(unary_union(pcb_holes))
 add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
