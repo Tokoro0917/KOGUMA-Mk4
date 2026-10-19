@@ -54,7 +54,8 @@ BAT = dict(x=-10.0 if CFG.get('fan') == 'spider' else -5.0, lx=22.5, ly=32.0, lz
 
 # ---------------- 質量・密度 ----------------
 RHO = dict(carbon=1.55e-3, pc=1.2e-3, resin=1.2e-3, fr4=1.85e-3, steel=7.85e-3, ndfeb=7.5e-3, rubber=1.2e-3,
-           pom=1.42e-3, brass=8.5e-3, ptfe=2.2e-3, film=1.4e-3, nylon=1.14e-3)   # g/mm³
+           pom=1.42e-3, brass=8.5e-3, ptfe=2.2e-3, film=1.4e-3, nylon=1.14e-3,
+           titanium=4.43e-3, aluminum=2.8e-3, pa12=1.01e-3)   # g/mm³
 FIXED = dict(motor=5.3, fan_motor=5.3, battery=14.5, pcb_parts=2.5, sensor=0.1, wiring=0.6)   # g
 
 def ycyl(r, y0, y1, x, z):
@@ -397,11 +398,48 @@ for gname, keys in GROUP:
     grp.append(dict(group=gname, m=round(m, 2), iz=round(iz, 1), n=len(sel)))
 assert sum(x['n'] for x in grp) == len(rows), [r['name'] for r in rows if not any(any(r['name'].startswith(k) for k in ks) for _, ks in GROUP)]
 
+# もしも(部品の重さを何倍にするか)
+def whatif(factors):
+    m_tot, iz_tot = 0.0, 0.0
+    for r in rows:
+        k = 1.0
+        for pre, f in factors.items():
+            if r['name'].startswith(pre):
+                k = f(r) if callable(f) else f
+        m_tot += r['m'] * k
+        iz_tot += k * (r['I'][2, 2] + r['m'] * ((r['c'][0] - CG[0])**2 + (r['c'][1] - CG[1])**2))
+    return dict(m=round(m_tot, 2), iz=round(iz_tot / 100, 1))
+def pcb_t(t):
+    def f(r):
+        bare = r['m'] - FIXED['pcb_parts']
+        return (bare * t / T_PCB + FIXED['pcb_parts']) / r['m']
+    return f
+if V == 'v0':
+    ny = RHO['nylon'] / RHO['steel']
+    WHATIF = {'ねじ・ナットをナイロンに': whatif({'screw_': ny, 'nut_': ny}), '基板を0.6mmに': whatif({'pcb': pcb_t(0.6)}),
+              '両方': whatif({'screw_': ny, 'nut_': ny, 'pcb': pcb_t(0.6)})}
+else:   # 2026-10-19: ファン(モーター・羽根)と電池は変えない。ほかで軽くする案
+    ny, ti = RHO['nylon'] / RHO['steel'], RHO['titanium'] / RHO['steel']
+    al, pa = RHO['aluminum'] / RHO['steel'], RHO['pa12'] / RHO['resin']
+    fanscr = {'screw_fanframe_': ny}
+    mscr_ti, mscr_al = {'screw_mount': ti}, {'screw_mount': al}
+    pa12 = {'mount_': pa, 'fan_case': pa, 'wheel': pa}
+    pcb4 = {'pcb': pcb_t(0.4)}
+    WHATIF = {'ファンの台のねじ3本をナイロンに': whatif(fanscr),
+              'マウントのねじ4本をチタンに': whatif(mscr_ti), 'マウントのねじ4本をアルミに': whatif(mscr_al),
+              '印刷する部品をPA12に(マウント・ファンの台・ホイール)': whatif(pa12),
+              '基板を0.4mmに': whatif(pcb4),
+              'ねじ(ナイロン + チタン)+ PA12': whatif({**fanscr, **mscr_ti, **pa12}),
+              'ねじ(ナイロン + アルミ)+ PA12': whatif({**fanscr, **mscr_al, **pa12}),
+              'ねじ(ナイロン + チタン)+ PA12 + 基板0.4mm': whatif({**fanscr, **mscr_ti, **pa12, **pcb4})}
+print('もしも:', WHATIF)
+
 if FAST:
     print(f"{V}: 合計 {M:.2f} g、重心 ({CG[0]:.2f}, {CG[1]:.2f}, {CG[2]:.2f}) mm、慣性モーメント {Izz:.0f} g·cm²")
     for x in grp:
         print(f"  {x['group']:42s} {x['m']:6.2f} g  {x['iz']:6.1f} g·cm²")
-    json.dump(dict(mass=round(M, 2), cg=[round(c, 2) for c in CG], iz=round(Izz, 1), groups=grp),
+    json.dump(dict(mass=round(M, 2), cg=[round(c, 2) for c in CG], iz=round(Izz, 1), groups=grp, whatif=WHATIF,
+                   parts=[dict(name=r['name'], mat=r['mat'], m=round(r['m'], 3)) for r in rows]),
               open(os.path.join(OUT, f'vehicle_{V}_mass.json'), 'w'), ensure_ascii=False, indent=1)
     sys.exit(0)
 
@@ -445,32 +483,6 @@ for a, b2 in itertools.combinations(names, 2):
         clear.append(dict(a=a, b=b2, gap=round(v, 3), overlap=round(ov, 3)))
 clear.sort(key=lambda r: r['gap'])
 
-# もしも(部品の重さを何倍にするか)
-def whatif(factors):
-    m_tot, iz_tot = 0.0, 0.0
-    for r in rows:
-        k = 1.0
-        for pre, f in factors.items():
-            if r['name'].startswith(pre):
-                k = f(r) if callable(f) else f
-        m_tot += r['m'] * k
-        iz_tot += k * (r['I'][2, 2] + r['m'] * ((r['c'][0] - CG[0])**2 + (r['c'][1] - CG[1])**2))
-    return dict(m=round(m_tot, 2), iz=round(iz_tot / 100, 1))
-def pcb06(r):
-    bare = r['m'] - FIXED['pcb_parts']
-    return (bare * 0.6 / T_PCB + FIXED['pcb_parts']) / r['m']
-if V == 'v0':
-    ny = RHO['nylon'] / RHO['steel']
-    WHATIF = {'ねじ・ナットをナイロンに': whatif({'screw_': ny, 'nut_': ny}), '基板を0.6mmに': whatif({'pcb': pcb06}),
-              '両方': whatif({'screw_': ny, 'nut_': ny, 'pcb': pcb06})}
-else:
-    bat = {'battery': 12.5 / FIXED['battery']}
-    fan = {'fan_motor': 2.7 / FIXED['fan_motor']}
-    pa = {'mount_': 1.01 / 1.2}
-    WHATIF = {'電池を12.5gに(3S 150mAh 級)': whatif(bat), 'ファンのモーターを2.7gに(φ7 × 16 級)': whatif(fan),
-              'マウントをPA12に': whatif(pa), '電池 + ファンのモーター': whatif({**bat, **fan}),
-              '全部': whatif({**bat, **fan, **pa})}
-print('もしも:', WHATIF)
 
 res = dict(whatif=WHATIF, mass=round(M, 2), cg=[round(c, 2) for c in CG], iz=round(Izz, 1), groups=grp, clearances=clear,
            parts=[dict(name=r['name'], mat=r['mat'], m=round(r['m'], 3), c=[round(c, 2) for c in r['c']]) for r in rows],
