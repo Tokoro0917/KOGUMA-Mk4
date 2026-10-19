@@ -11,7 +11,7 @@ from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp
 
-VER = '50'          # frame v5(C2 + マウントの下と後ろの横の帯に窓、2026-10-19)
+VER = '60'          # frame v6(安全率5まで下げてよいとして、作れる一番細い形 T3、2026-10-19)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'order')
