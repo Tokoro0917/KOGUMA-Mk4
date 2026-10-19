@@ -45,7 +45,7 @@ FAST = os.environ.get('FAST') == '1'      # 重さだけ計算する(ぶつか�
 
 # ---------------- 高さ(床から) ----------------
 Z_FB, Z_FT = 2.0, 3.0        # フレームの下面・上面
-Z_PC = 3.2                   # ポリカーボネートの上面
+Z_PC = 3.2                   # 吸引する面のシート(塩ビ 0.2mm、2026-10-19 にポリカーボネート 0.2mm から)の上面
 Z_PCB = 13.6                 # 基板の下面(マウントのモーターの筒の上 13.36 から 0.24)
 T_PCB = CFG['pcb_t']         # 基板の厚さ
 Z_PCBT = Z_PCB + T_PCB
@@ -53,7 +53,7 @@ FAN = (dz.FAN_X, 0.0)        # ファンの中心
 BAT = dict(x=-10.0 if CFG.get('fan') == 'spider' else -5.0, lx=22.5, ly=32.0, lz=14.0)   # 電池: 1S 180mAh(7.5 × 32 × 14)× 3 を立てて並べる(MK3 の STEP の寸法)。v4 はファンの上の穴を避けて 5mm 後ろへ
 
 # ---------------- 質量・密度 ----------------
-RHO = dict(carbon=1.55e-3, pc=1.2e-3, resin=1.2e-3, fr4=1.85e-3, steel=7.85e-3, ndfeb=7.5e-3, rubber=1.2e-3,
+RHO = dict(carbon=1.55e-3, pc=1.4e-3, resin=1.2e-3, fr4=1.85e-3, steel=7.85e-3, ndfeb=7.5e-3, rubber=1.2e-3,
            pom=1.42e-3, brass=8.5e-3, ptfe=2.2e-3, film=1.4e-3, nylon=1.14e-3,
            titanium=4.43e-3, aluminum=2.8e-3, pa12=1.01e-3)   # g/mm³
 FIXED = dict(motor=5.3, fan_motor=5.3, battery=14.5, pcb_parts=2.5, sensor=0.1, wiring=0.6)   # g

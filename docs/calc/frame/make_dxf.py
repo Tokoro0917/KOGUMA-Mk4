@@ -4,14 +4,14 @@
   HOLE        : モーターマウントのねじの穴(M2、φ2.3)
   RIB_SLOT    : リブを差す溝(リブがあるときだけ)
   RIB_PARTS   : リブの部品(同じ1mmのカーボン板から切る)。板の下に並べて置く(リブがあるときだけ)
-  PC_SHEET    : ポリカーボネート 0.2mm の板(吸引する面)。板の下に置く
+  PC_SHEET    : 吸引する面のシート(塩ビ 0.2mm。2026-10-19 まではポリカーボネート 0.2mm)。板の下に置く
 """
 import json, os, sys, numpy as np, ezdxf, matplotlib
 matplotlib.use('Agg'); import matplotlib.pyplot as plt
 from shapely.geometry import Point
 from shapely.ops import unary_union
 from shapely import affinity
-import design as dz, ribparts as rp
+import design as dz, ribparts as rp, dxf_arcs as dxa
 
 P = json.load(open(sys.argv[1]))
 tag = sys.argv[2]
@@ -27,17 +27,15 @@ doc = ezdxf.new(units=4)   # mm
 for name, col in (('CARBON', 7), ('HOLE', 1), ('RIB_SLOT', 3), ('RIB_PARTS', 5), ('PC_SHEET', 4), ('TEXT', 2)):
     doc.layers.add(name, color=col)
 msp = doc.modelspace()
-def add_poly(p, layer, dx=0, dy=0):
-    for q in getattr(p, 'geoms', [p]):
-        for ring in [q.exterior] + list(q.interiors):
-            msp.add_lwpolyline([(x + dx, y + dy) for x, y in list(ring.coords)[:-1]], close=True, dxfattribs={'layer': layer})
+def add_poly(p, layer, dx=0, dy=0):     # 直線と本当の円弧で書く(dxf_arcs.py)
+    dxa.add_polygon(msp, p, {'layer': layer}, dx, dy)
 add_poly(g['carbon'], 'CARBON')
 for s in slots:
     add_poly(s, 'RIB_SLOT')
 for h in holes:
     msp.add_circle(h.coords[0], dz.HOLE_D / 2, dxfattribs={'layer': 'HOLE'})
 add_poly(sheet, 'PC_SHEET', dy=-85)
-msp.add_text('PC 0.2mm (glue on TOP of carbon over suction area)', dxfattribs={'layer': 'TEXT', 'height': 2.0}).set_placement((-30, -105))
+msp.add_text('PVC sheet 0.2mm (glue on TOP of carbon over suction area)', dxfattribs={'layer': 'TEXT', 'height': 2.0}).set_placement((-30, -105))
 # リブの部品
 y0 = -125
 parts = []
@@ -85,6 +83,6 @@ if 'A' in P['braces']:
 note(dz.FAN_X + 11, -11, 'fan dia.32 (dotted)', 4, -8)
 ax.set_aspect('equal'); ax.grid(alpha=.25); ax.set_xlim(-55, 55); ax.set_ylim(-40, 40)
 rib_s = f' + ribs 1mm x h{P["v_rib_h"]:.0f} (orange)' if ribs else ' (no ribs)'
-ax.set_title(f'{tag}: carbon 1mm (gray){rib_s} + PC 0.2mm windows (blue). origin = axle, +x = front')
+ax.set_title(f'{tag}: carbon 1mm (gray){rib_s} + PVC 0.2mm sheet windows (blue). origin = axle, +x = front')
 fig.tight_layout(); fig.savefig(f'{tag}_drawing.png', dpi=120)
 print(json.dumps(parts, indent=1))
