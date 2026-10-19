@@ -102,6 +102,8 @@ P2 = (dict(mm.P_V1, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P_V
       if CFG['size'] == 'M3' else
       dict(mm.P_V1, pcb_post=Z_PCB, post_r=SC['boss'], post_nut=True, boss_r=SC['boss'], nut_af=SC['pocket'],
            nut_depth=SC['depth'], hole_d=SC['hole']))
+(xr_, yr_), (xf_, yf_) = dz.MOUNT_SCREWS
+P2 = dict(P2, screw_front=(xf_, -yf_), screw_rear=(xr_, -yr_))     # ねじの位置はフレームに合わせる(右側なので y は負)
 mx, mz = mm.motor_center(P2)
 right = {}
 right['mount'] = (mm.build(P2).val(), 'resin')
@@ -275,10 +277,10 @@ if CFG['clamp']:
 pcb_outline = unary_union([
     sbox(-22.0 if SPIDER else -21.0, -25.5, -9.0, 25.5),     # 後ろ(マウントの柱の上)
     sbox(-9.0, -25.0, 9.0, 25.0),       # 車輪の間(41T の上は z 13.95 なので |y| 25.8 より内側)
-    sbox(9.0, -21.0, 25.0 if FRAME_FAN else 22.0, 21.0),       # ファンのまわり(v3・v4 はケースの柱 (21.5, ±17.6) まで)
+    sbox(9.0, -21.0, 25.0 if FRAME_FAN else 22.0, 21.0),       # ファンのまわり(v3・v4 はケースの柱 (22, ±18) まで)
     sbox(22.0, -12.0, 40.0, 12.0),      # 首
     sbox(22.0, -15.0, 30.0, 15.0) if SPIDER else sbox(0, 0, 0.1, 0.1),   # v4: ファンの上の穴の横で、前とつなぐ
-    sbox(40.0, -23.0, 47.5, 23.0),      # 壁センサの板(フレームの前の辺 50.5 より内側)
+    sbox(40.0, -23.0, 47.5, 23.0),      # 壁センサの板(フレームの前の辺 50.0 より内側)
 ]).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
 pcb_holes = [Point(FAN).buffer(13.0 if SPIDER else 4.6, 64)] + [Point(p).buffer(SC['hole'] / 2, 24) for p in PCB_FAN_POSTS] \
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
@@ -314,7 +316,7 @@ def nut(x, y, z0):
             .cut(cq.Workplane().center(x, y).circle(SC['d'] / 2).extrude(SC['m'])).translate((0, 0, z0)))
 xr, xf = dz.MOUNT_SCREWS[0][0], dz.MOUNT_SCREWS[1][0]      # MOUNT_SCREWS = [後ろ, 前]
 for sy, side in ((1, 'L'), (-1, 'R')):
-    y = sy * 22.1
+    y = sy * dz.MOUNT_SCREWS[0][1]
     if CFG['screws'] == 'steel':     # v0: 鉄 6組
         add(f'screw_mountF_{side}', screw(xf, y, Z_FB, 5.0), 'steel')                       # 前の耳: L5、ナットは耳の上
         add(f'nut_mountF_{side}', nut(xf, y, P2['ear_top'] - P2['nut_depth']), 'steel')

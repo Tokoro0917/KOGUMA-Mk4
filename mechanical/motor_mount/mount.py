@@ -37,7 +37,10 @@ P = dict(
 P_V1 = dict(P)
 # v2(2026-10-19): ねじを M2 にし(穴 φ2.3、ナット二面幅4.0 → 穴4.2)、後ろの耳の上に基板を受ける柱(z 13.6 まで)を足した
 P.update(boss_r=3.1, nut_af=4.2, nut_depth=1.7, hole_d=2.3, pcb_post=13.6, post_r=3.1, post_nut=True)
-VER = 'v2'
+P_V2 = dict(P)
+# v3(2026-10-19): フレーム v6.1 に合わせて、ねじの位置を 1mm 単位に((7.85, -22.1)、(-17.15, -22.1) から)
+P.update(screw_front=(8.0, -22.0), screw_rear=(-17.0, -22.0))
+VER = 'v3'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
