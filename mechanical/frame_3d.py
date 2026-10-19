@@ -31,7 +31,7 @@ def poly_solid(poly, z0, z1):
 parts = {}
 parts['carbon'] = poly_solid(plate, 2.0, 3.0)
 sheet = g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
-parts['pc_sheet'] = poly_solid(sheet, 3.0, 3.2)
+parts['pc_sheet'] = poly_solid(sheet, 3.0, 3.2)     # 塩ビ 0.2mm
 ribs = []
 for (l, h, w) in g['vribs']:
     (x0, y0), (x1, y1) = l.coords[0], l.coords[-1]
@@ -66,7 +66,7 @@ def tris(shape, tol=0.08):
     return v[np.array(t)] if len(t) else np.zeros((0, 3, 3))
 fig = plt.figure(figsize=(16, 7.5))
 for k, (items, elev, azim, title) in enumerate((
-        (tuple(parts), 38, -62, f'{TAG} from front-left (carbon 1mm' + (' + ribs h3 orange' if ribs else ', no ribs') + ' + PC 0.2mm blue)'),
+        (tuple(parts), 38, -62, f'{TAG} from front-left (carbon 1mm' + (' + ribs h3 orange' if ribs else ', no ribs') + ' + PVC 0.2mm blue)'),
         (tuple(parts), 38, -118, 'from rear-left'))):
     ax = fig.add_subplot(1, 2, k + 1, projection='3d')
     allp = {**parts, **extra}
@@ -80,4 +80,4 @@ for k, (items, elev, azim, title) in enumerate((
     ax.text(52, 0, 4, 'FRONT', fontsize=8)
 fig.tight_layout(); fig.savefig(os.path.join(OUT, f'{TAG}_3d.png'), dpi=110)
 v = sum(parts[k].Volume() for k in ('carbon', 'ribs') if k in parts)
-print(f'カーボン {v * 1.55e-3:.2f} g、ポリカーボネート {parts["pc_sheet"].Volume() * 1.2e-3:.2f} g')
+print(f'カーボン {v * 1.55e-3:.2f} g、塩ビ {parts["pc_sheet"].Volume() * 1.4e-3:.2f} g')

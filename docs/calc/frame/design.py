@@ -236,7 +236,7 @@ def mass_iz(g):
     sheet = contains_xy(g['suction'].difference(Point(FAN_X, 0).buffer(FAN_R, 64)), X, Y)
     r2 = X**2 + Y**2
     dc = 1.55e-3 * 0.01      # g / (0.1mm)² セル(1mm厚)
-    dp = 0.2 * 1.2e-3 * 0.01
+    dp = 0.2 * 1.4e-3 * 0.01  # シート: 塩ビ 0.2mm(2026-10-19 にポリカーボネート 0.2mm から)
     m_c = mc.sum() * dc
     m_p = sheet.sum() * dp
     iz = (r2[mc].sum() * dc + r2[sheet].sum() * dp) / 100

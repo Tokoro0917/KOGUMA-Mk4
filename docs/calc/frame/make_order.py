@@ -88,7 +88,7 @@ for r in sheet.interiors:
     xs, ys = r.xy; ax.plot(np.array(xs) + ox, np.array(ys) + oy, 'k-', lw=0.5)
 ax.plot([30, 80], [60, 60], 'k-', lw=0.8); ax.text(30, 63, '50 mm (check scale)', fontsize=8)
 ax.plot([30, 30], [60, 110], 'k-', lw=0.8)
-ax.text(20, 280, f'MK4 PC sheet 0.2mm  (frame v{VER[0]}.{VER[1:]}, suction area 60.5 x 30.5, fan hole dia.15)', fontsize=9)
+ax.text(20, 280, f'MK4 PVC sheet 0.2mm  (frame v{VER[0]}.{VER[1:]}, suction area {2 * dz.SX:g} x {2 * dz.SY:g}, fan hole dia.{2 * dz.FAN_R:g})', fontsize=9)
 ax.text(20, 272, 'print at 100% (actual size). +x (front) = right. glue on TOP of carbon.', fontsize=8)
 ax.annotate('FRONT ->', (ox + 25, oy + 18), fontsize=8)
 fig.savefig(os.path.join(OUT, f'MK4PC{VER}_template_A4_1to1.pdf'))
