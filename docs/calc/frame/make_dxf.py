@@ -1,11 +1,12 @@
 """最終案の製作用 DXF(単位 mm、原点は車軸の中心、+x が前)
+使い方: python3 make_dxf.py パラメータ.json 名前 [DXFを置くフォルダ(既定はここ)]。図(名前_drawing.png)はここに出る
   CARBON      : カーボン板の外形と窓
   HOLE        : モーターマウントのねじの穴(M2、φ2.3)
   RIB_SLOT    : リブを差す溝(リブがあるときだけ)
   RIB_PARTS   : リブの部品(同じ1mmのカーボン板から切る)。板の下に並べて置く(リブがあるときだけ)
   PC_SHEET    : ポリカーボネート 0.2mm の板(吸引する面)。板の下に置く
 """
-import json, sys, numpy as np, ezdxf, matplotlib
+import json, os, sys, numpy as np, ezdxf, matplotlib
 matplotlib.use('Agg'); import matplotlib.pyplot as plt
 from shapely.geometry import Point
 from shapely.ops import unary_union
@@ -14,6 +15,7 @@ import design as dz, ribparts as rp
 
 P = json.load(open(sys.argv[1]))
 tag = sys.argv[2]
+OUT = sys.argv[3] if len(sys.argv) > 3 else '.'
 g = dz.build(**P)
 ribs = g['vribs']
 slots = [s for (l, h, w) in ribs for s in rp.slots_for(l)]
@@ -45,7 +47,7 @@ for i, (l, h, w) in enumerate(ribs):
     msp.add_text(f'RIB{i+1} L={l.length:.1f} h={h:.0f}', dxfattribs={'layer': 'TEXT', 'height': 1.5}).set_placement((-50 + l.length + 3, y0 - i * (h + 4)))
     parts.append(dict(no=i + 1, start=[round(c, 2) for c in l.coords[0]], end=[round(c, 2) for c in l.coords[-1]],
                       length=round(l.length, 2), height=h, tabs=[round(float(t), 2) for t in rp.tab_positions(l.length)]))
-doc.saveas(f'{tag}.dxf')
+doc.saveas(os.path.join(OUT, f'{tag}.dxf'))
 json.dump(parts, open(f'{tag}_ribs.json', 'w'), indent=1)
 
 # 寸法を書いた図

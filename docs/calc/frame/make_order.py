@@ -14,7 +14,7 @@ import design as dz, ribparts as rp
 VER = '60'          # frame v6(安全率5まで下げてよいとして、作れる一番細い形 T3、2026-10-19)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'order')
+OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../../mechanical/frame')   # 製作用のファイルは mechanical/frame に置く
 os.makedirs(OUT, exist_ok=True)
 P = json.load(open(os.path.join(HERE, 'results/final_params.json')))
 g = dz.build(**P)
