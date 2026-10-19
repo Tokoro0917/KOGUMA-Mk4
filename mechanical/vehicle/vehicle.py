@@ -56,11 +56,13 @@ BAT = dict(x=-10.0 if CFG.get('fan') == 'spider' else -5.0, lx=22.5, ly=32.0, lz
 # ---------------- 質量・密度 ----------------
 RHO = dict(carbon=1.55e-3, pc=1.4e-3, resin=1.2e-3, fr4=1.85e-3, steel=7.85e-3, ndfeb=7.5e-3, rubber=1.2e-3,
            pom=1.42e-3, brass=8.5e-3, ptfe=2.2e-3, film=1.4e-3, nylon=1.14e-3,
-           titanium=4.43e-3, aluminum=2.8e-3, pa12=1.01e-3)   # g/mm³
+           titanium=4.43e-3, aluminum=2.8e-3, pa12=1.01e-3, skid=0.6e-3)   # g/mm³(skid: カグスベール。樹脂0.5mm + コルク1mm の平均の見積もり)
 FIXED = dict(motor=5.3, fan_motor=5.3, battery=14.5, pcb_parts=2.5, sensor=0.1, wiring=0.6)   # g
 
 def ycyl(r, y0, y1, x, z):
     return mm.ycyl(r, y0, y1, x, z)
+
+SKID_R, SKID_T = 2.5, 1.5     # 滑り板(カグスベール)の半径、厚さ [mm]
 
 def zcyl(r, z0, z1, x=0.0, y=0.0):
     return cq.Workplane().center(x, y).circle(r).extrude(z1 - z0).translate((0, 0, z0))
@@ -96,7 +98,10 @@ add('pc_sheet', poly_solid(sheet, Z_FT, Z_PC), 'pc')
 skirt = g['suction'].difference(g['suction'].buffer(-0.1, join_style=2))           # 0.1mm のフィルム、床から 0.5mm
 add('skirt', poly_solid(skirt, 0.5, Z_FB), 'film')
 for sx in (1, -1):
-    add(f'skid_{"F" if sx > 0 else "R"}', zcyl(2.5, 0.0, Z_FB, sx * 45.0, 0.0), 'ptfe')     # 滑り板(PTFE φ5、接着)
+    # 滑り板: カグスベール(フリーサイズ、約1.5mm = フッ素加工の樹脂0.5 + コルク1.0)をフレームの下面に直接貼る(2026-10-19)。
+    # φ5 に切る。床とのすき間は 2.0 − 1.5 = 0.5mm。加速・減速で機体が0.64°傾いて片方が床に着く(スカートの端は床から0.17mm)
+    dome = zcyl(SKID_R, Z_FB - SKID_T, Z_FB, sx * 45.0, 0.0)
+    add(f'skid_{"F" if sx > 0 else "R"}', dome, 'skid')
 
 # ---------------- 足回り(右を作って左に写す) ----------------
 P2 = (dict(mm.P_V1, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P_V1, pcb_post=Z_PCB, post_r=3.7, post_nut=True)
@@ -506,7 +511,7 @@ for r in clear:
     print(f"  {r['a']:18s} - {r['b']:18s} {r['gap']:6.3f} mm  重なり {r['overlap']} mm³")
 
 # ---------------- STEP(部品ごとに名前と色) ----------------
-COL = dict(nylon=(0.95, 0.95, 0.9), carbon=(0.25, 0.24, 0.22), pc=(0.62, 0.79, 0.88), film=(0.9, 0.9, 0.6), ptfe=(0.95, 0.95, 0.95), resin=(0.95, 0.56, 0.17),
+COL = dict(nylon=(0.95, 0.95, 0.9), carbon=(0.25, 0.24, 0.22), pc=(0.62, 0.79, 0.88), film=(0.9, 0.9, 0.6), ptfe=(0.95, 0.95, 0.95), skid=(0.95, 0.95, 0.95), resin=(0.95, 0.56, 0.17),
            steel=(0.3, 0.3, 0.32), ndfeb=(0.7, 0.7, 0.75), rubber=(0.1, 0.1, 0.1), pom=(0.9, 0.9, 0.85), brass=(0.8, 0.65, 0.2),
            fr4=(0.1, 0.45, 0.2), motor=(0.65, 0.65, 0.68), fan_motor=(0.65, 0.65, 0.68), battery=(0.2, 0.35, 0.75), sensor=(0.85, 0.2, 0.2))
 asm = cq.Assembly(name=f'MK4_vehicle_{V}')
