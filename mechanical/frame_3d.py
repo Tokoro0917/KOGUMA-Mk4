@@ -12,7 +12,7 @@ import design as dz, ribparts as rp
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
-TAG = 'frame_v4_7'   # v4.6 のタイヤの穴を前後14mmに(2026-10-19)
+TAG = 'frame_v5'   # C2 + マウントの下と後ろの横の帯に窓(2026-10-19)
 P = json.load(open(os.path.join(HERE, '../docs/calc/frame/results/final_params.json')))
 g = dz.build(**P)
 slots = [s for (l, h, w) in g['vribs'] for s in rp.slots_for(l)]

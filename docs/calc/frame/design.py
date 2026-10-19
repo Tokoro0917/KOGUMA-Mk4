@@ -85,7 +85,18 @@ def mount_windows(carbon, suction, kinds):
             keep = keep.union(Point(x, sy * y).buffer(BOSS_R + 0.8, 32))   # ねじの頭・マウントの耳
     x0, x1, y0, y1 = ENC_BOARD
     keep = keep.union(box(x0 - 1.5, y0 - 1.5, x1 + 1.5, y1 + 1.5)).union(box(x0 - 1.5, -y1 - 1.5, x1 + 1.5, -y0 + 1.5))
-    raw = []
+    raw, clean = [], []
+    # すっきりした四角い窓(2026-10-19)。マウントの耳(半径3.1)から0.5mm、エンコーダ基板の足から1.5mm、タイヤの穴から1.5mm
+    if 'pad2' in kinds:      # マウントの下(後ろのねじとエンコーダ基板の間)
+        clean.append(box(MOUNT_SCREWS[0][0] + 3.6, SY + 3.0, ENC_BOARD[0] - 1.5, SLOT_Y0 - 2.0))
+    if 'side2' in kinds or 'side2r' in kinds:     # タイヤの穴の後ろの横の帯(外周の枠は残す)
+        clean.append(box(MOUNT_PAD[0] + 2.5, SLOT_Y0 + 0.8, -SLOT_L / 2 - 2.0, YB - 2.0))
+    if 'side2' in kinds:     # タイヤの穴の前の横の帯
+        clean.append(box(SLOT_L / 2 + 2.0, SLOT_Y0 + 0.8, XB - 2.0, YB - 3.0))
+    if clean:
+        clean += [affinity.scale(r, 1, -1, origin=(0, 0)) for r in clean]
+        cw = unary_union(clean).intersection(carbon.buffer(-2.0))         # ほかの切り口から 2mm 以上
+        return cw.buffer(-1.5).buffer(1.5)                             # 角は R1.5
     if 'pad' in kinds:
         raw.append(box(-13.0, SY + 2.0, ENC_BOARD[0] - 1.5, SLOT_Y0))
     if 'side' in kinds:
