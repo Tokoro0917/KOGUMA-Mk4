@@ -77,7 +77,7 @@ for x, y in dz.MOUNT_SCREWS:
     note(x, -y, f'{dz.SCREW} ({x}, {-y})', -6, -9)
 for x, y in dz.FAN_SCREWS:
     if y <= 0:
-        note(x, y, f'fan {dz.SCREW} ({x}, {y})', *((5, 9) if abs(y) < 1 else (3, -6)))
+        note(x, y, f'fan {dz.SCREW} ({x}, {y})', *((6, 16) if abs(y) < 1 else (3, -6)))
 if 'A' in P['braces']:
     note(38.9, 11.4, f"brace A {P.get('brace_w_each', {}).get('A', P['brace_w'])}mm", 4, -3)
 note(dz.FAN_X + 11, -11, 'fan dia.32 (dotted)', 4, -8)

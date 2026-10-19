@@ -11,7 +11,7 @@ from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp
 
-VER = '46'          # frame v4.6(v4.5 + 吸引ファンのケースのねじの穴3つ、2026-10-19)
+VER = '47'          # frame v4.7(v4.6 のタイヤの穴を前後14mmに、2026-10-19)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'order')
