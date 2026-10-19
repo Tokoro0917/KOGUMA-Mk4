@@ -11,7 +11,7 @@ matplotlib.use('Agg'); import matplotlib.pyplot as plt
 from shapely.geometry import Point
 from shapely.ops import unary_union
 from shapely import affinity
-import design as dz, ribparts as rp
+import design as dz, ribparts as rp, dxf_arcs as dxa
 
 P = json.load(open(sys.argv[1]))
 tag = sys.argv[2]
@@ -27,10 +27,8 @@ doc = ezdxf.new(units=4)   # mm
 for name, col in (('CARBON', 7), ('HOLE', 1), ('RIB_SLOT', 3), ('RIB_PARTS', 5), ('PC_SHEET', 4), ('TEXT', 2)):
     doc.layers.add(name, color=col)
 msp = doc.modelspace()
-def add_poly(p, layer, dx=0, dy=0):
-    for q in getattr(p, 'geoms', [p]):
-        for ring in [q.exterior] + list(q.interiors):
-            msp.add_lwpolyline([(x + dx, y + dy) for x, y in list(ring.coords)[:-1]], close=True, dxfattribs={'layer': layer})
+def add_poly(p, layer, dx=0, dy=0):     # 直線と本当の円弧で書く(dxf_arcs.py)
+    dxa.add_polygon(msp, p, {'layer': layer}, dx, dy)
 add_poly(g['carbon'], 'CARBON')
 for s in slots:
     add_poly(s, 'RIB_SLOT')

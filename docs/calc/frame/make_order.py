@@ -9,7 +9,7 @@ import numpy as np, ezdxf
 from shapely.geometry import Point, Polygon
 from shapely.ops import unary_union
 from shapely import affinity
-import design as dz, ribparts as rp
+import design as dz, ribparts as rp, dxf_arcs as dxa
 
 VER = '62'          # frame v6.2(吸引する面を 60 × 30mm にし、窓のへこんだ角を尖らせた、2026-10-19)
 
@@ -56,10 +56,8 @@ for i, p in enumerate(parts):
 
 doc = ezdxf.new(units=4)
 msp = doc.modelspace()
-def add(poly):
-    for q in getattr(poly, 'geoms', [poly]):
-        for ring in [q.exterior] + list(q.interiors):
-            msp.add_lwpolyline(list(ring.coords)[:-1], close=True)
+def add(poly):      # 直線と本当の円弧で書く(dxf_arcs.py)
+    dxa.add_polygon(msp, poly)
 add(plate)
 for (x, yy) in holes:
     msp.add_circle((x, yy), dz.HOLE_D / 2)
@@ -71,9 +69,7 @@ doc.saveas(fn)
 # ポリカーボネート
 sheet = g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 128))
 doc2 = ezdxf.new(units=4); m2 = doc2.modelspace()
-m2.add_lwpolyline(list(sheet.exterior.coords)[:-1], close=True)
-for r in sheet.interiors:
-    m2.add_lwpolyline(list(r.coords)[:-1], close=True)
+dxa.add_polygon(m2, sheet)
 doc2.saveas(os.path.join(OUT, f'MK4PC{VER}_T02.dxf'))
 
 # 1:1 の型紙(A4、印刷は「実際のサイズ」で)
