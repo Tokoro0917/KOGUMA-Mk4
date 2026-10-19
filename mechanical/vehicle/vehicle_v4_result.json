@@ -1,0 +1,1116 @@
+{
+ "whatif": {
+  "ファンの台のねじ3本をナイロンに": {
+   "m": 51.6,
+   "iz": 258.3
+  },
+  "マウントのねじ4本をチタンに": {
+   "m": 51.79,
+   "iz": 260.9
+  },
+  "マウントのねじ4本をアルミに": {
+   "m": 51.6,
+   "iz": 259.7
+  },
+  "印刷する部品をPA12に(マウント・ファンの台・ホイール)": {
+   "m": 51.48,
+   "iz": 258.9
+  },
+  "基板を0.4mmに": {
+   "m": 51.28,
+   "iz": 256.7
+  },
+  "ねじ(ナイロン + チタン)+ PA12": {
+   "m": 50.53,
+   "iz": 251.2
+  },
+  "ねじ(ナイロン + アルミ)+ PA12": {
+   "m": 50.34,
+   "iz": 250.0
+  },
+  "ねじ(ナイロン + チタン)+ PA12 + 基板0.4mm": {
+   "m": 49.63,
+   "iz": 244.4
+  }
+ },
+ "mass": 52.17,
+ "cg": [
+  -0.81,
+  0.0,
+  12.86
+ ],
+ "iz": 263.5,
+ "groups": [
+  {
+   "group": "フレーム・ポリカーボネート・スカート・滑り板",
+   "m": 5.26,
+   "iz": 60.5,
+   "n": 5
+  },
+  {
+   "group": "モーターマウント × 2",
+   "m": 2.04,
+   "iz": 12.2,
+   "n": 2
+  },
+  {
+   "group": "走行用モーター × 2",
+   "m": 10.6,
+   "iz": 33.5,
+   "n": 2
+  },
+  {
+   "group": "車輪・タイヤ・41T・ピニオン・軸・軸受・磁石・エンコーダ",
+   "m": 3.96,
+   "iz": 30.1,
+   "n": 22
+  },
+  {
+   "group": "吸引ファン(モーター・ケース・羽根)",
+   "m": 7.25,
+   "iz": 23.3,
+   "n": 4
+  },
+  {
+   "group": "基板(0.6mm)+ 部品",
+   "m": 5.18,
+   "iz": 39.5,
+   "n": 1
+  },
+  {
+   "group": "電池(3S 180mAh)",
+   "m": 14.5,
+   "iz": 30.7,
+   "n": 1
+  },
+  {
+   "group": "壁センサ × 4",
+   "m": 0.8,
+   "iz": 18.9,
+   "n": 8
+  },
+  {
+   "group": "ねじ・ナット",
+   "m": 1.99,
+   "iz": 14.8,
+   "n": 24
+  },
+  {
+   "group": "配線",
+   "m": 0.6,
+   "iz": 0.0,
+   "n": 1
+  }
+ ],
+ "clearances": [
+  {
+   "a": "brg_in_R",
+   "b": "motor_R",
+   "gap": 0.202,
+   "overlap": 0.0
+  },
+  {
+   "a": "brg_in_L",
+   "b": "motor_L",
+   "gap": 0.202,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "pinion_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "pinion_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "wheel_R",
+   "b": "brg_out_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "wheel_L",
+   "b": "brg_out_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "pc_sheet",
+   "b": "mount_R",
+   "gap": 0.35,
+   "overlap": 0.0
+  },
+  {
+   "a": "pc_sheet",
+   "b": "mount_L",
+   "gap": 0.35,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "spur41_R",
+   "gap": 0.358,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "spur41_L",
+   "gap": 0.358,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "shaft_R",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "pinion_R",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "shaft_L",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "pinion_L",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "wheel_R",
+   "b": "pinion_R",
+   "gap": 0.413,
+   "overlap": 0.0
+  },
+  {
+   "a": "wheel_L",
+   "b": "pinion_L",
+   "gap": 0.413,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_motor",
+   "b": "nut_fanclamp",
+   "gap": 0.42,
+   "overlap": 0.0
+  },
+  {
+   "a": "skirt",
+   "b": "screw_fanframe_0",
+   "gap": 0.45,
+   "overlap": 0.0
+  },
+  {
+   "a": "skirt",
+   "b": "screw_fanframe_1",
+   "gap": 0.45,
+   "overlap": 0.0
+  },
+  {
+   "a": "skirt",
+   "b": "screw_fanframe_2",
+   "gap": 0.45,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "tire_R",
+   "gap": 0.499,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "tire_L",
+   "gap": 0.499,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "wheel_R",
+   "gap": 0.5,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "wheel_L",
+   "gap": 0.5,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "spur41_R",
+   "gap": 0.5,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "spur41_L",
+   "gap": 0.5,
+   "overlap": 0.0
+  },
+  {
+   "a": "pc_sheet",
+   "b": "impeller",
+   "gap": 0.6,
+   "overlap": 0.0
+  },
+  {
+   "a": "motor_R",
+   "b": "pinion_R",
+   "gap": 0.6,
+   "overlap": 0.0
+  },
+  {
+   "a": "motor_L",
+   "b": "pinion_L",
+   "gap": 0.6,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "as5047p_R",
+   "gap": 0.606,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "as5047p_L",
+   "gap": 0.606,
+   "overlap": 0.0
+  },
+  {
+   "a": "pc_sheet",
+   "b": "motor_R",
+   "gap": 0.706,
+   "overlap": 0.0
+  },
+  {
+   "a": "pc_sheet",
+   "b": "motor_L",
+   "gap": 0.706,
+   "overlap": 0.0
+  },
+  {
+   "a": "brg_in_R",
+   "b": "as5047p_R",
+   "gap": 0.745,
+   "overlap": 0.0
+  },
+  {
+   "a": "brg_in_L",
+   "b": "as5047p_L",
+   "gap": 0.745,
+   "overlap": 0.0
+  },
+  {
+   "a": "enc_board_R",
+   "b": "motor_R",
+   "gap": 0.771,
+   "overlap": 0.0
+  },
+  {
+   "a": "enc_board_L",
+   "b": "motor_L",
+   "gap": 0.771,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "impeller",
+   "gap": 0.8,
+   "overlap": 0.0
+  },
+  {
+   "a": "brg_out_R",
+   "b": "motor_R",
+   "gap": 0.802,
+   "overlap": 0.0
+  },
+  {
+   "a": "brg_out_L",
+   "b": "motor_L",
+   "gap": 0.802,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "battery",
+   "gap": 0.844,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "battery",
+   "gap": 0.844,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "brg_in_R",
+   "gap": 0.898,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "brg_in_L",
+   "gap": 0.898,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "wheel_R",
+   "gap": 0.9,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "wheel_L",
+   "gap": 0.9,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_case",
+   "b": "fan_shaft",
+   "gap": 0.9,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "motor_R",
+   "gap": 0.906,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "motor_L",
+   "gap": 0.906,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "brg_out_R",
+   "gap": 0.975,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "brg_out_L",
+   "gap": 0.975,
+   "overlap": 0.0
+  }
+ ],
+ "parts": [
+  {
+   "name": "frame",
+   "mat": "carbon",
+   "m": 4.645,
+   "c": [
+    0.2,
+    -0.0,
+    2.5
+   ]
+  },
+  {
+   "name": "pc_sheet",
+   "mat": "pc",
+   "m": 0.4,
+   "c": [
+    -1.5,
+    0.0,
+    3.1
+   ]
+  },
+  {
+   "name": "skirt",
+   "mat": "film",
+   "m": 0.038,
+   "c": [
+    -0.0,
+    -0.0,
+    1.25
+   ]
+  },
+  {
+   "name": "skid_F",
+   "mat": "ptfe",
+   "m": 0.086,
+   "c": [
+    45.0,
+    -0.0,
+    1.0
+   ]
+  },
+  {
+   "name": "skid_R",
+   "mat": "ptfe",
+   "m": 0.086,
+   "c": [
+    -45.0,
+    -0.0,
+    1.0
+   ]
+  },
+  {
+   "name": "mount_R",
+   "mat": "resin",
+   "m": 1.02,
+   "c": [
+    -7.59,
+    -21.8,
+    6.86
+   ]
+  },
+  {
+   "name": "mount_L",
+   "mat": "resin",
+   "m": 1.02,
+   "c": [
+    -7.59,
+    21.8,
+    6.86
+   ]
+  },
+  {
+   "name": "wheel_R",
+   "mat": "resin",
+   "m": 0.385,
+   "c": [
+    0.0,
+    -29.35,
+    7.5
+   ]
+  },
+  {
+   "name": "wheel_L",
+   "mat": "resin",
+   "m": 0.385,
+   "c": [
+    0.0,
+    29.35,
+    7.5
+   ]
+  },
+  {
+   "name": "spur41_R",
+   "mat": "pom",
+   "m": 0.192,
+   "c": [
+    0.0,
+    -27.3,
+    7.5
+   ]
+  },
+  {
+   "name": "spur41_L",
+   "mat": "pom",
+   "m": 0.192,
+   "c": [
+    0.0,
+    27.3,
+    7.5
+   ]
+  },
+  {
+   "name": "pin_R",
+   "mat": "steel",
+   "m": 0.333,
+   "c": [
+    0.0,
+    -26.7,
+    7.5
+   ]
+  },
+  {
+   "name": "pin_L",
+   "mat": "steel",
+   "m": 0.333,
+   "c": [
+    0.0,
+    26.7,
+    7.5
+   ]
+  },
+  {
+   "name": "brg_out_R",
+   "mat": "steel",
+   "m": 0.191,
+   "c": [
+    0.0,
+    -25.91,
+    7.5
+   ]
+  },
+  {
+   "name": "brg_out_L",
+   "mat": "steel",
+   "m": 0.191,
+   "c": [
+    0.0,
+    25.91,
+    7.5
+   ]
+  },
+  {
+   "name": "brg_in_R",
+   "mat": "steel",
+   "m": 0.191,
+   "c": [
+    0.0,
+    -23.29,
+    7.5
+   ]
+  },
+  {
+   "name": "brg_in_L",
+   "mat": "steel",
+   "m": 0.191,
+   "c": [
+    0.0,
+    23.29,
+    7.5
+   ]
+  },
+  {
+   "name": "magnet_R",
+   "mat": "ndfeb",
+   "m": 0.053,
+   "c": [
+    0.0,
+    -23.2,
+    7.5
+   ]
+  },
+  {
+   "name": "magnet_L",
+   "mat": "ndfeb",
+   "m": 0.053,
+   "c": [
+    0.0,
+    23.2,
+    7.5
+   ]
+  },
+  {
+   "name": "as5047p_R",
+   "mat": "resin",
+   "m": 0.0,
+   "c": [
+    1.95,
+    -21.38,
+    4.88
+   ]
+  },
+  {
+   "name": "as5047p_L",
+   "mat": "resin",
+   "m": 0.0,
+   "c": [
+    1.95,
+    21.38,
+    4.88
+   ]
+  },
+  {
+   "name": "enc_board_R",
+   "mat": "fr4",
+   "m": 0.056,
+   "c": [
+    0.0,
+    -20.76,
+    7.24
+   ]
+  },
+  {
+   "name": "enc_board_L",
+   "mat": "fr4",
+   "m": 0.056,
+   "c": [
+    0.0,
+    20.76,
+    7.24
+   ]
+  },
+  {
+   "name": "tire_R",
+   "mat": "rubber",
+   "m": 0.306,
+   "c": [
+    0.0,
+    -30.05,
+    7.5
+   ]
+  },
+  {
+   "name": "tire_L",
+   "mat": "rubber",
+   "m": 0.306,
+   "c": [
+    0.0,
+    30.05,
+    7.5
+   ]
+  },
+  {
+   "name": "motor_R",
+   "mat": "motor",
+   "m": 5.3,
+   "c": [
+    -8.07,
+    -15.01,
+    8.21
+   ]
+  },
+  {
+   "name": "motor_L",
+   "mat": "motor",
+   "m": 5.3,
+   "c": [
+    -8.07,
+    15.01,
+    8.21
+   ]
+  },
+  {
+   "name": "shaft_R",
+   "mat": "steel",
+   "m": 0.023,
+   "c": [
+    -8.07,
+    -26.6,
+    8.21
+   ]
+  },
+  {
+   "name": "shaft_L",
+   "mat": "steel",
+   "m": 0.023,
+   "c": [
+    -8.07,
+    26.6,
+    8.21
+   ]
+  },
+  {
+   "name": "pinion_R",
+   "mat": "brass",
+   "m": 0.251,
+   "c": [
+    -8.07,
+    -26.9,
+    8.21
+   ]
+  },
+  {
+   "name": "pinion_L",
+   "mat": "brass",
+   "m": 0.251,
+   "c": [
+    -8.07,
+    26.9,
+    8.21
+   ]
+  },
+  {
+   "name": "fan_case",
+   "mat": "resin",
+   "m": 1.557,
+   "c": [
+    20.0,
+    -0.0,
+    8.16
+   ]
+  },
+  {
+   "name": "impeller",
+   "mat": "resin",
+   "m": 0.35,
+   "c": [
+    14.2,
+    0.0,
+    6.97
+   ]
+  },
+  {
+   "name": "fan_motor",
+   "mat": "fan_motor",
+   "m": 5.3,
+   "c": [
+    14.2,
+    0.0,
+    19.39
+   ]
+  },
+  {
+   "name": "fan_shaft",
+   "mat": "steel",
+   "m": 0.043,
+   "c": [
+    14.2,
+    -0.0,
+    6.7
+   ]
+  },
+  {
+   "name": "pcb",
+   "mat": "fr4 + 部品2.5g",
+   "m": 5.177,
+   "c": [
+    8.7,
+    0.0,
+    13.9
+   ]
+  },
+  {
+   "name": "battery",
+   "mat": "battery",
+   "m": 14.5,
+   "c": [
+    -10.0,
+    0.0,
+    21.2
+   ]
+  },
+  {
+   "name": "sensor_FL_led",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    46.75,
+    12.5,
+    15.8
+   ]
+  },
+  {
+   "name": "sensor_FL_pd",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    46.75,
+    8.5,
+    15.8
+   ]
+  },
+  {
+   "name": "sensor_FR_led",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    46.75,
+    -8.5,
+    15.8
+   ]
+  },
+  {
+   "name": "sensor_FR_pd",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    46.75,
+    -12.5,
+    15.8
+   ]
+  },
+  {
+   "name": "sensor_L_led",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    41.91,
+    21.01,
+    15.8
+   ]
+  },
+  {
+   "name": "sensor_L_pd",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    44.98,
+    18.44,
+    15.8
+   ]
+  },
+  {
+   "name": "sensor_R_led",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    44.98,
+    -18.44,
+    15.8
+   ]
+  },
+  {
+   "name": "sensor_R_pd",
+   "mat": "sensor",
+   "m": 0.1,
+   "c": [
+    41.91,
+    -21.01,
+    15.8
+   ]
+  },
+  {
+   "name": "screw_mountF_L",
+   "mat": "steel",
+   "m": 0.221,
+   "c": [
+    7.85,
+    22.1,
+    3.15
+   ]
+  },
+  {
+   "name": "nut_mountF_L",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    7.85,
+    22.1,
+    6.1
+   ]
+  },
+  {
+   "name": "screw_mountR_L",
+   "mat": "steel",
+   "m": 0.221,
+   "c": [
+    -17.15,
+    22.1,
+    3.15
+   ]
+  },
+  {
+   "name": "nut_mountR_L",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    -17.15,
+    22.1,
+    6.1
+   ]
+  },
+  {
+   "name": "screw_post_L",
+   "mat": "nylon",
+   "m": 0.037,
+   "c": [
+    -17.15,
+    22.1,
+    13.92
+   ]
+  },
+  {
+   "name": "nut_post_L",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    -17.15,
+    22.1,
+    12.75
+   ]
+  },
+  {
+   "name": "screw_fan_L",
+   "mat": "nylon",
+   "m": 0.037,
+   "c": [
+    21.5,
+    17.6,
+    13.92
+   ]
+  },
+  {
+   "name": "nut_fan_L",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    21.5,
+    17.6,
+    12.75
+   ]
+  },
+  {
+   "name": "screw_mountF_R",
+   "mat": "steel",
+   "m": 0.221,
+   "c": [
+    7.85,
+    -22.1,
+    3.15
+   ]
+  },
+  {
+   "name": "nut_mountF_R",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    7.85,
+    -22.1,
+    6.1
+   ]
+  },
+  {
+   "name": "screw_mountR_R",
+   "mat": "steel",
+   "m": 0.221,
+   "c": [
+    -17.15,
+    -22.1,
+    3.15
+   ]
+  },
+  {
+   "name": "nut_mountR_R",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    -17.15,
+    -22.1,
+    6.1
+   ]
+  },
+  {
+   "name": "screw_post_R",
+   "mat": "nylon",
+   "m": 0.037,
+   "c": [
+    -17.15,
+    -22.1,
+    13.92
+   ]
+  },
+  {
+   "name": "nut_post_R",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    -17.15,
+    -22.1,
+    12.75
+   ]
+  },
+  {
+   "name": "screw_fan_R",
+   "mat": "nylon",
+   "m": 0.037,
+   "c": [
+    21.5,
+    -17.6,
+    13.92
+   ]
+  },
+  {
+   "name": "nut_fan_R",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    21.5,
+    -17.6,
+    12.75
+   ]
+  },
+  {
+   "name": "screw_fanframe_0",
+   "mat": "steel",
+   "m": 0.221,
+   "c": [
+    21.5,
+    17.6,
+    3.15
+   ]
+  },
+  {
+   "name": "nut_fanframe_0",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    21.5,
+    17.6,
+    6.15
+   ]
+  },
+  {
+   "name": "screw_fanframe_1",
+   "mat": "steel",
+   "m": 0.221,
+   "c": [
+    21.5,
+    -17.6,
+    3.15
+   ]
+  },
+  {
+   "name": "nut_fanframe_1",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    21.5,
+    -17.6,
+    6.15
+   ]
+  },
+  {
+   "name": "screw_fanframe_2",
+   "mat": "steel",
+   "m": 0.221,
+   "c": [
+    32.6,
+    -0.0,
+    3.15
+   ]
+  },
+  {
+   "name": "nut_fanframe_2",
+   "mat": "nylon",
+   "m": 0.02,
+   "c": [
+    32.6,
+    -0.0,
+    6.15
+   ]
+  },
+  {
+   "name": "screw_fanclamp",
+   "mat": "nylon",
+   "m": 0.052,
+   "c": [
+    8.1,
+    -0.93,
+    11.5
+   ]
+  },
+  {
+   "name": "nut_fanclamp",
+   "mat": "nylon",
+   "m": 0.025,
+   "c": [
+    8.1,
+    3.6,
+    11.5
+   ]
+  },
+  {
+   "name": "wiring",
+   "mat": "配線(仮)",
+   "m": 0.6,
+   "c": [
+    0.0,
+    0.0,
+    12.0
+   ]
+  }
+ ],
+ "height": 29.4
+}

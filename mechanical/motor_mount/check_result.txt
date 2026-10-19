@@ -1,0 +1,36 @@
+mount            - brg_out          すき間  0.000 mm  重なり   0.023 mm³ ぶつかる
+mount            - brg_in           すき間  0.000 mm  重なり   0.023 mm³ ぶつかる
+mount            - motor            すき間  0.000 mm  重なり   0.000 mm³ 接している
+mount            - frame            すき間  0.000 mm  重なり   0.000 mm³ 接している
+enc_board        - frame            すき間  0.000 mm  重なり   0.018 mm³ ぶつかる
+mount            - enc_board        すき間  0.043 mm  重なり   0.000 mm³ 
+mount            - nut_front        すき間  0.050 mm  重なり   0.000 mm³ 
+mount            - nut_rear         すき間  0.050 mm  重なり   0.000 mm³ 
+mount            - screw_front      すき間  0.150 mm  重なり   0.000 mm³ 
+mount            - screw_rear       すき間  0.150 mm  重なり   0.000 mm³ 
+brg_in           - motor            すき間  0.202 mm  重なり   0.000 mm³ 
+mount            - pinion13         すき間  0.300 mm  重なり   0.000 mm³ 
+motor            - shaft            すき間  0.300 mm  重なり   0.000 mm³ 
+mount            - pc_sheet         すき間  0.350 mm  重なり   0.000 mm³ 
+mount            - spur41           すき間  0.358 mm  重なり   0.000 mm³ 
+mount            - motor_boss       すき間  0.400 mm  重なり   0.000 mm³ 
+tire15           - pinion13         すき間  0.400 mm  重なり   0.000 mm³ 
+tire15           - shaft            すき間  0.400 mm  重なり   0.000 mm³ 
+wheel            - pinion13         すき間  0.413 mm  重なり   0.000 mm³ 
+motor_boss       - pinion13         すき間  0.600 mm  重なり   0.000 mm³ 
+mount            - AS5047P          すき間  0.606 mm  重なり   0.000 mm³ 
+motor            - pc_sheet         すき間  0.706 mm  重なり   0.000 mm³ 
+brg_in           - AS5047P          すき間  0.745 mm  重なり   0.000 mm³ 
+enc_board        - motor            すき間  0.771 mm  重なり   0.000 mm³ 
+brg_out          - motor            すき間  0.802 mm  重なり   0.000 mm³ 
+motor            - pinion13         すき間  0.900 mm  重なり   0.000 mm³ 
+mount            - wheel            すき間  0.900 mm  重なり   0.000 mm³ 
+motor            - frame            すき間  0.906 mm  重なり   0.000 mm³ 
+mount            - shaft            すき間  1.000 mm  重なり   0.000 mm³ 
+spur41           - shaft            すき間  1.052 mm  重なり   0.000 mm³ 
+spur41           - motor_boss       すき間  1.098 mm  重なり   0.000 mm³ 
+spur41           - motor            すき間  1.300 mm  重なり   0.000 mm³ 
+AS5047P          - frame            すき間  1.408 mm  重なり   0.000 mm³ 
+brg_in           - enc_board        すき間  1.443 mm  重なり   0.000 mm³ 
+mount            - magnet           すき間  1.497 mm  重なり   0.000 mm³ 
+mount            - pin              すき間  1.497 mm  重なり   0.000 mm³ 
