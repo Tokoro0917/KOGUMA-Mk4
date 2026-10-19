@@ -11,7 +11,7 @@ from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp
 
-VER = '60'          # frame v6(安全率5まで下げてよいとして、作れる一番細い形 T3、2026-10-19)
+VER = '61'          # frame v6.1(v6 を前後100 × 左右70mm にし、ねじの穴の間を 1mm 単位に、2026-10-19)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../../mechanical/frame')   # 製作用のファイルは mechanical/frame に置く
@@ -25,7 +25,7 @@ holes = dz.holes()
 
 # リブの部品をフレームの下に並べる
 parts = []
-y = -35.3 - 6.0
+y = -dz.YB - 6.0
 for (l, h, w) in ribs:
     part = rp.rib_part(l.length, h)                  # (u, v)、つめは v < 0
     b = part.bounds

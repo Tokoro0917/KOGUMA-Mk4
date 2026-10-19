@@ -10,6 +10,7 @@ import mount as mm
 import design as fd      # フレームの形(docs/calc/frame/design.py)
 
 P = mm.P
+assert [(P['screw_rear'][0], -P['screw_rear'][1]), (P['screw_front'][0], -P['screw_front'][1])] == fd.MOUNT_SCREWS, 'マウントとフレームのねじの位置が違う'
 mx, mz = mm.motor_center(P)
 def ycyl(r, y0, y1, x, z): return mm.ycyl(r, y0, y1, x, z)
 

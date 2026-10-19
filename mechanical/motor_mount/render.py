@@ -3,6 +3,7 @@ import glob, os, numpy as np, matplotlib
 matplotlib.use('Agg'); import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import cadquery as cq
+import mount as mm
 
 COL = {'mount': '#f28e2b', 'motor': '#9e9e9e', 'motor_boss': '#9e9e9e', 'shaft': '#555', 'pinion13': '#d4af37',
        'spur41': '#eeeeee', 'wheel': '#4e79a7', 'tire15': '#222', 'pin': '#777', 'magnet': '#e15759',
@@ -34,8 +35,8 @@ for k, (elev, azim, title) in enumerate(((22, -125, 'right side, from front-outs
     ax.set_xlim(-26, 16); ax.set_ylim(-36, -6); ax.set_zlim(0, 20)
     ax.set_box_aspect((42, 30, 20)); ax.view_init(elev, azim)
     ax.set_xlabel('x (front +)'); ax.set_ylabel('y'); ax.set_zlabel('z'); ax.set_title(title, fontsize=9)
-fig.suptitle('MK4 motor mount v2 (orange, M2 screws, PCB post) with NFP-D8620, 41T:13T, LF-630 x2, magnet + AS5047P board (green)')
-fig.tight_layout(); fig.savefig('mount_v2_3d.png', dpi=110)
+fig.suptitle(f'MK4 motor mount {mm.VER} (orange, M2 screws, PCB post) with NFP-D8620, 41T:13T, LF-630 x2, magnet + AS5047P board (green)')
+fig.tight_layout(); fig.savefig(f'mount_{mm.VER}_3d.png', dpi=110)
 
 # 断面(y 一定の面で切る): 軸受の所 y=-25.0 と、エンコーダの所 y=-21.5
 fig, axs = plt.subplots(1, 3, figsize=(15, 5))
@@ -68,5 +69,5 @@ for ax, (plane, val, title) in zip(axs, (('y', -25.4, 'section y = -25.4 (outer 
         ax.axhline(0, color='k', lw=1)
     else:
         ax.set_xlim(-24, 15); ax.set_ylim(-34, -10); ax.set_xlabel('x (front +)'); ax.set_ylabel('y (left +)')
-fig.tight_layout(); fig.savefig('mount_v2_sections.png', dpi=110)
+fig.tight_layout(); fig.savefig(f'mount_{mm.VER}_sections.png', dpi=110)
 print('ok')
