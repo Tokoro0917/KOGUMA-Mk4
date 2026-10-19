@@ -86,7 +86,8 @@ for nm, col in (('frame', '#5f5a50'), ('fan_case', '#f28e2b'), ('impeller', '#e8
 for nm in ('screw_fanframe_0', 'screw_fanframe_1', 'screw_fanframe_2', 'fan_motor'):
     bb = parts[nm].BoundingBox()
     ax.add_patch(plt.Circle(((bb.xmin + bb.xmax) / 2, (bb.ymin + bb.ymax) / 2), (bb.xmax - bb.xmin) / 2, fill=False, ec='k', lw=1, ls='--'))
-ax.annotate('outlet', (26.3, 15.5), (30, 22), arrowprops=dict(arrowstyle='->'))
+if 'v3' in sys.argv[1]:
+    ax.annotate('outlet', (26.3, 15.5), (30, 22), arrowprops=dict(arrowstyle='->'))
 ax.set_aspect('equal'); ax.set_xlim(-5, 38); ax.set_ylim(-22, 24); ax.grid(alpha=.3)
-ax.set_title('section at z = 6 mm: volute (orange), impeller (yellow), frame (gray); dashed = screws, fan motor')
+ax.set_title('section at z = 6 mm: fan case (orange), impeller (yellow), frame (gray); dashed = screws, fan motor')
 fig.tight_layout(); fig.savefig(sys.argv[2].replace('.png', '_section.png'), dpi=100)
