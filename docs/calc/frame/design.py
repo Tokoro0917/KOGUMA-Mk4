@@ -6,7 +6,7 @@ from shapely import affinity
 
 XE, YE = 50.0, 25.3          # 前後の端、端の辺の半幅(2026-10-19 に 50.5 から。前後 100mm)
 XB, YB = 16.7, 35.0          # 真ん中の帯の半幅、最大の半幅(2026-10-19 に 35.3 から。左右 70mm)
-SX, SY = 30.25, 15.25        # 吸引する面の半分
+SX, SY = 30.0, 15.0          # 吸引する面の半分(2026-10-19 に 30.25、15.25 から。60 × 30mm)
 FAN_X, FAN_R = 14.2, 7.5     # ファンの穴
 SLOT_L, SLOT_Y0, SLOT_Y1 = 14.0, 25.8, 32.3   # タイヤ・ホイール・41T の穴: 前後14mm(2026-10-19 に13mmから。角でタイヤとのすき間0.26mmだった)、y 25.8〜32.3
 MOUNT_SCREWS = [(-17.0, 22.0), (8.0, 22.0)]    # モーターマウントのねじ。左右に写す(2026-10-19 に (−17.15, 22.1)、(7.85, 22.1) から。穴の間を 1mm 単位に)
@@ -34,9 +34,17 @@ def outline(r):
     return Polygon(pts).buffer(-r).buffer(r)
 
 def rounded(p, r):
+    """窓の出っ張った角を半径 r で丸める。へこんだ角は尖ったまま残す
+    (buffer で丸めると、へこんだ角に 0.05mm ほどの小さな丸みの誤差が残り、寸法が切りのよい数字にならないため)"""
     if r <= 0:
         return p
-    return p.buffer(-r).buffer(r)
+    cut = p.difference(p.buffer(-r).buffer(r))
+    def tiny(g):      # へこんだ角に残る誤差(0.1mm 未満の小さな三角)。細長い切れ端は消す
+        x0, y0, x1, y1 = g.bounds
+        return g.area <= 0.01 and max(x1 - x0, y1 - y0) < 0.1
+    big = [g for g in getattr(cut, 'geoms', [cut]) if not tiny(g)]
+    out = p.difference(unary_union(big)) if big else p
+    return out.buffer(-1e-4, join_style=2, mitre_limit=50).buffer(1e-4, join_style=2, mitre_limit=50)   # 幅 0 のひげを消す(角は尖ったまま)
 
 def taper(x0, x1, w0, w1):
     return Polygon([(x0, -w0 / 2), (x1, -w1 / 2), (x1, w1 / 2), (x0, w0 / 2)])

@@ -1,8 +1,12 @@
-# MK4 フレームの強度の計算と形(frame_v6.1、リブなし)
+# MK4 フレームの強度の計算と形(frame_v6.2、リブなし)
 
 2026-10-17作成。フレーム(1mmのカーボン板 + 吸引する面をふさぐ0.2mmのポリカーボネート)を有限要素法(FEM)で計算し、強さと硬さが上がる形を探した。配置は`docs/spec.md`の「機構の配置」。
 
 計算のスクリプトは`docs/calc/frame/`、製作用のDXFは`docs/calc/frame/frame_v4.dxf`、図は`docs/img/frame/`。
+
+> **2026-10-19(frame_v6.2)**: **吸引する面を60 × 30mm**(±30 × ±15。v6.1までは60.5 × 30.5mm)にした。また、窓のへこんだ角に0.05mmほどの丸みの誤差が残っていた(Fusionで測ると30.402mmになった)ので、角を丸める処理(`design.py`の`rounded`)を直して、へこんだ角が寸法どおりの点になるようにした。吸引する面の角は(±30, ±15)ちょうど。外形・ねじの穴・骨と窓の幅はv6.1と同じ。カーボン4.69g、ポリカーボネート0.39g、前の滑り板0.54mm、後ろ0.37mm、前の角0.59mm、236Hz、座屈117 / 70 / 442N、材料の安全率6.3(細かいメッシュ、`results/final62_result.json`、パラメータは`results/v6_2_params.json`)。製作用のファイルは`mechanical/frame/`: 注文用`MK4FRAME62_T1.dxf`、ポリカーボネート`MK4PC62_T02.dxf`と1:1の型紙、レイヤー別`frame_v6_2.dxf`、3D`frame_v6_2_3d.step`。
+>
+> ![frame_v6.2](img/frame/v6_2_drawing.png)
 
 > **2026-10-19(frame_v6.1)**: frame_v6の外形を**前後100mm × 左右70mm**(±50.0、±35.0。v6は101.0 × 70.6mm)にし、**ねじの穴の中心を1mm単位**にした。原点は車軸の中心。穴の間の距離(x・y方向)はどれも整数のmmになる。モーターマウントもv3にして、ねじの位置を合わせた(`docs/mount.md`)。骨・窓の幅はv6と同じ。
 >
@@ -27,7 +31,7 @@
 > | 材料の安全率(最小) | 6.3(正面の衝突) | 6.2 |
 > | 横の衝突の安全率 | 8.0 | 8.4 |
 >
-> 前後が0.5mmずつ短くなった分、前の滑り板・角が少し硬くなった。左右が0.3mmずつ狭くなった分、横の衝突の安全率が少し下がった(8.4 → 8.0)。細かいメッシュの値(`results/final61_result.json`、パラメータは`results/v6_1_params.json`、v6と同じ。外形と穴は`design.py`)。製作用のファイルは`mechanical/frame/`: 注文用`MK4FRAME61_T1.dxf`、ポリカーボネート`MK4PC61_T02.dxf`と1:1の型紙、レイヤー別`frame_v6_1.dxf`、3D`frame_v6_1_3d.step`。
+> 前後が0.5mmずつ短くなった分、前の滑り板・角が少し硬くなった。左右が0.3mmずつ狭くなった分、横の衝突の安全率が少し下がった(8.4 → 8.0)。細かいメッシュの値(`results/final61_result.json`、パラメータは`results/v6_1_params.json`、v6と同じ。外形と穴は`design.py`)。レイヤー別のDXFは`docs/calc/frame/frame_v6_1.dxf`。注文用のファイルと3Dはv6.2に置き換えた。
 >
 > ![frame_v6.1](img/frame/v6_1_drawing.png)
 >
@@ -387,12 +391,12 @@ A ≤ 0.25mm、B ≤ 0.15mm、1次の固有振動数 ≥ 400Hz、D・Eで座屈�
 
 モーターマウントの4か所と吸引ファンのケースの3か所(v4.6)のほかのねじ穴(基板・電池・壁センサ・滑り板など)は、使う部品に合わせて決める。要る穴を足してから注文する。図の緑は、今ある7か所の穴を除いた所
 
-![M2の穴を置ける所](img/frame/v6_1_hole_ok.png)(`hole_map.py`で作る。ねじの太さは`design.py`の`SCREW`、`HOLE_D`)
+![M2の穴を置ける所](img/frame/v6_2_hole_ok.png)(`hole_map.py`で作る。ねじの太さは`design.py`の`SCREW`、`HOLE_D`)
 
 - 緑の所に穴の中心を置けば、肉を足さなくても穴のまわりに2mm以上残る(吸引する面の外、エンコーダの磁石から8mm以上、マウントのねじと重ならない)
 - 穴はM2用のφ2.3。細い所(外周の枠2.5mm、前後の辺3.0mm、骨G 3.5mm、筋交いA 2.0mm、背骨4mm)に開けるときは、穴のまわりを直径6.3mm以上に広げる(ボス)。M3のころより、置ける所(緑)がずっと広い
 - 加工業者の決まり: 穴の縁とほかの切り口の間は1.5mm以上、内側の角はR0.75以上
-- 吸引する面(±30.25 × ±15.25mm)の中には開けない(上に貼るポリカーボネートを突き抜けると空気がもれる)
+- 吸引する面(±30 × ±15mm。v6.1までは±30.25 × ±15.25mm)の中には開けない(上に貼るポリカーボネートを突き抜けると空気がもれる)
 - 鉄のねじはエンコーダの磁石(車軸の端)とAS5047Pから離す
 - M2の鉄の低頭L5 + ナイロンのナットで1組約0.25g。重さの配分(ねじ等1.5g以下)に入れる
 - 穴の位置が決まったら、`design.py`に足して(または穴を足したDXFで)、強さと注文の決まり(`make_order.py`の幅の確認)を確かめ直す
@@ -491,7 +495,7 @@ frame_v5から細くした形を計算した(粗いメッシュ、`refine.py try
 
 | 項目 | 決まり | MK4のファイル |
 |---|---|---|
-| ファイル | DXF、上から見た外形の実線だけ、1:1。寸法線・文字・中心線は入れない。ファイル名は半角英数字 | `mechanical/frame/MK4FRAME61_T1.dxf`(フレーム1枚、リブなし) |
+| ファイル | DXF、上から見た外形の実線だけ、1:1。寸法線・文字・中心線は入れない。ファイル名は半角英数字 | `mechanical/frame/MK4FRAME62_T1.dxf`(フレーム1枚、リブなし) |
 | 複数の部品 | 1つのファイルに並べてよい。部品の間は5mm以上 | フレーム1枚だけ |
 | 最小の穴・溝 | 厚さ5mm以下: 穴φ1.5mm、溝の幅1.5mm | M2の穴φ2.3mm。一番細い材料は外周の枠・前後の辺・筋交いAの2.0mm |
 | 内側の角 | 最小R0.75(尖った角はR0.75になる) | 窓R2、タイヤの穴R1 |
@@ -503,12 +507,12 @@ frame_v5から細くした形を計算した(粗いメッシュ、`refine.py try
 
 手順:
 
-1. 見積もりのフォーム(<https://cfrp-japan.com/order-board-data/>)に`MK4FRAME61_T1.dxf`を付け、厚さ1mm・綾織・クロス・マット・数量(予備を含めて2枚など)を書く。備考に「繊維の向きは図のX方向(前後)を0°に」と書く
+1. 見積もりのフォーム(<https://cfrp-japan.com/order-board-data/>)に`MK4FRAME62_T1.dxf`を付け、厚さ1mm・綾織・クロス・マット・数量(予備を含めて2枚など)を書く。備考に「繊維の向きは図のX方向(前後)を0°に」と書く
 2. 当日〜3営業日でメールで見積もりが来る。メールで注文して、支払う
 3. 届いたら、縁のバリを水をかけながら耐水ペーパーで落とす(カーボンの粉は吸わない)
-4. ポリカーボネート0.2mmは、`mechanical/frame/MK4PC61_template_A4_1to1.pdf`を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC61_T02.dxf`をレーザー加工に出す)。フレームの上面に貼る
+4. ポリカーボネート0.2mmは、`mechanical/frame/MK4PC62_template_A4_1to1.pdf`を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC62_T02.dxf`をレーザー加工に出す)。フレームの上面に貼る
 
-`make_order.py`が、穴・溝・材料の幅が1.5mmより狭い所がないかを確かめる(frame_v6.1はOK)。
+`make_order.py`が、穴・溝・材料の幅が1.5mmより狭い所がないかを確かめる(frame_v6.2はOK)。
 
 ほかの選択肢(海外): FPVドローンのフレーム用に、3Kのカーボン板をDXFから切り出す業者が多い(例: CarbonVega <https://carbonvega.com/upload/>、最小の形1.5mm)。送料と納期を比べて選ぶ。
 
@@ -519,7 +523,7 @@ cd docs/calc/frame
 python3 test_verify.py                       # 計算が正しいかの確認
 python3 analyze.py                           # 今の形(既定の値)を計算
 python3 report.py final "$(cat results/final_params.json)"   # 図と結果
-python3 make_dxf.py results/final_params.json frame_v6_1 ../../../mechanical/frame       # DXF(レイヤー別)
+python3 make_dxf.py results/final_params.json frame_v6_2 ../../../mechanical/frame       # DXF(レイヤー別)
 python3 make_order.py                        # 注文用の DXF と型紙(mechanical/frame/)
 python3 ../../../mechanical/frame_3d.py      # 3D(STEP、mechanical/frame/)
 ```

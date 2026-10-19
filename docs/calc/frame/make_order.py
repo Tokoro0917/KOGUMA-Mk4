@@ -11,7 +11,7 @@ from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp
 
-VER = '61'          # frame v6.1(v6 を前後100 × 左右70mm にし、ねじの穴の間を 1mm 単位に、2026-10-19)
+VER = '62'          # frame v6.2(吸引する面を 60 × 30mm にし、窓のへこんだ角を尖らせた、2026-10-19)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../../mechanical/frame')   # 製作用のファイルは mechanical/frame に置く
