@@ -18,7 +18,7 @@
 > | 座屈する力(正面 / 角 / 横) | 111 / 67 / 436N(荷重の2.2 / 2.2 / 14.5倍) | 178 / 101 / 508N(3.6 / 3.4 / 16.9倍) |
 > | 材料の安全率(最小) | **6.2(正面の衝突、前の辺の真ん中)** | 8.6(横の衝突) |
 >
-> 0.93g軽くなった代わりに、前の滑り板・前の角のたわみが1.5倍、振動数が約2割下がった。衝突では、材料が割れる(6.2倍)より先に座屈する(約2.2倍)。細かいメッシュの値(`results/final60_result.json`、パラメータは`results/final_params.json` = `v6_params.json`)。製作用のDXFは`docs/calc/frame/frame_v6.dxf`と`docs/calc/frame/order/MK4FRAME60_T1.dxf`(注文用)、3Dは`mechanical/frame_v6_3d.step`。マウントとのぶつかりの確認も同じ結果。
+> 0.93g軽くなった代わりに、前の滑り板・前の角のたわみが1.5倍、振動数が約2割下がった。衝突では、材料が割れる(6.2倍)より先に座屈する(約2.2倍)。細かいメッシュの値(`results/final60_result.json`、パラメータは`results/final_params.json` = `v6_params.json`)。製作用のファイルは**`mechanical/frame/`**にまとめた: 注文用のDXF`MK4FRAME60_T1.dxf`、ポリカーボネート`MK4PC60_T02.dxf`と1:1の型紙、レイヤー別のDXF`frame_v6.dxf`、3D`frame_v6_3d.step`。マウントとのぶつかりの確認も同じ結果。
 >
 > ![frame_v6](img/frame/v6_drawing.png)
 >
@@ -462,7 +462,7 @@ frame_v5から細くした形を計算した(粗いメッシュ、`refine.py try
 
 | 項目 | 決まり | MK4のファイル |
 |---|---|---|
-| ファイル | DXF、上から見た外形の実線だけ、1:1。寸法線・文字・中心線は入れない。ファイル名は半角英数字 | `order/MK4FRAME60_T1.dxf`(フレーム1枚、リブなし) |
+| ファイル | DXF、上から見た外形の実線だけ、1:1。寸法線・文字・中心線は入れない。ファイル名は半角英数字 | `mechanical/frame/MK4FRAME60_T1.dxf`(フレーム1枚、リブなし) |
 | 複数の部品 | 1つのファイルに並べてよい。部品の間は5mm以上 | フレーム1枚だけ |
 | 最小の穴・溝 | 厚さ5mm以下: 穴φ1.5mm、溝の幅1.5mm | M2の穴φ2.3mm。一番細い材料は外周の枠・前後の辺・筋交いAの2.0mm |
 | 内側の角 | 最小R0.75(尖った角はR0.75になる) | 窓R2、タイヤの穴R1 |
@@ -477,7 +477,7 @@ frame_v5から細くした形を計算した(粗いメッシュ、`refine.py try
 1. 見積もりのフォーム(<https://cfrp-japan.com/order-board-data/>)に`MK4FRAME60_T1.dxf`を付け、厚さ1mm・綾織・クロス・マット・数量(予備を含めて2枚など)を書く。備考に「繊維の向きは図のX方向(前後)を0°に」と書く
 2. 当日〜3営業日でメールで見積もりが来る。メールで注文して、支払う
 3. 届いたら、縁のバリを水をかけながら耐水ペーパーで落とす(カーボンの粉は吸わない)
-4. ポリカーボネート0.2mmは、`order/MK4PC60_template_A4_1to1.pdf`を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC60_T02.dxf`をレーザー加工に出す)。フレームの上面に貼る
+4. ポリカーボネート0.2mmは、`mechanical/frame/MK4PC60_template_A4_1to1.pdf`を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC60_T02.dxf`をレーザー加工に出す)。フレームの上面に貼る
 
 `make_order.py`が、穴・溝・材料の幅が1.5mmより狭い所がないかを確かめる(frame_v6はOK)。
 
@@ -490,9 +490,9 @@ cd docs/calc/frame
 python3 test_verify.py                       # 計算が正しいかの確認
 python3 analyze.py                           # 今の形(既定の値)を計算
 python3 report.py final "$(cat results/final_params.json)"   # 図と結果
-python3 make_dxf.py results/final_params.json frame_v6       # DXF(レイヤー別)
-python3 make_order.py                        # 注文用の DXF と型紙(order/)
-python3 ../../../mechanical/frame_3d.py ../../../mechanical   # 3D(STEP)
+python3 make_dxf.py results/final_params.json frame_v6 ../../../mechanical/frame       # DXF(レイヤー別)
+python3 make_order.py                        # 注文用の DXF と型紙(mechanical/frame/)
+python3 ../../../mechanical/frame_3d.py      # 3D(STEP、mechanical/frame/)
 ```
 
 形の寸法は`design.py`の`DEFAULT`と、`final_params.json`の値で変えられる。

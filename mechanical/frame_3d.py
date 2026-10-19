@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(HERE, 'motor_mount'))
 import design as dz, ribparts as rp
 import mount as mm
 
-OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
+OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'frame')   # 製作用のファイルは mechanical/frame に置く
 TAG = 'frame_v6'   # 作れる一番細い形 T3(2026-10-19)
 P = json.load(open(os.path.join(HERE, '../docs/calc/frame/results/final_params.json')))
 g = dz.build(**P)
