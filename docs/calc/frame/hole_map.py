@@ -9,7 +9,7 @@ import design as dz
 
 P = json.load(open('results/final_params.json'))
 g = dz.build(**P)
-screws = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]
+screws = dz.holes()
 R = dz.HOLE_D / 2
 plate = g['carbon'].difference(unary_union([Point(c).buffer(R) for c in screws]))
 ok = plate.buffer(-(R + 2.0)).difference(g['suction'])

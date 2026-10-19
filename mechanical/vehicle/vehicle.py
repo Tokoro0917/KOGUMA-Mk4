@@ -23,7 +23,7 @@ import design as dz
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else HERE
-V = sys.argv[2] if len(sys.argv) > 2 else 'v2'
+V = sys.argv[2] if len(sys.argv) > 2 else 'v3'
 # ねじの寸法 [mm]: d 径、dk/k 頭の径・高さ(なべ。フレームの下の M3 は低頭)、s/m ナットの二面幅・厚さ、
 # hole 穴、boss 柱・耳の半径(ナットのまわりに0.8mm)、pocket/depth ナットの穴の二面幅・深さ、Lp 基板を留めるねじの長さ
 SPEC = {'M3':   dict(d=3.0, dk=5.5, k=1.5, s=5.5, m=2.4, hole=3.2, boss=3.7, pocket=5.7, depth=2.5, Lp=5.0),
@@ -33,6 +33,7 @@ SPEC = {'M3':   dict(d=3.0, dk=5.5, k=1.5, s=5.5, m=2.4, hole=3.2, boss=3.7, poc
 CFG = dict(v0=dict(pcb_t=0.8, wall=0.8, top=0.8, clamp=True, screws='steel', boss_r=3.0, size='M3'),
            v1=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='mixed', boss_r=3.4, size='M3'),
            v2=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='m2mix', size='M2'),
+           v3=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='m2mix', size='M2', fan='volute'),
            v2_m14=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M1.4'),
            v2_m16=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M1.6'),
            v2_m2=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M2'))[V]
@@ -84,7 +85,7 @@ def add(name, shape, mat):
 # ---------------- フレーム ----------------
 FP = json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/final_params.json')))
 g = dz.build(**FP)
-screws_mount = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]
+screws_mount = dz.holes() if CFG.get('fan') == 'volute' else [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]
 plate = g['carbon'].difference(unary_union([Point(c).buffer(SC['hole'] / 2, 32) for c in screws_mount]))
 add('frame', poly_solid(plate, Z_FB, Z_FT), 'carbon')
 sheet = g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
@@ -132,28 +133,81 @@ for k, (s, m) in right.items():
 
 # ---------------- 吸引ファン ----------------
 fx, fy = FAN
-R_OUT = 16.0; R_IN = R_OUT - CFG['wall']   # ケースの壁
-Z_TOP1 = 9.6; Z_TOP0 = Z_TOP1 - CFG['top']   # ケースの天井(この上にモーターの前の面が載る)
-BOSS_Y, BOSS_R = 12.5, CFG['boss_r']   # 基板(と押さえ)のねじの柱
-case = zcyl(R_OUT, Z_PC, Z_TOP1, fx, fy).cut(zcyl(R_IN, Z_PC - 0.1, Z_TOP0, fx, fy))
-case = case.union(zcyl(R_IN, Z_PC, Z_PC + 0.6, fx, fy).cut(zcyl(13.0, Z_PC - 0.1, Z_PC + 0.7, fx, fy)))   # 接着の面(内側のつば)
-for ang in (90, -90):             # 吐き出しの窓(左右)
-    a = math.radians(ang)
-    win = (cq.Workplane().box(8.0, 4.0, 4.0).translate((fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 5.9))
-           .rotate((fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 0), (fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 1), ang - 90))
-    case = case.cut(win)
-case = case.union(zcyl(4.35 + CFG['wall'], Z_TOP1, Z_PCB, fx, fy))       # モーターの筒(v1 はモーターを接着)
-for sy in (1, -1):
-    case = case.union(zcyl(BOSS_R, Z_TOP1, Z_PCB, fx, sy * BOSS_Y))      # 押さえのねじの柱
-case = case.cut(zcyl(4.35, Z_TOP1, Z_PCB + 1, fx, fy))                  # モーターの穴
-case = case.cut(zcyl(1.5, Z_TOP0 - 0.1, Z_TOP1 + 0.1, fx, fy))          # 軸と軸受けの出っ張りの穴
-for sy in (1, -1):
-    case = case.cut(zcyl(SC['hole'] / 2, Z_TOP0 - 0.1, Z_PCB + 1, fx, sy * BOSS_Y))
-    nut = (cq.Workplane().center(fx, sy * BOSS_Y).polygon(6, SC['pocket'] / math.cos(math.pi / 6)).extrude(SC['depth'])
-           .translate((0, 0, Z_PCB - SC['depth'])))
-    slot = cq.Workplane().box(4.0, SC['pocket'], SC['depth'], centered=(False, True, False)).translate((fx, sy * BOSS_Y, Z_PCB - SC['depth']))
-    case = case.cut(nut).cut(slot)                                       # ナットは横から入れる
-add('fan_case', case, 'resin')
+VOLUTE = CFG.get('fan') == 'volute'
+if not VOLUTE:          # v0〜v2: 丸いケース(左右に窓)、ポリカーボネートに接着
+    R_OUT = 16.0; R_IN = R_OUT - CFG['wall']   # ケースの壁
+    Z_TOP1 = 9.6; Z_TOP0 = Z_TOP1 - CFG['top']   # ケースの天井(この上にモーターの前の面が載る)
+    BOSS_Y, BOSS_R = 12.5, CFG['boss_r']   # 基板(と押さえ)のねじの柱
+    case = zcyl(R_OUT, Z_PC, Z_TOP1, fx, fy).cut(zcyl(R_IN, Z_PC - 0.1, Z_TOP0, fx, fy))
+    case = case.union(zcyl(R_IN, Z_PC, Z_PC + 0.6, fx, fy).cut(zcyl(13.0, Z_PC - 0.1, Z_PC + 0.7, fx, fy)))   # 接着の面(内側のつば)
+    for ang in (90, -90):             # 吐き出しの窓(左右)
+        a = math.radians(ang)
+        win = (cq.Workplane().box(8.0, 4.0, 4.0).translate((fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 5.9))
+               .rotate((fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 0), (fx + 15.6 * math.cos(a), fy + 15.6 * math.sin(a), 1), ang - 90))
+        case = case.cut(win)
+    case = case.union(zcyl(4.35 + CFG['wall'], Z_TOP1, Z_PCB, fx, fy))       # モーターの筒(v1 はモーターを接着)
+    for sy in (1, -1):
+        case = case.union(zcyl(BOSS_R, Z_TOP1, Z_PCB, fx, sy * BOSS_Y))      # 押さえのねじの柱
+    case = case.cut(zcyl(4.35, Z_TOP1, Z_PCB + 1, fx, fy))                  # モーターの穴
+    case = case.cut(zcyl(1.5, Z_TOP0 - 0.1, Z_TOP1 + 0.1, fx, fy))          # 軸と軸受けの出っ張りの穴
+    for sy in (1, -1):
+        case = case.cut(zcyl(SC['hole'] / 2, Z_TOP0 - 0.1, Z_PCB + 1, fx, sy * BOSS_Y))
+        nut = (cq.Workplane().center(fx, sy * BOSS_Y).polygon(6, SC['pocket'] / math.cos(math.pi / 6)).extrude(SC['depth'])
+               .translate((0, 0, Z_PCB - SC['depth'])))
+        slot = cq.Workplane().box(4.0, SC['pocket'], SC['depth'], centered=(False, True, False)).translate((fx, sy * BOSS_Y, Z_PCB - SC['depth']))
+        case = case.cut(nut).cut(slot)                                       # ナットは横から入れる
+    add('fan_case', case, 'resin')
+    PCB_FAN_POSTS = [(fx, sy * BOSS_Y) for sy in (1, -1)]
+else:                   # v3: 渦巻きのケース(ボリュート)。フレームにねじ3本で留める。基板はケースの柱に載せるだけ(2026-10-19)
+    from shapely.geometry import Polygon as SPoly
+    BOSS_R = CFG['boss_r']
+    Z_TOP1 = 9.4; Z_TOP0 = Z_TOP1 - CFG['top']
+    W = CFG['wall']
+    R0, R1, Y_OUT = 10.6, 13.6, 15.5          # 渦巻きの内側の半径(舌 → 出口)、出口の端(左)
+    tt = np.linspace(0, 1, 181)
+    pts = [(fx + (R0 + (R1 - R0) * t) * math.cos(2 * math.pi * t), fy + (R0 + (R1 - R0) * t) * math.sin(2 * math.pi * t)) for t in tt]
+    pts += [(fx + R1, fy + Y_OUT), (fx + R0, fy + Y_OUT)]
+    inner = SPoly(pts).buffer(0)
+    outer = inner.buffer(W, join_style=2)
+    exit_cut = sbox(fx + R0 - 0.01, fy + Y_OUT - 0.01, fx + R1 + 0.01, fy + Y_OUT + W + 0.5)
+    PCB_FAN_POSTS = [p for p in dz.FAN_SCREWS if abs(p[1]) > 1]     # 基板も載せる柱(左右)
+    FRONT_EAR = [p for p in dz.FAN_SCREWS if abs(p[1]) <= 1][0]
+    webs = []
+    for (px, py) in dz.FAN_SCREWS:                                   # 柱・耳とケースをつなぐ
+        q = outer.exterior.interpolate(outer.exterior.project(Point(px, py)))
+        webs.append(Point(px, py).buffer(BOSS_R, 32).union(q.buffer(1.5)).convex_hull)
+    wall2d = outer.union(unary_union(webs)).difference(inner).difference(exit_cut)
+    case = cq.Workplane().add(poly_solid(wall2d, Z_PC, Z_TOP1))
+    case = case.union(cq.Workplane().add(poly_solid(outer, Z_TOP0, Z_TOP1)))   # 天井
+    for (px, py) in dz.FAN_SCREWS:
+        top = Z_PCB if (px, py) in PCB_FAN_POSTS else Z_TOP1
+        case = case.union(zcyl(BOSS_R, Z_PC, top, px, py))
+        foot = Point(px, py).buffer(BOSS_R, 48).difference(g['suction'])     # ポリカーボネートのない所は、フレームの上面(3.0)まで下げる
+        if foot.area > 0.5:
+            case = case.union(cq.Workplane().add(poly_solid(foot, Z_FT, Z_PC + 0.05)))
+    # モーターの筒(割りを入れて、横のねじで締める)
+    Z_COL = 13.2
+    col = zcyl(5.15, Z_TOP1, Z_COL, fx, fy).union(
+        cq.Workplane().box(2.8, 5.6, 3.0, centered=False).translate((fx - 7.4, fy - 2.8, 10.0)))
+    case = case.union(col)
+    case = case.cut(cq.Workplane().box(3.6, 0.8, Z_COL - Z_TOP1, centered=False).translate((fx - 7.5, fy - 0.4, Z_TOP1 + 0.3)))
+    case = case.cut(zcyl(4.35, Z_TOP1, Z_COL + 1, fx, fy))
+    case = case.cut(ycyl(SC['hole'] / 2, -3.0, 3.0, fx - 6.1, 11.5))
+    case = case.cut(zcyl(1.5, Z_TOP0 - 0.1, Z_TOP1 + 0.1, fx, fy))           # 軸の穴
+    def nut_pocket(px, py, z_top, out):
+        hexp = cq.Workplane().center(px, py).polygon(6, SC['pocket'] / math.cos(math.pi / 6)).extrude(SC['depth']).translate((0, 0, z_top - SC['depth']))
+        ux, uy = out
+        slot = cq.Workplane().box(5.0 if ux else SC['pocket'], 5.0 if uy else SC['pocket'], SC['depth'], centered=(True, True, False)) \
+            .translate((px + 2.5 * ux, py + 2.5 * uy, z_top - SC['depth']))
+        return hexp.union(slot)
+    for (px, py) in dz.FAN_SCREWS:
+        case = case.cut(zcyl(SC['hole'] / 2, Z_FT - 0.2, Z_PCB + 1, px, py))
+        out = (1, 0) if abs(py) <= 1 else (0, 1 if py > 0 else -1)
+        case = case.cut(nut_pocket(px, py, P2['ear_top'] + 0.01, out))        # フレームのねじのナット(横から)
+        if (px, py) in PCB_FAN_POSTS:
+            case = case.cut(nut_pocket(px, py, Z_PCB + 0.01, out))            # 基板のねじのナット(横から)
+    assert case.val().isValid() and case.val().Volume() > 500, 'ファンのケースの形が壊れた'
+    add('fan_case', case, 'resin')
 imp = zcyl(10.0, 7.4, 8.0, fx, fy).union(zcyl(1.5, 4.5, 8.0, fx, fy))
 for i in range(8):
     imp = imp.union(cq.Workplane().box(6.0, 0.5, 3.6).translate((fx + 7.0, fy, 5.6))
@@ -177,11 +231,11 @@ if CFG['clamp']:
 pcb_outline = unary_union([
     sbox(-21.0, -25.5, -9.0, 25.5),     # 後ろ(マウントの柱の上)
     sbox(-9.0, -25.0, 9.0, 25.0),       # 車輪の間(41T の上は z 13.95 なので |y| 25.8 より内側)
-    sbox(9.0, -21.0, 22.0, 21.0),       # ファンの押さえのまわり
+    sbox(9.0, -21.0, 25.0 if VOLUTE else 22.0, 21.0),       # ファンのまわり(v3 はケースの柱 (21.5, ±17) まで)
     sbox(22.0, -12.0, 40.0, 12.0),      # 首
     sbox(40.0, -23.0, 47.5, 23.0),      # 壁センサの板(フレームの前の辺 50.5 より内側)
 ]).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
-pcb_holes = [Point(FAN).buffer(4.6, 48)] + [Point(fx, sy * BOSS_Y).buffer(SC['hole'] / 2, 24) for sy in (1, -1)] \
+pcb_holes = [Point(FAN).buffer(4.6, 48)] + [Point(p).buffer(SC['hole'] / 2, 24) for p in PCB_FAN_POSTS] \
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
 pcb_poly = pcb_outline.difference(unary_union(pcb_holes))
 add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
@@ -229,8 +283,9 @@ for sy, side in ((1, 'L'), (-1, 'R')):
             add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'nylon')
         add(f'screw_post_{side}', screw(xr, y, Z_PCBT, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
         add(f'nut_post_{side}', nut(xr, y, Z_PCB - SC['depth'] + 0.05), 'nylon')
-        add(f'screw_fan_{side}', screw(fx, sy * BOSS_Y, Z_CL, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
-        add(f'nut_fan_{side}', nut(fx, sy * BOSS_Y, Z_PCB - SC['depth'] + 0.05), 'nylon')
+        fpx, fpy = PCB_FAN_POSTS[0 if sy > 0 else 1]
+        add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
+        add(f'nut_fan_{side}', nut(fpx, fpy, Z_PCB - SC['depth'] + 0.05), 'nylon')
     elif CFG['screws'] == 'small':   # 細いねじ(鉄)8組。基板のねじは短く
         for nm_, x_ in (('mountF', xf), ('mountR', xr)):
             add(f'screw_{nm_}_{side}', screw(x_, y, Z_FB, 5.0), 'steel')
@@ -247,6 +302,13 @@ for sy, side in ((1, 'L'), (-1, 'R')):
         add(f'nut_post_{side}', nut(xr, y, Z_PCB - 2.45), 'nylon')
         add(f'screw_fan_{side}', screw(fx, sy * BOSS_Y, Z_CL, 5.0, up=False, head_h=2.1, head_r=2.75), 'nylon')
         add(f'nut_fan_{side}', nut(fx, sy * BOSS_Y, Z_PCB - 2.45), 'nylon')
+
+if VOLUTE:   # ファンのケースをフレームに留めるねじ(下から鉄の低頭 L5)と、モーターの筒を締めるねじ(ナイロン、横)
+    for i, (px, py) in enumerate(dz.FAN_SCREWS):
+        add(f'screw_fanframe_{i}', screw(px, py, Z_FB, 5.0), 'steel')
+        add(f'nut_fanframe_{i}', nut(px, py, P2['ear_top'] - P2['nut_depth'] + 0.05), 'nylon')
+    add('screw_fanclamp', ycyl(1.0, -2.8, 5.2, fx - 6.1, 11.5).union(ycyl(2.0, -4.4, -2.8, fx - 6.1, 11.5)), 'nylon')
+    add('nut_fanclamp', ycyl(2.3, 2.8, 4.4, fx - 6.1, 11.5).cut(ycyl(1.0, 2.7, 4.5, fx - 6.1, 11.5)), 'nylon')
 
 # ---------------- 質量 ----------------
 def props(shape):

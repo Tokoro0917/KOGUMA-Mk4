@@ -11,7 +11,7 @@ from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp
 
-VER = '45'          # frame v4.5(v4.4 の穴を M2 用の φ2.3 に、2026-10-19)
+VER = '46'          # frame v4.6(v4.5 + 吸引ファンのケースのねじの穴3つ、2026-10-19)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'order')
@@ -21,7 +21,7 @@ g = dz.build(**P)
 ribs = g['vribs']
 slots = [s for (l, h, w) in ribs for s in rp.slots_for(l)]
 plate = g['carbon'].difference(unary_union(slots))
-holes = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]
+holes = dz.holes()
 
 # リブの部品をフレームの下に並べる
 parts = []

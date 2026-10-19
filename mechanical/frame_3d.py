@@ -12,11 +12,11 @@ import design as dz, ribparts as rp
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
-TAG = 'frame_v4_5'   # v4.4 の穴を M2 用の φ2.3 に(2026-10-19)
+TAG = 'frame_v4_6'   # v4.5 + 吸引ファンのケースのねじの穴(2026-10-19)
 P = json.load(open(os.path.join(HERE, '../docs/calc/frame/results/final_params.json')))
 g = dz.build(**P)
 slots = [s for (l, h, w) in g['vribs'] for s in rp.slots_for(l)]
-holes = [Point(x, sy * y).buffer(dz.HOLE_D / 2, 32) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]
+holes = [Point(c).buffer(dz.HOLE_D / 2, 32) for c in dz.holes()]
 plate = g['carbon'].difference(unary_union(slots + holes))
 
 def poly_solid(poly, z0, z1):
