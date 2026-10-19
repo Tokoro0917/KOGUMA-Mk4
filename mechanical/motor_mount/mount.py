@@ -33,6 +33,12 @@ P = dict(
                                       # False: 下から長いねじ1本で、ナットは基板の上
 )
 
+# v1(2026-10-17): M3、柱なし。P_V1 で作り直せる
+P_V1 = dict(P)
+# v2(2026-10-19): ねじを M2 にし(穴 φ2.3、ナット二面幅4.0 → 穴4.2)、後ろの耳の上に基板を受ける柱(z 13.6 まで)を足した
+P.update(boss_r=3.1, nut_af=4.2, nut_depth=1.7, hole_d=2.3, pcb_post=13.6, post_r=3.1, post_nut=True)
+VER = 'v2'
+
 def motor_center(P):
     a = math.radians(P['motor_angle'])
     return (P['axle'][0] - P['cd'] * math.cos(a), P['axle'][1] + P['cd'] * math.sin(a))
@@ -98,5 +104,5 @@ if __name__ == '__main__':
     print(f'体積 {v:.0f} mm³、樹脂(1.2 g/cm³)で {v * 1.2e-3:.2f} g、ナイロン PA12(1.01)で {v * 1.01e-3:.2f} g')
     print('外形', m.val().BoundingBox().__dict__ if False else [round(x, 2) for x in (m.val().BoundingBox().xmin, m.val().BoundingBox().xmax, m.val().BoundingBox().ymin, m.val().BoundingBox().ymax, m.val().BoundingBox().zmin, m.val().BoundingBox().zmax)])
     print('モーターの中心', [round(c, 3) for c in motor_center(P)])
-    cq.exporters.export(m, 'motor_mount_R_v1.step'); cq.exporters.export(m, 'motor_mount_R_v1.stl')
-    cq.exporters.export(m.mirror('XZ'), 'motor_mount_L_v1.step'); cq.exporters.export(m.mirror('XZ'), 'motor_mount_L_v1.stl')
+    cq.exporters.export(m, f'motor_mount_R_{VER}.step'); cq.exporters.export(m, f'motor_mount_R_{VER}.stl')
+    cq.exporters.export(m.mirror('XZ'), f'motor_mount_L_{VER}.step'); cq.exporters.export(m.mirror('XZ'), f'motor_mount_L_{VER}.stl')

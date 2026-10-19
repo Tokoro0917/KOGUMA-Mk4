@@ -11,7 +11,7 @@ from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp
 
-VER = '44'          # frame v4.4(リブなし、マウントの下に窓、筋交いA 2mm、2026-10-18)
+VER = '45'          # frame v4.5(v4.4 の穴を M2 用の φ2.3 に、2026-10-19)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'order')
@@ -62,7 +62,7 @@ def add(poly):
             msp.add_lwpolyline(list(ring.coords)[:-1], close=True)
 add(plate)
 for (x, yy) in holes:
-    msp.add_circle((x, yy), 1.6)
+    msp.add_circle((x, yy), dz.HOLE_D / 2)
 for p in parts:
     add(p)
 fn = os.path.join(OUT, f'MK4FRAME{VER}_T1.dxf')

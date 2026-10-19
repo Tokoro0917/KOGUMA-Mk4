@@ -23,20 +23,21 @@ import design as dz
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else HERE
-V = sys.argv[2] if len(sys.argv) > 2 else 'v1'
+V = sys.argv[2] if len(sys.argv) > 2 else 'v2'
 # ねじの寸法 [mm]: d 径、dk/k 頭の径・高さ(なべ。フレームの下の M3 は低頭)、s/m ナットの二面幅・厚さ、
 # hole 穴、boss 柱・耳の半径(ナットのまわりに0.8mm)、pocket/depth ナットの穴の二面幅・深さ、Lp 基板を留めるねじの長さ
 SPEC = {'M3':   dict(d=3.0, dk=5.5, k=1.5, s=5.5, m=2.4, hole=3.2, boss=3.7, pocket=5.7, depth=2.5, Lp=5.0),
-        'M2':   dict(d=2.0, dk=3.8, k=1.2, s=4.0, m=1.6, hole=2.3, boss=3.1, pocket=4.2, depth=1.7, Lp=4.0),
+        'M2':   dict(d=2.0, dk=3.8, k=1.1, s=4.0, m=1.6, hole=2.3, boss=3.1, pocket=4.2, depth=1.7, Lp=4.0),
         'M1.6': dict(d=1.6, dk=3.2, k=1.3, s=3.2, m=1.3, hole=1.8, boss=2.7, pocket=3.4, depth=1.4, Lp=3.0),
         'M1.4': dict(d=1.4, dk=2.5, k=0.9, s=3.0, m=1.2, hole=1.7, boss=2.6, pocket=3.2, depth=1.3, Lp=3.0)}
 CFG = dict(v0=dict(pcb_t=0.8, wall=0.8, top=0.8, clamp=True, screws='steel', boss_r=3.0, size='M3'),
            v1=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='mixed', boss_r=3.4, size='M3'),
-           v2=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M1.4'),
+           v2=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='m2mix', size='M2'),
+           v2_m14=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M1.4'),
            v2_m16=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M1.6'),
            v2_m2=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M2'))[V]
 SC = SPEC[CFG['size']]
-if CFG['screws'] == 'small':
+if CFG['screws'] in ('small', 'm2mix'):
     CFG['boss_r'] = SC['boss']
 FAST = os.environ.get('FAST') == '1'      # 重さだけ計算する(ぶつかり・STEP・図を省く)
 
@@ -94,9 +95,9 @@ for sx in (1, -1):
     add(f'skid_{"F" if sx > 0 else "R"}', zcyl(2.5, 0.0, Z_FB, sx * 45.0, 0.0), 'ptfe')     # 滑り板(PTFE φ5、接着)
 
 # ---------------- 足回り(右を作って左に写す) ----------------
-P2 = (dict(mm.P, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P, pcb_post=Z_PCB, post_r=3.7, post_nut=True)
+P2 = (dict(mm.P_V1, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P_V1, pcb_post=Z_PCB, post_r=3.7, post_nut=True)
       if CFG['size'] == 'M3' else
-      dict(mm.P, pcb_post=Z_PCB, post_r=SC['boss'], post_nut=True, boss_r=SC['boss'], nut_af=SC['pocket'],
+      dict(mm.P_V1, pcb_post=Z_PCB, post_r=SC['boss'], post_nut=True, boss_r=SC['boss'], nut_af=SC['pocket'],
            nut_depth=SC['depth'], hole_d=SC['hole']))
 mx, mz = mm.motor_center(P2)
 right = {}
@@ -222,7 +223,15 @@ for sy, side in ((1, 'L'), (-1, 'R')):
         add(f'nut_post_{side}', nut(xr, y, Z_PCBT), 'steel')
         add(f'screw_fan_{side}', screw(fx, sy * BOSS_Y, Z_CL, 5.0, up=False), 'steel')      # ファンの押さえ: L5、ナットはケースの柱
         add(f'nut_fan_{side}', nut(fx, sy * BOSS_Y, Z_PCB - 2.45), 'steel')
-    elif CFG['screws'] == 'small':   # v2: 細いねじ(鉄)8組。基板のねじは短く
+    elif CFG['screws'] == 'm2mix':   # v2: M2。フレームの下は鉄の低頭 L5 + ナイロンのナット、基板はナイロンのなべ L4 + ナイロンのナット
+        for nm_, x_ in (('mountF', xf), ('mountR', xr)):
+            add(f'screw_{nm_}_{side}', screw(x_, y, Z_FB, 5.0), 'steel')
+            add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'nylon')
+        add(f'screw_post_{side}', screw(xr, y, Z_PCBT, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
+        add(f'nut_post_{side}', nut(xr, y, Z_PCB - SC['depth'] + 0.05), 'nylon')
+        add(f'screw_fan_{side}', screw(fx, sy * BOSS_Y, Z_CL, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
+        add(f'nut_fan_{side}', nut(fx, sy * BOSS_Y, Z_PCB - SC['depth'] + 0.05), 'nylon')
+    elif CFG['screws'] == 'small':   # 細いねじ(鉄)8組。基板のねじは短く
         for nm_, x_ in (('mountF', xf), ('mountR', xr)):
             add(f'screw_{nm_}_{side}', screw(x_, y, Z_FB, 5.0), 'steel')
             add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'steel')

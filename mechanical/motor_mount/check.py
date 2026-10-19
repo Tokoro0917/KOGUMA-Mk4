@@ -58,10 +58,11 @@ for (l, h, w) in g['vribs']:
     rib = cq.Workplane().box(L, 1.0, h, centered=(False, True, False)).rotate((0, 0, 0), (0, 0, 1), ang).translate((x0, y0, 3.0)).val()
     parts[f'rib_{"front" if x0 > 0 else "rear"}'] = rib
 for nm, (sx, sy) in (('front', P['screw_front']), ('rear', P['screw_rear'])):
-    head = cq.Workplane().center(sx, sy).circle(2.75).extrude(1.5).translate((0, 0, 0.5)).val()
-    shank = cq.Workplane().center(sx, sy).circle(1.5).extrude(5.0).translate((0, 0, 2.0)).val()
-    nut = (cq.Workplane().center(sx, sy).polygon(6, 5.5 / math.cos(math.pi / 6)).extrude(2.4)
-           .cut(cq.Workplane().center(sx, sy).circle(1.5).extrude(2.4)).translate((0, 0, P['ear_top'] - P['nut_depth'])).val())
+    # M2 の低頭 L5(頭 φ3.8 × 1.1)とナット(二面幅4.0 × 1.6)
+    head = cq.Workplane().center(sx, sy).circle(1.9).extrude(1.1).translate((0, 0, 0.9)).val()
+    shank = cq.Workplane().center(sx, sy).circle(1.0).extrude(5.0).translate((0, 0, 2.0)).val()
+    nut = (cq.Workplane().center(sx, sy).polygon(6, 4.0 / math.cos(math.pi / 6)).extrude(1.6)
+           .cut(cq.Workplane().center(sx, sy).circle(1.0).extrude(1.6)).translate((0, 0, P['ear_top'] - P['nut_depth'] + 0.05)).val())
     parts[f'screw_{nm}'] = cq.Compound.makeCompound([head, shank]); parts[f'nut_{nm}'] = nut
 
 def dist(a, b):

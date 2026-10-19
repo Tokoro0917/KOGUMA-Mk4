@@ -82,7 +82,7 @@ def report(params, tag, max_area=0.15, h=0.45):
         for i in p.interiors:
             msp.add_lwpolyline(list(i.coords), close=True, dxfattribs={'layer': 'CARBON_OUTLINE'})
     for c in g['clamps']:
-        msp.add_circle(c.centroid.coords[0], 1.7, dxfattribs={'layer': 'M3_HOLES'})
+        msp.add_circle(c.centroid.coords[0], dz.HOLE_D / 2, dxfattribs={'layer': 'M3_HOLES'})
     sheet = g['suction'].difference(__import__('shapely').geometry.Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
     msp.add_lwpolyline(list(sheet.exterior.coords), close=True, dxfattribs={'layer': 'PC_SHEET'})
     for i in sheet.interiors:

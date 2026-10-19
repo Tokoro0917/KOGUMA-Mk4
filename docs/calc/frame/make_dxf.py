@@ -1,6 +1,6 @@
 """最終案の製作用 DXF(単位 mm、原点は車軸の中心、+x が前)
   CARBON      : カーボン板の外形と窓
-  M3          : M3 の穴(φ3.2)。モーターマウントのねじの位置は仮
+  HOLE        : モーターマウントのねじの穴(M2、φ2.3)
   RIB_SLOT    : リブを差す溝(リブがあるときだけ)
   RIB_PARTS   : リブの部品(同じ1mmのカーボン板から切る)。板の下に並べて置く(リブがあるときだけ)
   PC_SHEET    : ポリカーボネート 0.2mm の板(吸引する面)。板の下に置く
@@ -22,7 +22,7 @@ holes = [Point(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]
 sheet = g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
 
 doc = ezdxf.new(units=4)   # mm
-for name, col in (('CARBON', 7), ('M3', 1), ('RIB_SLOT', 3), ('RIB_PARTS', 5), ('PC_SHEET', 4), ('TEXT', 2)):
+for name, col in (('CARBON', 7), ('HOLE', 1), ('RIB_SLOT', 3), ('RIB_PARTS', 5), ('PC_SHEET', 4), ('TEXT', 2)):
     doc.layers.add(name, color=col)
 msp = doc.modelspace()
 def add_poly(p, layer, dx=0, dy=0):
@@ -33,7 +33,7 @@ add_poly(g['carbon'], 'CARBON')
 for s in slots:
     add_poly(s, 'RIB_SLOT')
 for h in holes:
-    msp.add_circle(h.coords[0], 1.6, dxfattribs={'layer': 'M3'})
+    msp.add_circle(h.coords[0], dz.HOLE_D / 2, dxfattribs={'layer': 'HOLE'})
 add_poly(sheet, 'PC_SHEET', dy=-85)
 msp.add_text('PC 0.2mm (glue on TOP of carbon over suction area)', dxfattribs={'layer': 'TEXT', 'height': 2.0}).set_placement((-30, -105))
 # リブの部品
@@ -59,7 +59,7 @@ for p in g['pc']:
 for (l, h, w) in ribs:
     ax.plot(*l.xy, color='#e6550d', lw=3, solid_capstyle='butt')
 for hh in holes:
-    ax.plot(*hh.buffer(1.6).exterior.xy, color='r', lw=1)
+    ax.plot(*hh.buffer(dz.HOLE_D / 2).exterior.xy, color='r', lw=1)
 ax.plot(*Point(dz.FAN_X, 0).buffer(16).exterior.xy, 'g:', lw=1)
 ax.plot(*g['suction'].exterior.xy, 'r--', lw=.8)
 def note(x, y, s, dx=0, dy=0):
@@ -74,7 +74,7 @@ note(30, 28.3, f"rim {P['rim']}mm", 3, 6)
 note(dz.XE - 1.5, -12, f"front edge {P['end_edge']}mm", -12, -14)
 note(25, 20.4, f"G brace {P['brace_w']}mm" + (f" + rib h{P['v_rib_h']:.0f}" if ribs else ''), -8, 9)
 for x, y in dz.MOUNT_SCREWS:
-    note(x, -y, f'M3 ({x}, {-y})', -6, -9)
+    note(x, -y, f'{dz.SCREW} ({x}, {-y})', -6, -9)
 if 'A' in P['braces']:
     note(38.9, 11.4, f"brace A {P.get('brace_w_each', {}).get('A', P['brace_w'])}mm", 4, -3)
 note(dz.FAN_X + 11, -11, 'fan dia.32 (dotted)', 4, -8)
