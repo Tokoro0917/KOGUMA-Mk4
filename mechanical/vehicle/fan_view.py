@@ -41,10 +41,10 @@ while it.More():
     if st.IsFree_s(l) and st.IsShape_s(l):
         walk(l, TopLoc_Location(), name(l))
 
-KEEP = ('frame', 'pc_sheet', 'fan_case', 'impeller', 'fan_motor', 'fan_shaft', 'screw_fanframe', 'nut_fanframe',
+KEEP = ('frame', 'pc_sheet', 'fan_case', 'impeller', 'fan_motor', 'fan_shaft', 'screw_fanframe', 'nut_fanframe', 'screw_fanjoint',
         'screw_fanclamp', 'nut_fanclamp', 'motor_', 'mount_', 'skirt')
 COL = {'frame': (0.25, 0.24, 0.22), 'pc_sheet': (0.62, 0.79, 0.88), 'fan_case': (0.95, 0.56, 0.17), 'impeller': (0.95, 0.85, 0.3),
-       'fan_motor': (0.65, 0.65, 0.68), 'fan_shaft': (0.3, 0.3, 0.32), 'screw_fanframe': (0.3, 0.3, 0.32),
+       'fan_motor': (0.65, 0.65, 0.68), 'fan_shaft': (0.3, 0.3, 0.32), 'screw_fanframe': (0.3, 0.3, 0.32), 'screw_fanjoint': (0.95, 0.95, 0.9),
        'nut_fanframe': (0.95, 0.95, 0.9), 'screw_fanclamp': (0.95, 0.95, 0.9), 'nut_fanclamp': (0.95, 0.95, 0.9),
        'motor_': (0.65, 0.65, 0.68), 'mount_': (0.95, 0.56, 0.17), 'skirt': (0.9, 0.9, 0.6)}
 box = cq.Solid.makeBox(48, 50, 40, pnt=cq.Vector(-8, -25, -1))
@@ -83,7 +83,7 @@ for nm, col in (('frame', '#5f5a50'), ('fan_case', '#f28e2b'), ('impeller', '#e8
     v = np.array([(p.x, p.y) for p in v])
     for tri in np.array(t):
         ax.fill(*v[tri].T, color=col, lw=0)
-for nm in ('screw_fanframe_0', 'screw_fanframe_1', 'screw_fanframe_2', 'fan_motor'):
+for nm in [n for n in parts if n.startswith(('screw_fanframe_', 'screw_fanjoint_'))] + ['fan_motor']:
     bb = parts[nm].BoundingBox()
     ax.add_patch(plt.Circle(((bb.xmin + bb.xmax) / 2, (bb.ymin + bb.ymax) / 2), (bb.xmax - bb.xmin) / 2, fill=False, ec='k', lw=1, ls='--'))
 if 'v3' in sys.argv[1]:

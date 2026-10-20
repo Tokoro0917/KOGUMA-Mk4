@@ -12,7 +12,7 @@ import design as dz, ribparts as rp
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'frame')   # 製作用のファイルは mechanical/frame に置く
-TAG = 'frame_v6_3'   # ねじの通し穴を φ2.2 に(2026-10-20)
+TAG = 'frame_v6_4'   # ファンの台の左右の穴をなくした(2026-10-20)
 P = json.load(open(os.path.join(HERE, '../docs/calc/frame/results/final_params.json')))
 g = dz.build(**P)
 slots = [s for (l, h, w) in g['vribs'] for s in rp.slots_for(l)]

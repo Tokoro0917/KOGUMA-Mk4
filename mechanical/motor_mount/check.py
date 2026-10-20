@@ -51,7 +51,7 @@ geoms = getattr(car, 'geoms', [car])
 parts['frame'] = cq.Compound.makeCompound([poly_solid(p, 2.0, 3.0) for p in geoms if p.area > 1])
 sheet = g['suction'].difference(__import__('shapely').geometry.Point(fd.FAN_X, 0).buffer(fd.FAN_R, 48)).intersection(sbox(-60, -40, 60, 0))
 parts['pc_sheet'] = poly_solid(sheet, 3.0, 3.2)
-parts['fan(仮 φ32 h6)'] = cq.Workplane().center(fd.FAN_X, 0).circle(16).extrude(6).translate((0, 0, 3.2)).val()
+parts['fan_ring(φ25.2 h6.8)'] = cq.Workplane().center(fd.FAN_X, 0).circle(12.6).extrude(6.8).translate((0, 0, 3.2)).val()   # ファンを囲う輪の外側(機体の案 v4。2026-10-20 に仮の φ32 から)
 for (l, h, w) in g['vribs']:
     (x0, y0), (x1, y1) = l.coords[0], l.coords[-1]
     if y0 > 0: continue
