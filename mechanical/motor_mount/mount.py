@@ -47,7 +47,10 @@ P_V4 = dict(P)
 # v5(2026-10-20): 前の耳から腕を伸ばしてファンの台を持つ(継ぎ目 (10, -16)、上から M2 でねじ山に留める)。
 #                 前の耳の上にも基板を受ける柱を立てる(ファンの台の左右の柱をやめたため)
 P.update(fan_joint=(10.0, -16.0), joint_r=3.0, joint_z=(4.0, 8.8), arm_w=3.4, pcb_post_front=True)
-VER = 'v5'
+P_V5 = dict(P)
+# v6(2026-10-20): 羽根 φ32・囲い φ33(外径 φ34.2)にしたので、継ぎ目を (20, -22) へ(前の耳からまっすぐ前へ12mm)
+P.update(fan_joint=(20.0, -22.0))
+VER = 'v6'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])

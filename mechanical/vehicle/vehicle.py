@@ -179,7 +179,7 @@ if not FRAME_FAN:          # v0〜v2: 丸いケース(左右に窓)、ポリカ�
 elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーターを真ん中に持つ(2026-10-19)。フレームにねじ3本で留める。上へ吐き出す
     BOSS_R = CFG['boss_r']
     W = CFG['wall']
-    R_RING, Z_RING = 12.0, 10.0               # 輪の内側の半径(羽根 φ20 とのすき間 2mm)、輪の上
+    R_RING, Z_RING = 16.5, 10.0               # 輪の内側の半径(囲いの内径 φ33、羽根 φ32 とのすき間 0.5mm。2026-10-20)、輪の上
     Z_ARM0, Z_ARM1, ARM_W = 8.8, 10.8, 3.0    # 腕(羽根の上 8.0 から 0.8 上)
     Z_TOP1 = 9.4; Z_TOP0 = Z_ARM0             # モーターの前の面を受けるハブの底
     Z_COL = 13.2
@@ -275,9 +275,10 @@ else:                   # v3: 渦巻きのケース(ボリュート)。フレー
             case = case.cut(nut_pocket(px, py, Z_PCB + 0.01, out))            # 基板のねじのナット(横から)
     assert case.val().isValid() and case.val().Volume() > 500, 'ファンのケースの形が壊れた'
     add('fan_case', case, 'resin')
-imp = zcyl(10.0, 7.4, 8.0, fx, fy).union(zcyl(1.5, 4.5, 8.0, fx, fy))
+R_IMP = 16.0 if SPIDER else 10.0      # 羽根の半径(2026-10-20: φ32)
+imp = zcyl(R_IMP, 7.4, 8.0, fx, fy).union(zcyl(1.5, 4.5, 8.0, fx, fy))
 for i in range(8):
-    imp = imp.union(cq.Workplane().box(6.0, 0.5, 3.6).translate((fx + 7.0, fy, 5.6))
+    imp = imp.union(cq.Workplane().box(R_IMP - 4.0, 0.5, 3.6).translate((fx + (R_IMP + 4.0) / 2, fy, 5.6))
                     .rotate((fx, fy, 0), (fx, fy, 1), i * 45))
 imp = imp.cut(zcyl(0.6, 4.4, 8.1, fx, fy))
 add('impeller', imp, 'resin')
@@ -298,8 +299,9 @@ if CFG['clamp']:
 if SPIDER:      # 2026-10-19: 絵の形(U字)。後ろは電池の下、左右の腕で前の壁センサの耳と前の角の横の壁センサへ。真ん中の前はファンの上で開ける
     _half = Polygon([(-19.0, 0.0), (-19.0, 26.0), (-8.0, 26.0), (-8.0, 25.0), (7.0, 25.0), (8.5, 28.0), (9.0, 33.0),   # 41T の上(|x| ≤ 8)は |y| ≤ 25
                       (16.0, 33.5), (24.0, 31.0), (34.0, 28.5),
-                     (40.0, 27.5), (44.5, 25.0), (45.0, 22.0), (42.0, 18.5), (34.0, 15.0), (22.0, 14.0), (14.2, 14.0), (14.2, 0.0)])
-    pcb_outline = unary_union([_half, affinity.scale(_half, 1, -1, origin=(0, 0))]).difference(Point(FAN).buffer(9.5, 64))
+                     (40.0, 27.5), (44.5, 25.0), (45.0, 22.0), (42.0, 19.5), (34.0, 17.5), (14.2, 17.5), (14.2, 0.0)])
+    # 真ん中の前はファンの囲い(内径 φ33)の上を開ける(半径17.5、腕の内側は |y| ≥ 17.5。2026-10-20)
+    pcb_outline = unary_union([_half, affinity.scale(_half, 1, -1, origin=(0, 0))]).difference(Point(FAN).buffer(17.5, 64))
     pcb_outline = pcb_outline.buffer(-1.5, join_style=1).buffer(1.5, join_style=1).buffer(1.0, join_style=1).buffer(-1.0, join_style=1)
 else:
     pcb_outline = unary_union([

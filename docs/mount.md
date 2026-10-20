@@ -1,5 +1,7 @@
-# MK4 モーターマウント v5
+# MK4 モーターマウント v6
 
+> **2026-10-20 v6**: 吸引ファンを**羽根 φ32、囲いの内径 φ33**(輪の外側 φ34.2)にしたので、**継ぎ目を (10, ±16) から (20, ±22) へ**動かした(輪の外側から約2.6mm外)。腕は前の耳 (8, ±22) からまっすぐ前へ伸びる。1個1.64g。ファンの輪とマウントの前の柱のすき間は約2.6mm。STEP・STLは`motor_mount_R_v6.*`・`_L_v6.*`。v5は`mount.py`の`P_V5`で作り直せる。
+>
 > **2026-10-20 v5**: **前の耳から腕を伸ばして、吸引ファンの台を持つ**(継ぎ目 (10, ±16)、腕は幅3.4mm・z 4.0〜8.8、継ぎ目の柱は半径3.0)。ファンの台は継ぎ目に載せ、上からナイロンのM2 L6でマウントの腕のねじ山に留める。ファンの台の左右の柱(フレームに留めていた (22, ±18))はなくした。**前の耳の上にも基板を受ける柱**(半径3.1、z 13.6まで、上にねじ山)を立てた。1個1.53g(v4は1.14g)。ファンの輪とのすき間0.94mm。STEP・STLは`motor_mount_R_v5.*`・`_L_v5.*`。v4は`mount.py`の`P_V4`で作り直せる。
 >
 > **2026-10-20 v4**: **ナットをやめ、ねじの穴に M2 のねじ山を切る(タップ)**。下穴は φ1.6(印刷のあと φ1.6 のドリルを通してから M2 のタップを立てる)。前の耳・後ろの耳(下からフレームのねじ、かみ合いは耳の高さ4mm)と、後ろの柱の上(基板のねじ)。ナットの穴がなくなって肉が増え、**1個1.14g**(v3は1.02g、ナット3個 0.06g はなくなる)。ナットのまわりの薄い壁(約0.7mm)もなくなった。STEP・STLは`motor_mount_R_v4.*`・`_L_v4.*`。v3は`mount.py`の`P_V3`で作り直せる。
@@ -10,9 +12,9 @@
 
 2026-10-17作成。ToraNeko.Mk3の足回り(車輪・41T・平行ピン・LF-630・磁石・エンコーダ基板)をそのまま使い、MK4のモーター(NFP-D8620、直径8.6 × 20mm)と41T:13Tに合わせて作った。CADは`mechanical/motor_mount/`(CadQueryのスクリプト、STEP、STL)。
 
-![断面](img/mount/mount_v5_sections.png)
+![断面](img/mount/mount_v6_sections.png)
 
-![組み立て](img/mount/mount_v5_3d.png)
+![組み立て](img/mount/mount_v6_3d.png)
 
 ## 1. 決めたこと
 
@@ -79,7 +81,7 @@ ToraNeko.Mk3のSTEPから足回りの部品を取り出してMK4の位置に置�
 
 ## 5. フレームへの影響(frame_v4.1 → v4.2)
 
-マウントに合わせてフレームを直し、強度を計算し直した(`docs/frame.md`)。今の形は**frame_v6.2**(2026-10-19。frame_v6 を前後100 × 左右70mmにし、ねじの穴を1mm単位に、吸引する面を60 × 30mmにした。マウントの下の窓は x −13.6〜−4.5、|y| 18.3〜23.8)、DXFは`mechanical/frame/frame_v6_4.dxf`。
+マウントに合わせてフレームを直し、強度を計算し直した(`docs/frame.md`)。今の形は**frame_v6.2**(2026-10-19。frame_v6 を前後100 × 左右70mmにし、ねじの穴を1mm単位に、吸引する面を60 × 30mmにした。マウントの下の窓は x −13.6〜−4.5、|y| 18.3〜23.8)、DXFは`mechanical/frame/frame_v6_5.dxf`(frame v6.5)。
 
 - タイヤ・ホイール・41Tの穴: y 25.8〜32.3(幅6.5mm)、前後13mm(v4は9 × 13.5mm)。マウントが載る板が増える。**v4.7から前後14mm**(角でタイヤとのすき間が0.26mmだったため)
 - ねじの穴: (8, ±22)、(−17, ±22)(v6.1から。v6までは (7.85, ±22.1)、(−17.15, ±22.1))。v4.5からM2用のφ2.3(v4.4まではM3用のφ3.2)
@@ -112,8 +114,8 @@ ToraNeko.Mk3のSTEPから足回りの部品を取り出してMK4の位置に置�
 | ファイル | 中身 |
 |---|---|
 | `mechanical/motor_mount/mount.py` | マウントのCadQueryのスクリプト(寸法は先頭の`P`) |
-| `mechanical/motor_mount/motor_mount_R_v5.step` / `_L_v5.step` | 右・左のマウント(Fusionで読み込む) |
-| `mechanical/motor_mount/motor_mount_R_v5.stl` / `_L_v5.stl` | JLC3DPに出す用 |
+| `mechanical/motor_mount/motor_mount_R_v6.step` / `_L_v6.step` | 右・左のマウント(Fusionで読み込む) |
+| `mechanical/motor_mount/motor_mount_R_v6.stl` / `_L_v6.stl` | JLC3DPに出す用 |
 | `mechanical/motor_mount/mk4_drive_R_check.step` | 確認用の組み立て(右側: マウント、モーター、ピニオン、足回り、フレーム、ねじ) |
 | `mechanical/motor_mount/tn_drive_mk4_right.step` | ToraNeko.Mk3の足回りの部品をMK4の位置に置いたもの |
 | `mechanical/motor_mount/check.py`、`check_result.txt` | ぶつかりとすき間の確認 |

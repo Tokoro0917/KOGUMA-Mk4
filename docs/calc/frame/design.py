@@ -13,7 +13,7 @@ MOUNT_SCREWS = [(-17.0, 22.0), (8.0, 22.0)]    # モーターマウントのね�
 BOSS_R = 3.7                                    # ねじのまわりの肉(直径7.4mm。M3 のときに決めた大きさのまま)
 SCREW, HOLE_D = 'M2', 2.2                       # ねじは M2、通し穴 φ2.2(2026-10-19 に M3 から変更。2026-10-20 に 2.3 → 2.2、JIS の精級)
 FAN_SCREWS = [(33.0, 0.0)]                      # 吸引ファンの台をフレームに留めるねじ(前の耳)。2026-10-20 に左右の柱 (22, ±18) をやめ、台はモーターマウントの腕に留める
-FAN_JOINTS = [(10.0, 16.0), (10.0, -16.0)]       # ファンの台とモーターマウントの腕をつなぐねじ(上から M2、マウントの腕にねじ山)
+FAN_JOINTS = [(20.0, 22.0), (20.0, -22.0)]       # ファンの台とモーターマウントの腕をつなぐねじ(上から M2、マウントの腕にねじ山)。2026-10-20 に羽根 φ32・囲い φ33 にして (10, ±16) から
 FAN_BOSS_R = 3.3                                # ファンのねじのまわりに必ず残す肉(穴の縁から2.15mm。窓がここにかからない)
 
 def holes():
@@ -149,6 +149,7 @@ def build(**kw):
     holes = [rounded(g, P['fillet']) for g in getattr(ends, 'geoms', [ends]) if g.area > P['end_window_min']]
     holes = [h for g in holes for h in getattr(g, 'geoms', [g]) if not h.is_empty]
     holes = no_boss(holes, fan_boss, P['fillet'])
+    holes = no_boss(holes, Point(FAN_X, 0).buffer(FAN_R + P['fan_ring'], 64), P['fillet'])   # ファンの真下(半径 FAN_R + fan_ring)はカーボンで埋める(2026-10-20)
     # 吸引する面の中の窓(ポリカーボネートでふさぐ)
     win = box(-SX + P['land'], -SY + P['land'], SX - P['land'], SY - P['land'])
     if P['inner_spine'] > 0:
