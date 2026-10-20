@@ -178,7 +178,7 @@ if not FRAME_FAN:          # v0〜v2: 丸いケース(左右に窓)、ポリカ�
     PCB_FAN_POSTS = [(fx, sy * BOSS_Y) for sy in (1, -1)]
 elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーターを真ん中に持つ(2026-10-19)。フレームにねじ3本で留める。上へ吐き出す
     BOSS_R = CFG['boss_r']
-    W = CFG['wall']
+    W = 1.0                                   # 輪の壁(2026-10-20 に 0.6 から。前の耳のねじをやめた分、輪を太くして台を硬くする)
     R_RING, Z_RING = 16.5, 10.0               # 輪の内側の半径(囲いの内径 φ33、羽根 φ32 とのすき間 0.5mm。2026-10-20)、輪の上
     Z_ARM0, Z_ARM1, ARM_W = 8.8, 10.8, 3.0    # 腕(羽根の上 8.0 から 0.8 上)
     Z_TOP1 = 9.4; Z_TOP0 = Z_ARM0             # モーターの前の面を受けるハブの底
@@ -186,6 +186,11 @@ elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーター�
     # 基板はモーターマウントの前後の耳の上の柱で受ける(2026-10-20。ファンの台の左右の柱はやめた)
     PCB_FAN_POSTS = [(dz.MOUNT_SCREWS[1][0], sy * dz.MOUNT_SCREWS[1][1]) for sy in (1, -1)]
     case = zcyl(R_RING + W, Z_PC, Z_RING, fx, fy).cut(zcyl(R_RING, Z_PC - 0.1, Z_RING + 0.1, fx, fy))   # 輪(囲い)
+    ring_foot = Point(fx, fy).buffer(R_RING + W, 128).difference(Point(fx, fy).buffer(R_RING, 128)).difference(g['suction'])
+    if ring_foot.area > 0.05:            # 塩ビのない所(吸引する面の外)は、輪をフレームの上面(3.0)まで下げてすき間をふさぐ
+        case = case.union(cq.Workplane().add(poly_solid(ring_foot, Z_FT, Z_PC + 0.05)))
+    if not dz.FAN_SCREWS:                # 前の腕は輪まで(2026-10-20、前の耳のねじをやめた)
+        case = case.union(cq.Workplane().box(R_RING + W / 2, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False)).translate((fx, fy, Z_ARM0)))
     case = case.union(zcyl(5.35, Z_TOP0, Z_COL, fx, fy))                                              # ハブ
     for (px, py) in dz.FAN_JOINTS:       # マウントの腕に載せる耳(上から M2 で留める)
         L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
