@@ -28,20 +28,21 @@ V = sys.argv[2] if len(sys.argv) > 2 else 'v4'
 # ねじの寸法 [mm]: d 径、dk/k 頭の径・高さ(なべ。フレームの下の M3 は低頭)、s/m ナットの二面幅・厚さ、
 # hole 穴、boss 柱・耳の半径(ナットのまわりに0.8mm)、pocket/depth ナットの穴の二面幅・深さ、Lp 基板を留めるねじの長さ
 SPEC = {'M3':   dict(d=3.0, dk=5.5, k=1.5, s=5.5, m=2.4, hole=3.2, boss=3.7, pocket=5.7, depth=2.5, Lp=5.0),
-        'M2':   dict(d=2.0, dk=3.8, k=1.1, s=4.0, m=1.6, hole=2.3, boss=3.1, pocket=4.2, depth=1.7, Lp=4.0),
+        'M2':   dict(d=2.0, dk=3.8, k=1.1, s=4.0, m=1.6, hole=2.2, boss=3.1, pocket=4.2, depth=1.7, Lp=4.0, tap=1.6),   # 2026-10-20: 通し穴 2.3 → 2.2、タップの下穴 1.6
         'M1.6': dict(d=1.6, dk=3.2, k=1.3, s=3.2, m=1.3, hole=1.8, boss=2.7, pocket=3.4, depth=1.4, Lp=3.0),
         'M1.4': dict(d=1.4, dk=2.5, k=0.9, s=3.0, m=1.2, hole=1.7, boss=2.6, pocket=3.2, depth=1.3, Lp=3.0)}
 CFG = dict(v0=dict(pcb_t=0.8, wall=0.8, top=0.8, clamp=True, screws='steel', boss_r=3.0, size='M3'),
            v1=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='mixed', boss_r=3.4, size='M3'),
            v2=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='m2mix', size='M2'),
            v3=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='m2mix', size='M2', fan='volute'),
-           v4=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='m2mix', size='M2', fan='spider'),
+           v4=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='m2mix', size='M2', fan='spider', tap=True),   # tap: 印刷の部品にねじ山を切る(ナットなし、2026-10-20)
            v2_m14=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M1.4'),
            v2_m16=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M1.6'),
            v2_m2=dict(pcb_t=0.6, wall=0.6, top=0.6, clamp=False, screws='small', size='M2'))[V]
 SC = SPEC[CFG['size']]
 if CFG['screws'] in ('small', 'm2mix'):
     CFG['boss_r'] = SC['boss']
+TAP = CFG.get('tap', False)
 FAST = os.environ.get('FAST') == '1'      # 重さだけ計算する(ぶつかり・STEP・図を省く)
 
 # ---------------- 高さ(床から) ----------------
@@ -108,6 +109,11 @@ P2 = (dict(mm.P_V1, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P_V
       if CFG['size'] == 'M3' else
       dict(mm.P_V1, pcb_post=Z_PCB, post_r=SC['boss'], post_nut=True, boss_r=SC['boss'], nut_af=SC['pocket'],
            nut_depth=SC['depth'], hole_d=SC['hole']))
+if TAP:
+    P2 = dict(P2, hole_d=SC['tap'], tap=True)
+if CFG.get('fan') == 'spider':      # 2026-10-20: 前の耳から腕を伸ばしてファンの台を持ち、前の耳の上にも基板の柱(mount.py v5)
+    _jx, _jy = dz.FAN_JOINTS[0]
+    P2 = dict(P2, fan_joint=(_jx, -abs(_jy)), joint_r=mm.P['joint_r'], joint_z=mm.P['joint_z'], arm_w=mm.P['arm_w'], pcb_post_front=True)
 (xr_, yr_), (xf_, yf_) = dz.MOUNT_SCREWS
 P2 = dict(P2, screw_front=(xf_, -yf_), screw_rear=(xr_, -yr_))     # ねじの位置はフレームに合わせる(右側なので y は負)
 mx, mz = mm.motor_center(P2)
@@ -177,9 +183,16 @@ elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーター�
     Z_ARM0, Z_ARM1, ARM_W = 8.8, 10.8, 3.0    # 腕(羽根の上 8.0 から 0.8 上)
     Z_TOP1 = 9.4; Z_TOP0 = Z_ARM0             # モーターの前の面を受けるハブの底
     Z_COL = 13.2
-    PCB_FAN_POSTS = [p for p in dz.FAN_SCREWS if abs(p[1]) > 1]
+    # 基板はモーターマウントの前後の耳の上の柱で受ける(2026-10-20。ファンの台の左右の柱はやめた)
+    PCB_FAN_POSTS = [(dz.MOUNT_SCREWS[1][0], sy * dz.MOUNT_SCREWS[1][1]) for sy in (1, -1)]
     case = zcyl(R_RING + W, Z_PC, Z_RING, fx, fy).cut(zcyl(R_RING, Z_PC - 0.1, Z_RING + 0.1, fx, fy))   # 輪(囲い)
     case = case.union(zcyl(5.35, Z_TOP0, Z_COL, fx, fy))                                              # ハブ
+    for (px, py) in dz.FAN_JOINTS:       # マウントの腕に載せる耳(上から M2 で留める)
+        L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
+        case = case.union(cq.Workplane().box(L, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
+                          .rotate((0, 0, 0), (0, 0, 1), ang).translate((fx, fy, Z_ARM0)))
+        case = case.union(zcyl(3.0, Z_ARM0, Z_ARM1, px, py))
+        case = case.cut(zcyl(SC['hole'] / 2, Z_ARM0 - 0.1, Z_ARM1 + 0.1, px, py))
     for (px, py) in dz.FAN_SCREWS:
         L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
         arm = (cq.Workplane().box(L, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
@@ -203,7 +216,9 @@ elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーター�
             .translate((px + 2.5 * ux, py + 2.5 * uy, z_top - SC['depth']))
         return hexp.union(slot)
     for (px, py) in dz.FAN_SCREWS:
-        case = case.cut(zcyl(SC['hole'] / 2, Z_FT - 0.2, Z_PCB + 1, px, py))
+        case = case.cut(zcyl((SC['tap'] if TAP else SC['hole']) / 2, Z_FT - 0.2, Z_PCB + 1, px, py))
+        if TAP:
+            continue          # ねじ山を切る(下からフレームのねじ、柱の上から基板のねじ)
         out = (1, 0) if abs(py) <= 1 else (0, 1 if py > 0 else -1)
         case = case.cut(nut_pocket(px, py, P2['ear_top'] + 0.01, out))
         if (px, py) in PCB_FAN_POSTS:
@@ -340,12 +355,15 @@ for sy, side in ((1, 'L'), (-1, 'R')):
     elif CFG['screws'] == 'm2mix':   # v2: M2。フレームの下は鉄の低頭 L5 + ナイロンのナット、基板はナイロンのなべ L4 + ナイロンのナット
         for nm_, x_ in (('mountF', xf), ('mountR', xr)):
             add(f'screw_{nm_}_{side}', screw(x_, y, Z_FB, 5.0), 'steel')
-            add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'nylon')
+            if not TAP:
+                add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'nylon')
         add(f'screw_post_{side}', screw(xr, y, Z_PCBT, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
-        add(f'nut_post_{side}', nut(xr, y, Z_PCB - SC['depth'] + 0.05), 'nylon')
+        if not TAP:
+            add(f'nut_post_{side}', nut(xr, y, Z_PCB - SC['depth'] + 0.05), 'nylon')
         fpx, fpy = PCB_FAN_POSTS[0 if sy > 0 else 1]
         add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
-        add(f'nut_fan_{side}', nut(fpx, fpy, Z_PCB - SC['depth'] + 0.05), 'nylon')
+        if not TAP:
+            add(f'nut_fan_{side}', nut(fpx, fpy, Z_PCB - SC['depth'] + 0.05), 'nylon')
     elif CFG['screws'] == 'small':   # 細いねじ(鉄)8組。基板のねじは短く
         for nm_, x_ in (('mountF', xf), ('mountR', xr)):
             add(f'screw_{nm_}_{side}', screw(x_, y, Z_FB, 5.0), 'steel')
@@ -366,7 +384,11 @@ for sy, side in ((1, 'L'), (-1, 'R')):
 if FRAME_FAN:   # ファンのケースをフレームに留めるねじ(下から鉄の低頭 L5)と、モーターの筒を締めるねじ(ナイロン、横)
     for i, (px, py) in enumerate(dz.FAN_SCREWS):
         add(f'screw_fanframe_{i}', screw(px, py, Z_FB, 5.0), 'steel')
-        add(f'nut_fanframe_{i}', nut(px, py, P2['ear_top'] - P2['nut_depth'] + 0.05), 'nylon')
+        if not TAP:
+            add(f'nut_fanframe_{i}', nut(px, py, P2['ear_top'] - P2['nut_depth'] + 0.05), 'nylon')
+    if SPIDER:
+        for i, (px, py) in enumerate(dz.FAN_JOINTS):   # ファンの台をマウントの腕に留める(ナイロンのなべ L6、上から)
+            add(f'screw_fanjoint_{i}', screw(px, py, 10.8, 6.0, up=False, head_h=1.6, head_r=2.0), 'nylon')
     add('screw_fanclamp', ycyl(1.0, -2.8, 5.2, fx - 6.1, 11.5).union(ycyl(2.0, -4.4, -2.8, fx - 6.1, 11.5)), 'nylon')
     add('nut_fanclamp', ycyl(2.3, 2.8, 4.4, fx - 6.1, 11.5).cut(ycyl(1.0, 2.7, 4.5, fx - 6.1, 11.5)), 'nylon')
 

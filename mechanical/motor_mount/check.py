@@ -51,7 +51,7 @@ geoms = getattr(car, 'geoms', [car])
 parts['frame'] = cq.Compound.makeCompound([poly_solid(p, 2.0, 3.0) for p in geoms if p.area > 1])
 sheet = g['suction'].difference(__import__('shapely').geometry.Point(fd.FAN_X, 0).buffer(fd.FAN_R, 48)).intersection(sbox(-60, -40, 60, 0))
 parts['pc_sheet'] = poly_solid(sheet, 3.0, 3.2)
-parts['fan(仮 φ32 h6)'] = cq.Workplane().center(fd.FAN_X, 0).circle(16).extrude(6).translate((0, 0, 3.2)).val()
+parts['fan_ring(φ25.2 h6.8)'] = cq.Workplane().center(fd.FAN_X, 0).circle(12.6).extrude(6.8).translate((0, 0, 3.2)).val()   # ファンを囲う輪の外側(機体の案 v4。2026-10-20 に仮の φ32 から)
 for (l, h, w) in g['vribs']:
     (x0, y0), (x1, y1) = l.coords[0], l.coords[-1]
     if y0 > 0: continue
@@ -61,10 +61,12 @@ for (l, h, w) in g['vribs']:
 for nm, (sx, sy) in (('front', P['screw_front']), ('rear', P['screw_rear'])):
     # M2 の低頭 L5(頭 φ3.8 × 1.1)とナット(二面幅4.0 × 1.6)
     head = cq.Workplane().center(sx, sy).circle(1.9).extrude(1.1).translate((0, 0, 0.9)).val()
-    shank = cq.Workplane().center(sx, sy).circle(1.0).extrude(5.0).translate((0, 0, 2.0)).val()
+    shank = cq.Workplane().center(sx, sy).circle(P['hole_d'] / 2 if P.get('tap') else 1.0).extrude(5.0).translate((0, 0, 2.0)).val()   # タップのときは下穴の径(ねじ山がかみ合う分は重なりにしない)
     nut = (cq.Workplane().center(sx, sy).polygon(6, 4.0 / math.cos(math.pi / 6)).extrude(1.6)
            .cut(cq.Workplane().center(sx, sy).circle(1.0).extrude(1.6)).translate((0, 0, P['ear_top'] - P['nut_depth'] + 0.05)).val())
-    parts[f'screw_{nm}'] = cq.Compound.makeCompound([head, shank]); parts[f'nut_{nm}'] = nut
+    parts[f'screw_{nm}'] = cq.Compound.makeCompound([head, shank])
+    if not P.get('tap'):
+        parts[f'nut_{nm}'] = nut
 
 def dist(a, b):
     d = BRepExtrema_DistShapeShape(a.wrapped, b.wrapped); d.Perform()

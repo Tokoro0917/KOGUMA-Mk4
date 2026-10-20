@@ -40,7 +40,14 @@ P.update(boss_r=3.1, nut_af=4.2, nut_depth=1.7, hole_d=2.3, pcb_post=13.6, post_
 P_V2 = dict(P)
 # v3(2026-10-19): フレーム v6.1 に合わせて、ねじの位置を 1mm 単位に((7.85, -22.1)、(-17.15, -22.1) から)
 P.update(screw_front=(8.0, -22.0), screw_rear=(-17.0, -22.0))
-VER = 'v3'
+P_V3 = dict(P)
+# v4(2026-10-20): ナットをやめて、ねじの穴に M2 のねじ山を切る(タップ)。下穴 φ1.6、ナットの穴はなくす
+P.update(hole_d=1.6, tap=True)
+P_V4 = dict(P)
+# v5(2026-10-20): 前の耳から腕を伸ばしてファンの台を持つ(継ぎ目 (10, -16)、上から M2 でねじ山に留める)。
+#                 前の耳の上にも基板を受ける柱を立てる(ファンの台の左右の柱をやめたため)
+P.update(fan_joint=(10.0, -16.0), joint_r=3.0, joint_z=(4.0, 8.8), arm_w=3.4, pcb_post_front=True)
+VER = 'v5'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -73,6 +80,16 @@ def build(P=P):
         # 耳とマウントをつなぐ
         x_link0, x_link1 = sorted((sx, ax if sx > 0 else mx))
         body = body.union(box(x_link0, x_link1, sy - P['boss_r'], min(sy + P['boss_r'], y_in), ft, P['ear_top']))
+    if P.get('fan_joint'):    # 前の耳からファンの台の継ぎ目へ伸ばす腕と、継ぎ目のねじの柱
+        (sx, sy), (jx, jy) = P['screw_front'], P['fan_joint']
+        z0, z1 = P['joint_z']
+        L = math.hypot(jx - sx, jy - sy); ang = math.degrees(math.atan2(jy - sy, jx - sx))
+        arm = cq.Workplane().box(L, P['arm_w'], z1 - z0, centered=(False, True, False)).rotate((0, 0, 0), (0, 0, 1), ang).translate((sx, sy, z0))
+        body = body.union(arm).union(cq.Workplane().center(jx, jy).circle(P['joint_r']).extrude(z1 - z0).translate((0, 0, z0)))
+        body = body.union(cq.Workplane().center(sx, sy).circle(P['boss_r']).extrude(z1 - ft).translate((0, 0, ft)))
+    if P.get('pcb_post_front'):   # 前の耳の上にも基板を受ける柱
+        sx, sy = P['screw_front']
+        body = body.union(cq.Workplane().center(sx, sy).circle(P['post_r']).extrude(P['pcb_post'] - ft).translate((0, 0, ft)))
     if P.get('pcb_post'):     # 後ろの耳の上に柱を立て、基板を受ける(下から長いねじで、フレーム・柱・基板をまとめて留める)
         sx, sy = P['screw_rear']
         body = body.union(cq.Workplane().center(sx, sy).circle(P['post_r']).extrude(P['pcb_post'] - P['ear_top']).translate((0, 0, P['ear_top'])))
@@ -89,6 +106,8 @@ def build(P=P):
     body = body.cut(box(-40, 40, -40, y_out, 0, 30).cut(ycyl(P['seat_r'], P['brg_seat_out'], y_out, ax, az)))
     for (sx_, sy_) in (P['screw_front'], P['screw_rear']):
         body = body.cut(cq.Workplane().center(sx_, sy_).circle(P['hole_d'] / 2).extrude(20).translate((0, 0, ft - 1)))
+        if P.get('tap'):
+            continue          # ねじ山を切るので、ナットの穴は作らない(耳は下からフレームのねじ、柱の上は基板のねじ)
         if P.get('pcb_post') and (sx_, sy_) == P['screw_rear']:
             if not P.get('post_nut'):
                 continue      # 柱のある耳はナットを基板の上に置く
@@ -99,6 +118,9 @@ def build(P=P):
             continue
         body = body.cut(cq.Workplane().center(sx_, sy_).polygon(6, P['nut_af'] / math.cos(math.pi / 6))
                         .extrude(P['nut_depth'] + 1).translate((0, 0, P['ear_top'] - P['nut_depth'])))
+    if P.get('fan_joint'):
+        jx, jy = P['fan_joint']
+        body = body.cut(cq.Workplane().center(jx, jy).circle(P['hole_d'] / 2).extrude(20).translate((0, 0, ft - 1)))   # 継ぎ目の下穴(ねじ山)
     return body
 
 if __name__ == '__main__':
