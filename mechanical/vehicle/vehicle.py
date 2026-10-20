@@ -176,7 +176,7 @@ if not FRAME_FAN:          # v0〜v2: 丸いケース(左右に窓)、ポリカ�
         case = case.cut(nut).cut(slot)                                       # ナットは横から入れる
     add('fan_case', case, 'resin')
     PCB_FAN_POSTS = [(fx, sy * BOSS_Y) for sy in (1, -1)]
-elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーターを真ん中に持つ(2026-10-19)。フレームにねじ3本で留める。上へ吐き出す
+elif SPIDER:            # v4: 羽根を輪で囲い、腕でモーターを真ん中に持つ(2026-10-19。2026-10-20 から、ハブと輪を斜め45°の4本の腕でつなぎ、輪から耳を出してマウントの腕に留める)。フレームにねじ3本で留める。上へ吐き出す
     BOSS_R = CFG['boss_r']
     W = 1.0                                   # 輪の壁(2026-10-20 に 0.6 から。前の耳のねじをやめた分、輪を太くして台を硬くする)
     R_RING, Z_RING = 16.5, 10.0               # 輪の内側の半径(囲いの内径 φ33、羽根 φ32 とのすき間 0.5mm。2026-10-20)、輪の上
@@ -190,13 +190,14 @@ elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーター�
     ring_foot = Point(fx, fy).buffer(R_RING + W, 128).difference(Point(fx, fy).buffer(R_RING, 128)).difference(g['suction'])
     if ring_foot.area > 0.05:            # 塩ビのない所(吸引する面の外)は、輪をフレームの上面(3.0)まで下げてすき間をふさぐ
         case = case.union(cq.Workplane().add(poly_solid(ring_foot, Z_FT, Z_PC + 0.05)))
-    if not dz.FAN_SCREWS:                # 前の腕は輪まで(2026-10-20、前の耳のねじをやめた)
-        case = case.union(cq.Workplane().box(R_RING + W / 2, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False)).translate((fx, fy, Z_ARM0)))
-    case = case.union(zcyl(5.35, Z_TOP0, Z_COL, fx, fy))                                              # ハブ
-    for (px, py) in dz.FAN_JOINTS:       # マウントの腕に載せる耳(上から M2 で留める)
-        L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
-        case = case.union(cq.Workplane().box(L, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
+    for ang in (45, 135, 225, 315):      # モーターの受け(ハブ)を輪につなぐ腕4本、斜め45°で均等(2026-10-20。それまではハブから継ぎ目へ2本と前へ1本)
+        case = case.union(cq.Workplane().box(R_RING + W / 2, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
                           .rotate((0, 0, 0), (0, 0, 1), ang).translate((fx, fy, Z_ARM0)))
+    case = case.union(zcyl(5.35, Z_TOP0, Z_COL, fx, fy))                                              # ハブ
+    for (px, py) in dz.FAN_JOINTS:       # マウントの腕に載せる耳(上から M2 で留める)。輪から耳へ短い腕を出す(2026-10-20)
+        L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
+        case = case.union(cq.Workplane().box(L - R_RING, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
+                          .translate((R_RING, 0, 0)).rotate((0, 0, 0), (0, 0, 1), ang).translate((fx, fy, Z_ARM0)))
         case = case.union(zcyl(3.0, Z_ARM0, Z_ARM1, px, py))
         case = case.cut(zcyl(SC['hole'] / 2, Z_ARM0 - 0.1, Z_ARM1 + 0.1, px, py))
     for (px, py) in dz.FAN_SCREWS:
