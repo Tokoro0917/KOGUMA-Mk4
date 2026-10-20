@@ -11,7 +11,7 @@ from shapely.ops import unary_union
 from shapely import affinity
 import design as dz, ribparts as rp, dxf_arcs as dxa
 
-VER = '64'          # frame v6.4(ファンの台の左右の穴をなくし、ねじの穴 5つに、2026-10-20)
+VER = '65'          # frame v6.5(羽根 φ32 に合わせ、ファンの真下を半径16.5mmまでカーボンで埋めた、2026-10-20)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../../../mechanical/frame')   # 製作用のファイルは mechanical/frame に置く
