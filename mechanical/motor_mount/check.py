@@ -61,10 +61,12 @@ for (l, h, w) in g['vribs']:
 for nm, (sx, sy) in (('front', P['screw_front']), ('rear', P['screw_rear'])):
     # M2 の低頭 L5(頭 φ3.8 × 1.1)とナット(二面幅4.0 × 1.6)
     head = cq.Workplane().center(sx, sy).circle(1.9).extrude(1.1).translate((0, 0, 0.9)).val()
-    shank = cq.Workplane().center(sx, sy).circle(1.0).extrude(5.0).translate((0, 0, 2.0)).val()
+    shank = cq.Workplane().center(sx, sy).circle(P['hole_d'] / 2 if P.get('tap') else 1.0).extrude(5.0).translate((0, 0, 2.0)).val()   # タップのときは下穴の径(ねじ山がかみ合う分は重なりにしない)
     nut = (cq.Workplane().center(sx, sy).polygon(6, 4.0 / math.cos(math.pi / 6)).extrude(1.6)
            .cut(cq.Workplane().center(sx, sy).circle(1.0).extrude(1.6)).translate((0, 0, P['ear_top'] - P['nut_depth'] + 0.05)).val())
-    parts[f'screw_{nm}'] = cq.Compound.makeCompound([head, shank]); parts[f'nut_{nm}'] = nut
+    parts[f'screw_{nm}'] = cq.Compound.makeCompound([head, shank])
+    if not P.get('tap'):
+        parts[f'nut_{nm}'] = nut
 
 def dist(a, b):
     d = BRepExtrema_DistShapeShape(a.wrapped, b.wrapped); d.Perform()

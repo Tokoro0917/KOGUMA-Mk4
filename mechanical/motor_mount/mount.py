@@ -40,7 +40,10 @@ P.update(boss_r=3.1, nut_af=4.2, nut_depth=1.7, hole_d=2.3, pcb_post=13.6, post_
 P_V2 = dict(P)
 # v3(2026-10-19): フレーム v6.1 に合わせて、ねじの位置を 1mm 単位に((7.85, -22.1)、(-17.15, -22.1) から)
 P.update(screw_front=(8.0, -22.0), screw_rear=(-17.0, -22.0))
-VER = 'v3'
+P_V3 = dict(P)
+# v4(2026-10-20): ナットをやめて、ねじの穴に M2 のねじ山を切る(タップ)。下穴 φ1.6、ナットの穴はなくす
+P.update(hole_d=1.6, tap=True)
+VER = 'v4'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -89,6 +92,8 @@ def build(P=P):
     body = body.cut(box(-40, 40, -40, y_out, 0, 30).cut(ycyl(P['seat_r'], P['brg_seat_out'], y_out, ax, az)))
     for (sx_, sy_) in (P['screw_front'], P['screw_rear']):
         body = body.cut(cq.Workplane().center(sx_, sy_).circle(P['hole_d'] / 2).extrude(20).translate((0, 0, ft - 1)))
+        if P.get('tap'):
+            continue          # ねじ山を切るので、ナットの穴は作らない(耳は下からフレームのねじ、柱の上は基板のねじ)
         if P.get('pcb_post') and (sx_, sy_) == P['screw_rear']:
             if not P.get('post_nut'):
                 continue      # 柱のある耳はナットを基板の上に置く
