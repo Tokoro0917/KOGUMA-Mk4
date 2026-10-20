@@ -182,7 +182,8 @@ elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーター�
     R_RING, Z_RING = 16.5, 10.0               # 輪の内側の半径(囲いの内径 φ33、羽根 φ32 とのすき間 0.5mm。2026-10-20)、輪の上
     Z_ARM0, Z_ARM1, ARM_W = 8.8, 10.8, 3.0    # 腕(羽根の上 8.0 から 0.8 上)
     Z_TOP1 = 9.4; Z_TOP0 = Z_ARM0             # モーターの前の面を受けるハブの底
-    Z_COL = 13.2
+    Z_COL = 16.0                              # ハブの上(2026-10-20: 圧入にして 13.2 から伸ばした。モーターを 6.6mm つかむ)
+    BORE_D = 8.6                              # モーターの穴(モーター φ8.6 を圧入。モーターマウントの軸受の穴と同じ考え方で寸法どおり)
     # 基板はモーターマウントの前後の耳の上の柱で受ける(2026-10-20。ファンの台の左右の柱はやめた)
     PCB_FAN_POSTS = [(dz.MOUNT_SCREWS[1][0], sy * dz.MOUNT_SCREWS[1][1]) for sy in (1, -1)]
     case = zcyl(R_RING + W, Z_PC, Z_RING, fx, fy).cut(zcyl(R_RING, Z_PC - 0.1, Z_RING + 0.1, fx, fy))   # 輪(囲い)
@@ -208,11 +209,8 @@ elif SPIDER:            # v4: 羽根を輪で囲い、3本の腕でモーター�
         foot = Point(px, py).buffer(BOSS_R, 48).difference(g['suction'])
         if foot.area > 0.5:
             case = case.union(cq.Workplane().add(poly_solid(foot, Z_FT, Z_PC + 0.05)))
-    # モーターの筒(割りを入れて、横のねじで締める。締めの耳は後ろ向き)
-    case = case.union(cq.Workplane().box(2.8, 5.6, 3.0, centered=False).translate((fx - 7.4, fy - 2.8, 10.0)))
-    case = case.cut(cq.Workplane().box(3.6, 0.8, Z_COL - Z_TOP1, centered=False).translate((fx - 7.5, fy - 0.4, Z_TOP1 + 0.3)))
-    case = case.cut(zcyl(4.35, Z_TOP1, Z_COL + 1, fx, fy))
-    case = case.cut(ycyl(SC['hole'] / 2, -3.0, 3.0, fx - 6.1, 11.5))
+    # モーターの筒: 上から圧入し、前の面をハブの底に当てる(2026-10-20。それまでは割りを入れて横のねじで締めていた)
+    case = case.cut(zcyl(BORE_D / 2, Z_TOP1, Z_COL + 1, fx, fy))
     case = case.cut(zcyl(1.5, Z_TOP0 - 0.1, Z_TOP1 + 0.1, fx, fy))
     def nut_pocket(px, py, z_top, out):
         hexp = cq.Workplane().center(px, py).polygon(6, SC['pocket'] / math.cos(math.pi / 6)).extrude(SC['depth']).translate((0, 0, z_top - SC['depth']))
@@ -396,8 +394,9 @@ if FRAME_FAN:   # ファンのケースをフレームに留めるねじ(下か�
     if SPIDER:
         for i, (px, py) in enumerate(dz.FAN_JOINTS):   # ファンの台をマウントの腕に留める(ナイロンのなべ L6、上から)
             add(f'screw_fanjoint_{i}', screw(px, py, 10.8, 6.0, up=False, head_h=1.6, head_r=2.0), 'nylon')
-    add('screw_fanclamp', ycyl(1.0, -2.8, 5.2, fx - 6.1, 11.5).union(ycyl(2.0, -4.4, -2.8, fx - 6.1, 11.5)), 'nylon')
-    add('nut_fanclamp', ycyl(2.3, 2.8, 4.4, fx - 6.1, 11.5).cut(ycyl(1.0, 2.7, 4.5, fx - 6.1, 11.5)), 'nylon')
+    if not SPIDER:      # v3: モーターの筒を横のねじで締める(v4 は圧入)
+        add('screw_fanclamp', ycyl(1.0, -2.8, 5.2, fx - 6.1, 11.5).union(ycyl(2.0, -4.4, -2.8, fx - 6.1, 11.5)), 'nylon')
+        add('nut_fanclamp', ycyl(2.3, 2.8, 4.4, fx - 6.1, 11.5).cut(ycyl(1.0, 2.7, 4.5, fx - 6.1, 11.5)), 'nylon')
 
 # ---------------- 質量 ----------------
 def props(shape):
