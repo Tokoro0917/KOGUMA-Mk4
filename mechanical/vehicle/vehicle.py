@@ -198,7 +198,7 @@ elif SPIDER:            # v4: 羽根を輪で囲い、腕でモーターを真�
         L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
         case = case.union(cq.Workplane().box(L - R_RING, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
                           .translate((R_RING, 0, 0)).rotate((0, 0, 0), (0, 0, 1), ang).translate((fx, fy, Z_ARM0)))
-        case = case.union(zcyl(3.0, Z_ARM0, Z_ARM1, px, py))
+        case = case.union(zcyl(mm.P['joint_r'], Z_ARM0, Z_ARM1, px, py))
         case = case.cut(zcyl(SC['hole'] / 2, Z_ARM0 - 0.1, Z_ARM1 + 0.1, px, py))
     for (px, py) in dz.FAN_SCREWS:
         L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))

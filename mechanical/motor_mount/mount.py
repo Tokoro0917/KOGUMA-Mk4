@@ -50,7 +50,10 @@ P.update(fan_joint=(10.0, -16.0), joint_r=3.0, joint_z=(4.0, 8.8), arm_w=3.4, pc
 P_V5 = dict(P)
 # v6(2026-10-20): 羽根 φ32・囲い φ33(外径 φ34.2)にしたので、継ぎ目を (20, -22) へ(前の耳からまっすぐ前へ12mm)
 P.update(fan_joint=(20.0, -22.0))
-VER = 'v6'
+P_V6 = dict(P)
+# v7(2026-10-21): 継ぎ目を (14, -22) へ。継ぎ目の台を半径2.5にし、フレームの窓にかからない(下から見えない)ようにする
+P.update(fan_joint=(14.0, -22.0), joint_r=2.5)
+VER = 'v7'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
