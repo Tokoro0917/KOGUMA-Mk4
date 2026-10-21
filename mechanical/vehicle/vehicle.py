@@ -198,8 +198,8 @@ elif SPIDER:            # v4: 羽根を輪で囲い、腕でモーターを真�
         L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
         case = case.union(cq.Workplane().box(L - R_RING, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
                           .translate((R_RING, 0, 0)).rotate((0, 0, 0), (0, 0, 1), ang).translate((fx, fy, Z_ARM0)))
-        case = case.union(zcyl(3.0, Z_ARM0, Z_ARM1, px, py))
-        case = case.cut(zcyl(SC['hole'] / 2, Z_ARM0 - 0.1, Z_ARM1 + 0.1, px, py))
+        case = case.union(zcyl(3.0, Z_ARM0, Z_PCB, px, py))         # 耳の上は基板まで柱にして、基板の前の腕を受ける(2026-10-20)
+        case = case.cut(zcyl(SC['hole'] / 2, Z_ARM0 - 0.1, Z_PCB + 0.1, px, py))
     for (px, py) in dz.FAN_SCREWS:
         L = math.hypot(px - fx, py - fy); ang = math.degrees(math.atan2(py - fy, px - fx))
         arm = (cq.Workplane().box(L, ARM_W, Z_ARM1 - Z_ARM0, centered=(False, True, False))
@@ -316,6 +316,7 @@ else:
         sbox(40.0, -23.0, 47.5, 23.0),      # 壁センサの板(フレームの前の辺より内側)
     ]).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
 pcb_holes = ([] if SPIDER else [Point(FAN).buffer(4.6, 64)]) + [Point(p).buffer(SC['hole'] / 2, 24) for p in PCB_FAN_POSTS] \
+    + ([Point(p).buffer(SC['hole'] / 2, 24) for p in dz.FAN_JOINTS] if SPIDER else []) \
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
 pcb_poly = pcb_outline.difference(unary_union(pcb_holes))
 add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
@@ -393,8 +394,8 @@ if FRAME_FAN:   # ファンのケースをフレームに留めるねじ(下か�
         if not TAP:
             add(f'nut_fanframe_{i}', nut(px, py, P2['ear_top'] - P2['nut_depth'] + 0.05), 'nylon')
     if SPIDER:
-        for i, (px, py) in enumerate(dz.FAN_JOINTS):   # ファンの台をマウントの腕に留める(ナイロンのなべ L6、上から)
-            add(f'screw_fanjoint_{i}', screw(px, py, 10.8, 6.0, up=False, head_h=1.6, head_r=2.0), 'nylon')
+        for i, (px, py) in enumerate(dz.FAN_JOINTS):   # 基板・ファンの台の柱をまとめてマウントの腕に留める(ナイロンのなべ L8、上から。2026-10-20 に L6 から)
+            add(f'screw_fanjoint_{i}', screw(px, py, Z_PCBT, 8.0, up=False, head_h=1.6, head_r=2.0), 'nylon')
     if not SPIDER:      # v3: モーターの筒を横のねじで締める(v4 は圧入)
         add('screw_fanclamp', ycyl(1.0, -2.8, 5.2, fx - 6.1, 11.5).union(ycyl(2.0, -4.4, -2.8, fx - 6.1, 11.5)), 'nylon')
         add('nut_fanclamp', ycyl(2.3, 2.8, 4.4, fx - 6.1, 11.5).cut(ycyl(1.0, 2.7, 4.5, fx - 6.1, 11.5)), 'nylon')
