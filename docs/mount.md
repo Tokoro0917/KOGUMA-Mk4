@@ -1,5 +1,7 @@
-# MK4 モーターマウント v6
+# MK4 モーターマウント v7
 
+> **2026-10-21 v7**: **継ぎ目を (20, ±22) から (14, ±22) へ**動かし、継ぎ目の台の半径を3.0 → 2.5にした。v6 の継ぎ目はフレームの窓の上にあり、下から台と腕が見えていた。(14, ±22) は前の耳の前のカーボンの上で、半径2.5の台がすべてカーボンに載る(フレームは変えない)。腕は前の耳からまっすぐ前へ6mm。1個1.48g(v6は1.64g)。輪とのすき間は2.0mm、前の耳の上の基板の柱とは0.4mm。STEP・STLは`motor_mount_R_v7.*`・`_L_v7.*`。v6は`mount.py`の`P_V6`で作り直せる。
+>
 > **2026-10-20 v6**(続き): ファンの台の前の耳のねじ (33, 0) をやめ、台はこの腕の2か所だけで持つ(frame v6.6)。輪の壁を1.0mm(外側 φ35)にしたので、輪とマウントの前の柱のすき間は約2.2mm、走行用モーターとは1.15mm。マウントの形は変わらない。
 >
 > **2026-10-20 v6**: 吸引ファンを**羽根 φ32、囲いの内径 φ33**(輪の外側 φ34.2)にしたので、**継ぎ目を (10, ±16) から (20, ±22) へ**動かした(輪の外側から約2.6mm外)。腕は前の耳 (8, ±22) からまっすぐ前へ伸びる。1個1.64g。ファンの輪とマウントの前の柱のすき間は約2.6mm。STEP・STLは`motor_mount_R_v6.*`・`_L_v6.*`。v5は`mount.py`の`P_V5`で作り直せる。
@@ -14,9 +16,9 @@
 
 2026-10-17作成。ToraNeko.Mk3の足回り(車輪・41T・平行ピン・LF-630・磁石・エンコーダ基板)をそのまま使い、MK4のモーター(NFP-D8620、直径8.6 × 20mm)と41T:13Tに合わせて作った。CADは`mechanical/motor_mount/`(CadQueryのスクリプト、STEP、STL)。
 
-![断面](img/mount/mount_v6_sections.png)
+![断面](img/mount/mount_v7_sections.png)
 
-![組み立て](img/mount/mount_v6_3d.png)
+![組み立て](img/mount/mount_v7_3d.png)
 
 ## 1. 決めたこと
 
@@ -116,8 +118,8 @@ ToraNeko.Mk3のSTEPから足回りの部品を取り出してMK4の位置に置�
 | ファイル | 中身 |
 |---|---|
 | `mechanical/motor_mount/mount.py` | マウントのCadQueryのスクリプト(寸法は先頭の`P`) |
-| `mechanical/motor_mount/motor_mount_R_v6.step` / `_L_v6.step` | 右・左のマウント(Fusionで読み込む) |
-| `mechanical/motor_mount/motor_mount_R_v6.stl` / `_L_v6.stl` | JLC3DPに出す用 |
+| `mechanical/motor_mount/motor_mount_R_v7.step` / `_L_v7.step` | 右・左のマウント(Fusionで読み込む) |
+| `mechanical/motor_mount/motor_mount_R_v7.stl` / `_L_v7.stl` | JLC3DPに出す用 |
 | `mechanical/motor_mount/mk4_drive_R_check.step` | 確認用の組み立て(右側: マウント、モーター、ピニオン、足回り、フレーム、ねじ) |
 | `mechanical/motor_mount/tn_drive_mk4_right.step` | ToraNeko.Mk3の足回りの部品をMK4の位置に置いたもの |
 | `mechanical/motor_mount/check.py`、`check_result.txt` | ぶつかりとすき間の確認 |
