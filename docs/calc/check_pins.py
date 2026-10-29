@@ -33,6 +33,7 @@ ASSIGN = [
     ('PB15', 'SPI2_MOSI', 'ENC_MOSI',  'エンコーダ MOSI'),
     ('PC6',  'GPIO_Output', 'ENC_L_CS', '左エンコーダ チップセレクト'),
     ('PC7',  'GPIO_Output', 'ENC_R_CS', '右エンコーダ チップセレクト'),
+    ('PC15-OSC32_OUT', 'GPIO_Output', 'ENC_CAL', 'エンコーダの校正(MT6835 の CAL_EN、左右共通。2026-10-29)'),
     # 壁センサ(MK3と同じ回路)
     ('PC0',  'ADC1_INP10', 'WALL_FL',  '壁センサ 左前'),
     ('PC1',  'ADC1_INP11', 'WALL_L',   '壁センサ 左'),

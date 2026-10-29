@@ -7,11 +7,11 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `KOGUMA-Mk4.kicad_sch` | 一番上のシート。下のシートを並べる |
 | `power.kicad_sch` | 電源(電池 → 電源スイッチ → VBAT → 3.3V、電池の電圧の分圧) |
 | `motor.kicad_sch` | モーター(MP6551 × 2、CM の分圧とコンデンサ)と吸引ファン(IRLML6344、0.1Ω のシャント) |
-| `sensor.kicad_sch` | センサ(A3): 壁センサの発光 4ch(OPV332 + NJU6080)、受光 4ch(SFH 229 FA + OPA2354、820kΩ ∥ 0.5pF)、PD_BIAS、IMU(LSM6DSR)、エンコーダ(MT6835)の基板への線(J5・J6) |
+| `sensor.kicad_sch` | センサ(A3): 壁センサの発光 4ch(OPV332 + NJU6080)、受光 4ch(SFH 229 FA + OPA2354、820kΩ ∥ 0.5pF)、PD_BIAS、IMU(LSM6DSR)、エンコーダの基板(MT6835)とのつなぎ(J5・J6、メイン基板の穴とパッド7つ) |
 | `ui.kicad_sch` | 表示・入力・通信: LED 7個、ブザー、スイッチ、デバッグの端子(J7、ToraNeko.Mk3 の J6 と同じ並び)、UART_RX のテストパッド |
 | `mcu.kicad_sch` | MCU(STM32H725RGVx)、SMPS(Direct SMPS)、発振子(10MHz、CSTNE10M0G52Z000R0)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
 | `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、OPA2354、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
-| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド) |
+| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、ENC_Base_Slot(エンコーダの基板を通す穴 NPTH 1.0 × 6.6mm と、上の面のパッド7つ。左の J5 は回転 0°、右の J6 は 180°) |
 | `sym-lib-table`・`fp-lib-table` | 上の2つをプロジェクトのライブラリとして登録する |
 
 ## ネットの名前
@@ -30,6 +30,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `WALL_FL`・`WALL_L`・`WALL_R`・`WALL_FR` | 壁センサの受光のアンプの出力(ADC1) |
 | `WALL_LED_FL_R`・`WALL_LED_L_FR` | 壁センサの発光(対角の2個ずつ。MK3 の WallLED_12 / WallLED_34) |
 | `IMU_*`・`ENC_*` | IMU(SPI3)とエンコーダ(SPI2) |
+| `ENC_CAL` | 2個の MT6835 の CAL_EN(左右共通、PC15)。校正のときだけ H |
 
 ## まだ決めていないこと
 
@@ -46,4 +47,5 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 - ERC: エラー 0。警告は、確かめた環境に KiCad の標準ライブラリ(Device など)が登録されていないことによるものだけ
 - ネットリストで、全部のピンが意図したネットにつながっていることを確かめた(つないでいないのは SW1 の3番、LXDC55 の NC と PG だけ)
-- 全シート(電源・モーター・MCU・センサ・表示と通信、同日): ERC のエラー 0、ラベルの相手がいない警告も 0(残る警告は確かめた環境に標準ライブラリがないことによるものだけ)。MCU のピン43本(発振子の2本を含む)が `docs/pinmap.md` のネット名と一致することをネットリストで確かめた
+- 全シート(電源・モーター・MCU・センサ・表示と通信、同日): ERC のエラー 0、ラベルの相手がいない警告も 0(残る警告は確かめた環境に標準ライブラリがないことによるものだけ)。MCU のピン43本(発振子の2本を含む。2026-10-29 に ENC_CAL を足して44本)が `docs/pinmap.md` のネット名と一致することをネットリストで確かめた
+- エンコーダの基板(2026-10-29): `../KOGUMA-Mk4_Encoder/` の ERC エラー 0、DRC エラー 0、回路図と基板の食い違い 0。メイン基板の ENC_CAL を PC15 に足し、`docs/calc/check_pins.py` で OK(使う44本、残り2本)

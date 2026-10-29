@@ -1,0 +1,221 @@
+(footprint "ENC_Edge"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "KOGUMA MK4 encoder board (6x12.8x0.6): pads at the edge that passes through the main board slot. Pads 1 and 7 (3V3, GND) on the chip side (F), 2-6 (CAL, MISO, MOSI, SCK, CS) on the back (B), 0.2-2.0mm from the edge. Main board top face at 1.4000000000000004mm (0.8mm board), bottom face at 2.200000000000001mm. Magnet axis at 8.3mm")
+	(tags "encoder edge KOGUMA")
+	(property "Reference" "REF**"
+		(at 0 -0.6 0)
+		(layer "F.SilkS")
+		(uuid "09d61315-7b70-4bfb-8766-fce4c8dbef4b")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Value" "ENC_Edge"
+		(at 0 13.8 0)
+		(layer "F.Fab")
+		(uuid "45b125e5-2f99-45ae-b072-29d73e66dc29")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "207cb0db-1568-4451-92b9-7c9605a6e3fa")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "bd010809-7b87-41dc-a997-3d454c9c4c8f")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(attr smd)
+	(pad "1" smd roundrect
+		(at 1.5 1.1)
+		(size 2.4 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "3d5b040e-5a80-4c85-a37b-a5f03d460d7b")
+	)
+	(pad "2" smd roundrect
+		(at -2.3 1.1)
+		(size 0.7 1.8)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "939ee72f-5bf0-4629-bf54-aca63d2b1d93")
+	)
+	(pad "3" smd roundrect
+		(at -1.15 1.1)
+		(size 0.7 1.8)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "04b99a80-0ad4-4c45-b0f9-02a9be88707b")
+	)
+	(pad "4" smd roundrect
+		(at 0 1.1)
+		(size 0.7 1.8)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "e5a0405a-dd64-4561-bb54-e4df4b425fa4")
+	)
+	(pad "5" smd roundrect
+		(at 1.15 1.1)
+		(size 0.7 1.8)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "00aa1911-1136-4b19-b289-e72c6fc64486")
+	)
+	(pad "6" smd roundrect
+		(at 2.3 1.1)
+		(size 0.7 1.8)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "692347cb-6f2f-4624-8499-a418769835de")
+	)
+	(pad "7" smd roundrect
+		(at -1.5 1.1)
+		(size 2.4 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "1c67fb23-09db-4319-8229-4f3baf188b58")
+	)
+	(fp_rect
+		(start -3 0)
+		(end 3 12.8)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "4bb0efa2-810b-4bd6-a421-ec43ea36c30f")
+	)
+	(fp_line
+		(start -3.5 1.4)
+		(end 3.5 1.4)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "a44e0dd4-6d32-47c6-8f39-df3305862eef")
+	)
+	(fp_line
+		(start -3.5 2.2)
+		(end 3.5 2.2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "f1cf3352-0d3d-4422-b937-5a41cbad5db9")
+	)
+	(fp_text user "MAIN BOARD (0.8mm)"
+		(at 0 1.8 0)
+		(layer "Dwgs.User")
+		(uuid "f649e16d-e415-4b2d-9053-fedbf1fe4743")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(fp_line
+		(start -1 8.3)
+		(end 1 8.3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "e28bea62-a545-4123-957f-01defc9d6752")
+	)
+	(fp_line
+		(start 0 7.3)
+		(end 0 9.3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "55e2c4d7-ba82-4ea0-85a8-a1c278f1d34e")
+	)
+	(fp_text user "MAGNET AXIS"
+		(at 0 9.7 0)
+		(layer "Dwgs.User")
+		(uuid "6b46642e-26bf-41bd-93c8-8e490d09101b")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(fp_line
+		(start -3.5 12.8)
+		(end 3.5 12.8)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "becab2f1-998f-4a77-8176-98c3683be8a3")
+	)
+	(fp_text user "FRAME TOP"
+		(at 0 13.2 0)
+		(layer "Dwgs.User")
+		(uuid "6857324b-7381-48f2-bb09-80f8980384d8")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(fp_rect
+		(start -3 -0.05)
+		(end 3 2.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "b99543ee-f32e-4d23-a9df-bb2feed7e079")
+	)
+	(fp_rect
+		(start -3 -0.05)
+		(end 3 2.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "b4177402-94c1-4044-9be8-b03f7d6dd4dc")
+	)
+	(embedded_fonts no)
+)

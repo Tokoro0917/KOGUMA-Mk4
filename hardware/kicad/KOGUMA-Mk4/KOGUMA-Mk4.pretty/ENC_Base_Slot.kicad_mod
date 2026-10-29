@@ -1,0 +1,176 @@
+(footprint "ENC_Base_Slot"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "KOGUMA MK4 main board: slot (NPTH 6.6x1.0mm) for the encoder board (0.6mm) and solder pads on the top side. Chip side = -Y (pads 1 and 7: 3V3, GND), back side = +Y (pads 2-6: CAL, MISO, MOSI, SCK, CS). Rotation 0 = chip side toward the top of the screen (left encoder of the robot); rotate 180deg for the right encoder")
+	(tags "encoder slot KOGUMA")
+	(property "Reference" "REF**"
+		(at 0 -2.65 0)
+		(layer "F.SilkS")
+		(uuid "8ca6bf5a-356b-4fda-b02a-5a34310eef77")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Value" "ENC_Base_Slot"
+		(at 0 2.65 0)
+		(layer "F.Fab")
+		(uuid "0cb2fa9c-dd1d-4e8f-a1b8-de01672f4b3e")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "dca5e7a6-ae01-4159-ad50-8c6988709743")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "f9992ae8-712a-49d3-97f1-b64db00bc2a1")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(attr smd)
+	(pad "" np_thru_hole oval
+		(at 0 0)
+		(size 6.6 1)
+		(drill oval 6.6 1)
+		(layers "*.Cu" "*.Mask")
+		(uuid "f2e367cd-1a07-4417-9df9-e31423844a01")
+	)
+	(pad "1" smd roundrect
+		(at -1.5 -1.25)
+		(size 2.4 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "1afe688c-be04-4384-a48f-2e8713ac2b8b")
+	)
+	(pad "2" smd roundrect
+		(at 2.3 1.25)
+		(size 0.7 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "47b4a4ff-1cf0-4c3d-beab-b416ee95d96c")
+	)
+	(pad "3" smd roundrect
+		(at 1.15 1.25)
+		(size 0.7 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "c926c715-f6d9-4f36-85e6-a11d9e4d305a")
+	)
+	(pad "4" smd roundrect
+		(at 0 1.25)
+		(size 0.7 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "e92802e4-0651-4c60-8598-f61aa9d2c150")
+	)
+	(pad "5" smd roundrect
+		(at -1.15 1.25)
+		(size 0.7 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "7a468b6e-3c95-4fb5-82dc-12ce33084165")
+	)
+	(pad "6" smd roundrect
+		(at -2.3 1.25)
+		(size 0.7 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "f0f5d1e8-3215-48e0-bc6d-38019c606213")
+	)
+	(pad "7" smd roundrect
+		(at 1.5 -1.25)
+		(size 2.4 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "c43f52ce-02fc-4d24-b178-2beb1975689e")
+	)
+	(fp_rect
+		(start -3 -0.3)
+		(end 3 0.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "837c4b61-1527-4cd7-b1f0-2ddc4e71602c")
+	)
+	(fp_rect
+		(start -2.5 -1.5)
+		(end 2.5 -0.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "f7c95142-970d-4d15-8db5-408dc3e379eb")
+	)
+	(fp_text user "CHIP"
+		(at 0 -0.9 0)
+		(layer "F.Fab")
+		(uuid "ca62dd8f-9c2b-4d8f-9129-109838767f40")
+		(effects
+			(font
+				(size 0.4 0.4)
+				(thickness 0.06)
+			)
+		)
+	)
+	(fp_line
+		(start -3.5 -0.6)
+		(end -3.5 0.6)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "203edf28-f624-4035-921e-60c62769a3dd")
+	)
+	(fp_line
+		(start 3.5 -0.6)
+		(end 3.5 0.6)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "ec2e5ae5-5cc2-4f11-b151-da12abed02e9")
+	)
+	(fp_rect
+		(start -3.7 -2.05)
+		(end 3.7 2.05)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "4fed72ba-8b5a-4d9c-a277-926e5c9b35f2")
+	)
+	(embedded_fonts no)
+)
