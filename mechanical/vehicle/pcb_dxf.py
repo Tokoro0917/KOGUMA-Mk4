@@ -27,7 +27,7 @@ for (x, y) in ps.SCREWS:
 msp.add_lwpolyline([(-21.25, -16), (1.25, -16), (1.25, 16), (-21.25, 16)], close=True, dxfattribs=ref)   # 電池(基板の上)
 for i, (x, y) in enumerate(ps.LEDS):                                                 # UI の LED(1608 として 1.6 × 0.8)
     msp.add_lwpolyline([(x - 0.4, y - 0.8), (x + 0.4, y - 0.8), (x + 0.4, y + 0.8), (x - 0.4, y + 0.8)], close=True, dxfattribs=ref)
-msp.add_text('LED x7', height=1.5, dxfattribs=ref).set_placement((-42.0, -15.0))
+msp.add_text('LED x7', height=1.5, dxfattribs=ref).set_placement((ps.REAR + 4.0, -15.0))
 for nm, ((sx, sy), ang) in ps.SENS.items():
     a = math.radians(ang); u = np.array([math.cos(a), math.sin(a)]); n = np.array([-u[1], u[0]])
     for off in (2.0, -2.0):                                                           # 発光・受光 φ3 × 4.5 を寝かせる
