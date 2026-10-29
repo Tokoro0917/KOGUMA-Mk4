@@ -7,9 +7,9 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `KOGUMA-Mk4.kicad_sch` | 一番上のシート。下のシートを並べる |
 | `power.kicad_sch` | 電源(電池 → 電源スイッチ → VBAT → 3.3V、電池の電圧の分圧) |
 | `motor.kicad_sch` | モーター(MP6551 × 2、CM の分圧とコンデンサ)と吸引ファン(IRLML6344、0.1Ω のシャント) |
-| `sensor.kicad_sch` | センサ(A3): 壁センサの発光 4ch(OPV332 + NJU6080)、受光 4ch(SFH 229 FA + AD8606)、PD_BIAS、IMU(LSM6DSR)、エンコーダの基板への線(J5・J6) |
+| `sensor.kicad_sch` | センサ(A3): 壁センサの発光 4ch(OPV332 + NJU6080)、受光 4ch(SFH 229 FA + OPA2354、820kΩ ∥ 0.5pF)、PD_BIAS、IMU(LSM6DSR)、エンコーダ(MT6835)の基板への線(J5・J6) |
 | `mcu.kicad_sch` | MCU(STM32H725RGVx)、SMPS(Direct SMPS)、発振子(10MHz、CSTNE10M0G52Z000R0)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
-| `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
+| `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、OPA2354、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
 | `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド) |
 | `sym-lib-table`・`fp-lib-table` | 上の2つをプロジェクトのライブラリとして登録する |
 
