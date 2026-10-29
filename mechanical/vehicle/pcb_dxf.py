@@ -27,6 +27,9 @@ for (x, y) in ps.SCREWS:
 msp.add_lwpolyline([(-21.25, -16), (1.25, -16), (1.25, 16), (-21.25, 16)], close=True, dxfattribs=ref)   # 電池(基板の上)
 for i, (x, y) in enumerate(ps.LEDS):                                                 # UI の LED(1608 として 1.6 × 0.8)
     msp.add_lwpolyline([(x - 0.4, y - 0.8), (x + 0.4, y - 0.8), (x + 0.4, y + 0.8), (x - 0.4, y + 0.8)], close=True, dxfattribs=ref)
+for (x0, x1, y0, y1) in ps.ENC:                                                      # エンコーダ基板を立てる所(基板の裏)
+    msp.add_lwpolyline([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], close=True, dxfattribs=ref)
+    msp.add_text('ENC', height=1.2, dxfattribs=ref).set_placement((x0, y1 + 0.5 if y0 > 0 else y0 - 1.7))
 msp.add_text('LED x7', height=1.5, dxfattribs=ref).set_placement((ps.REAR + 4.0, -15.0))
 for nm, ((sx, sy), ang) in ps.SENS.items():
     a = math.radians(ang); u = np.array([math.cos(a), math.sin(a)]); n = np.array([-u[1], u[0]])

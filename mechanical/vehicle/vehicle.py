@@ -126,8 +126,8 @@ for s in tn:
         continue
     if bb.ymin > -21.1 and bb.ymax < -20.4:
         s = s.translate(cq.Vector(0, 0, 0.11))
-        if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: 面に貼る基板(x -2.8〜5.2、z 3.0〜13.2)
-            s = cq.Solid.makeBox(8.0, 0.6, 10.2, cq.Vector(-2.8, -21.06, 3.0))
+        if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: メイン基板の裏に立てる基板(x -2.6〜5.2、y -21.0〜-20.4、z 3.3〜13.6。2026-10-29)
+            s = cq.Solid.makeBox(7.8, 0.6, 10.3, cq.Vector(-2.6, -21.0, 3.3))
         right['enc_board'] = (s, 'fr4'); continue
     if bb.ymin > -22.3 and bb.ymax < -20.9:
         right['as5047p'] = (s.translate(cq.Vector(0, 0, 0.11)), 'resin'); continue
