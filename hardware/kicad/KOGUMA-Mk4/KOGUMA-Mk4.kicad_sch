@@ -10,7 +10,7 @@
 		(rev "0.1")
 	)
 	(lib_symbols)
-	(text "シート: 電源・モーター(これから MCU・センサ・表示 を足す)"
+	(text "シート: 電源・モーター・MCU(これから センサ・表示・通信 を足す)"
 		(exclude_from_sim no)
 		(at 25.4 20.32 0)
 		(effects
@@ -101,6 +101,48 @@
 			(project "KOGUMA-Mk4"
 				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044"
 					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 116.84 30.48)
+		(size 30.48 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "573ce600-c2c8-500c-8fb5-a8b0ffd3807f")
+		(property "Sheetname" "MCU"
+			(at 116.84 29.7684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "mcu.kicad_sch"
+			(at 116.84 46.3046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044"
+					(page "4")
 				)
 			)
 		)

@@ -647,7 +647,7 @@ MP6551のCMをPWMに同期してADCで読める(10kHz)ので、**モーターの
 |---|---|
 | VDDSMPS | 1.62〜3.6V、VDDと同じ電圧にする |
 | スイッチング周波数 | 2.4MHz ± 10% |
-| 外付け部品 | インダクタ2.2µH(直流抵抗150mΩ以下、飽和電流1.7A以上、定格電流1.4A以上)、VDDSMPSに4.7µF、VFBSMPSに10µF、VLXSMPSに220pF、VCAPに2.2µF × 2(3本目のVCAPはつなぐだけ) |
+| 外付け部品 | インダクタ2.2µH(直流抵抗150mΩ以下、飽和電流1.7A以上、定格電流1.4A以上)、VDDSMPSに4.7µF、VFBSMPSに10µF、VLXSMPSに220pF、VCAPに100nF × 2(3本目のVCAPはつなぐだけ。表15の注1: LDOを使わないときは2.2µFではなく100nF。2026-10-29に直した)。VFBSMPS・VCAPは同じVCOREにつなぐ(図17の「Direct SMPS supply」) |
 | 550MHzの条件 | 電圧スケールVOS0(コア1.36V)+ CPU_FREQ_BOOST。VOS0だけなら520MHzまで |
 | VOS0をSMPSで使う条件 | VDD 2.2V以上、**ジャンクション温度105°Cまで** |
 | 消費電流(550MHz、ITCMで実行、標準値) | 周辺を止めて81mA、全部動かして125mA(SMPS)。LDOなら145mA / 215mA |
