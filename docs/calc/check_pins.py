@@ -64,9 +64,9 @@ ASSIGN = [
     ('PB12', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
     ('PB13', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
     ('PC14-OSC32_IN', 'GPIO_Input', 'SW', 'スイッチ'),
-    # 水晶(HSE)10MHz(2026-10-29。MK3 と同じ周波数。それまでは付けず HSI)
-    ('PH0-OSC_IN', 'RCC_OSC_IN',  'OSC_IN',  '水晶(HSE)'),
-    ('PH1-OSC_OUT', 'RCC_OSC_OUT', 'OSC_OUT', '水晶(HSE)'),
+    # 発振子(HSE)10MHz、CSTNE10M0G52Z000R0(2026-10-29。MK3 と同じ。それまでは付けず HSI)
+    ('PH0-OSC_IN', 'RCC_OSC_IN',  'OSC_IN',  '発振子(HSE)'),
+    ('PH1-OSC_OUT', 'RCC_OSC_OUT', 'OSC_OUT', '発振子(HSE)'),
 ]
 
 # タイマのエンコーダモードで読むエンコーダ(A相, B相)の組。磁気式(SPI)にしたので今はない

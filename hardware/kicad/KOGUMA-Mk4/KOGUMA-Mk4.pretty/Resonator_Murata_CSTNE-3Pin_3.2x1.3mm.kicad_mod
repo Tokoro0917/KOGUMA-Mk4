@@ -1,0 +1,116 @@
+(footprint "Resonator_Murata_CSTNE-3Pin_3.2x1.3mm"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Murata CSTNE ceramic resonator 3.2x1.3mm, 3 terminals (1 input, 2 GND, 3 output), recommendable land pattern from spec JGC42-8974A")
+	(tags "Murata CSTNE resonator")
+	(property "Reference" "REF**"
+		(at 0 -2.0 0)
+		(layer "F.SilkS")
+		(uuid "a0af73ae-2dd2-406c-910d-494f2c6ce51c")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "Resonator_Murata_CSTNE-3Pin_3.2x1.3mm"
+		(at 0 2.0 0)
+		(layer "F.Fab")
+		(uuid "83935a19-2ce3-454a-bd42-e549decb5e20")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "68a5f0bb-a0ab-44d3-9716-8012b180f724")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "0eb40a46-74ad-432e-994c-d72e8679d285")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -1.6 -0.65)
+		(end 1.6 0.65)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "ddfc4a21-d357-4a3d-bce2-f16d5bba98df")
+	)
+	(fp_rect
+		(start -1.9 -1.2)
+		(end 1.9 1.2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "d9310507-6734-4993-a6a7-94a5c0003b16")
+	)
+	(fp_line
+		(start -1.72 -1.07)
+		(end -1.72 1.07)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "92f7396f-1d37-4ed0-9979-052ba8e6c71e")
+	)
+	(fp_line
+		(start 1.72 -1.07)
+		(end 1.72 1.07)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "f481e8d3-ca2a-484d-a36f-cff756bf9bed")
+	)
+	(pad "1" smd rect
+		(at 1.2 0)
+		(size 0.4 1.9)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "4a31701a-ae1f-46dc-958c-ffb45e86496f")
+	)
+	(pad "2" smd rect
+		(at 0.0 0)
+		(size 0.4 1.9)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "755a4788-f155-4152-bc5b-039aabb9814f")
+	)
+	(pad "3" smd rect
+		(at -1.2 0)
+		(size 0.4 1.9)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "f300a181-aecf-4a80-ae45-0bba103cf132")
+	)
+	(embedded_fonts no)
+)
