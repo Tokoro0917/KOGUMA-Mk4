@@ -38,8 +38,8 @@ ASSIGN = [
     ('PC1',  'ADC1_INP11', 'WALL_L',   '壁センサ 左'),
     ('PA6',  'ADC1_INP3',  'WALL_R',   '壁センサ 右'),
     ('PA7',  'ADC1_INP7',  'WALL_FR',  '壁センサ 右前'),
-    ('PB4(NJTRST)', 'GPIO_Output', 'WALL_LED_L', '壁センサの発光 左(NJU6080のPWM端子)'),
-    ('PB5',  'GPIO_Output', 'WALL_LED_R', '壁センサの発光 右(NJU6080のPWM端子)'),
+    ('PB4(NJTRST)', 'GPIO_Output', 'WALL_LED_FL_R', '壁センサの発光 FL と R(MK3 の WallLED_12)'),
+    ('PB5',  'GPIO_Output', 'WALL_LED_L_FR', '壁センサの発光 L と FR(MK3 の WallLED_34)'),
     # 電源・吸引・ブザー
     ('PB1',  'ADC2_INP5', 'BATT',      '電池の電圧(分圧)'),
     ('PB8',  'TIM16_CH1', 'FAN_PWM',   '吸引ファン(PWM)'),

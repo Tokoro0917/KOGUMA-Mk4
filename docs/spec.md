@@ -662,7 +662,7 @@ MK3(KOGUMA-CHAN.MkIIの回路図、`docs/reference/KOGUMA-CHAN.MkII_v2.pdf`)と�
 
 | 部分 | 部品 | 回路 |
 |---|---|---|
-| 発光 | OPV332 × 4 | MK3は2個を直列にして定電流ドライバNJU6080で10mA(Rs = 20Ω、0.2V / 20Ω)、電源+5V。**MK4は1個ずつNJU6080(計4個)にして、電源を3.3Vにする**。制御は今までどおり左右2系統(WallLED_L / WallLED_R、1本のピンで2個のNJU6080のPWM端子を動かす) |
+| 発光 | OPV332 × 4 | MK3は2個を直列にして定電流ドライバNJU6080で10mA(Rs = 20Ω、0.2V / 20Ω)、電源+5V。**MK4は1個ずつNJU6080(計4個)にして、電源を3.3Vにする**。制御は今までどおり2系統で、1本のピンで2個のNJU6080のPWM端子を動かす。**MK3 と同じく対角の2個ずつ**: WALL_LED_FL_R が FL と R、WALL_LED_L_FR が L と FR(MK3 のソフトの WallLED_12 / WallLED_34。2026-10-29 にネット名を WALL_LED_L / WALL_LED_R から変えた) |
 | 受光 | SFH 229 FA × 4 | フォトダイオードをAD8606(2回路入り × 2)の電流-電圧変換で受ける。帰還は820kΩ + 2.2pF、+側にPD_BIAS(約0.15V) |
 | MCU | ADC × 4、GPIO × 2 | |
 
