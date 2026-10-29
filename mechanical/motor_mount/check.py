@@ -22,7 +22,10 @@ for s in tn:
     if abs(bb.zmax - 14.5) < 0.05:          # ToraNeko のタイヤ(φ14)は使わない
         continue
     if bb.ymin > -21.1 and bb.ymax < -20.4:   # エンコーダ基板(フレームの上面 3.0 に合わせて 0.11 上げる)
-        s = s.translate(cq.Vector(0, 0, 0.11)); parts['enc_board'] = s; continue
+        s = s.translate(cq.Vector(0, 0, 0.11))
+        if mm.P.get('enc_face'):    # v9: 面に貼る大きい基板(x -2.8〜5.2、z 3.0〜13.2)
+            s = cq.Solid.makeBox(8.0, 0.6, 10.2, cq.Vector(-2.8, -21.06, 3.0))
+        parts['enc_board'] = s; continue
     if bb.ymin > -22.3 and bb.ymax < -20.9:
         s = s.translate(cq.Vector(0, 0, 0.11)); parts['AS5047P'] = s; continue
     if abs(bb.zmax - 13.25) < 0.05: parts['wheel'] = s; continue

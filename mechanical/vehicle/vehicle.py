@@ -125,7 +125,10 @@ for s in tn:
     if abs(bb.zmax - 14.5) < 0.05:              # ToraNeko のタイヤ(φ14)は使わない
         continue
     if bb.ymin > -21.1 and bb.ymax < -20.4:
-        right['enc_board'] = (s.translate(cq.Vector(0, 0, 0.11)), 'fr4'); continue
+        s = s.translate(cq.Vector(0, 0, 0.11))
+        if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: 面に貼る基板(x -2.8〜5.2、z 3.0〜13.2)
+            s = cq.Solid.makeBox(8.0, 0.6, 10.2, cq.Vector(-2.8, -21.06, 3.0))
+        right['enc_board'] = (s, 'fr4'); continue
     if bb.ymin > -22.3 and bb.ymax < -20.9:
         right['as5047p'] = (s.translate(cq.Vector(0, 0, 0.11)), 'resin'); continue
     if abs(bb.zmax - 13.25) < 0.05:

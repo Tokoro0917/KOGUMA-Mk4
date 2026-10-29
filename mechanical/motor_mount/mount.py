@@ -61,7 +61,14 @@ P_V7 = dict(P)
 #   - 穴の入口に面取り 0.3mm(軸受・モーターを入れやすく、タップを立てやすく)
 #   - 耳と柱の半径 3.1 → 2.6、耳とマウントをつなぐ板の幅を 3.4mm にして軽くする
 P.update(bore_clear=0.0, wall=0.9, pads=True, pad_relief=0.1, pad_w=2.6, chamfer=0.3, boss_r=2.6, post_r=2.6, link_w=3.4)
-VER = 'v8'
+P_V8 = dict(P)
+# v9(2026-10-29): エンコーダ基板を溝に差して裏の壁で支えるのをやめ、マウントの面(y -21.1、磁石の側)に当てて接着する(ねじなし)。
+#   基板は x -2.8〜5.2、z 3.0〜13.2(8.0 × 10.2mm、0.6mm)。下はフレームの上面、前は x 5.2 の当たり面(z 3〜7)に当てて位置を決める。
+#   面の縁(貼る所): 上 z 11.3〜13.6、前 x 4.0〜5.2、下 z 3.0〜3.8。くぼみ(AS5047P・部品・つば)は x -4.0〜4.0、z 3.8〜11.3
+#   くぼみの後ろの端を x -3.8 → -4.0 にし、モーターの穴とつなげる(内の軸受のつばとモーターの間は 0.2mm しかなく、間に 0.2mm の薄い壁が残っていたため。v8 まで)
+#   くぼみの底を z 3.7 → 3.8(床の厚さ 0.8mm)、上の縁の肉を後ろ x -4.2 まで伸ばしてモーターの筒とつなげる
+P.update(enc_face=dict(x0=-2.8, bx0=-4.2, x1=6.0, wx1=5.2, ztop=13.6, px1=4.0, pz1=11.3), pocket=(4.0, 3.8, 14.0))
+VER = 'v9'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -117,10 +124,20 @@ def build(P=P):
     body = body.cut(ycyl(P['lip_hole'] / 2, y_out - 1, P['motor_face'] + 0.01, mx, mz))
     body = body.cut(ycyl(P['brg_od'] / 2, P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az))
     px, pz0, pz1 = P['pocket']
-    # ポケットは基板の溝の手前まで(基板の裏は壁で受ける)。前側は開ける(薄い壁を残さない)
-    body = body.cut(box(ax - px, ax + px + 1.0, P['brg_seat_in'], P['enc_slot'][0], pz0, pz1))
-    sy0, sy1, sx = P['enc_slot']
-    body = body.cut(box(ax - sx, ax + sx, sy0, sy1, ft - 0.01, 14.0))
+    ef = P.get('enc_face')
+    if ef:   # v9: エンコーダ基板をマウントの面に当てて接着する(裏から支えない)
+        # 面の縁を作る肉(くぼみの上・前): 内の軸受の壁から基板の面まで
+        body = body.union(box(ax + ef.get('bx0', ef['x0']), ax + ef['x1'], P['brg_seat_in'] - 0.01, P['enc_slot'][0], ft, ef['ztop']))
+        body = body.cut(ycyl(P['motor_d'] / 2 + P.get('pad_relief', 0.0), P['brg_seat_in'] - 0.02, P['enc_slot'][0] + 0.02, mx, mz))   # 足した肉がモーターの穴を埋めないように
+        # くぼみ(AS5047P・部品・内の軸受のつば): 上は z ef['pz1'] で閉じ、前は ef['px1'] まで
+        body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], P['enc_slot'][0], pz0, ef['pz1']))
+        # 基板の面より内側は、基板の外形の所をすべて開ける(裏の壁をなくす)
+        body = body.cut(box(ax + ef['x0'], ax + ef['wx1'], P['enc_slot'][0], P['inner_face'] + 1.0, ft - 0.01, 20.0))   # 前は x wx1 で止め、基板の前の端を受ける
+    else:
+        # ポケットは基板の溝の手前まで(基板の裏は壁で受ける)。前側は開ける(薄い壁を残さない)
+        body = body.cut(box(ax - px, ax + px + 1.0, P['brg_seat_in'], P['enc_slot'][0], pz0, pz1))
+        sy0, sy1, sx = P['enc_slot']
+        body = body.cut(box(ax - sx, ax + sx, sy0, sy1, ft - 0.01, 14.0))
     # 外側の面より外に出た所を削る(41T・ピニオンとのすき間)
     body = body.cut(box(-40, 40, -40, y_out, 0, 30).cut(ycyl(P['seat_r'], P['brg_seat_out'], y_out, ax, az)))
     for (sx_, sy_) in (P['screw_front'], P['screw_rear']):
