@@ -2,7 +2,7 @@
 	(version 20250114)
 	(generator "eeschema")
 	(generator_version "9.0")
-	(uuid "9b7d9cce-e694-4ccb-908f-cf46129b4ffc")
+	(uuid "b4ecac63-bf9d-5a4c-873b-2154e676a044")
 	(paper "A4")
 	(title_block
 		(title "KOGUMA MK4")
@@ -10,7 +10,7 @@
 		(rev "0.1")
 	)
 	(lib_symbols)
-	(text "シート: 電源(これから モーター・MCU・センサ・表示 を足す)"
+	(text "シート: 電源・モーター(これから MCU・センサ・表示 を足す)"
 		(exclude_from_sim no)
 		(at 25.4 20.32 0)
 		(effects
@@ -19,7 +19,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "998ced7c-2887-4269-a26e-54f837131ad9")
+		(uuid "5161811d-2b4e-5884-a23a-d7797971e784")
 	)
 	(sheet
 		(at 25.4 30.48)
@@ -36,7 +36,7 @@
 		(fill
 			(color 0 0 0 0.0000)
 		)
-		(uuid "6d9edaeb-6bc1-469b-98ca-a808c4aea3e7")
+		(uuid "3ced59ac-efb9-5b1e-b026-e42a9995f64f")
 		(property "Sheetname" "電源"
 			(at 25.4 29.7684 0)
 			(effects
@@ -57,8 +57,50 @@
 		)
 		(instances
 			(project "KOGUMA-Mk4"
-				(path "/9b7d9cce-e694-4ccb-908f-cf46129b4ffc"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044"
 					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 71.12 30.48)
+		(size 30.48 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "b3ecc577-4e99-536f-af5d-c45eb9b9dc15")
+		(property "Sheetname" "モーター"
+			(at 71.12 29.7684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "motor.kicad_sch"
+			(at 71.12 46.3046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044"
+					(page "3")
 				)
 			)
 		)

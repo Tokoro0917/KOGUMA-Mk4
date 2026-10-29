@@ -6,8 +6,9 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 |---|---|
 | `KOGUMA-Mk4.kicad_sch` | 一番上のシート。下のシートを並べる |
 | `power.kicad_sch` | 電源(電池 → 電源スイッチ → VBAT → 3.3V、電池の電圧の分圧) |
-| `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
-| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」) |
+| `motor.kicad_sch` | モーター(MP6551 × 2、CM の分圧とコンデンサ)と吸引ファン(IRLML6344、0.1Ω のシャント) |
+| `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
+| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」) |
 | `sym-lib-table`・`fp-lib-table` | 上の2つをプロジェクトのライブラリとして登録する |
 
 ## ネットの名前
@@ -18,14 +19,23 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `VBAT` | 電源スイッチのあと。MP6551・LXDC55 の入力 |
 | `+3V3` | LXDC55 の出力 |
 | `BATT` | 電池の電圧の分圧(MCU の PB1、ADC2_INP5 へ)。グローバルラベル |
+| `MOT_L_IN1`・`MOT_L_IN2`・`MOT_R_IN1`・`MOT_R_IN2` | MP6551 の IN(TIM1 の CH1〜CH4) |
+| `MOT_EN` | 2個の MP6551 の EN1・EN2(共通) |
+| `MOT_nFAULT` | 2個の nFAULT(オープンドレインを共通に、10kΩ で 3.3V へ) |
+| `MOT_L_CM1`・`MOT_L_CM2`・`MOT_R_CM1`・`MOT_R_CM2` | CM の電圧(ADC2) |
+| `FAN_PWM`・`FAN_ISENSE` | ファンの PWM(TIM16)と電流(ADC1) |
 
 ## まだ決めていないこと
 
 - SW1(SSSS810701)と J1(BT2.0 のケーブルをはんだ付けするパッド)のフットプリント。J1 は仮に `Connector_Wire:SolderWire-0.5sqmm_1x02_P4.8mm_D0.9mm_OD2.3mm`
 - C4(ポリマー 47µF 25V)の品番と大きさ。仮に 7343
 - LXDC55 のフットプリントは、データシートのランドパターンの寸法から作った。基板を注文する前に、実物か村田の最新の資料で確かめる
+- **MP6551 のフットプリント(MPS_QFN-14_2.5x3mm)は寸法の読み取りに自信がない**。データシートの図の「2.80」を上下の小さいパッドの中心の間、「1.20」を長いパッドの長さ、「1.30」を中心から長いパッドの外の端までと読んだ(パッケージの足の位置とつじつまが合う読み方)。長いパッドの幅は 0.25mm と仮定。基板を注文する前に、印刷した図に実物を重ねるなどして確かめる
+- モーター・ファンの線のパッド(J2〜J4)、ファンの還流ダイオード(D40)の品番、R41(ゲートの直列抵抗)の値
+- MCU のシートがまだないので、ERC に IN・FAN_PWM のラベルの相手がいないエラーと警告が出る
 
 ## 確かめたこと(2026-10-29、kicad-cli 9.0.9)
 
 - ERC: エラー 0。警告は、確かめた環境に KiCad の標準ライブラリ(Device など)が登録されていないことによるものだけ
 - ネットリストで、全部のピンが意図したネットにつながっていることを確かめた(つないでいないのは SW1 の3番、LXDC55 の NC と PG だけ)
+- モーターのシート(同日): ERC のエラーは、MCU のシートがまだないことによるもの(上)だけ
