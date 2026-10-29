@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461343.2104513887
+2461343.37900463
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461343.2104513887
+2461343.37900463
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-B7
+BB
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{E194440B-F305-4F2B-9F6C-10926F97BDAC}
+{D0B6078F-E572-4F54-A849-4D893DA90EB8}
   9
 $VERSIONGUID
   2
-{546862CE-FD53-46C7-9D76-372417B86941}
+{B11BEB00-513B-4D4F-85D1-20F0C0C6A8D2}
   9
 $EXTNAMES
 290
@@ -3157,7 +3157,7 @@ ACAD
   0
 APPID
   5
-B4
+B8
 330
 3
 100
@@ -3171,7 +3171,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-B5
+B9
 330
 3
 100
@@ -6105,9 +6105,133 @@ AcDbPolyline
  20
 12.8
   0
-TEXT
+LWPOLYLINE
   5
 A3
+330
+17
+100
+AcDbEntity
+  8
+REF
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+-2.6
+ 20
+-21.0
+ 10
+5.2
+ 20
+-21.0
+ 10
+5.2
+ 20
+-20.4
+ 10
+-2.6
+ 20
+-20.4
+  0
+TEXT
+  5
+A4
+330
+17
+100
+AcDbEntity
+  8
+REF
+100
+AcDbText
+ 10
+-2.6
+ 20
+-22.7
+ 30
+0.0
+ 40
+1.2
+  1
+ENC
+ 11
+-2.6
+ 21
+-22.7
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+A5
+330
+17
+100
+AcDbEntity
+  8
+REF
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+-2.6
+ 20
+20.4
+ 10
+5.2
+ 20
+20.4
+ 10
+5.2
+ 20
+21.0
+ 10
+-2.6
+ 20
+21.0
+  0
+TEXT
+  5
+A6
+330
+17
+100
+AcDbEntity
+  8
+REF
+100
+AcDbText
+ 10
+-2.6
+ 20
+21.5
+ 30
+0.0
+ 40
+1.2
+  1
+ENC
+ 11
+-2.6
+ 21
+21.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+A7
 330
 17
 100
@@ -6137,7 +6261,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-A4
+A8
 330
 17
 100
@@ -6169,7 +6293,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-A5
+A9
 330
 17
 100
@@ -6201,7 +6325,7 @@ AcDbPolyline
   0
 LINE
   5
-A6
+AA
 330
 17
 100
@@ -6225,7 +6349,7 @@ AcDbLine
   0
 TEXT
   5
-A7
+AB
 330
 17
 100
@@ -6255,7 +6379,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-A8
+AC
 330
 17
 100
@@ -6287,7 +6411,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-A9
+AD
 330
 17
 100
@@ -6319,7 +6443,7 @@ AcDbPolyline
   0
 LINE
   5
-AA
+AE
 330
 17
 100
@@ -6343,7 +6467,7 @@ AcDbLine
   0
 TEXT
   5
-AB
+AF
 330
 17
 100
@@ -6373,7 +6497,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-AC
+B0
 330
 17
 100
@@ -6405,7 +6529,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-AD
+B1
 330
 17
 100
@@ -6437,7 +6561,7 @@ AcDbPolyline
   0
 LINE
   5
-AE
+B2
 330
 17
 100
@@ -6461,7 +6585,7 @@ AcDbLine
   0
 TEXT
   5
-AF
+B3
 330
 17
 100
@@ -6491,7 +6615,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-B0
+B4
 330
 17
 100
@@ -6523,7 +6647,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-B1
+B5
 330
 17
 100
@@ -6555,7 +6679,7 @@ AcDbPolyline
   0
 LINE
   5
-B2
+B6
 330
 17
 100
@@ -6579,7 +6703,7 @@ AcDbLine
   0
 TEXT
   5
-B3
+B7
 330
 17
 100
@@ -7697,7 +7821,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-B6
+BA
   0
 DICTIONARYVAR
   5
@@ -7709,7 +7833,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-10-29T05:03:03.132410+00:00
+1.4.5 @ 2026-10-29T09:05:46.024767+00:00
   0
 VISUALSTYLE
   5
@@ -8413,7 +8537,7 @@ X-Ray
   0
 DICTIONARYVAR
   5
-B6
+BA
 330
 2D
 100
@@ -8421,7 +8545,7 @@ DictionaryVariables
 280
 0
   1
-1.4.5 @ 2026-10-29T05:03:03.145453+00:00
+1.4.5 @ 2026-10-29T09:05:46.041941+00:00
   0
 ENDSEC
   0
