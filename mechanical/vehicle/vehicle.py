@@ -300,13 +300,9 @@ if CFG['clamp']:
     add('fan_clamp', clamp, 'resin')
 
 # ---------------- 基板 ----------------
-if SPIDER:      # 2026-10-19: 絵の形(U字)。後ろは電池の下、左右の腕で前の壁センサの耳と前の角の横の壁センサへ。真ん中の前はファンの上で開ける
-    _half = Polygon([(-19.0, 0.0), (-19.0, 26.0), (-8.0, 26.0), (-8.0, 25.0), (7.0, 25.0), (8.5, 28.0), (9.0, 33.0),   # 41T の上(|x| ≤ 8)は |y| ≤ 25
-                      (16.0, 33.5), (24.0, 31.0), (34.0, 28.5),
-                     (40.0, 27.5), (44.5, 25.0), (45.0, 22.0), (42.0, 19.5), (34.0, 17.5), (14.2, 17.5), (14.2, 0.0)])
-    # 真ん中の前はファンの囲い(内径 φ33)の上を開ける(半径17.5、腕の内側は |y| ≥ 17.5。2026-10-20)
-    pcb_outline = unary_union([_half, affinity.scale(_half, 1, -1, origin=(0, 0))]).difference(Point(FAN).buffer(17.5, 64))
-    pcb_outline = pcb_outline.buffer(-1.5, join_style=1).buffer(1.5, join_style=1).buffer(1.0, join_style=1).buffer(-1.0, join_style=1)
+if SPIDER:      # 2026-10-19: U字。2026-10-28(基板 v5): ファンの上はハブのまわりだけ開け、後ろは x −46 まで広げる(pcb_shape.py)
+    import pcb_shape
+    pcb_outline = pcb_shape.outline()
 else:
     pcb_outline = unary_union([
         sbox(-21.0, -25.5, -9.0, 25.5),     # 後ろ(マウントの柱の上)
