@@ -2771,6 +2771,271 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:Crystal_GND24"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "Y"
+				(at 3.175 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "Crystal_GND24"
+				(at 3.175 3.175 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Four pin crystal, GND on pins 2 and 4"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property private "KLC_S3.3" "The rectangle is not a symbol body but a graphical element"
+				(at 0 -12.7 0)
+				(show_name)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property private "KLC_S4.1" "Some pins are on 50mil grid to make the symbol small"
+				(at 0 -15.24 0)
+				(show_name)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "quartz ceramic resonator oscillator"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Crystal*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Crystal_GND24_0_1"
+				(polyline
+					(pts
+						(xy -2.54 2.286) (xy -2.54 3.556) (xy 2.54 3.556) (xy 2.54 2.286)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 0) (xy -2.032 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.54 -2.286) (xy -2.54 -3.556) (xy 2.54 -3.556) (xy 2.54 -2.286)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -2.032 -1.27) (xy -2.032 1.27)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.143 2.54)
+					(end 1.143 -2.54)
+					(stroke
+						(width 0.3048)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -3.81) (xy 0 -3.556)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.032 0) (xy 2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 2.032 -1.27) (xy 2.032 1.27)
+					)
+					(stroke
+						(width 0.508)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Crystal_GND24_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 1.27)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -5.08 90)
+					(length 1.27)
+					(name "G"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -5.08 90)
+					(length 1.27)
+					(hide yes)
+					(name "G"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 1.27)
+					(name "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(symbol
 		(lib_id "KOGUMA-Mk4:STM32H725RGVx")
@@ -2780,7 +3045,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "7e335eac-2017-42be-9c64-ce6e0aefd98b")
+		(uuid "4d7aa77d-fd6c-4079-8ce1-e5f1e2795ed4")
 		(property "Reference" "U4"
 			(at 160.02 157.48 0)
 			(effects
@@ -2827,211 +3092,211 @@
 			)
 		)
 		(pin "12"
-			(uuid "9ebd9b17-2452-44a1-8dcf-0357a27c6ea9")
+			(uuid "1d4ce705-9347-49fb-a24a-d569a302c40e")
 		)
 		(pin "63"
-			(uuid "2fd9eca1-23ed-4c8f-b769-c67f83f1a050")
+			(uuid "e32516ed-04c6-484d-981f-71434cdfe95b")
 		)
 		(pin "5"
-			(uuid "7227bc55-325e-4fe3-b65c-419a61cd8f28")
+			(uuid "aa26e1b4-7a9f-4cf5-bc78-d179261191cd")
 		)
 		(pin "7"
-			(uuid "667bd080-16db-412e-a0d0-884829556cb0")
+			(uuid "45e11801-ed96-46ba-a96e-3c8eb16a1ead")
 		)
 		(pin "10"
-			(uuid "f7232454-fb75-40dd-a955-3aa183003d42")
+			(uuid "543749c6-30aa-4045-bcd6-60da03dfc60c")
 		)
 		(pin "11"
-			(uuid "03004046-cb9b-441e-9b66-575a0cc8b5a6")
+			(uuid "d3031215-50ff-4026-8c26-91cd8e04028a")
 		)
 		(pin "57"
-			(uuid "e44be3fc-c664-440a-8288-c55f69a5267c")
+			(uuid "72378b3b-fa67-4744-a308-34ec9abb7c4b")
 		)
 		(pin "13"
-			(uuid "062a957d-658b-4e4b-ab45-7a2b70cb9879")
+			(uuid "5c56223e-bdff-4544-8c4f-64ddcd3c21a0")
 		)
 		(pin "14"
-			(uuid "810c6975-1be9-4119-af9c-9078b36941db")
+			(uuid "203078c4-9761-446c-8c91-2a91af698ede")
 		)
 		(pin "27"
-			(uuid "8320b5f4-1201-4412-8225-2cf2c90fc4b8")
+			(uuid "e8e495bd-d741-48d1-989b-6ce058049a9b")
 		)
 		(pin "28"
-			(uuid "ad22aff1-8ec0-4e4b-8c22-280a6dc872d7")
+			(uuid "aed2b463-67d9-41a6-9403-6cc254d35f67")
 		)
 		(pin "40"
-			(uuid "a77f7909-2cb7-46ba-8388-c2160a6e112b")
+			(uuid "6bb236b1-ed06-41a8-abb1-c8ad763b9c18")
 		)
 		(pin "41"
-			(uuid "6cd4de96-c8f5-4827-a878-2ff914415e81")
+			(uuid "7f5d8619-7a13-4683-8291-2bcac1566889")
 		)
 		(pin "42"
-			(uuid "5bc83ddf-95d0-4fce-95f8-0a3a9a9ebd36")
+			(uuid "a4b3f808-0a7d-437d-b16d-6ea9482a3cc6")
 		)
 		(pin "54"
-			(uuid "78f9b274-fab4-4241-8962-16cb8983f8e1")
+			(uuid "6af8e17f-596a-4b13-b3af-9cae6db725f3")
 		)
 		(pin "55"
-			(uuid "3d7219a6-1bd1-4830-aa2f-bb0ab8a9dee8")
+			(uuid "64c18847-f0b5-4245-982b-2924c377b931")
 		)
 		(pin "56"
-			(uuid "71d26a1d-629d-4f5a-9c8a-aa166a2e8b11")
+			(uuid "dbf0fe39-1542-4b31-bf73-cff40c4c8a9b")
 		)
 		(pin "2"
-			(uuid "2dca5fef-036d-4f8b-8a46-f10d9ec9a64b")
+			(uuid "317a6b96-2f79-4b07-ac9c-17f44010cc12")
 		)
 		(pin "3"
-			(uuid "10699441-9166-4baa-8c01-b2b5dc62b814")
+			(uuid "c8e03186-5049-4b3c-867c-368737e6c8ec")
 		)
 		(pin "33"
-			(uuid "9656b3fe-2d26-42b4-9486-c8c2f712e2a2")
+			(uuid "30638b34-e45f-4493-b3ed-9e8733ccfd73")
 		)
 		(pin "49"
-			(uuid "9d53490a-e5b3-413e-b85e-faa2ed469ca5")
+			(uuid "f98458ab-ce06-485e-9c89-a46642f02004")
 		)
 		(pin "66"
-			(uuid "0230228d-cada-4f03-b2ae-7ffe3620e24a")
+			(uuid "5da5fd58-8087-4767-ab35-27251dc515fc")
 		)
 		(pin "1"
-			(uuid "5d5dd6df-a596-4629-a440-462d0bbbb75f")
+			(uuid "aa47a5bf-e21f-438e-8ee1-8644267848ec")
 		)
 		(pin "9"
-			(uuid "5e62cb93-8abd-4d2a-8274-485e497ffeca")
+			(uuid "b4be3ed3-245a-4775-839c-48e2a1dbad05")
 		)
 		(pin "22"
-			(uuid "0f98da9f-dc3f-4aca-bbd1-ca5590088f2a")
+			(uuid "a92f1c48-6415-4f17-8a54-b756bfe7eda1")
 		)
 		(pin "21"
-			(uuid "69a673d3-d9d1-4360-950e-2bf4e4d3d0fc")
+			(uuid "8a2f06fd-641c-49b7-a28b-e849eb59eeb0")
 		)
 		(pin "34"
-			(uuid "a1a5d078-5e0d-4592-8883-6796ccc28cbe")
+			(uuid "f08d9f1b-6783-4667-a778-1066afedc27e")
 		)
 		(pin "50"
-			(uuid "d12c732d-4505-4cee-b8b0-3221aa9d43b9")
+			(uuid "92c9593e-af36-4009-9265-2748c7e22889")
 		)
 		(pin "67"
-			(uuid "5f383513-7cbe-47c7-9bc8-228e9be734e1")
+			(uuid "96337588-b2d0-4d0a-a86a-10126a65911c")
 		)
 		(pin "69"
-			(uuid "b41f3789-07fe-4ea2-9550-265d8e98cc19")
+			(uuid "24c3553d-3f33-4a1d-bf02-b1f57182d052")
 		)
 		(pin "8"
-			(uuid "3879fd2b-96d3-47ba-bcba-4632f64cbb38")
+			(uuid "718b90c4-7c80-4704-81f1-b128522daf85")
 		)
 		(pin "35"
-			(uuid "9882d642-8ba9-4e42-a9dc-68902c684092")
+			(uuid "3d4aab2f-9ef4-4146-91fd-d546cc17d5c1")
 		)
 		(pin "15"
-			(uuid "0b60361b-30cd-4e8d-9861-e375b53cdc64")
+			(uuid "1a8ef0f7-dc56-49b7-a530-97447f66fdde")
 		)
 		(pin "51"
-			(uuid "1541b258-1101-4b23-98ac-e78c23ecdff2")
+			(uuid "eb3b7c63-bda3-412c-a6b9-570c31f282ff")
 		)
 		(pin "4"
-			(uuid "3e01aa3a-184e-44f2-977c-68e24bdd2802")
+			(uuid "00d96f44-7b22-405d-9e28-fbcb742524c9")
 		)
 		(pin "68"
-			(uuid "db27281c-87dd-4bf0-8de4-95401bcde36b")
+			(uuid "1a0014f9-9fa7-435b-85e4-12d5af79e204")
 		)
 		(pin "16"
-			(uuid "d47865b9-807a-4f6a-be5b-8b9f92561c4a")
+			(uuid "d596f329-70e6-4c63-b8e1-93a870f51e3a")
 		)
 		(pin "6"
-			(uuid "044a924d-b0b2-4f16-ba1a-3dd27c58f883")
+			(uuid "c06ab7af-bb94-4fee-b5d6-834575f6dd4b")
 		)
 		(pin "17"
-			(uuid "00cc9bff-72a2-4b41-b7e0-7627581b274c")
+			(uuid "14ee3b67-818c-4a21-8289-a1cbab4b8684")
 		)
 		(pin "18"
-			(uuid "81629822-47a7-4e2d-816b-923b9799c359")
+			(uuid "fd1e2c2f-655f-4f26-99b2-7ccaa0ce17bf")
 		)
 		(pin "19"
-			(uuid "3588592e-83f7-4284-83d6-aa9954f39698")
+			(uuid "5aed567b-9d28-492d-9b92-6d87195b2497")
 		)
 		(pin "20"
-			(uuid "db47e9a8-252c-4fe4-bcd0-c18adacef86b")
+			(uuid "a4592452-7ec5-49f7-8b90-287d0681cbe2")
 		)
 		(pin "23"
-			(uuid "1923e7c2-2efa-43eb-9237-243c8d853982")
+			(uuid "3d0dfbcc-74ce-4291-97c7-2798dd20e3ea")
 		)
 		(pin "24"
-			(uuid "33460a49-8ff7-4f56-b7fa-1f3e4f52b04d")
+			(uuid "ed36ff4f-3ded-40fd-9770-ded960e32a7c")
 		)
 		(pin "25"
-			(uuid "14647f44-9041-44e5-b71a-b804abba3bda")
+			(uuid "da84921c-f7a4-4957-b168-7d990045ebce")
 		)
 		(pin "26"
-			(uuid "d4cccbaa-239c-4948-b889-54ca0b4c3fc4")
+			(uuid "b9647ec9-1fa6-4364-984d-84be86dd61ce")
 		)
 		(pin "43"
-			(uuid "1070a387-6867-4e00-b681-38e7fc980fe0")
+			(uuid "1f27981d-1a09-42c7-93bf-73e8301c67c5")
 		)
 		(pin "44"
-			(uuid "853e4d13-f4b0-4f6a-9a28-604cbef8f822")
+			(uuid "9e52eb00-967e-479c-ab55-22d965810dbd")
 		)
 		(pin "45"
-			(uuid "44cc4f37-6ce7-4135-981c-a74e9b8cf3b6")
+			(uuid "4990baf1-5dc0-441f-93e0-c107823e8fbd")
 		)
 		(pin "46"
-			(uuid "9099ee56-0274-448e-a044-89553ebf8521")
+			(uuid "1b93ffdf-d532-48df-ae4e-7a055e365bac")
 		)
 		(pin "47"
-			(uuid "cf754771-9196-4358-8977-af30c8b9175c")
+			(uuid "7a7bda74-7600-4dc0-a716-f9888c67a6e3")
 		)
 		(pin "48"
-			(uuid "e1c6ceac-4338-438d-a895-c37bc6fd72eb")
+			(uuid "e65c3cd3-63cd-45ba-823c-4309189fda3b")
 		)
 		(pin "52"
-			(uuid "1a5401d3-99cc-4d31-859a-1c84dbfae127")
+			(uuid "ca1ae9ce-872a-4376-8c46-5b771bb0a855")
 		)
 		(pin "53"
-			(uuid "a62f7b0f-641d-4c8c-8f12-c55a36c87d91")
+			(uuid "3b959238-419c-4cd9-8590-820c72e70d6c")
 		)
 		(pin "29"
-			(uuid "f431ccb2-6343-48a9-8ab8-ce98edc448f7")
+			(uuid "41e80600-3079-43a4-b1db-ca526491ea5a")
 		)
 		(pin "30"
-			(uuid "f12f17d2-086d-495b-9290-411840ec423c")
+			(uuid "e57b061f-93ca-4588-8882-c9aae73c81ca")
 		)
 		(pin "31"
-			(uuid "896dfb83-b6a6-4426-9355-9ff65f0ca646")
+			(uuid "4bd42029-898c-4802-aa8b-297747911617")
 		)
 		(pin "58"
-			(uuid "5e1b66d3-e361-42b2-b9a2-872c21a42c77")
+			(uuid "2292619d-0a22-4825-938d-4f2fe4fc5a31")
 		)
 		(pin "59"
-			(uuid "b24a7dfe-ee15-4d9b-b880-628c1b5d749a")
+			(uuid "3e83afd7-d9ed-4a05-96b1-0fe8164b1887")
 		)
 		(pin "60"
-			(uuid "8e9e54c7-5be4-4163-b80c-50297a187480")
+			(uuid "4bc9f2af-7635-4f46-988f-ce3f5c326333")
 		)
 		(pin "61"
-			(uuid "b3e9ddde-e1dd-4ae9-a0ac-d0c4984c02cd")
+			(uuid "a0618313-8743-4d07-b730-e424d95aec61")
 		)
 		(pin "62"
-			(uuid "86955f39-7c27-461f-b42f-ccf456e86b00")
+			(uuid "0e1616b6-7c52-4f00-886a-e2d8ad43cee9")
 		)
 		(pin "64"
-			(uuid "554c91b1-167b-4796-897f-fb65ae3b3ced")
+			(uuid "7ddcf328-d682-4741-8bac-25d5974b7b0f")
 		)
 		(pin "65"
-			(uuid "139edc70-90c5-49b1-9067-453f53d5c2a3")
+			(uuid "3ea8bc06-df37-402b-9e7e-079b44e357d6")
 		)
 		(pin "32"
-			(uuid "6257d78f-3d45-4c57-87c4-ca2f6ae5a32b")
+			(uuid "114c6f97-3f6c-47ba-8b6c-d85f2d0e1d62")
 		)
 		(pin "36"
-			(uuid "3e4a446b-a594-4be9-863d-8e62f1d58605")
+			(uuid "906891d4-332f-4df1-88df-78e02987d0f4")
 		)
 		(pin "37"
-			(uuid "9ab105ee-6f5b-45be-9d2f-3cc7973f4bc1")
+			(uuid "8c069db5-37df-4ca6-8ecb-195809bb2524")
 		)
 		(pin "38"
-			(uuid "9fe7c7e7-c03d-4383-a317-cc4e8eb9366b")
+			(uuid "fe9ff801-778b-4d4c-bf7f-7f85aa819abc")
 		)
 		(pin "39"
-			(uuid "a89e9179-a74f-4a0d-9c5b-1cc423d66119")
+			(uuid "01c4dada-51d2-4e32-abf9-8d1e121c85ff")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -3050,7 +3315,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e7ade510-d42d-4ec5-a5ff-482e6560ed77")
+		(uuid "90c120f7-7a57-4951-859b-8cd5473cd047")
 	)
 	(global_label "SW"
 		(shape input)
@@ -3062,7 +3327,7 @@
 			)
 			(justify right)
 		)
-		(uuid "3c0f6308-cca3-41b6-8324-258093288c51")
+		(uuid "c99a8bd2-faad-45a3-b886-4c2d7933bf23")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 124.46 0)
 			(effects
@@ -3081,7 +3346,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "b0c45c28-5438-406c-b246-8ce12980229c")
+		(uuid "1481b5c3-2ddf-4cdc-bd85-1dd0010a819c")
 	)
 	(global_label "WALL_FL"
 		(shape input)
@@ -3093,7 +3358,7 @@
 			)
 			(justify right)
 		)
-		(uuid "beed2bd3-a2e1-4c1a-97da-2fab9c700cee")
+		(uuid "281d6833-0d83-4ba5-828a-47ad6fe25485")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 99.06 0)
 			(effects
@@ -3112,7 +3377,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "0169f6b5-c80c-4367-be58-23fbefdda050")
+		(uuid "6f6d9c03-a48a-4216-a554-ee4c10c60fa5")
 	)
 	(global_label "WALL_L"
 		(shape input)
@@ -3124,7 +3389,7 @@
 			)
 			(justify right)
 		)
-		(uuid "7731e987-1ef3-4add-bd39-8449cfe301aa")
+		(uuid "613d631a-d09a-4ff7-8255-c86c1469ef20")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 101.6 0)
 			(effects
@@ -3143,7 +3408,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "f118d729-6b3b-444b-b8c5-dbd2a4367f4f")
+		(uuid "5a89077f-7534-469c-87ee-fb4d365d622c")
 	)
 	(global_label "LED_MODE0"
 		(shape output)
@@ -3155,7 +3420,7 @@
 			)
 			(justify left)
 		)
-		(uuid "3932b4d2-3d86-479b-9d9d-77dd2f36a8d8")
+		(uuid "dd7cd901-9141-482d-a4fc-29c8c4806683")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 66.04 0)
 			(effects
@@ -3174,7 +3439,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "2edb763d-c0e5-4ea0-9d18-c031f4e98eaf")
+		(uuid "63461781-1981-4c5d-acdf-a35d5dd5b1e8")
 	)
 	(global_label "LED_MODE1"
 		(shape output)
@@ -3186,7 +3451,7 @@
 			)
 			(justify left)
 		)
-		(uuid "35d02677-8057-4fe6-9c55-c6d41f68f8ef")
+		(uuid "ce16fe1b-747c-4091-be56-0c53a50ffeb8")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 68.58 0)
 			(effects
@@ -3205,7 +3470,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "db959660-fd26-43b0-89d0-b360959456e3")
+		(uuid "06fe307e-ad5a-482f-91ca-0f438c24b66e")
 	)
 	(global_label "LED_MODE2"
 		(shape output)
@@ -3217,7 +3482,7 @@
 			)
 			(justify left)
 		)
-		(uuid "cda9d8ff-49e8-4436-962f-8313524aefe1")
+		(uuid "f0467049-eb64-4b5f-a32a-33422129a09b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 71.12 0)
 			(effects
@@ -3236,7 +3501,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a0bf3347-17e2-4243-93ff-75be4a90028d")
+		(uuid "2aa5e764-dd1d-43c1-a288-22a40a2f892d")
 	)
 	(global_label "LED_NUM0"
 		(shape output)
@@ -3248,7 +3513,7 @@
 			)
 			(justify left)
 		)
-		(uuid "31c8dc7f-f770-4f84-95b3-d39421ecbdd2")
+		(uuid "cd4af7b8-04f1-4cb6-aa78-39cbdac4535c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 73.66 0)
 			(effects
@@ -3267,7 +3532,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d644f6db-3407-4d37-ac92-06aa19bd849d")
+		(uuid "54ea971e-9010-446c-952a-ddf766c24dad")
 	)
 	(global_label "MOT_R_CM1"
 		(shape input)
@@ -3279,7 +3544,7 @@
 			)
 			(justify left)
 		)
-		(uuid "4214b9f5-7bae-463a-b1b2-7cd66978d44e")
+		(uuid "fe705978-8833-44f8-aacd-7127d8f89386")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 76.2 0)
 			(effects
@@ -3298,7 +3563,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "fa8e5daa-938c-4070-9d9c-fc6ec34b8367")
+		(uuid "3be1cae4-6ec5-4dd0-b8cd-f2c9e806bff5")
 	)
 	(global_label "MOT_R_CM2"
 		(shape input)
@@ -3310,7 +3575,7 @@
 			)
 			(justify left)
 		)
-		(uuid "6383209b-3252-4719-8a51-bdc1e55c5431")
+		(uuid "958cd93f-5deb-4ecf-9506-57ae953e8222")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 78.74 0)
 			(effects
@@ -3329,7 +3594,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "32973c40-5e76-4b23-81ee-ffc3cc243e95")
+		(uuid "276f05d6-553f-4a1c-b04b-2bcc3b72eaaf")
 	)
 	(global_label "WALL_R"
 		(shape input)
@@ -3341,7 +3606,7 @@
 			)
 			(justify left)
 		)
-		(uuid "e85c65db-b031-4118-9e5b-5122e4864ffb")
+		(uuid "f45b71bb-c6ec-4c09-ad1d-3ed56a428952")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 81.28 0)
 			(effects
@@ -3360,7 +3625,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "6717e742-749e-43d9-95a5-6fe206737d99")
+		(uuid "08841ee5-e379-4abd-a5f6-c44a027dff99")
 	)
 	(global_label "WALL_FR"
 		(shape input)
@@ -3372,7 +3637,7 @@
 			)
 			(justify left)
 		)
-		(uuid "8b1fbbc0-8ed7-45a6-b12f-52d1da947120")
+		(uuid "adc16126-bf29-4932-8868-b13533d75733")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 83.82 0)
 			(effects
@@ -3391,7 +3656,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e13dca77-6c21-4219-98f8-409e14442e08")
+		(uuid "a542c3c4-5477-47b4-b631-b09c8f299fa7")
 	)
 	(global_label "MOT_L_CM1"
 		(shape input)
@@ -3403,7 +3668,7 @@
 			)
 			(justify right)
 		)
-		(uuid "ddb71239-bb99-46a1-b84e-35134d8b7db0")
+		(uuid "64bdc4f2-c542-4951-b948-f479f515dd30")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 104.14 0)
 			(effects
@@ -3422,7 +3687,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "ab7894c5-62cb-4550-b005-6b1ed2b7872f")
+		(uuid "f17d39ef-d11a-4e26-a800-e9733661a44e")
 	)
 	(global_label "MOT_L_CM2"
 		(shape input)
@@ -3434,7 +3699,7 @@
 			)
 			(justify right)
 		)
-		(uuid "4eab252a-ddbc-4aeb-84ce-4d0ac1fb8415")
+		(uuid "0d83f8d7-e281-49e8-9df0-d130df26efda")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 106.68 0)
 			(effects
@@ -3453,7 +3718,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "916f09ab-369f-43e7-a7b8-6730e77e5741")
+		(uuid "fe5e13ba-fe91-449e-a7ac-a8916f210562")
 	)
 	(global_label "FAN_ISENSE"
 		(shape input)
@@ -3465,7 +3730,7 @@
 			)
 			(justify left)
 		)
-		(uuid "bebafa33-7214-442c-ae54-e75cbb3669ad")
+		(uuid "df82eacc-d9ff-475b-9ef3-a4849c7eb4cc")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 109.22 0)
 			(effects
@@ -3484,7 +3749,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "f0322491-c481-48c4-b874-3c802222ca33")
+		(uuid "c42c5f5b-f916-4553-b64a-5da5bd4e25c3")
 	)
 	(global_label "BATT"
 		(shape input)
@@ -3496,7 +3761,7 @@
 			)
 			(justify left)
 		)
-		(uuid "ccb71a44-af5e-4b9e-9ba8-f493e28fa621")
+		(uuid "7d614ee3-64a9-440f-a542-fe434ba8e814")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 111.76 0)
 			(effects
@@ -3515,7 +3780,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "4756daec-acef-41f3-a45a-85f421a5213a")
+		(uuid "33d4144c-7040-476c-858b-b7fc9f91ff0a")
 	)
 	(global_label "MOT_EN"
 		(shape output)
@@ -3527,7 +3792,7 @@
 			)
 			(justify left)
 		)
-		(uuid "664383b4-a382-4aef-a9fd-519821727026")
+		(uuid "7f6da7f7-c2b5-488b-805f-53bd4079e095")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 114.3 0)
 			(effects
@@ -3546,7 +3811,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "11a7f300-6662-4e20-b9d6-9842116edc81")
+		(uuid "bc4165dc-9a24-4b4a-bf57-751e27ed9162")
 	)
 	(global_label "LED_NUM1"
 		(shape output)
@@ -3558,7 +3823,7 @@
 			)
 			(justify left)
 		)
-		(uuid "7a4ae246-aa71-4fb8-ac48-7eea3db496b1")
+		(uuid "a9222192-b73b-40a2-a30e-0604caa88238")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 134.62 0)
 			(effects
@@ -3577,7 +3842,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5ffe7d2c-76c7-4e72-b6dc-f9a77e94f3f4")
+		(uuid "e5aad1fb-a601-482c-a172-85522f62f4cc")
 	)
 	(global_label "LED_NUM2"
 		(shape output)
@@ -3589,7 +3854,7 @@
 			)
 			(justify left)
 		)
-		(uuid "a50b5165-c5af-4b55-b5da-663c315f21da")
+		(uuid "659431af-99a7-49ae-8cb6-d32981aa9e62")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 137.16 0)
 			(effects
@@ -3608,7 +3873,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d20f48c6-9b82-44c3-bb12-8d4c3952f2da")
+		(uuid "e88c2262-8204-4bf3-9f09-f0e28d27de8c")
 	)
 	(global_label "LED_NUM3"
 		(shape output)
@@ -3620,7 +3885,7 @@
 			)
 			(justify left)
 		)
-		(uuid "3fbc06a7-b281-45a1-a4b5-24648138c626")
+		(uuid "fe0e7408-3c85-4536-8cc4-bf7e12ab2571")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 139.7 0)
 			(effects
@@ -3639,7 +3904,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "b843c93e-bd74-4b6a-8c54-979336c098ec")
+		(uuid "14cf5951-b888-4084-87e6-4e50056e3ebf")
 	)
 	(global_label "ENC_MISO"
 		(shape input)
@@ -3651,7 +3916,7 @@
 			)
 			(justify left)
 		)
-		(uuid "53d893f8-7756-4077-9ee6-c51aa9a03e61")
+		(uuid "e0e16aab-6046-4544-847a-04aa3ae544b7")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 142.24 0)
 			(effects
@@ -3670,7 +3935,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "38334121-4717-4486-8264-f7614de09173")
+		(uuid "f2f6848e-9b8f-4c62-8148-5a26065497f5")
 	)
 	(global_label "ENC_MOSI"
 		(shape output)
@@ -3682,7 +3947,7 @@
 			)
 			(justify left)
 		)
-		(uuid "fd223dac-8961-4dc6-a61a-3840fe9c2581")
+		(uuid "e3356ae1-4038-49f2-b0b0-a9e23bbfa7c6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 144.78 0)
 			(effects
@@ -3701,7 +3966,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "0480f2b6-fc08-49d8-9a7f-e3c2452d24e6")
+		(uuid "0b30a698-ae78-4033-9cfa-94e5bf674d0d")
 	)
 	(global_label "ENC_L_CS"
 		(shape output)
@@ -3713,7 +3978,7 @@
 			)
 			(justify right)
 		)
-		(uuid "7c055713-86a1-4af4-afd6-751dc26faa86")
+		(uuid "b8d8f28c-e585-4d08-9b72-46164b0cf896")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 109.22 0)
 			(effects
@@ -3732,7 +3997,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "9242f8e7-ea98-4b45-a399-f964f773c5b6")
+		(uuid "ed4be375-f4c5-431e-b077-f499f7d8546d")
 	)
 	(global_label "ENC_R_CS"
 		(shape output)
@@ -3744,7 +4009,7 @@
 			)
 			(justify right)
 		)
-		(uuid "6f13a572-1381-4161-8a52-911f2f44dd2c")
+		(uuid "b91ad037-3c5c-407c-b239-8c36c23bdb9d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 111.76 0)
 			(effects
@@ -3763,7 +4028,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a36091a9-cda2-4fb7-9c9e-9c638ff08f88")
+		(uuid "836df212-00e6-4dcc-a345-13f6068afd4b")
 	)
 	(global_label "MOT_nFAULT"
 		(shape input)
@@ -3775,7 +4040,7 @@
 			)
 			(justify right)
 		)
-		(uuid "b222025f-92b8-49a8-9eec-82afb001b60a")
+		(uuid "71923439-3bc9-4e1d-851b-3a5d5918710b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 114.3 0)
 			(effects
@@ -3794,7 +4059,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "76ac692d-39c2-4616-b0f7-79ad4a7972e5")
+		(uuid "9d2e33f8-3ff0-47ca-8aa7-3971e8a2f7d3")
 	)
 	(global_label "MOT_L_IN1"
 		(shape output)
@@ -3806,7 +4071,7 @@
 			)
 			(justify left)
 		)
-		(uuid "f2e5d6ad-0704-475f-8063-24f833ac141d")
+		(uuid "52c7dfdd-e987-4482-8a16-c0da35b11a1c")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 86.36 0)
 			(effects
@@ -3825,7 +4090,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "c2202a42-cb58-40f0-9002-773a8ccae114")
+		(uuid "136c9eed-b48d-44c8-87a6-5a148f246d90")
 	)
 	(global_label "MOT_L_IN2"
 		(shape output)
@@ -3837,7 +4102,7 @@
 			)
 			(justify left)
 		)
-		(uuid "7ac8c512-17cd-4c4f-b646-73075bfe8303")
+		(uuid "988ead19-5965-413a-a26c-3cb236ce443e")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 88.9 0)
 			(effects
@@ -3856,7 +4121,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "53b04cc1-e15e-4029-aeb6-6bd1db8b5d59")
+		(uuid "6e059b36-584e-436b-b652-c52d9a4c0465")
 	)
 	(global_label "MOT_R_IN1"
 		(shape output)
@@ -3868,7 +4133,7 @@
 			)
 			(justify left)
 		)
-		(uuid "156ea7fa-1ab1-4264-99bc-c620c9dd83e8")
+		(uuid "18103cb9-f4f3-4b16-9556-9f625e354aa9")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 91.44 0)
 			(effects
@@ -3887,7 +4152,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "38be0063-af89-4600-9ba3-32df4b4caaf2")
+		(uuid "4e1d46d4-a451-4101-a04b-a473033a6452")
 	)
 	(global_label "MOT_R_IN2"
 		(shape output)
@@ -3899,7 +4164,7 @@
 			)
 			(justify left)
 		)
-		(uuid "c30597b9-ddf3-44a0-b079-b90966763429")
+		(uuid "4a765936-2d3c-4e2f-89fd-9d4071200333")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 93.98 0)
 			(effects
@@ -3918,7 +4183,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "377838fe-392b-4f47-b359-e1d70f788c4c")
+		(uuid "de59cc85-880d-4972-867c-002a4f666f77")
 	)
 	(global_label "ENC_SCK"
 		(shape output)
@@ -3930,7 +4195,7 @@
 			)
 			(justify left)
 		)
-		(uuid "6b436ac7-c5da-432a-811b-d06113c3ae44")
+		(uuid "986e941f-f705-4a93-853a-e42cf276b30b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 96.52 0)
 			(effects
@@ -3949,7 +4214,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "0f712cd0-d49e-4248-867a-878840f602bd")
+		(uuid "7e4081bc-55ac-4f05-bc97-0642a231a3b7")
 	)
 	(global_label "SWDIO"
 		(shape bidirectional)
@@ -3961,7 +4226,7 @@
 			)
 			(justify left)
 		)
-		(uuid "b267de67-73cd-4922-81f6-c1abb5e58481")
+		(uuid "bcd1541e-de83-460e-a791-ebacfd441877")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 99.06 0)
 			(effects
@@ -3980,7 +4245,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "13f8b800-e032-43b9-a421-5ba645de484f")
+		(uuid "7f1b44ad-6395-47a6-b870-b65ee4d1e32d")
 	)
 	(global_label "SWCLK"
 		(shape input)
@@ -3992,7 +4257,7 @@
 			)
 			(justify left)
 		)
-		(uuid "07617721-10b8-4826-b641-f86b06633982")
+		(uuid "4fecaa00-c0c5-49b5-a022-7be76e88ac2d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 101.6 0)
 			(effects
@@ -4011,7 +4276,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5735faa1-adbc-4191-a01d-992f1afa9bb6")
+		(uuid "78603f4f-295b-439a-bb2c-1f23a7bd80b2")
 	)
 	(global_label "IMU_CS"
 		(shape output)
@@ -4023,7 +4288,7 @@
 			)
 			(justify left)
 		)
-		(uuid "4b9e1bf8-cfd2-4810-ba04-f6cc574b4069")
+		(uuid "10071bfc-3db6-4f78-a38e-63963ff7422a")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 104.14 0)
 			(effects
@@ -4042,7 +4307,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "17dc755c-9f01-4a62-88cc-58a8800d8018")
+		(uuid "317386bd-1df6-40c0-a622-b2bda71bc626")
 	)
 	(global_label "IMU_SCK"
 		(shape output)
@@ -4054,7 +4319,7 @@
 			)
 			(justify right)
 		)
-		(uuid "08788849-5628-416d-8383-40134f1ad2f0")
+		(uuid "a557ff65-8f36-49f9-9b1a-c745d0003a40")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 116.84 0)
 			(effects
@@ -4073,7 +4338,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "14d8dfdb-9fe4-430d-9264-180de0ab8c2a")
+		(uuid "f2a5df43-5544-4542-ab46-7f2af45327c9")
 	)
 	(global_label "IMU_MISO"
 		(shape input)
@@ -4085,7 +4350,7 @@
 			)
 			(justify right)
 		)
-		(uuid "2c200dbf-9143-4b85-8af0-7abcda41abe1")
+		(uuid "30900dde-4a9c-42db-afed-521f41aa1d20")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 119.38 0)
 			(effects
@@ -4104,7 +4369,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "a9326add-5174-49f2-aedf-9db8ca55cb41")
+		(uuid "9b4e72ee-9c78-4f99-aa4f-3bef1b1b3495")
 	)
 	(global_label "IMU_MOSI"
 		(shape output)
@@ -4116,7 +4381,7 @@
 			)
 			(justify right)
 		)
-		(uuid "6e47b34d-fbcd-47e6-879f-bc9518a86e05")
+		(uuid "ff58efd5-a20c-4fa5-9c12-7245c3ed073b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 121.92 0)
 			(effects
@@ -4135,7 +4400,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "71b5e4a2-256b-481d-9108-0ef9a4f6db75")
+		(uuid "5314854d-32b7-4b94-b2ab-c9c707cdf62a")
 	)
 	(global_label "WALL_LED_L"
 		(shape output)
@@ -4147,7 +4412,7 @@
 			)
 			(justify left)
 		)
-		(uuid "a1a0eb86-bd32-4c6e-9952-31f964ca48a1")
+		(uuid "bbb42faa-9225-4b00-bfb0-da70bf5ead66")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 119.38 0)
 			(effects
@@ -4166,7 +4431,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "3b3e925c-ef0e-4be7-adf1-03c8f370847f")
+		(uuid "09d19a1e-3c77-4305-aefd-af3c0d6b2935")
 	)
 	(global_label "WALL_LED_R"
 		(shape output)
@@ -4178,7 +4443,7 @@
 			)
 			(justify left)
 		)
-		(uuid "f62317ea-7a4b-4e35-8d9b-54bf206bdbbf")
+		(uuid "8f0a42bf-e984-40ee-8d56-ec25c14033e4")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 121.92 0)
 			(effects
@@ -4197,7 +4462,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1af8de26-5c80-43ef-bdc2-1615fb89d5b2")
+		(uuid "888bc7f2-c961-4d4c-b51b-40a12440c35b")
 	)
 	(global_label "UART_TX"
 		(shape output)
@@ -4209,7 +4474,7 @@
 			)
 			(justify left)
 		)
-		(uuid "2e5bbf21-a282-46b1-b3ed-10c3732a4256")
+		(uuid "4e7492a1-ea5b-4752-8dd8-221c7c3156ee")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 124.46 0)
 			(effects
@@ -4228,7 +4493,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "7d2e8664-ec2f-4867-8230-18c894470edc")
+		(uuid "ec19e8b9-bfb8-433b-a0c8-2bd9c3ee6728")
 	)
 	(global_label "UART_RX"
 		(shape input)
@@ -4240,7 +4505,7 @@
 			)
 			(justify left)
 		)
-		(uuid "02de5c27-7345-424d-9384-21ef18d9e6b8")
+		(uuid "45fb4b3c-5954-4c66-a213-195cb20a80b5")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 127 0)
 			(effects
@@ -4259,7 +4524,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5b83ff62-71eb-41ff-a06c-e78e1c61e2f1")
+		(uuid "384970a7-ce2b-4627-93d5-032a0ebc0904")
 	)
 	(global_label "FAN_PWM"
 		(shape output)
@@ -4271,7 +4536,7 @@
 			)
 			(justify left)
 		)
-		(uuid "22675013-cf83-4f7d-a290-f3bf22258ddc")
+		(uuid "11b32535-cf1c-44ad-9e8f-5d89dad5942d")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 129.54 0)
 			(effects
@@ -4290,7 +4555,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "f46277f7-466f-4973-88c6-0581f2ffe0e9")
+		(uuid "64690547-2abd-49e3-adf2-ec11aebe0d9b")
 	)
 	(global_label "BUZZER"
 		(shape output)
@@ -4302,7 +4567,7 @@
 			)
 			(justify left)
 		)
-		(uuid "ddd81180-2c3a-4ba2-9733-43e708d4eec4")
+		(uuid "88471893-fa8a-4d7b-8bec-e08ec90b2b69")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 185.42 132.08 0)
 			(effects
@@ -4321,7 +4586,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "84896116-243d-4164-8cf8-34520803ffe7")
+		(uuid "0233240e-c819-43ef-b7e0-e9921b3f1cf0")
 	)
 	(global_label "NRST"
 		(shape bidirectional)
@@ -4333,7 +4598,7 @@
 			)
 			(justify right)
 		)
-		(uuid "e063c89c-ef9a-4c05-8007-c173249ade73")
+		(uuid "055eec6e-90dd-43a1-a446-8214140a03b6")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 119.38 66.04 0)
 			(effects
@@ -4352,7 +4617,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d392766e-cbbe-46e5-9455-e527403c4b0f")
+		(uuid "6db6afb3-0fac-47b1-a906-067631eadb4f")
 	)
 	(label "BOOT0"
 		(at 116.84 71.12 180)
@@ -4362,27 +4627,59 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "f55ab0fd-3791-4298-9c05-c1fb19ac8e5b")
+		(uuid "cc59fa16-410b-4e30-8308-e9a92b32f759")
 	)
 	(no_connect
 		(at 124.46 127)
-		(uuid "95fd67f9-f0df-45bc-b8d8-82ded862acb1")
-	)
-	(no_connect
-		(at 124.46 86.36)
-		(uuid "1a1197a2-fcec-455d-b337-254df5587a0e")
-	)
-	(no_connect
-		(at 124.46 88.9)
-		(uuid "a223f222-b3c9-451a-a3c1-2e72c3f142c5")
+		(uuid "4ff7d680-4c7f-4e79-bad7-9005f8580549")
 	)
 	(no_connect
 		(at 124.46 93.98)
-		(uuid "f479b819-21c2-446e-9c4f-eda3f113df7b")
+		(uuid "69fa3295-932d-4813-8900-543d2063f470")
 	)
 	(no_connect
 		(at 180.34 116.84)
-		(uuid "ab18e6e6-ea2a-40fb-afca-775a77361866")
+		(uuid "7bdaaa9c-153e-4778-a4a2-6c42cc4373c5")
+	)
+	(wire
+		(pts
+			(xy 116.84 86.36) (xy 124.46 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5f8d424-6495-4902-b84b-9d29fd05f6e8")
+	)
+	(label "OSC_IN"
+		(at 116.84 86.36 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5b90a2c8-bfc0-43e2-bd60-e025d7998b78")
+	)
+	(wire
+		(pts
+			(xy 116.84 88.9) (xy 124.46 88.9)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "79dcde89-234e-4d58-8c0e-05c039b85d41")
+	)
+	(label "OSC_OUT"
+		(at 116.84 88.9 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "964bf77c-03dc-4633-b474-68af7d9f0905")
 	)
 	(wire
 		(pts
@@ -4392,7 +4689,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "8b593848-ca9b-4998-839d-887a8706815f")
+		(uuid "f909649e-8680-4a46-a033-61025719c9d4")
 	)
 	(wire
 		(pts
@@ -4402,7 +4699,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "022480cf-98d1-4c17-8c1e-c745af7a4ef8")
+		(uuid "363aad88-0dc7-4155-85ab-a57ec78dd976")
 	)
 	(wire
 		(pts
@@ -4412,7 +4709,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "049d527a-6598-446e-8655-7ba3ab246cd1")
+		(uuid "75241ce1-84e3-456c-aa05-184b7aef3d47")
 	)
 	(wire
 		(pts
@@ -4422,7 +4719,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "8a765ed6-c36f-4948-963d-6dcf8c23326f")
+		(uuid "823e140e-7fb4-4b83-b89a-0df1b5873053")
 	)
 	(wire
 		(pts
@@ -4432,7 +4729,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "de894820-213a-4b3b-9b2f-9f93fcfc496f")
+		(uuid "77339afb-1ec6-48b8-9ba7-e0d493545daf")
 	)
 	(wire
 		(pts
@@ -4442,7 +4739,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d373c37c-80d4-4af2-9fcf-3fa51b6f110c")
+		(uuid "1fcd01ed-c5d0-41ad-a23b-9450676aa24b")
 	)
 	(wire
 		(pts
@@ -4452,7 +4749,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "7ab3ff25-5073-461f-9417-9917d1f93f38")
+		(uuid "b8e85928-1b6e-4f11-b774-72b2b47b3ece")
 	)
 	(wire
 		(pts
@@ -4462,7 +4759,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "9bc45fb9-6b55-4ad7-a93e-3992586d655d")
+		(uuid "a948f725-9c94-4c3c-9b74-d092316aaef6")
 	)
 	(wire
 		(pts
@@ -4472,7 +4769,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "848be661-1c6d-42a3-802e-395caec6c17b")
+		(uuid "5f0f5eeb-af42-491e-9f24-82d2c23cf170")
 	)
 	(wire
 		(pts
@@ -4482,7 +4779,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "ba46c839-2316-47da-81dc-ba26ba79660a")
+		(uuid "0117d220-648a-472a-8868-f1ce7f52d895")
 	)
 	(wire
 		(pts
@@ -4492,31 +4789,31 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5332550f-b25e-40c1-8c71-ee218a308371")
+		(uuid "12bd0763-6e5a-4ee4-8c3e-a828603a6230")
 	)
 	(junction
 		(at 147.32 50.8)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "9a05b475-db0c-4eec-91ae-c64703095542")
+		(uuid "30e08b82-f787-482b-a00f-12bf39f3a949")
 	)
 	(junction
 		(at 149.86 50.8)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "0ccb5271-0525-4778-873e-7382b9256d02")
+		(uuid "09ac043c-a7f0-4676-b491-58ee8dea72dd")
 	)
 	(junction
 		(at 152.4 50.8)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "9882a2ca-2877-424b-8f21-c2b0b8f5e9b3")
+		(uuid "9b7979ee-df7a-4081-a343-c548d4cd62a4")
 	)
 	(junction
 		(at 154.94 50.8)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "31b4dcc2-90f4-4c2b-a669-7c498c80104f")
+		(uuid "201c52a9-c46a-4fee-b2a5-669c7bdf94d8")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -4526,7 +4823,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "dc1051a1-d7ff-4ea8-92ee-61cae04e9a98")
+		(uuid "6a29491e-629e-4485-8223-c913feeaf72e")
 		(property "Reference" "#PWR01"
 			(at 149.86 48.26 0)
 			(effects
@@ -4572,7 +4869,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "116979ca-8c89-4626-ba9f-9c6fce4f064a")
+			(uuid "d9ce961e-3da2-4366-8046-1624c3e512c7")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -4591,13 +4888,13 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "34ca9800-e5fe-49f7-8966-9ebd186ded98")
+		(uuid "03256916-8787-4350-a908-32abcc48be18")
 	)
 	(junction
 		(at 149.86 50.8)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "7ec141dc-7125-4e97-8cf8-4a2ec9cd9601")
+		(uuid "f962b13a-ac91-4995-818c-422f22476331")
 	)
 	(wire
 		(pts
@@ -4607,7 +4904,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "5891b05c-9365-4c4b-8af8-7935402c51fe")
+		(uuid "ba8c4053-fa35-4a25-8ef5-8c63fc09969f")
 	)
 	(wire
 		(pts
@@ -4617,7 +4914,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "9c6649e7-ff59-44ff-bd2d-bb214f4ba0af")
+		(uuid "6886118a-a3a1-4c7e-b59c-b2bd396159a9")
 	)
 	(wire
 		(pts
@@ -4627,7 +4924,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "08f0f3fd-7f72-44ff-afee-5222ea845162")
+		(uuid "f8d09050-0eda-4363-98a7-e18c42fa0f11")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -4637,7 +4934,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "99112ed6-adee-4747-be28-814ca7247706")
+		(uuid "172b9504-bdc9-473f-8221-ab82572edf0a")
 		(property "Reference" "C50"
 			(at 172.72 55.88 0)
 			(effects
@@ -4684,10 +4981,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "6deba13f-1b74-4cfb-8093-1f0f27a1867c")
+			(uuid "7348184a-866a-4ff4-a16b-bda9cd34fd63")
 		)
 		(pin "2"
-			(uuid "35f628fc-2b52-42ee-bda0-6858ca61a8f5")
+			(uuid "bedec5c9-6a0e-47cf-a614-b6aff14a711c")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -4702,7 +4999,7 @@
 		(at 170.18 53.34)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "82d92190-111c-42ee-ae4b-ed99bff9a920")
+		(uuid "2322f730-918c-4bf6-b4c4-91e7e136f5a3")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -4712,7 +5009,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "014885f6-f8cb-4d1d-b2f8-e81718bd486e")
+		(uuid "d2dc1815-2de7-41b2-ae67-864bc7ebc291")
 		(property "Reference" "#PWR02"
 			(at 170.18 63.5 0)
 			(effects
@@ -4758,7 +5055,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "4d722ba0-8c3f-485a-868a-e913a1213ae2")
+			(uuid "31449d51-eca3-4f91-9d0e-868d835cbd43")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -4777,7 +5074,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "edbc6567-d29a-4393-990f-34e8fc4ca0ca")
+		(uuid "9eee3d5d-0834-47d2-9e1a-48c527044acb")
 		(property "Reference" "#PWR03"
 			(at 177.8 55.88 0)
 			(effects
@@ -4823,7 +5120,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "5e42e821-e1bb-4bd4-a027-8ae143033f5b")
+			(uuid "26d26297-1c51-4079-8719-483bcd0dcc81")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -4842,7 +5139,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "bfaba253-8e4a-4ff0-9428-b3d9e79ae957")
+		(uuid "0711b157-7d81-4975-b105-a4bdd77d0ffc")
 	)
 	(wire
 		(pts
@@ -4852,7 +5149,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "e0fc9586-0acc-4cb2-af7d-1b3bedfd9c8d")
+		(uuid "7fdb9e99-9989-4e01-bc22-66cef729cd1f")
 	)
 	(wire
 		(pts
@@ -4862,7 +5159,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "14374a1b-0e95-43ca-abc4-2deacd520809")
+		(uuid "619cf2dd-06dd-4f14-a9a7-42380ee7f9b2")
 	)
 	(wire
 		(pts
@@ -4872,7 +5169,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "4713130d-28bd-41c2-9436-15f21cd883c6")
+		(uuid "e388f6c1-8f37-4990-9242-94521b714f2d")
 	)
 	(wire
 		(pts
@@ -4882,7 +5179,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "7701a285-16c9-4e92-bebe-024898775274")
+		(uuid "74405811-ebef-419b-bcdd-933ee4c9dd3e")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -4892,7 +5189,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "0f277edc-8cc5-4203-9640-abfe0101b289")
+		(uuid "cc97cc40-bc7f-4c8d-b404-eae3b1095c28")
 		(property "Reference" "C51"
 			(at 185.42 43.18 0)
 			(effects
@@ -4939,10 +5236,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "d0ac6bee-f6e6-46e3-9a6a-d96656798502")
+			(uuid "ab9958b6-f467-43e0-8b86-d9917f115a2f")
 		)
 		(pin "2"
-			(uuid "2a2e320d-f4d0-4e91-b10b-db1010041159")
+			(uuid "17dfb416-55d3-4b6b-aa35-68a0d56804cf")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -4957,7 +5254,7 @@
 		(at 182.88 40.64)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "5856b2c2-906c-4d86-9478-797b07211fb2")
+		(uuid "871ee50b-c1a9-476d-836c-6412aa611a54")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -4967,7 +5264,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "dd227859-95f4-4901-bb59-d1d5f1cde22c")
+		(uuid "9347388f-3aa0-46d1-8b9b-9a57b071fbc4")
 		(property "Reference" "#PWR04"
 			(at 182.88 50.8 0)
 			(effects
@@ -5013,7 +5310,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "8c49099d-77c8-4f2d-9eee-840c56a79df3")
+			(uuid "1b83f61e-0622-4f70-ab7c-12cf0e39eaad")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5032,7 +5329,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b60fb4e6-ccc8-4d31-868f-83f1e901678f")
+		(uuid "fa144846-010f-4f0f-a909-eb7d63270390")
 		(property "Reference" "C52"
 			(at 193.04 43.18 0)
 			(effects
@@ -5079,10 +5376,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "07f4e4de-01c5-421f-a870-863387bc0aeb")
+			(uuid "ba4f05d1-68d5-43cc-8c0b-f9184a83104a")
 		)
 		(pin "2"
-			(uuid "b58d3232-a463-4a6d-a71c-00d5346e09af")
+			(uuid "bfcf7cc2-e706-4973-9043-a3a125a2432f")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5097,7 +5394,7 @@
 		(at 190.5 40.64)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "5b193464-3032-4506-bb9b-4c11ab554e30")
+		(uuid "2ce9d362-1f3e-4f5c-9ac0-74580b871b23")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -5107,7 +5404,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b3891c6f-4b5a-4325-ba5c-349401bb249d")
+		(uuid "8fe35adb-820d-4b51-a859-23b4e98f44ff")
 		(property "Reference" "#PWR05"
 			(at 190.5 50.8 0)
 			(effects
@@ -5153,7 +5450,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "c7989b78-5fbe-489e-bc99-3b4c95481cab")
+			(uuid "ca83d225-f759-4f0f-9c56-eb5e425deeb3")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5172,7 +5469,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "789a0b96-904b-4045-8f56-866327f7424d")
+		(uuid "952320e2-8007-4fb2-95b1-80dfab85c8e4")
 		(property "Reference" "FB1"
 			(at 201.93 33.02 90)
 			(effects
@@ -5217,10 +5514,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "bab63bf8-6c0c-4e4f-8cc0-efdfd1030868")
+			(uuid "34451884-a39c-4c4e-b41a-182f477d3467")
 		)
 		(pin "2"
-			(uuid "9335df45-ec67-41c3-aa6f-a622914b16fa")
+			(uuid "163bf9a4-8e9a-4caf-bb6e-2da89386a6a6")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5239,7 +5536,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "f54ee228-f460-40ce-847b-e58779f9bd48")
+		(uuid "adc02de9-34dd-464e-9915-528419d38b01")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -5249,7 +5546,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "eecc1c3d-9e2f-49dc-984c-b5168fdee958")
+		(uuid "575a4e58-c6ff-4f74-b730-fa463479605d")
 		(property "Reference" "#PWR06"
 			(at 213.36 43.18 0)
 			(effects
@@ -5295,7 +5592,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "d39f9379-323e-4522-b752-d29a0f62a46a")
+			(uuid "542119fe-232d-440a-ab5d-bbb4c0ee7ba1")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5314,7 +5611,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "851edf70-ed19-476f-b2c2-94bb346662e8")
+		(uuid "5a0226fa-94e4-41d8-b59c-a3693d8fb6cd")
 		(property "Reference" "#FLG07"
 			(at 175.26 43.18 0)
 			(effects
@@ -5360,7 +5657,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "b5750b06-8142-4ec6-a79b-b19eb37c1b35")
+			(uuid "be360586-6e74-4373-a16b-acc47f4c26a5")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5375,7 +5672,7 @@
 		(at 175.26 40.64)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "acceac99-8ab1-4c5e-9428-91f397b143b9")
+		(uuid "65f94290-95c5-4588-8fad-340b472f041c")
 	)
 	(symbol
 		(lib_id "Device:L")
@@ -5385,7 +5682,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "b0f3688b-139e-4686-904a-0b2389458ef2")
+		(uuid "854db33c-4740-49b0-a618-aa3479347482")
 		(property "Reference" "L1"
 			(at 87.63 68.58 90)
 			(effects
@@ -5430,10 +5727,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "400ff14f-9dde-4bcb-a0cf-458c94f44a0c")
+			(uuid "1db98f7a-7491-45e0-bd30-db41ed6a7629")
 		)
 		(pin "2"
-			(uuid "3764822e-d83e-4c57-b8f8-523465109b64")
+			(uuid "3800b486-4a6e-4799-abad-af8f5a6d2e34")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5452,7 +5749,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "41248d1c-8688-4e1b-ab01-06e921bb084d")
+		(uuid "dbd4902d-2ad7-4351-b9fa-fc31e9ab44f7")
 	)
 	(wire
 		(pts
@@ -5462,7 +5759,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "f02af26b-6ff8-4b9e-beb0-3f59b3406b07")
+		(uuid "000ccfa8-c93b-400f-9ba7-f3ac2445c876")
 	)
 	(wire
 		(pts
@@ -5472,7 +5769,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1cd49a6e-4d05-42e2-9ec7-c3830473b09e")
+		(uuid "630e0121-2ff0-453b-bb79-caa2e8130667")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -5482,7 +5779,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "3bd54126-c994-441d-9995-0be0f1ed0656")
+		(uuid "6da10c4b-6774-4fe4-aa15-8bc6e54e0f0c")
 		(property "Reference" "C53"
 			(at 106.68 71.12 0)
 			(effects
@@ -5529,10 +5826,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "cea87945-b559-4521-9528-425f346d1926")
+			(uuid "5dc25a1f-7d33-4878-a0c5-8616649ff2f3")
 		)
 		(pin "2"
-			(uuid "80b4ad16-3ab9-439c-8f19-c24a83744701")
+			(uuid "1468a466-5cf4-4819-94a9-9360af0a4731")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5547,7 +5844,7 @@
 		(at 104.14 76.2)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "c838ae05-b792-4bf8-bfd0-7c9919c645d1")
+		(uuid "58215a2b-6fcd-4942-aa01-3aae220a1cfc")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -5557,7 +5854,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "24301ee0-e4ee-44a7-ad8c-27435ab3ea8b")
+		(uuid "1427ba7d-f1eb-4a84-a879-aef3603fae95")
 		(property "Reference" "#PWR08"
 			(at 104.14 71.12 0)
 			(effects
@@ -5603,7 +5900,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "87f11fdf-cb7c-4fb7-967c-5effd856d881")
+			(uuid "db05a098-a7f8-4c9c-807a-496f8d4eba5e")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5622,7 +5919,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "2a98c017-2bed-4276-bd45-ec23d27fcd04")
+		(uuid "cc98a6fa-d949-4beb-be5c-c1c34cb6bccf")
 	)
 	(wire
 		(pts
@@ -5632,7 +5929,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "c7881f44-1d8b-41ff-8c73-2e2350ac67a6")
+		(uuid "8fecba15-85d7-4832-ab5a-5eac1392e871")
 	)
 	(wire
 		(pts
@@ -5642,7 +5939,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "4d5673e4-a034-438b-a5f1-817a96f2bc04")
+		(uuid "74c13497-8854-4df4-a9a0-ba8915cf21e4")
 	)
 	(wire
 		(pts
@@ -5652,7 +5949,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "eee81b8f-5478-4bee-b72d-aa8c6fc7e24d")
+		(uuid "bb3e194a-913e-43cd-a03c-fbbf9f9caad9")
 	)
 	(wire
 		(pts
@@ -5662,7 +5959,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "3586db64-555b-43d9-be84-ca937c983f89")
+		(uuid "97a98bd4-6364-45c0-bcf7-883b478b72cf")
 	)
 	(wire
 		(pts
@@ -5672,7 +5969,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "10d9e701-bf60-4549-9678-0cefc1a6fed3")
+		(uuid "f236f92e-bcb1-4881-8c0f-af891f28564e")
 	)
 	(wire
 		(pts
@@ -5682,7 +5979,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "952add1c-deee-4e7b-8b3e-e25c97e033c0")
+		(uuid "b68e2668-2662-4691-8e2e-387613549163")
 	)
 	(wire
 		(pts
@@ -5692,7 +5989,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "4bc0806a-8e1d-4d49-9b8d-f1a98be4e898")
+		(uuid "a89cbb20-1cd6-4011-8e30-b709fb955466")
 	)
 	(wire
 		(pts
@@ -5702,7 +5999,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "2a2d4df1-7327-483a-bb1c-e8ccc3004464")
+		(uuid "580b246f-7f26-4444-83f0-537a374751f3")
 	)
 	(wire
 		(pts
@@ -5712,25 +6009,25 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "fa6427bf-1d7f-43c5-9617-a20397b99a02")
+		(uuid "5536493f-8347-46fb-a70b-5eb8432895b6")
 	)
 	(junction
 		(at 63.5 81.28)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "c18a3027-e1e6-41ca-ae4e-53686230ec87")
+		(uuid "0279f1bb-0563-48ea-b021-d95ed47b28da")
 	)
 	(junction
 		(at 63.5 132.08)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "20c5c7da-4d8c-4bc3-b5d5-09337ee819ec")
+		(uuid "fabd0876-c298-4335-8717-17e87819887f")
 	)
 	(junction
 		(at 63.5 134.62)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "912105d3-f975-4416-9a09-07040278471f")
+		(uuid "0a7aea9b-fa97-4714-952f-41b6443e6667")
 	)
 	(label "VCORE"
 		(at 66.04 81.28 0)
@@ -5740,7 +6037,7 @@
 			)
 			(justify left bottom)
 		)
-		(uuid "c0ff52c7-582f-4325-9c44-84c5cbe47d03")
+		(uuid "3542cc8f-2b21-4e04-a80c-367d182638a8")
 	)
 	(wire
 		(pts
@@ -5750,7 +6047,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "eb246b59-8d16-497b-99f7-96f40d26b16e")
+		(uuid "ef528343-410d-489a-bc09-4db84515b008")
 	)
 	(wire
 		(pts
@@ -5760,7 +6057,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1b8d0716-7f5c-494d-a871-ab4a47c519f0")
+		(uuid "5b8371e3-713f-4877-82a8-8512843928ff")
 	)
 	(wire
 		(pts
@@ -5770,13 +6067,13 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "6016ac69-3d14-43c3-996b-c2e207dfa02f")
+		(uuid "25b0221e-d9a8-435f-854a-bde78d0c2b03")
 	)
 	(junction
 		(at 63.5 127)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "36bab265-772f-42b8-852f-361f96f776d8")
+		(uuid "5eb0b6d9-c5a5-4aa6-b84a-a60adeb2cf83")
 	)
 	(symbol
 		(lib_id "Device:C")
@@ -5786,7 +6083,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "016544eb-6802-4bfd-b30d-72cac91e7e98")
+		(uuid "d156615f-9239-4baa-8196-ad215c76844b")
 		(property "Reference" "C54"
 			(at 58.42 129.54 0)
 			(effects
@@ -5833,10 +6130,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "6cc46d57-f9d3-4c23-a8d2-e718bf10914f")
+			(uuid "5f987cbb-2007-44c9-8810-baa6056cb256")
 		)
 		(pin "2"
-			(uuid "e0c40216-671f-4864-b5ef-0a2e6499e072")
+			(uuid "1d74e3a4-84a6-4747-bbfa-d72240dbcc2f")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5851,7 +6148,7 @@
 		(at 55.88 127)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "c53b7921-a1a3-4247-a837-fffdd09220ae")
+		(uuid "dda07956-a567-450a-a378-d9e052259ad5")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -5861,7 +6158,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "c3e37cb4-aab5-449e-a923-7f615869f8c0")
+		(uuid "7a406e6d-c0d0-467b-a92f-5ee77c6070db")
 		(property "Reference" "#PWR09"
 			(at 55.88 137.16 0)
 			(effects
@@ -5907,7 +6204,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "71716874-ed9a-47c6-b183-97f9e2204d56")
+			(uuid "829a227a-b744-4174-b149-05abd1076dc7")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5926,7 +6223,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "27bde25d-9ac0-4508-b455-341b1025812a")
+		(uuid "f2d3e36c-0eab-4790-9b4b-cea7993c2a4b")
 		(property "Reference" "C55"
 			(at 48.26 129.54 0)
 			(effects
@@ -5973,10 +6270,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "35265ab5-5a1c-407d-bda1-407cd03b6684")
+			(uuid "331c6dc5-2dca-46e9-9ca7-a451c57df117")
 		)
 		(pin "2"
-			(uuid "17827dd2-18e7-4620-aee9-60adacd2a9c8")
+			(uuid "ce6b8b8d-4cb8-4daa-994e-e300d58a4eca")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -5991,7 +6288,7 @@
 		(at 45.72 127)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "07f25910-0251-4190-9cd4-3fab9c646d3a")
+		(uuid "8690dc1a-d851-4f14-bca7-055a01a99f7c")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6001,7 +6298,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4ebc8bbb-aa79-4377-ac98-7f97ceb1cecf")
+		(uuid "37f8ae9f-eadf-4e20-ad82-a90e60b158a5")
 		(property "Reference" "#PWR10"
 			(at 45.72 137.16 0)
 			(effects
@@ -6047,7 +6344,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "9dcec285-f6ee-498b-9557-542944fb076f")
+			(uuid "19c420aa-43d5-4233-aa05-939bed7eeba5")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6066,7 +6363,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4f925a29-a113-4158-b83f-35855134103b")
+		(uuid "be7acd2d-6889-4ceb-bd03-7738c6863694")
 		(property "Reference" "C56"
 			(at 38.1 129.54 0)
 			(effects
@@ -6113,10 +6410,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "70671a60-e4fd-4a17-888c-30d011631ac0")
+			(uuid "78ff05eb-c90e-4199-8ff4-892bdf2878f5")
 		)
 		(pin "2"
-			(uuid "fb1d8bd8-cf61-4378-84d5-f9bc36f45d14")
+			(uuid "a8faa990-f362-4864-8c12-fedd540f9202")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6135,7 +6432,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "36fe6731-99cb-465f-a2e9-902593f8bfa3")
+		(uuid "fed56858-08e4-4ed7-b16e-01f2a193cdcb")
 		(property "Reference" "#PWR11"
 			(at 35.56 137.16 0)
 			(effects
@@ -6181,7 +6478,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "2bc1bbac-b6bd-4082-be7a-e05e3695af76")
+			(uuid "a585f59c-120b-4ade-a5eb-9f64c8b1f993")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6200,7 +6497,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "9a21ce02-f9f2-4311-b1d5-021fa4cdb13c")
+		(uuid "d565c690-2a6c-4b11-8b86-d1e787a033a4")
 	)
 	(wire
 		(pts
@@ -6210,7 +6507,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "bbade6fd-83a8-4a4c-9a90-7762ffa308af")
+		(uuid "2a4d3e6e-4231-41d8-aed8-45525d1c6301")
 	)
 	(wire
 		(pts
@@ -6220,7 +6517,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "d2f64d41-b0b5-4ce4-b6a1-d22c04250c6b")
+		(uuid "a7f8d982-1850-4d11-b47c-4222103aac91")
 	)
 	(wire
 		(pts
@@ -6230,7 +6527,7 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "cdf75350-5c41-45c8-91b5-e1c0d1cef65c")
+		(uuid "4467414a-5f55-46af-9a68-77c32794efad")
 	)
 	(wire
 		(pts
@@ -6240,13 +6537,13 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "1ea57058-1621-42fa-ba73-fa0da4f7ad48")
+		(uuid "231eea46-7eec-4df4-9bc9-6b64fa6b8756")
 	)
 	(junction
 		(at 152.4 157.48)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "4bbaacec-a885-44e3-891b-bccf96468272")
+		(uuid "b2308afa-b603-4e00-8761-5845f927e54a")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6256,7 +6553,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "d2538de8-9a7a-4d8e-b81b-9d7c530518f0")
+		(uuid "9981f1ec-011f-4332-af00-c52246245c33")
 		(property "Reference" "#PWR12"
 			(at 149.86 162.56 0)
 			(effects
@@ -6302,7 +6599,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "3da99ae2-0e1c-4afe-a1f9-b4e28327cc79")
+			(uuid "d4edc85e-51aa-4541-aa80-45f2c835af58")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6321,13 +6618,13 @@
 			(width 0)
 			(type default)
 		)
-		(uuid "6bea7b4f-52e5-4153-a824-a25160d1432a")
+		(uuid "15e3bb75-aa68-462e-b88e-fc0de96d1045")
 	)
 	(junction
 		(at 149.86 157.48)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "dc0148e5-194b-4278-9c3b-a8bf0b451a16")
+		(uuid "fb75a007-688c-4277-99fb-a81fe8e16ec1")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -6337,7 +6634,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "0535406e-74f2-49a2-bf2c-708a2da75789")
+		(uuid "038dbb05-8f29-4bc3-ba48-b85159d62767")
 		(property "Reference" "#PWR13"
 			(at 40.64 182.88 0)
 			(effects
@@ -6383,7 +6680,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "7250278d-d371-451e-be78-592e076ea824")
+			(uuid "f85a3d33-fbc2-41de-81f2-eeb5e29ad52c")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6396,85 +6693,85 @@
 	)
 	(wire
 		(pts
-			(xy 40.64 180.34) (xy 48.26 180.34)
+			(xy 40.64 180.34) (xy 50.8 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "74a53262-2e54-4850-bb2e-ca4b862526db")
+		(uuid "f44af20f-769b-448b-82c4-72b90d63452e")
 	)
 	(wire
 		(pts
-			(xy 48.26 180.34) (xy 55.88 180.34)
+			(xy 50.8 180.34) (xy 60.96 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "697be969-8d3d-4415-a0d3-585640e5042a")
+		(uuid "ced4e556-c7f3-4cd2-9522-32dffa6170b4")
 	)
 	(wire
 		(pts
-			(xy 55.88 180.34) (xy 63.5 180.34)
+			(xy 60.96 180.34) (xy 71.12 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "f6b5775b-6b9b-48d0-9e2c-eec2463c03b7")
+		(uuid "945f523d-7cbe-429b-a881-9478387ac331")
 	)
 	(wire
 		(pts
-			(xy 63.5 180.34) (xy 71.12 180.34)
+			(xy 71.12 180.34) (xy 81.28 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "90b5491e-4d59-4258-8464-d80af2c8bfb9")
+		(uuid "7ced1eb0-c141-41b6-9cc8-69360d21df56")
 	)
 	(wire
 		(pts
-			(xy 71.12 180.34) (xy 78.74 180.34)
+			(xy 81.28 180.34) (xy 91.44 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "b693ba78-5f01-456e-8285-1b3996236a4c")
+		(uuid "0c250e5e-0cc7-44d5-9d77-37822d2d446b")
 	)
 	(wire
 		(pts
-			(xy 78.74 180.34) (xy 86.36 180.34)
+			(xy 91.44 180.34) (xy 101.6 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "1dbd85de-b436-48fc-b74b-396f90e1050e")
+		(uuid "0143bfc0-0382-488e-a43a-ee512153ad01")
 	)
 	(wire
 		(pts
-			(xy 86.36 180.34) (xy 93.98 180.34)
+			(xy 101.6 180.34) (xy 111.76 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a93a97a0-d3f5-4186-abe4-a46d5a95172d")
+		(uuid "bdffb5cd-ffe3-422d-9775-b46d8e1e118f")
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 48.26 184.15 0)
+		(at 50.8 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "93586f5f-384a-4ddb-96b0-098e1f32342b")
+		(uuid "6e31c09d-a756-4427-baf5-6a490d76ad5d")
 		(property "Reference" "C57"
-			(at 49.53 187.96 0)
+			(at 53.34 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6483,7 +6780,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 49.53 190.5 0)
+			(at 53.34 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6492,7 +6789,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 48.26 184.15 0)
+			(at 50.8 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6501,7 +6798,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 48.26 184.15 0)
+			(at 50.8 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6510,7 +6807,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 48.26 184.15 0)
+			(at 50.8 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6519,10 +6816,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "d49e0556-f18e-4ed9-9ea6-b1a80b8f8af6")
+			(uuid "e8e0392f-dd0a-4479-b478-49cf07e02f66")
 		)
 		(pin "2"
-			(uuid "f8d09588-dd3a-43d9-ba4f-90bfc464d6bc")
+			(uuid "c996c99f-20f3-4254-af82-fe6c0033a6b6")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6534,22 +6831,22 @@
 		)
 	)
 	(junction
-		(at 48.26 180.34)
+		(at 50.8 180.34)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "ce5dbc3d-e464-46e2-9b45-69077fafff5c")
+		(uuid "6a94f287-a3b5-4f6c-9dec-bda87a4344bf")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 48.26 187.96 0)
+		(at 50.8 187.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "2d848bd4-6461-407c-b286-0687849470e7")
+		(uuid "03b9e04b-fc66-4243-9b50-de46085e31b1")
 		(property "Reference" "#PWR14"
-			(at 48.26 190.5 0)
+			(at 50.8 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6558,7 +6855,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 48.26 191.77 0)
+			(at 50.8 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6566,7 +6863,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 48.26 187.96 0)
+			(at 50.8 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6575,7 +6872,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 48.26 187.96 0)
+			(at 50.8 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6584,7 +6881,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 48.26 187.96 0)
+			(at 50.8 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6593,7 +6890,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "d3143e91-25d0-4c70-ba80-687a9f80578d")
+			(uuid "95295ce0-2cc1-4d2f-9f6b-1c98d9f8fab5")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6606,15 +6903,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 55.88 184.15 0)
+		(at 60.96 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "98709c39-47ba-4005-a9c2-23fd5d73fac2")
+		(uuid "69243027-175e-4cd2-ad4b-372c0d1e1710")
 		(property "Reference" "C58"
-			(at 57.15 187.96 0)
+			(at 63.5 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6623,7 +6920,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 57.15 190.5 0)
+			(at 63.5 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6632,7 +6929,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 55.88 184.15 0)
+			(at 60.96 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6641,7 +6938,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 55.88 184.15 0)
+			(at 60.96 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6650,7 +6947,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 55.88 184.15 0)
+			(at 60.96 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6659,10 +6956,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "0e3af89d-2bae-44a0-8ea4-c9aa99899996")
+			(uuid "0582cb25-edd5-4607-a84a-f95ebf5a9f66")
 		)
 		(pin "2"
-			(uuid "ea8bf281-676f-44bd-90e7-60bc4abc2a50")
+			(uuid "17500e80-9da6-4988-9e57-61b4e1122f06")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -6674,22 +6971,22 @@
 		)
 	)
 	(junction
-		(at 55.88 180.34)
+		(at 60.96 180.34)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "75150eac-d8b9-4d04-9d25-5d4339cafaf3")
+		(uuid "55e4251b-4d74-4d7d-a383-3d474031edbf")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 55.88 187.96 0)
+		(at 60.96 187.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "6b6a9c54-415e-43c0-812d-431f0b3153fa")
+		(uuid "ff1c7010-ec0c-44e3-90a7-3484717785a8")
 		(property "Reference" "#PWR15"
-			(at 55.88 190.5 0)
+			(at 60.96 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6698,7 +6995,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 55.88 191.77 0)
+			(at 60.96 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6706,7 +7003,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 55.88 187.96 0)
+			(at 60.96 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6715,7 +7012,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 55.88 187.96 0)
+			(at 60.96 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6724,7 +7021,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 55.88 187.96 0)
+			(at 60.96 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6733,152 +7030,12 @@
 			)
 		)
 		(pin "1"
-			(uuid "f7237834-8f72-4263-bffd-0d307d3447fa")
+			(uuid "60301f0b-62ab-4f14-8948-2912beb7b70f")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
 				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
 					(reference "#PWR15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C")
-		(at 63.5 184.15 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "1764aac1-e8a2-4055-9ad3-54ed5aad2175")
-		(property "Reference" "C59"
-			(at 64.77 187.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "100n"
-			(at 64.77 190.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 63.5 184.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 63.5 184.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 63.5 184.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d94b13de-e37b-4d0e-8f9c-dc7c628bf2b9")
-		)
-		(pin "2"
-			(uuid "978f122f-9a04-42ca-8771-699db6866775")
-		)
-		(instances
-			(project "KOGUMA-Mk4"
-				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
-					(reference "C59")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(junction
-		(at 63.5 180.34)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "13ed3b46-5992-43f8-b6d7-5b9c1c89a3eb")
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 63.5 187.96 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "d3d231b8-dd92-4896-9863-c7bb3540624f")
-		(property "Reference" "#PWR16"
-			(at 63.5 190.5 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 63.5 191.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 63.5 187.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 63.5 187.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 63.5 187.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "2a7d5354-a191-481c-bbb5-54b636247d91")
-		)
-		(instances
-			(project "KOGUMA-Mk4"
-				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
-					(reference "#PWR16")
 					(unit 1)
 				)
 			)
@@ -6892,9 +7049,9 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "06dfb8ad-a4fb-4822-a071-cf07874fd1aa")
-		(property "Reference" "C60"
-			(at 72.39 187.96 0)
+		(uuid "9114cf94-da8f-46b0-a6e4-d28f19a5ec56")
+		(property "Reference" "C59"
+			(at 73.66 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6903,7 +7060,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 72.39 190.5 0)
+			(at 73.66 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6939,15 +7096,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "90ad7985-329e-4ff7-a631-19f222e51140")
+			(uuid "37895652-39a2-49b1-ad8b-386d3fa6a539")
 		)
 		(pin "2"
-			(uuid "a1c10e67-e6b1-4ce6-a5a0-ea5d40b97f44")
+			(uuid "9ae3447a-d6b1-45d8-a58f-f54f95ea3e6c")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
 				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
-					(reference "C60")
+					(reference "C59")
 					(unit 1)
 				)
 			)
@@ -6957,7 +7114,7 @@
 		(at 71.12 180.34)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "253df242-15bc-4c21-a527-b071eef9514c")
+		(uuid "7ccebe63-cef7-4548-b067-93e12ec04387")
 	)
 	(symbol
 		(lib_id "power:GND")
@@ -6967,8 +7124,8 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "4b578cf0-85b4-437d-8665-2becbce84d47")
-		(property "Reference" "#PWR17"
+		(uuid "6f619716-36a5-4fdf-a638-d817902dfb1e")
+		(property "Reference" "#PWR16"
 			(at 71.12 190.5 0)
 			(effects
 				(font
@@ -7013,7 +7170,147 @@
 			)
 		)
 		(pin "1"
-			(uuid "0dacf2d7-3764-4f56-9c48-8c2342885a47")
+			(uuid "90047d23-f3f6-429d-9c2a-458c801a96ff")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "#PWR16")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 81.28 184.15 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "20e058dc-6a97-457a-a3e7-166a96a03858")
+		(property "Reference" "C60"
+			(at 83.82 184.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "100n"
+			(at 83.82 186.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 81.28 184.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 81.28 184.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 81.28 184.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5687be7e-72bc-487b-82b7-1609f141bbba")
+		)
+		(pin "2"
+			(uuid "9b902496-af3d-4c9f-9da5-868d50d8461f")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "C60")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(junction
+		(at 81.28 180.34)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "940f52cc-2df3-421a-8024-d55b600c9d82")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 81.28 187.96 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b5f33b46-f7f5-43f6-8d3d-04a125c22fca")
+		(property "Reference" "#PWR17"
+			(at 81.28 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 81.28 191.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 81.28 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 81.28 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 81.28 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7451270a-1cda-4831-b64b-04c91a6044fb")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7026,15 +7323,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 78.74 184.15 0)
+		(at 91.44 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "52cc30a3-afaa-4fe6-a4c0-f19eb9a76ea0")
+		(uuid "01220074-56c5-42d2-8065-441272d1fb75")
 		(property "Reference" "C61"
-			(at 80.01 187.96 0)
+			(at 93.98 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7043,7 +7340,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 80.01 190.5 0)
+			(at 93.98 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7052,7 +7349,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 78.74 184.15 0)
+			(at 91.44 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7061,7 +7358,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 78.74 184.15 0)
+			(at 91.44 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7070,7 +7367,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 78.74 184.15 0)
+			(at 91.44 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7079,10 +7376,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "b757a46d-f2bb-46d2-b964-83bd895ced9a")
+			(uuid "b2897fd8-2ec1-43e7-bc62-caffeb127f4a")
 		)
 		(pin "2"
-			(uuid "5ba8642c-f04c-4f5b-b3c6-303cee7ddd9c")
+			(uuid "7c4df500-ec60-47df-9b9c-effe209dbf19")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7094,22 +7391,22 @@
 		)
 	)
 	(junction
-		(at 78.74 180.34)
+		(at 91.44 180.34)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "0d83c137-58fb-41f4-b2c4-cd2bd02e1da5")
+		(uuid "7ffe54f8-8f5f-430f-ad10-0d1be46a7e66")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 78.74 187.96 0)
+		(at 91.44 187.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "f331a755-140a-4003-bfe0-6aee2d616077")
+		(uuid "76bed9ac-23f9-4f79-bec0-a018ec6e62a7")
 		(property "Reference" "#PWR18"
-			(at 78.74 190.5 0)
+			(at 91.44 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7118,7 +7415,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 78.74 191.77 0)
+			(at 91.44 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7126,7 +7423,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 78.74 187.96 0)
+			(at 91.44 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7135,7 +7432,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 78.74 187.96 0)
+			(at 91.44 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7144,7 +7441,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 78.74 187.96 0)
+			(at 91.44 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7153,7 +7450,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "86390e57-e22f-48d8-a4dc-f5025d02506f")
+			(uuid "fde98ca7-1128-4faf-927c-80609c1d57e8")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7166,15 +7463,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 86.36 184.15 0)
+		(at 101.6 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "8bf9d7bc-5907-4e3f-a67c-e8f418e387ed")
-		(property "Reference" "C62"
-			(at 87.63 187.96 0)
+		(uuid "fbaab8b0-aad9-4d0e-bb11-49602faef4d5")
+		(property "Reference" "C64"
+			(at 104.14 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7182,8 +7479,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "4.7u 10V"
-			(at 87.63 190.5 0)
+		(property "Value" "100n"
+			(at 104.14 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7192,7 +7489,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 86.36 184.15 0)
+			(at 101.6 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7201,7 +7498,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 86.36 184.15 0)
+			(at 101.6 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7210,7 +7507,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 86.36 184.15 0)
+			(at 101.6 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7219,37 +7516,37 @@
 			)
 		)
 		(pin "1"
-			(uuid "16bc1f9a-d443-46c8-95f2-e8b3617886fd")
+			(uuid "e306e525-4c89-4ad6-aa9a-3c47a71caaa7")
 		)
 		(pin "2"
-			(uuid "db995763-1d1b-4743-954e-18b3530c1a85")
+			(uuid "aa32289f-0d65-4bf7-9f91-9284946befe4")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
 				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
-					(reference "C62")
+					(reference "C64")
 					(unit 1)
 				)
 			)
 		)
 	)
 	(junction
-		(at 86.36 180.34)
+		(at 101.6 180.34)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "c0d317a5-5b57-4578-a5cb-8df5f3aaa59b")
+		(uuid "0ea95509-5d0f-4121-8d68-eb01358fafcd")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 86.36 187.96 0)
+		(at 101.6 187.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "6b5142aa-2726-42a9-a1a8-5598e788a2d5")
+		(uuid "1fcd3321-3381-42ba-ab98-3d4e4651cd9d")
 		(property "Reference" "#PWR19"
-			(at 86.36 190.5 0)
+			(at 101.6 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7258,7 +7555,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 86.36 191.77 0)
+			(at 101.6 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7266,7 +7563,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 86.36 187.96 0)
+			(at 101.6 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7275,7 +7572,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 86.36 187.96 0)
+			(at 101.6 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7284,7 +7581,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 86.36 187.96 0)
+			(at 101.6 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7293,7 +7590,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "df0c7e39-a871-42c4-90e7-bd6367036e1a")
+			(uuid "1f470171-76da-4163-b981-e9cfc96ef0b3")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7306,15 +7603,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 93.98 184.15 0)
+		(at 111.76 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "893946e1-29c7-468a-b743-abeb99e265ec")
-		(property "Reference" "C64"
-			(at 95.25 187.96 0)
+		(uuid "f56a0d87-c494-43b6-b4f5-d3baffe453ce")
+		(property "Reference" "C62"
+			(at 114.3 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7322,8 +7619,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100n"
-			(at 95.25 190.5 0)
+		(property "Value" "4.7u 10V"
+			(at 114.3 186.69 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7332,7 +7629,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 93.98 184.15 0)
+			(at 111.76 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7341,7 +7638,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 93.98 184.15 0)
+			(at 111.76 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7350,7 +7647,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 93.98 184.15 0)
+			(at 111.76 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7359,15 +7656,15 @@
 			)
 		)
 		(pin "1"
-			(uuid "a66aeb13-9686-4eb5-a0f7-dadaf012a300")
+			(uuid "b0bd5c28-93cc-4ec9-9a21-ddd2b48b474f")
 		)
 		(pin "2"
-			(uuid "a895a5b6-2007-4cf3-8997-e71051c7d2f3")
+			(uuid "94127154-4d34-4a49-af14-647777476ebd")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
 				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
-					(reference "C64")
+					(reference "C62")
 					(unit 1)
 				)
 			)
@@ -7375,15 +7672,15 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 93.98 187.96 0)
+		(at 111.76 187.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "30c0eeb2-4d33-44e8-a9c0-b45ee579c00d")
+		(uuid "c6696cf0-f473-4e4c-8a96-ae3896a9a2fb")
 		(property "Reference" "#PWR20"
-			(at 93.98 190.5 0)
+			(at 111.76 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7392,7 +7689,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 93.98 191.77 0)
+			(at 111.76 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7400,7 +7697,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 93.98 187.96 0)
+			(at 111.76 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7409,7 +7706,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 93.98 187.96 0)
+			(at 111.76 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7418,7 +7715,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 93.98 187.96 0)
+			(at 111.76 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7427,7 +7724,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "bdb20c85-8bdf-45c9-b3ee-c856ce9d0b81")
+			(uuid "33c2d7df-ecb6-414b-a7e7-935e1e141e68")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7439,26 +7736,26 @@
 		)
 	)
 	(label "BOOT0"
-		(at 114.3 180.34 0)
+		(at 129.54 180.34 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left bottom)
 		)
-		(uuid "31f5e831-19db-4342-83c6-de4a8ae75b3f")
+		(uuid "ab40c3b7-4499-4c35-9e2c-06267e7576da")
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 121.92 184.15 0)
+		(at 137.16 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "1fb2bdf4-ace5-460d-8602-b3dfbd21e6c3")
+		(uuid "968e3222-ea3b-4617-82ef-33697155eb08")
 		(property "Reference" "R50"
-			(at 124.46 182.88 0)
+			(at 139.7 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7467,7 +7764,7 @@
 			)
 		)
 		(property "Value" "10k"
-			(at 124.46 185.42 0)
+			(at 139.7 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7476,7 +7773,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 121.92 184.15 0)
+			(at 137.16 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7485,7 +7782,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 121.92 184.15 0)
+			(at 137.16 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7494,7 +7791,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 121.92 184.15 0)
+			(at 137.16 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7503,10 +7800,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "c52df0c9-51bf-41c8-96a5-f5451f7fb761")
+			(uuid "4e3eba38-fee2-480e-9c81-8c32881a05ac")
 		)
 		(pin "2"
-			(uuid "b9455488-6349-4937-9a8d-4a1d41b3e1a6")
+			(uuid "7e7e296e-d416-48e8-8aa3-64f3d0cf26d2")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7519,25 +7816,25 @@
 	)
 	(wire
 		(pts
-			(xy 114.3 180.34) (xy 121.92 180.34)
+			(xy 129.54 180.34) (xy 137.16 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "a9edccea-a7a3-41a9-a388-c7c7fb7bc586")
+		(uuid "7d5655ff-1dba-4b34-914e-2349fdb91410")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 121.92 187.96 0)
+		(at 137.16 187.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "5c8900e1-4b7b-4f62-94cf-71d7f9e0a0ae")
+		(uuid "cf3b8cf8-13e8-46c1-b8b9-773468e2e1ed")
 		(property "Reference" "#PWR21"
-			(at 121.92 190.5 0)
+			(at 137.16 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7546,7 +7843,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 121.92 191.77 0)
+			(at 137.16 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7554,7 +7851,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 121.92 187.96 0)
+			(at 137.16 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7563,7 +7860,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 121.92 187.96 0)
+			(at 137.16 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7572,7 +7869,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 121.92 187.96 0)
+			(at 137.16 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7581,7 +7878,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "adb1a3dc-33ed-4c60-9d80-9e30a6b87f81")
+			(uuid "0577be60-c958-4890-ade7-79228ba73412")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7594,7 +7891,7 @@
 	)
 	(global_label "NRST"
 		(shape bidirectional)
-		(at 137.16 180.34 180)
+		(at 152.4 180.34 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7602,9 +7899,9 @@
 			)
 			(justify right)
 		)
-		(uuid "04774044-92fb-4702-a83e-16c4e34b6244")
+		(uuid "a6f79bf3-6741-4f69-870d-97a4712c7145")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 137.16 180.34 0)
+			(at 152.4 180.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7615,15 +7912,15 @@
 	)
 	(symbol
 		(lib_id "Device:C")
-		(at 144.78 184.15 0)
+		(at 160.02 184.15 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "e484d95c-0614-48b2-b271-81ae4a37c925")
+		(uuid "f0dca35d-c973-4aa2-9855-cc64bee13937")
 		(property "Reference" "C63"
-			(at 147.32 182.88 0)
+			(at 162.56 182.88 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7632,7 +7929,7 @@
 			)
 		)
 		(property "Value" "100n"
-			(at 147.32 185.42 0)
+			(at 162.56 185.42 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7641,7 +7938,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
-			(at 144.78 184.15 0)
+			(at 160.02 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7650,7 +7947,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 144.78 184.15 0)
+			(at 160.02 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7659,7 +7956,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 144.78 184.15 0)
+			(at 160.02 184.15 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7668,10 +7965,10 @@
 			)
 		)
 		(pin "1"
-			(uuid "50606209-af20-4017-bd43-e483c436467b")
+			(uuid "427ed757-6467-44a5-b070-f7a2f0ac4c8a")
 		)
 		(pin "2"
-			(uuid "ae210fbb-36f9-40de-8eb5-2f8b4e1a6a2c")
+			(uuid "efb10518-42e1-4435-8a3b-a8a9faf3b872")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7684,25 +7981,25 @@
 	)
 	(wire
 		(pts
-			(xy 137.16 180.34) (xy 144.78 180.34)
+			(xy 152.4 180.34) (xy 160.02 180.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "4dfccb72-52de-4665-ab7b-471eb3111ef0")
+		(uuid "35a65892-2746-417a-868b-7e7ebd9a7dee")
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 144.78 187.96 0)
+		(at 160.02 187.96 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(uuid "1956c41d-54ee-4379-8920-8e94f2b68d7a")
+		(uuid "d055cea3-ad93-44cc-a98e-35af0a9911c2")
 		(property "Reference" "#PWR22"
-			(at 144.78 190.5 0)
+			(at 160.02 190.5 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7711,7 +8008,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 144.78 191.77 0)
+			(at 160.02 191.77 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7719,7 +8016,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 144.78 187.96 0)
+			(at 160.02 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7728,7 +8025,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 144.78 187.96 0)
+			(at 160.02 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7737,7 +8034,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 144.78 187.96 0)
+			(at 160.02 187.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7746,7 +8043,7 @@
 			)
 		)
 		(pin "1"
-			(uuid "4aeb2332-4885-4c1e-9b02-dc9cea64c825")
+			(uuid "fcbf2387-629d-466b-a3b6-0688ff48e2f5")
 		)
 		(instances
 			(project "KOGUMA-Mk4"
@@ -7757,6 +8054,495 @@
 			)
 		)
 	)
+	(wire
+		(pts
+			(xy 25.4 60.96) (xy 30.48 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5880c107-7ff8-4936-8b7d-01ac9d8eb14d")
+	)
+	(wire
+		(pts
+			(xy 30.48 60.96) (xy 39.37 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "87f6afb9-3360-4769-9778-cbdc5af274ce")
+	)
+	(label "OSC_IN"
+		(at 25.4 60.96 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f26d08cf-919b-4d32-895d-32384b458d08")
+	)
+	(symbol
+		(lib_id "Device:Crystal_GND24")
+		(at 43.18 60.96 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "71c6a110-7a36-4201-b524-aed9e961f977")
+		(property "Reference" "Y1"
+			(at 43.18 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10MHz (要選定)"
+			(at 43.18 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm"
+			(at 43.18 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 43.18 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 43.18 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "48e06825-6523-4bc8-a995-9fb0f0fc7198")
+		)
+		(pin "2"
+			(uuid "b7ab253d-acdc-4645-9bc9-7e6b718f2fbc")
+		)
+		(pin "4"
+			(uuid "89342751-f811-48ea-8474-d055812fa0f0")
+		)
+		(pin "3"
+			(uuid "7829e558-8395-4ad9-8883-17693ccda478")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "Y1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 46.99 60.96) (xy 55.88 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a163f763-8529-4210-af04-a75dc4efff96")
+	)
+	(wire
+		(pts
+			(xy 55.88 60.96) (xy 60.96 60.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2b37e5a4-a62b-4a39-b718-31fcf9d8297f")
+	)
+	(label "OSC_OUT"
+		(at 60.96 60.96 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "fa971db5-3a94-4116-a7fd-cc117414ec0f")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 43.18 66.04 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "bac501ee-dd48-4cbb-b17c-2fa47967bb5c")
+		(property "Reference" "#PWR23"
+			(at 43.18 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 43.18 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 43.18 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 43.18 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9e9034b6-97f9-4843-84d7-c48ee215650e")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "#PWR23")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 30.48 64.77 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5cd3efce-aaa9-4e4c-a498-e0a34fb114fa")
+		(property "Reference" "C65"
+			(at 31.75 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10p (仮)"
+			(at 31.75 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 30.48 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 30.48 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 30.48 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "33b2d831-4fee-4119-966c-87e925a96c8f")
+		)
+		(pin "2"
+			(uuid "1f6d9fb9-cb6a-4ad3-8736-9f12f0b05c81")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "C65")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(junction
+		(at 30.48 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "090e40fe-288f-4f51-b459-10f793271a6d")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 30.48 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f35d3c25-b354-4da4-ac24-b1219974fa9b")
+		(property "Reference" "#PWR24"
+			(at 30.48 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 30.48 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 30.48 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 30.48 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 30.48 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "fe03a671-ea22-461a-8376-4a5bc1c4aa04")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "#PWR24")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 55.88 64.77 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d473358b-338c-491d-ac03-463cbe89f147")
+		(property "Reference" "C66"
+			(at 57.15 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10p (仮)"
+			(at 57.15 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 55.88 64.77 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "bfe2777c-2ba5-48ff-9b50-4b8f4c0a5b63")
+		)
+		(pin "2"
+			(uuid "2fefd598-b3cb-4f21-87c1-2b7b5819c936")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "C66")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(junction
+		(at 55.88 60.96)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "23058cff-4388-438c-9333-0a66e6f8b8f5")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 55.88 68.58 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3de1d1e6-d8a3-44a4-b7a0-c0dc61fe06c3")
+		(property "Reference" "#PWR25"
+			(at 55.88 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 55.88 72.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 55.88 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 55.88 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 55.88 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "bee5334c-d97d-4a18-a1d5-932b64d21c45")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "#PWR25")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(text "HSE: 10MHz の水晶(MK3 と同じ周波数)。Y1・C65・C66 は PH0・PH1 のすぐそばに置く。\nC65・C66 = 2 ×(水晶の CL − 基板とピンの浮遊容量 約3〜5pF)。品番を決めてから値を決める。"
+		(exclude_from_sim no)
+		(at 25.4 48.26 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "441eb778-662a-4ff2-82cf-164a597358be")
+	)
 	(text "MCU(STM32H725RGVx、VFQFPN68)"
 		(exclude_from_sim no)
 		(at 25.4 20.32 0)
@@ -7766,9 +8552,9 @@
 			)
 			(justify left top)
 		)
-		(uuid "4a46daad-11c5-4668-bc20-4e6ddff417a1")
+		(uuid "cc5861b0-4ed0-43ab-a229-a0e26d66b9bd")
 	)
-	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15・PH0・PH1・PD2・PB3 は予備(PD2 は IMU の INT の候補)。"
+	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15・PD2・PB3 は予備(PD2 は IMU の INT の候補)。PH0・PH1 は水晶(HSE)。"
 		(exclude_from_sim no)
 		(at 25.4 25.4 0)
 		(effects
@@ -7777,7 +8563,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "e6a1758e-a78b-418b-bf2c-b8d29c9eb3a9")
+		(uuid "869c6344-6bce-4b05-a1a2-363b04436919")
 	)
 	(text "SMPS(Direct SMPS supply、DS13311 の図17・表16): VLXSMPS → L1(2.2µH)→ VCORE。VFBSMPS と VCAP × 3 は VCORE につなぐ。\nC54 は VFBSMPS の出力のコンデンサ(10µF、ESR 20mΩ 以下)、C53 は VLXSMPS の 220pF。\nVCAP は表15の注に従い 100nF × 2(レギュレータを使わないとき。2.2µF は要らない)。3本目の VCAP はつなぐだけ。\nL1・C53・C54 は VLXSMPS・VFBSMPS のすぐそばに置き、壁センサのアンプと ADC の入力から離す。"
 		(exclude_from_sim no)
@@ -7788,7 +8574,7 @@
 			)
 			(justify left top)
 		)
-		(uuid "f9909a87-419c-47a7-92fa-4121c2a66ba8")
+		(uuid "f09b7447-1bec-422d-929b-f563064f05ae")
 	)
 	(text "パスコン: VDD のピンごとに 100nF(C57〜C61)+ 4.7µF(C62)。VBAT は VDD につなぎ、100nF(C64)。\nVDDA は FB1 と 1µF + 100nF(ADC の基準も VDDA)。C54 は ESR 20mΩ 以下。"
 		(exclude_from_sim no)
@@ -7799,18 +8585,18 @@
 			)
 			(justify left top)
 		)
-		(uuid "9059d116-918c-477a-8df4-2717ac527f12")
+		(uuid "56fc98bd-8190-4e28-948b-9279147f4026")
 	)
 	(text "BOOT0: 10kΩ で GND(内蔵Flashから起動)。\nNRST: 100nF。SWD の端子にも出す。"
 		(exclude_from_sim no)
-		(at 114.3 167.64 0)
+		(at 129.54 167.64 0)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify left top)
 		)
-		(uuid "5a6f3e6f-bee9-4d6f-a030-9de197a573ee")
+		(uuid "0feaf8b4-7bf6-4896-874c-bdbfa29fd99d")
 	)
 	(embedded_fonts no)
 )

@@ -1,6 +1,6 @@
 # STM32H725RG ピンの割り当て(MK4)
 
-2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
+2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。2026-10-29に水晶(HSE、10MHz)を付けることにして PH0・PH1 を使う。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
 
 ## 確かめ方
 
@@ -15,7 +15,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - そのピンに、割り当てた機能(タイマのチャンネル、ADCの入力、SPI、USARTなど)があるか
 - 同じピン、同じタイマのチャンネル、同じADCの入力を2回使っていないか
 
-**結果: OK**。使う41本、残り5本。
+**結果: OK**。使う43本、残り3本(2026-10-29)。
 
 確かめていないこと(CubeMXで.iocを作るときに確かめる): クロックの設定、DMAの割り当て、ADCを2つ同時に動かす設定、タイマの周波数。
 
@@ -24,6 +24,8 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | ピン番号 | ピン | 機能 | ネット名 | 用途 |
 |---|---|---|---|---|
 | 2 | PC14-OSC32_IN | GPIO_Input | SW | スイッチ |
+| 10 | PH0-OSC_IN | RCC_OSC_IN | OSC_IN | 水晶(HSE、10MHz) |
+| 11 | PH1-OSC_OUT | RCC_OSC_OUT | OSC_OUT | 水晶(HSE、10MHz) |
 | 13 | PC0 | ADC1_INP10 | WALL_FL | 壁センサ 左前 |
 | 14 | PC1 | ADC1_INP11 | WALL_L | 壁センサ 左 |
 | 17 | PA0 | GPIO_Output | LED_MODE0 | モード ビット0 |
@@ -65,15 +67,13 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
 | 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
 
-## 残りのピン(5本)
+## 残りのピン(3本)
 
 | ピン | 使える機能 | 使い道の案 |
 |---|---|---|
 | PD2 | TIM3_ETR | IMUの割り込み(INT) |
 | PB3 | SWO(デバッグのトレース出力)、TIM2_CH2 | 予備(SWOを使うならここ) |
 | PC15 | (OSC32_OUT) | 予備(電流を多く流せないピン) |
-| PH0 | (OSC_IN) | 予備(水晶を付けないため) |
-| PH1 | (OSC_OUT) | 予備(水晶を付けないため) |
 
 ## 割り当ての考え方
 
@@ -86,7 +86,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - **UART**: USART1(PB6・PB7)。PA9・PA10はモーターのPWMに、PB14・PB15はエンコーダのSPI2に使うので、USART1の3つ目の組にした
 - **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13
 - **スイッチ**: PC14(OSC32_IN)。入力なので、流せる電流が小さくても問題ない
-- **水晶(HSE)**: 付けない(2026-10-12)。内蔵のHSIからPLLで550MHzにする。PH0・PH1は予備
+- **水晶(HSE)**: 10MHz を PH0・PH1 に付ける(2026-10-29。MK3 と同じ周波数)。PLL で 550MHz にする(例: 10MHz ÷ 5 × 275 ÷ 1)。2026-10-12 には付けず HSI にしていた
 
 ## 気をつけること
 
