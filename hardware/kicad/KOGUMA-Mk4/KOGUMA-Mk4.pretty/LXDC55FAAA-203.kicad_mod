@@ -1,0 +1,192 @@
+(footprint "LXDC55FAAA-203"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Murata LXDC55FAAA-203 micro DC-DC, 5.7x5.0mm, reference land pattern from datasheet (Dec. 2012)")
+	(tags "Murata LXDC55 DC-DC")
+	(property "Reference" "REF**"
+		(at 0 -3.6 0)
+		(layer "F.SilkS")
+		(uuid "832f23d6-7c43-4b13-b168-a33f5318077b")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "LXDC55FAAA-203"
+		(at 0 3.6 0)
+		(layer "F.Fab")
+		(uuid "2db37efd-ca6f-4e8e-bf9f-6839ae24642a")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "01699b48-0654-476b-a4ef-761149617cb4")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "6cf9db7e-f44b-4d0c-b1e0-a9db4011faee")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -2.85 -2.5)
+		(end 2.85 2.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "cb6292c2-d1d0-4652-9d16-a4b47efccd63")
+	)
+	(fp_rect
+		(start -3.1 -2.75)
+		(end 3.1 2.75)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "5b07b6a9-571e-482a-bcb2-fc63be299a4b")
+	)
+	(fp_line
+		(start -2.97 -2.62)
+		(end 2.97 -2.62)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "80d3aa4c-2080-487f-b682-7fa4391cc36f")
+	)
+	(fp_line
+		(start -2.97 2.62)
+		(end 2.97 2.62)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "f41689fd-39e7-41d8-a2dd-3cf051306de3")
+	)
+	(fp_line
+		(start 2.97 -2.62)
+		(end 2.97 -3.1)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "5c43a6ac-4f72-4d3d-b510-ef90dfbb1e22")
+	)
+	(pad "1" smd rect
+		(at 2.25 -1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "f78020f6-495f-4912-9a3b-1d5b18bd9796")
+	)
+	(pad "2" smd rect
+		(at 1.15 -1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "2af8e829-93a4-4361-a2d4-25416f8f9c6f")
+	)
+	(pad "3" smd rect
+		(at 0.0 -1.7)
+		(size 0.8 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "7868cc3a-b92c-4f4d-866c-d4ab3aaa105d")
+	)
+	(pad "4" smd rect
+		(at -1.15 -1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "b77f8d52-7d7c-4ba0-af43-c8ebecad64e7")
+	)
+	(pad "5" smd rect
+		(at -2.25 -1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "7a6f134d-5ffe-48f0-ac4f-e638632bf560")
+	)
+	(pad "6" smd rect
+		(at -2.25 0.0)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "9dda909c-7347-4598-a1f2-badc0534b19f")
+	)
+	(pad "7" smd rect
+		(at -2.25 1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "9ec94b0a-27d0-47ab-ad5c-c8da7f22b0ea")
+	)
+	(pad "8" smd rect
+		(at -1.15 1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "c68cc476-4fde-46a4-9854-6643af0fc5d0")
+	)
+	(pad "9" smd rect
+		(at 0.0 1.7)
+		(size 0.8 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "ff533e37-d2e5-401a-8629-16e3750dfa7b")
+	)
+	(pad "10" smd rect
+		(at 1.15 1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "e8debdc2-f334-4c11-84a9-4b586cf2b2b8")
+	)
+	(pad "11" smd rect
+		(at 2.25 1.7)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "5080bc26-75d7-4e10-840e-978685c02cf7")
+	)
+	(pad "12" smd rect
+		(at 2.25 0.0)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "7c78a802-f9a5-4f0a-bff5-f40ba003dabc")
+	)
+	(pad "13" smd rect
+		(at 0.0 0.0)
+		(size 0.8 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "7b4d6281-9184-488f-b922-ce174195dedb")
+	)
+	(pad "14" smd rect
+		(at -1.15 0.0)
+		(size 0.7 1.1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(uuid "3a90943c-bfaa-465c-b0a5-2d600ab0e086")
+	)
+	(embedded_fonts no)
+)

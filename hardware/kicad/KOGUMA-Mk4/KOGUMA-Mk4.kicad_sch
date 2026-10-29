@@ -1,0 +1,72 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "9b7d9cce-e694-4ccb-908f-cf46129b4ffc")
+	(paper "A4")
+	(title_block
+		(title "KOGUMA MK4")
+		(date "2026-10-29")
+		(rev "0.1")
+	)
+	(lib_symbols)
+	(text "シート: 電源(これから モーター・MCU・センサ・表示 を足す)"
+		(exclude_from_sim no)
+		(at 25.4 20.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left top)
+		)
+		(uuid "998ced7c-2887-4269-a26e-54f837131ad9")
+	)
+	(sheet
+		(at 25.4 30.48)
+		(size 30.48 15.24)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "6d9edaeb-6bc1-469b-98ca-a808c4aea3e7")
+		(property "Sheetname" "電源"
+			(at 25.4 29.7684 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power.kicad_sch"
+			(at 25.4 46.3046 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/9b7d9cce-e694-4ccb-908f-cf46129b4ffc"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)
