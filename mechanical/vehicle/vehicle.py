@@ -111,9 +111,9 @@ P2 = (dict(mm.P_V1, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P_V
            nut_depth=SC['depth'], hole_d=SC['hole']))
 if TAP:
     P2 = dict(P2, hole_d=SC['tap'], tap=True)
-if CFG.get('fan') == 'spider':      # 2026-10-20: 前の耳から腕を伸ばしてファンの台を持ち、前の耳の上にも基板の柱(mount.py v5)
+if CFG.get('fan') == 'spider':      # 2026-10-20 から: 今の mount.py の形(v5〜。前の耳から腕を伸ばしてファンの台を持ち、前の耳の上にも基板の柱)
     _jx, _jy = dz.FAN_JOINTS[0]
-    P2 = dict(P2, fan_joint=(_jx, -abs(_jy)), joint_r=mm.P['joint_r'], joint_z=mm.P['joint_z'], arm_w=mm.P['arm_w'], pcb_post_front=True)
+    P2 = dict(mm.P, pcb_post=Z_PCB, fan_joint=(_jx, -abs(_jy)))
 (xr_, yr_), (xf_, yf_) = dz.MOUNT_SCREWS
 P2 = dict(P2, screw_front=(xf_, -yf_), screw_rear=(xr_, -yr_))     # ねじの位置はフレームに合わせる(右側なので y は負)
 mx, mz = mm.motor_center(P2)
@@ -125,7 +125,10 @@ for s in tn:
     if abs(bb.zmax - 14.5) < 0.05:              # ToraNeko のタイヤ(φ14)は使わない
         continue
     if bb.ymin > -21.1 and bb.ymax < -20.4:
-        right['enc_board'] = (s.translate(cq.Vector(0, 0, 0.11)), 'fr4'); continue
+        s = s.translate(cq.Vector(0, 0, 0.11))
+        if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: メイン基板の裏に立てる基板(x -2.6〜5.2、y -21.0〜-20.4、z 3.3〜13.6。2026-10-29)
+            s = cq.Solid.makeBox(7.8, 0.6, 10.3, cq.Vector(-2.6, -21.0, 3.3))
+        right['enc_board'] = (s, 'fr4'); continue
     if bb.ymin > -22.3 and bb.ymax < -20.9:
         right['as5047p'] = (s.translate(cq.Vector(0, 0, 0.11)), 'resin'); continue
     if abs(bb.zmax - 13.25) < 0.05:
@@ -300,13 +303,9 @@ if CFG['clamp']:
     add('fan_clamp', clamp, 'resin')
 
 # ---------------- 基板 ----------------
-if SPIDER:      # 2026-10-19: 絵の形(U字)。後ろは電池の下、左右の腕で前の壁センサの耳と前の角の横の壁センサへ。真ん中の前はファンの上で開ける
-    _half = Polygon([(-19.0, 0.0), (-19.0, 26.0), (-8.0, 26.0), (-8.0, 25.0), (7.0, 25.0), (8.5, 28.0), (9.0, 33.0),   # 41T の上(|x| ≤ 8)は |y| ≤ 25
-                      (16.0, 33.5), (24.0, 31.0), (34.0, 28.5),
-                     (40.0, 27.5), (44.5, 25.0), (45.0, 22.0), (42.0, 19.5), (34.0, 17.5), (14.2, 17.5), (14.2, 0.0)])
-    # 真ん中の前はファンの囲い(内径 φ33)の上を開ける(半径17.5、腕の内側は |y| ≥ 17.5。2026-10-20)
-    pcb_outline = unary_union([_half, affinity.scale(_half, 1, -1, origin=(0, 0))]).difference(Point(FAN).buffer(17.5, 64))
-    pcb_outline = pcb_outline.buffer(-1.5, join_style=1).buffer(1.5, join_style=1).buffer(1.0, join_style=1).buffer(-1.0, join_style=1)
+if SPIDER:      # 2026-10-19: U字。2026-10-28(基板 v5): ファンの上はハブのまわりだけ開け、後ろは x −46 まで広げる(pcb_shape.py)
+    import pcb_shape
+    pcb_outline = pcb_shape.outline()
 else:
     pcb_outline = unary_union([
         sbox(-21.0, -25.5, -9.0, 25.5),     # 後ろ(マウントの柱の上)
