@@ -1,21 +1,26 @@
-"""MK4 壁センサのホルダ v1(2026-10-30)。CadQuery で作る。
+"""MK4 壁センサのホルダ。CadQuery で作る。
 ToraNeko.Mk3 のセンサホルダ v4(`mechanical/exported/TORANEKO.Mk3_v36.step` の「センサホルダ v4」を測った)と同じ形:
-発光(OPV332、φ3 の T-1)を上の穴、受光(SFH 229 FA、φ3 の T-1)を下の穴に入れ、足は後ろから出して下に曲げ、基板の穴に通す。
-ホルダの下の突起(ほぞ)を基板の穴に差して、位置と向きを決める。
-座標 [mm]: 原点は前の面(光が出る面)の真ん中で基板の上の面の高さ。+y が光の向き、x は幅、z は上。
-使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v1.step / .stl / .png
+発光(OPV332、φ3 の T-1)を基板から遠い穴、受光(SFH 229 FA、φ3 の T-1)を基板に近い穴に入れ、足は後ろから出して基板の側へ曲げ、基板の穴に通す。
+ホルダのほぞを基板の穴に差して、位置と向きを決める。
+v1(2026-10-30): ToraNeko と同じ寸法で、基板の上に立てる(高さ 10.5mm、穴 3.5・8.1mm)
+v2(2026-10-30): **基板の裏(下)にさかさまに付ける**。下はフレーム(上面 z 3.0)なので、高さを 9.9mm、穴を 3.2・7.6mm にした
+               (基板の下面 z 13.6 から下の端 z 3.7、フレームまで 0.7mm)
+座標 [mm]: 原点は前の面(光が出る面)の真ん中で、基板に付ける面。+y が光の向き、x は幅、+z は基板から離れる向き
+(基板の裏に付けるので、機体では下向き)。ほぞは −z 側(基板の穴に入る)。
+使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v2.step / .stl / .png
 """
 import os, math
 import cadquery as cq
 
 P = dict(
-    w=6.0, d=4.04, h=10.5,          # 幅、奥行き(前の面から後ろの面まで)、基板の上の面からの高さ
+    w=6.0, d=4.04, h=9.9,           # 幅、奥行き(前の面から後ろの面まで)、基板の面からの高さ(v1・ToraNeko は 10.5)
     hole_d=3.2,                     # 発光・受光を入れる穴(ToraNeko と同じ。φ3 の T-1 が入る)
-    z_emit=8.1, z_recv=3.5,         # 穴の中心の高さ(基板の上の面から)。上が発光、下が受光(ToraNeko と同じ)
-    r_front=1.6, r_top_front=1.6, r_top_side=1.0,   # 角の丸み: 前の縦の辺、前の上の辺、上の横の辺
+    z_emit=7.6, z_recv=3.2,         # 穴の中心の基板の面からの距離。遠い方が発光、近い方が受光(ToraNeko と同じ並び。v1・ToraNeko は 8.1・3.5)
+    r_front=1.6, r_top_front=1.6, r_top_side=1.0,   # 角の丸み: 前の縦の辺、前の端(基板から遠い所)の辺、端の横の辺
     peg_w=3.0, peg_d=3.0, peg_back=0.0, peg_t=0.6, peg_r=0.4,   # ほぞ: 幅、奥行き、後ろの面からのずれ、長さ(基板の厚さ)、縦の角の丸み
 )
-VER = 'v1'
+VER = 'v2'
+MOUNT = 'bottom'     # 基板の裏に付ける(2026-10-30)
 
 def holder(P=P):
     w, d, h = P['w'], P['d'], P['h']
@@ -57,6 +62,7 @@ if __name__ == '__main__':
         sh = 0.35 + 0.65 * np.clip(nrm @ np.array([0.4, -0.6, 0.7]), 0, 1)
         ax.add_collection3d(Poly3DCollection(T, facecolor=np.c_[0.6 * sh, 0.6 * sh, 0.65 * sh, np.ones_like(sh)], edgecolor='none'))
         ax.set_xlim(-4, 4); ax.set_ylim(-6, 2); ax.set_zlim(-1, 11); ax.set_box_aspect((8, 8, 12)); ax.view_init(el, az); ax.set_title(tt, fontsize=9)
-        ax.set_xticks([-3, 0, 3]); ax.set_yticks([-4, 0]); ax.set_zticks([0, 3.5, 8.1, 10.5])
-    fig.suptitle(f'MK4 wall sensor holder {VER}: {P["w"]} x {P["d"]} x {P["h"]} mm, holes phi{P["hole_d"]} at z {P["z_recv"]} / {P["z_emit"]}', fontsize=10)
+        ax.set_xticks([-3, 0, 3]); ax.set_yticks([-4, 0]); ax.set_zticks([0, P['z_recv'], P['z_emit'], P['h']])
+    fig.suptitle(f'MK4 wall sensor holder {VER}: {P["w"]} x {P["d"]} x {P["h"]} mm, holes phi{P["hole_d"]} at {P["z_recv"]} (receiver) / {P["z_emit"]} (emitter) from the board. '
+                 'Mounted upside down under the board (z here = distance below the board)', fontsize=9)
     fig.tight_layout(); fig.savefig(os.path.join(here, f'sensor_holder_{VER}.png'), dpi=90)

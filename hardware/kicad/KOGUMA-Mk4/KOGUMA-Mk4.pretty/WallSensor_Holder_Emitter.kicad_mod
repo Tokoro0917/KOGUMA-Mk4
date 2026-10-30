@@ -3,12 +3,12 @@
 	(generator "pcbnew")
 	(generator_version "9.0")
 	(layer "F.Cu")
-	(descr "KOGUMA MK4 wall sensor emitter (OPV332, T-1 3mm) in the sensor holder (upper hole, z 8.1 above the board). Includes the holder peg hole (Edge.Cuts) and outline. Origin = centre of the holder front face, beam +X. Place WallSensor_Holder_Receiver at the same position and rotation")
+	(descr "KOGUMA MK4 wall sensor emitter (OPV332, T-1 3mm) in the sensor holder v2 (hole 7.6mm from the board). The holder hangs under the board: place this footprint on the back side (flipped). Includes the holder peg hole (Edge.Cuts) and outline. Origin = centre of the holder front face, beam +X. Place WallSensor_Holder_Receiver at the same position and rotation")
 	(tags "wall sensor holder KOGUMA")
 	(property "Reference" "REF**"
 		(at 0 -4.2 0)
 		(layer "F.SilkS")
-		(uuid "beb61ecd-2747-4fb1-af4c-eb5f8627c923")
+		(uuid "f92bd1d2-77e1-4bad-9806-322de5b311dd")
 		(effects
 			(font
 				(size 0.5 0.5)
@@ -19,7 +19,7 @@
 	(property "Value" "WallSensor_Holder_Emitter"
 		(at 0 5 0)
 		(layer "F.Fab")
-		(uuid "49235613-1ea8-4f38-89b1-7f0217cffb7d")
+		(uuid "b02559f8-4569-42ad-89bc-d382c5531ce5")
 		(effects
 			(font
 				(size 0.5 0.5)
@@ -31,7 +31,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "a82dc329-4b47-4c16-a491-12bf91896f33")
+		(uuid "f86ebd5b-2b71-450f-85e7-585385def56f")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -43,7 +43,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "8491c45d-05e6-4d6b-a478-fc50e3bdc63d")
+		(uuid "bd63967a-5b60-4775-972c-e7f4597f09b2")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -57,14 +57,14 @@
 		(size 1.6 1.6)
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
-		(uuid "50f8ca50-d1b3-4443-a465-4ebe3f33f21b")
+		(uuid "560891d6-ce8d-449e-929a-eeec4b094f04")
 	)
 	(pad "2" thru_hole circle
 		(at -7.04 -1.27)
 		(size 1.6 1.6)
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
-		(uuid "cd304097-8b21-4c3a-9174-c87c7206ee42")
+		(uuid "5cceb2fa-4adc-4e52-8c1f-ecd4a15b321b")
 	)
 	(fp_rect
 		(start -4.04 -3)
@@ -75,7 +75,7 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "5739668d-c09b-4038-914a-c2f5c7d66587")
+		(uuid "6b1b9381-16f8-4f68-b822-165bee61aa64")
 	)
 	(fp_line
 		(start 0 0)
@@ -85,7 +85,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "de448b51-909a-49e2-9da7-fe92ddb72ea6")
+		(uuid "becda3a0-4fb3-4379-bbab-7dde83cb7eda")
 	)
 	(fp_line
 		(start 3 0)
@@ -95,7 +95,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "20a411ec-a8dd-405d-908d-d84100ae3590")
+		(uuid "27d2e2ed-8ecd-42e9-b965-84c10815d9ed")
 	)
 	(fp_line
 		(start 3 0)
@@ -105,7 +105,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "5f6fe638-67c1-444b-8c12-4096fc5bea04")
+		(uuid "0807c5f6-85e8-464b-ba2b-e937a369ccf0")
 	)
 	(fp_line
 		(start -3.64 -1.6)
@@ -115,7 +115,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "fbb45ce3-6021-4461-850b-37de8d0e85c9")
+		(uuid "65dd61e5-bd40-4b8b-83cc-e85a511d12fa")
 	)
 	(fp_line
 		(start -0.94 -1.1)
@@ -125,7 +125,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "c6168324-3e58-4a35-a413-a909633676b8")
+		(uuid "255d8dfd-2b96-4c43-ac8e-f05fdcb536b3")
 	)
 	(fp_line
 		(start -1.44 1.6)
@@ -135,7 +135,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "f8c95b35-8f55-489c-a517-1bd1f594aaf4")
+		(uuid "1b2399e6-70a0-4149-8cf3-2574aa23da32")
 	)
 	(fp_line
 		(start -4.14 1.1)
@@ -145,7 +145,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "2749737e-cc06-4d0f-aacc-e22d3ce47579")
+		(uuid "1c14fa64-0ac9-42b4-86d4-e375fab562e9")
 	)
 	(fp_arc
 		(start -1.44 -1.6)
@@ -156,7 +156,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "29c31055-c942-4589-849b-32af98899431")
+		(uuid "e6cbfaf6-37e3-4a28-a350-ba4370ec9fff")
 	)
 	(fp_arc
 		(start -0.94 1.1)
@@ -167,7 +167,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "2bd1da93-11a7-4be4-844f-a30df68138e0")
+		(uuid "79ca24e1-ac1b-4d17-92e0-793d7b010df2")
 	)
 	(fp_arc
 		(start -3.64 1.6)
@@ -178,7 +178,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "b82cd6ed-6b2a-4b07-bbc0-2c2c963e46b1")
+		(uuid "68ba4cbd-54bf-40ee-a3bb-ed942fe1f292")
 	)
 	(fp_arc
 		(start -4.14 -1.1)
@@ -189,7 +189,7 @@
 			(type solid)
 		)
 		(layer "Edge.Cuts")
-		(uuid "afdce365-822f-4418-990e-a21dccd06419")
+		(uuid "a4b3cdd5-2151-4d59-ac16-95d425451585")
 	)
 	(fp_line
 		(start 0.15 -3.15)
@@ -199,7 +199,7 @@
 			(type solid)
 		)
 		(layer "F.SilkS")
-		(uuid "db15c2fa-586a-4acd-acd1-b817a1de25c1")
+		(uuid "c5f0c470-9175-474d-ab35-98e1f4cfae13")
 	)
 	(fp_rect
 		(start -8.24 -3.25)
@@ -210,12 +210,12 @@
 		)
 		(fill no)
 		(layer "F.CrtYd")
-		(uuid "f40761e0-80f8-499f-a739-ef13e82cc546")
+		(uuid "9a6d9ac9-5e5e-479c-bbc3-7203481c938d")
 	)
 	(fp_text user "HOLDER"
 		(at -2.02 -3.5 0)
 		(layer "F.Fab")
-		(uuid "49c55fa0-4549-48bc-b8a4-a1825a2b976a")
+		(uuid "c9646f39-c1ae-49f2-a9fd-ce41f2d0f26f")
 		(effects
 			(font
 				(size 0.4 0.4)
@@ -223,10 +223,10 @@
 			)
 		)
 	)
-	(fp_text user "EMIT (upper hole)"
+	(fp_text user "EMIT (far hole)"
 		(at -7.04 0 0)
 		(layer "F.Fab")
-		(uuid "879a32c0-618f-47d8-b544-4e141a0aa8d1")
+		(uuid "9df4dc34-a9a3-4b77-abab-20584dd72e00")
 		(effects
 			(font
 				(size 0.3 0.3)

@@ -3,12 +3,12 @@
 	(generator "pcbnew")
 	(generator_version "9.0")
 	(layer "F.Cu")
-	(descr "KOGUMA MK4 wall sensor receiver (SFH 229 FA, T-1 3mm) in the sensor holder (lower hole, z 3.5 above the board). Origin = centre of the holder front face, beam +X. Place at the same position and rotation as WallSensor_Holder_Emitter")
+	(descr "KOGUMA MK4 wall sensor receiver (SFH 229 FA, T-1 3mm) in the sensor holder v2 (hole 3.2mm from the board). The holder hangs under the board: place this footprint on the back side (flipped). Origin = centre of the holder front face, beam +X. Place at the same position and rotation as WallSensor_Holder_Emitter")
 	(tags "wall sensor holder KOGUMA")
 	(property "Reference" "REF**"
 		(at 0 4.2 0)
 		(layer "F.SilkS")
-		(uuid "da5540e2-a93c-4646-867d-14d41bbf2612")
+		(uuid "9e36dd39-3998-4433-b084-fdf264494ee8")
 		(effects
 			(font
 				(size 0.5 0.5)
@@ -19,7 +19,7 @@
 	(property "Value" "WallSensor_Holder_Receiver"
 		(at 0 5 0)
 		(layer "F.Fab")
-		(uuid "c045b005-6d3e-4603-8158-d4472e49c413")
+		(uuid "59164b21-553f-4d36-b216-3e2d4a5cadec")
 		(effects
 			(font
 				(size 0.5 0.5)
@@ -31,7 +31,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "37607c82-cc6b-46fd-8420-01e64a27f796")
+		(uuid "82b8a280-7f23-44c3-93e2-19773519cbeb")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -43,7 +43,7 @@
 		(at 0 0 0)
 		(layer "F.Fab")
 		(hide yes)
-		(uuid "1e953763-ce82-4465-a40e-038ccc04166c")
+		(uuid "f9f6cddd-69fd-45ee-ab2b-3f246892a434")
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -57,14 +57,14 @@
 		(size 1.6 1.6)
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
-		(uuid "070b98c4-fa90-49ea-b763-3f8f4cb9d67e")
+		(uuid "bac02816-0da8-4d79-8bb1-2c4fdda87d65")
 	)
 	(pad "2" thru_hole circle
 		(at -4.89 -1.27)
 		(size 1.6 1.6)
 		(drill 0.9)
 		(layers "*.Cu" "*.Mask")
-		(uuid "17b5963a-e9cf-4c78-bfbe-a2f290d4a1ac")
+		(uuid "cfda8b53-311c-4479-ba21-ae4660e1e28d")
 	)
 	(fp_rect
 		(start -4.04 -3)
@@ -75,7 +75,7 @@
 		)
 		(fill no)
 		(layer "F.Fab")
-		(uuid "2272f23d-7784-4f9a-9797-ecf20074aa6f")
+		(uuid "c9854317-e2d0-4dae-a6cb-1247d8f7d560")
 	)
 	(fp_line
 		(start 0 0)
@@ -85,7 +85,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "8eb4c61b-583c-45a0-abae-62cc44e82948")
+		(uuid "d4e0622a-e5ee-42d3-93ec-b9397e4a469d")
 	)
 	(fp_line
 		(start 3 0)
@@ -95,7 +95,7 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "e3b4d956-bd8f-4013-afc8-312b56554e9a")
+		(uuid "bc92ddd4-7f15-40d5-b630-bccaa9442cce")
 	)
 	(fp_line
 		(start 3 0)
@@ -105,12 +105,12 @@
 			(type solid)
 		)
 		(layer "F.Fab")
-		(uuid "deb16abc-cc82-465f-a974-e9db76a0de01")
+		(uuid "da14c51c-3bc7-4216-985e-19a891746600")
 	)
-	(fp_text user "RECV (lower hole)"
+	(fp_text user "RECV (near hole)"
 		(at -4.89 0 0)
 		(layer "F.Fab")
-		(uuid "635ed847-e2fe-4714-8386-87424b7bf892")
+		(uuid "31fa8c1c-d7d0-448e-87e9-bc5727f0eeb5")
 		(effects
 			(font
 				(size 0.3 0.3)

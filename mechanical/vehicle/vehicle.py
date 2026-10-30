@@ -327,15 +327,15 @@ b = BAT
 add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + b['lz'] / 2)), 'battery')
 
 # ---------------- 壁センサ ----------------
-# 2026-10-30(基板 v7): 発光 OPV332(上の穴)・受光 SFH 229 FA(下の穴)をホルダ(mechanical/sensor_holder、ToraNeko.Mk3 と同じ形)に入れ、
-# ホルダのほぞを基板の穴に差す。位置と向きは pcb_shape.SENS(ホルダの前の面の真ん中、光の向き)
+# 2026-10-30(基板 v7): 発光 OPV332・受光 SFH 229 FA をホルダ(mechanical/sensor_holder、ToraNeko.Mk3 と同じ形)に入れ、
+# **基板の裏(下)にさかさまに付ける**(ほぞは下から基板の穴に入る)。位置と向きは pcb_shape.SENS(ホルダの前の面の真ん中、光の向き)
 # それまで: 前の2本はタイヤの前の耳 (12, ±30) で外へ5°、横の2本は前の角 (41, ±24) から反対側の壁へ 75°。φ3 × 4.5 を基板の上に寝かせていた
 if SPIDER:
     sys.path.insert(0, os.path.join(HERE, '../sensor_holder'))
     import sensor_holder as sh
     SENS = pcb_shape.SENS
     for nm, ((sx_, sy_), ang) in SENS.items():
-        place = lambda w: w.rotate((0, 0, 0), (0, 0, 1), ang - 90).translate((sx_, sy_, Z_PCBT))
+        place = lambda w: w.rotate((0, 0, 0), (0, 1, 0), 180).rotate((0, 0, 0), (0, 0, 1), ang - 90).translate((sx_, sy_, Z_PCB))   # 光の向きの軸で 180° 回して基板の下面に
         add(f'sensor_holder_{nm}', place(sh.holder()), 'resin')
         for k, z in (('emit', sh.P['z_emit']), ('recv', sh.P['z_recv'])):     # T-1(φ3)の本体。前の面から 0.5mm 出る
             add(f'sensor_{nm}_{k}', place(cq.Workplane('XZ').circle(1.5).extrude(-(sh.P['d'] + 0.5)).translate((0, -sh.P['d'], z))), 'sensor')
