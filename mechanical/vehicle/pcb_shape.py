@@ -24,7 +24,9 @@ v12(2026-10-30): 軽くするため中をくり抜いた(4つの案から選ん�
 v13(2026-10-30): 電池の下にはマイコンを置くので、電池の下の窓はやめた(前と横のセンサの間のポケットだけ)
 v14(2026-10-30): 後ろも前と同じように削った(3つの案から選んだ)。x < 4 は、電池の下(マイコン、|y| ≤ 17)、後ろの LED の列(|y| ≤ 15)、
                  柱のまわり(半径 4 の耳)、エンコーダ基板の穴のまわり(2mm)だけ残し、へこんだ角 R3。
-                 約 3050mm²(v13 から −0.44g)。1次 147Hz は変わらない(前のセンサで決まる)。3次(電池)は 303 → 280Hz"""
+                 約 3050mm²(v13 から −0.44g)。1次 147Hz は変わらない(前のセンサで決まる)。3次(電池)は 303 → 280Hz
+v15(2026-10-30): UI の LED を ToraNeko.Mk3 と同じ並びにした(後ろの左右の角に2個ずつ、後ろの V 字の切り欠きの先に3個)。
+                 後ろの縁は ToraNeko と同じく V 字に切り欠き(先は x LED_APEX)、左右の角(羽)に LED を載せる"""
 import os, sys, math
 import numpy as np
 from shapely.geometry import Polygon, Point, box, LineString
@@ -33,7 +35,7 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v14'
+VER = 'v15'
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
@@ -53,7 +55,13 @@ REAR_SIDE, REAR_LED, POST_BOSS, ENC_RIM, R_REAR, REAR_X = 17.0, 15.0, 4.0, 2.0, 
 POCKET_RIM, POCKET_R = 4.5, 2.0           # v12: 前と横のセンサの間のポケット(縁などに残す幅、角の丸み)
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
 ENC = [(-2.65, 2.65, -21.0, -20.4), (-2.65, 2.65, 20.4, 21.0)]   # エンコーダ基板が通る所(x0, x1, y0, y1)。穴は ENC_Base_Slot(NPTH 1.0 × 5.9mm)
-LEDS = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                                # UI の LED 7個(後ろの縁、4mm おき)
+LEDS_V14 = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                            # v14 までの UI の LED 7個(後ろの縁、4mm おき)
+# v15: UI の LED 7個(0402)を ToraNeko.Mk3 と同じ並びに(TORANEKO.Mk3.kicad_pcb の D18〜D24。ToraNeko の車軸は KiCad の y 66、真ん中は x 110。
+# MK4 の座標では x = 66 − y、y = 110 − x)。LED1・2 は左の角、LED3〜5 は V 字の切り欠きの先(真ん中が 0.5mm 前)、LED6・7 は右の角。
+# ToraNeko は後ろの縁が x −32.05 なので、角の2個は MK4 の後ろの縁(x REAR)から ToraNeko と同じ 1.85mm に置く
+LED_APEX = -24.5        # v15: 後ろの V 字の切り欠きの先(ToraNeko と同じ。真ん中の LED の 1.4mm 後ろ)
+LED_WING = (12.3, 18.5) # v15: 後ろの左右の角(羽)の |y|(内側、外側)
+LEDS = [(REAR + 1.85, 16.21), (REAR + 1.85, 14.29), (-23.1, 2.015), (-22.6, 0.095), (-23.1, -1.785), (REAR + 1.85, -14.385), (REAR + 1.85, -16.31)]
 
 # ---- 壁センサ(2026-10-30 からホルダに入れ、基板の裏(下)に付ける)。(x, y) はホルダの前の面(光が出る所)の真ん中、角度は光の向き(+x から反時計回り) ----
 # ホルダは sensor_holder.py(v2、高さ 9.9mm)。基板の下面 z 13.6 から下の端 z 3.7。光の高さは受光 z 10.4、発光 z 6.0
@@ -156,11 +164,25 @@ def outline_v13():
     o = outline_v11()
     return o.difference(pockets(o))
 
-def outline():
+def outline_v14():
     """v14: v13 の後ろ(x < REAR_X)を、電池の下・LED の列・柱の耳・エンコーダの穴のまわりだけ残して削る"""
     x0, x1, y0 = WHEEL_CUT
     v11 = outline_v11()
     keep = unary_union([box(BAT[0] - 1, -REAR_SIDE, BAT[1] + 1, REAR_SIDE), box(REAR, -REAR_LED, BAT[0] + 1.25, REAR_LED)]
+                       + [Point(p).buffer(POST_BOSS) for p in SCREWS]
+                       + [box(a - ENC_RIM, c - ENC_RIM, b + ENC_RIM, d + ENC_RIM) for a, b, c, d in ENC])
+    o = unary_union([v11.difference(box(-60, -60, REAR_X, 60)), keep.intersection(v11)])
+    o = o.buffer(R_REAR, join_style=1).buffer(-R_REAR, join_style=1).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
+    o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 41T・タイヤ
+    return o.difference(pockets(o)).difference(Point(FAN).buffer(HUB_HOLE, 64))
+
+def outline():
+    """v15: v14 の後ろを、ToraNeko.Mk3 と同じく V 字に切り欠き、左右の角(羽)に LED を載せる形にする"""
+    x0, x1, y0 = WHEEL_CUT
+    v11 = outline_v11()
+    yi, yo = LED_WING
+    rear = Polygon([(BAT[0] - 1, yo), (REAR, yo), (REAR, yi), (LED_APEX, 0.0), (REAR, -yi), (REAR, -yo), (BAT[0] - 1, -yo)])
+    keep = unary_union([box(BAT[0] - 1, -REAR_SIDE, BAT[1] + 1, REAR_SIDE), rear]
                        + [Point(p).buffer(POST_BOSS) for p in SCREWS]
                        + [box(a - ENC_RIM, c - ENC_RIM, b + ENC_RIM, d + ENC_RIM) for a, b, c, d in ENC])
     o = unary_union([v11.difference(box(-60, -60, REAR_X, 60)), keep.intersection(v11)])
