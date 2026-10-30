@@ -7,7 +7,9 @@ v7(2026-10-30): 形をすっきりさせ、壁センサをホルダ(ToraNeko.Mk3
                 車輪(41T・タイヤ)の所と、前の腕の間だけをへこませる。角は R3
 v8(2026-10-30): v7 の形がよくないので作り直した(4つの案から選んだ)。外形はフレームと平行な八角形(フレームの 1.5mm 内側)、
                 前の切り欠きは大きな円弧(中心 (51, 0)、半径 19。ToraNeko.Mk3 の前後の円弧と同じ考え方)、車輪の所は四角く切る。
-                へこんだ角 R3、出っ張った角 R5。横の壁センサを (41, ±18.5) から (40, ±18) へ"""
+                へこんだ角 R3、出っ張った角 R5。横の壁センサを (41, ±18.5) から (40, ±18) へ
+v9(2026-10-30): もっと削った。フレームから 3mm 内側、前の円弧を半径 20 に、後ろの横は |y| 26.5 でまっすぐ(車輪の所まで)。
+                約 450mm² 減(−0.5g)。壁センサを形に収まる所へ: 前 (18, ±29) → (18, ±28)、横 (40, ±18) → (37.5, ±17.5)"""
 import os, sys, math
 import numpy as np
 from shapely.geometry import Polygon, Point, box
@@ -16,13 +18,14 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v8'
+VER = 'v9'
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
 REAR, FRONT = -30.0, 47.5        # 後ろの縁(電池の後ろの端 −21.25 から約9mm。LED を並べる)、前の縁
-FRAME_MARGIN = 1.5      # 外形はフレームの外形と平行に 1.5mm 内側
-NOTCH_C, NOTCH_R = (51.0, 0.0), 19.0   # 前の切り欠き(クワガタの腕の間)の円弧。x 32 まで(ファンの輪の前の端は x 31.7)
+FRAME_MARGIN = 3.0      # 外形はフレームの外形と平行に 3mm 内側(v8 は 1.5mm)
+NOTCH_C, NOTCH_R = (51.0, 0.0), 20.0   # 前の切り欠き(クワガタの腕の間)の円弧。x 31 まで(ファンの輪の前の端は x 31.7。v8 は半径 19)
+REAR_Y = 26.5           # 後ろ(車輪より後ろ)の横の縁 |y|
 WHEEL_CUT = (-8.0, 8.5, 25.0)   # 41T・タイヤの所は基板を置かない: x0 ≤ x ≤ x1 で |y| > y0(41T の一番上は z 13.95)
 R_IN, R_OUT = 3.0, 5.0  # へこんだ角、出っ張った角の丸み
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
@@ -33,7 +36,7 @@ LEDS = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                            
 # ホルダは sensor_holder.py(v2、高さ 9.9mm)。基板の下面 z 13.6 から下の端 z 3.7。光の高さは受光 z 10.4、発光 z 6.0
 HOLDER_SIDE = 'bottom'
 # 前の2本はタイヤの前の耳で外へ5°、横の2本は前の腕から反対側の壁へ75°(左右で交差)。v6 までは (12, ±30)・(41, ±24) に寝かせていた
-SENS = {'FL': ((18.0, 29.0), 5.0), 'FR': ((18.0, -29.0), -5.0), 'R': ((40.0, 18.0), -75.0), 'L': ((40.0, -18.0), 75.0)}   # v8。v7 は R・L が (41, ±18.5)
+SENS = {'FL': ((18.0, 28.0), 5.0), 'FR': ((18.0, -28.0), -5.0), 'R': ((37.5, 17.5), -75.0), 'L': ((37.5, -17.5), 75.0)}   # v9。v8 は (18, ±29)・(40, ±18)、v7 は R・L が (41, ±18.5)
 # ホルダ(sensor_holder.py の P と同じ値): 幅、奥行き、ほぞ(幅、奥行き、後ろの面からのずれ)、ほぞの穴のすき間と角の丸み
 HOLDER_W, HOLDER_D = 6.0, 4.04
 PEG_W, PEG_D, PEG_BACK = 3.0, 3.0, 0.0
@@ -70,6 +73,7 @@ def footprint(nm, m=1.0):
 def outline():
     x0, x1, y0 = WHEEL_CUT
     o = dz.outline(0).buffer(-FRAME_MARGIN, join_style=2).intersection(box(REAR, -50, FRONT, 50))   # フレームと平行な八角形
+    o = o.difference(box(-50, REAR_Y, x0, 60)).difference(box(-50, -60, x0, -REAR_Y))             # 後ろの横をまっすぐに
     o = o.difference(Point(NOTCH_C).buffer(NOTCH_R, 256))                                         # 前の円弧の切り欠き
     o = o.difference(box(x0, y0, x1, 60)).difference(box(x0, -60, x1, -y0))                    # 41T・タイヤ
     o = o.buffer(R_IN, join_style=1).buffer(-R_IN, join_style=1)                               # へこんだ角
