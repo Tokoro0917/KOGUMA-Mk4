@@ -21,7 +21,10 @@ v12(2026-10-30): 軽くするため中をくり抜いた(4つの案から選ん�
                  前と横のセンサの間にポケット(縁・ファンのまわり・センサのまわりに 4.5mm 残す、角 R2)。
                  約 3020mm²(v11 から −770mm²、−0.85g)、1次 145Hz(v11 は 160Hz、v10 は 136Hz)。電池の下は抜いても振動はほぼ変わらない。
                  前は縁を 2.5mm にすると 80Hz、ファンからセンサへの梁(トラス)だけ残すと 137Hz
-v13(2026-10-30): 電池の下にはマイコンを置くので、電池の下の窓はやめた(前と横のセンサの間のポケットだけ)"""
+v13(2026-10-30): 電池の下にはマイコンを置くので、電池の下の窓はやめた(前と横のセンサの間のポケットだけ)
+v14(2026-10-30): 後ろも前と同じように削った(3つの案から選んだ)。x < 4 は、電池の下(マイコン、|y| ≤ 17)、後ろの LED の列(|y| ≤ 15)、
+                 柱のまわり(半径 4 の耳)、エンコーダ基板の穴のまわり(2mm)だけ残し、へこんだ角 R3。
+                 約 3050mm²(v13 から −0.44g)。1次 147Hz は変わらない(前のセンサで決まる)。3次(電池)は 303 → 280Hz"""
 import os, sys, math
 import numpy as np
 from shapely.geometry import Polygon, Point, box, LineString
@@ -30,7 +33,7 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v13'
+VER = 'v14'
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
@@ -46,6 +49,7 @@ NOTCH11_C, NOTCH11_R = (55.0, 0.0), 18.0   # v11: 前の切り欠きの円弧
 BAT = (-21.25, 1.25, 16.0)    # 電池(x0, x1, |y|)
 BAT_WIN_M, BAT_WIN_R = 3.0, 3.0           # v12: 電池の下の窓(電池の縁から内側へ 3mm、角 R3)
 BAT_WIN = False                           # v13: 電池の下にはマイコンを置くので窓は開けない
+REAR_SIDE, REAR_LED, POST_BOSS, ENC_RIM, R_REAR, REAR_X = 17.0, 15.0, 4.0, 2.0, 3.0, 4.0   # v14: 後ろ(x < REAR_X)に残す所: 電池の下 |y|、LED の列 |y|、柱の耳の半径、エンコーダの穴のまわり、へこんだ角
 POCKET_RIM, POCKET_R = 4.5, 2.0           # v12: 前と横のセンサの間のポケット(縁などに残す幅、角の丸み)
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
 ENC = [(-2.65, 2.65, -21.0, -20.4), (-2.65, 2.65, 20.4, 21.0)]   # エンコーダ基板が通る所(x0, x1, y0, y1)。穴は ENC_Base_Slot(NPTH 1.0 × 5.9mm)
@@ -147,10 +151,22 @@ def outline_v12():
     o = outline_v11()
     return o.difference(pockets(o, True))
 
-def outline():
+def outline_v13():
     """v13: v11 の形から、前と横のセンサの間のポケットをくり抜く(電池の下は抜かない)"""
     o = outline_v11()
     return o.difference(pockets(o))
+
+def outline():
+    """v14: v13 の後ろ(x < REAR_X)を、電池の下・LED の列・柱の耳・エンコーダの穴のまわりだけ残して削る"""
+    x0, x1, y0 = WHEEL_CUT
+    v11 = outline_v11()
+    keep = unary_union([box(BAT[0] - 1, -REAR_SIDE, BAT[1] + 1, REAR_SIDE), box(REAR, -REAR_LED, BAT[0] + 1.25, REAR_LED)]
+                       + [Point(p).buffer(POST_BOSS) for p in SCREWS]
+                       + [box(a - ENC_RIM, c - ENC_RIM, b + ENC_RIM, d + ENC_RIM) for a, b, c, d in ENC])
+    o = unary_union([v11.difference(box(-60, -60, REAR_X, 60)), keep.intersection(v11)])
+    o = o.buffer(R_REAR, join_style=1).buffer(-R_REAR, join_style=1).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
+    o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 41T・タイヤ
+    return o.difference(pockets(o)).difference(Point(FAN).buffer(HUB_HOLE, 64))
 
 def board():
     """外形からねじの穴とホルダのほぞの穴を抜いたもの"""
