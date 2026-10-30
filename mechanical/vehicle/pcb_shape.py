@@ -20,7 +20,8 @@ v11(2026-10-30): 振動対策。v10 の角は先のセンサ(0.39g)が重く、1
 v12(2026-10-30): 軽くするため中をくり抜いた(4つの案から選んだ)。電池の下に窓(x −18.25〜−1.75、|y| ≤ 13、角 R3)、
                  前と横のセンサの間にポケット(縁・ファンのまわり・センサのまわりに 4.5mm 残す、角 R2)。
                  約 3020mm²(v11 から −770mm²、−0.85g)、1次 145Hz(v11 は 160Hz、v10 は 136Hz)。電池の下は抜いても振動はほぼ変わらない。
-                 前は縁を 2.5mm にすると 80Hz、ファンからセンサへの梁(トラス)だけ残すと 137Hz"""
+                 前は縁を 2.5mm にすると 80Hz、ファンからセンサへの梁(トラス)だけ残すと 137Hz
+v13(2026-10-30): 電池の下にはマイコンを置くので、電池の下の窓はやめた(前と横のセンサの間のポケットだけ)"""
 import os, sys, math
 import numpy as np
 from shapely.geometry import Polygon, Point, box, LineString
@@ -29,7 +30,7 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v12'
+VER = 'v13'
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
@@ -44,6 +45,7 @@ NECK_W, R_HORN = 9.0, 7.0   # v10: センサと芯をつなぐ首の幅、角の
 NOTCH11_C, NOTCH11_R = (55.0, 0.0), 18.0   # v11: 前の切り欠きの円弧
 BAT = (-21.25, 1.25, 16.0)    # 電池(x0, x1, |y|)
 BAT_WIN_M, BAT_WIN_R = 3.0, 3.0           # v12: 電池の下の窓(電池の縁から内側へ 3mm、角 R3)
+BAT_WIN = False                           # v13: 電池の下にはマイコンを置くので窓は開けない
 POCKET_RIM, POCKET_R = 4.5, 2.0           # v12: 前と横のセンサの間のポケット(縁などに残す幅、角の丸み)
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
 ENC = [(-2.65, 2.65, -21.0, -20.4), (-2.65, 2.65, 20.4, 21.0)]   # エンコーダ基板が通る所(x0, x1, y0, y1)。穴は ENC_Base_Slot(NPTH 1.0 × 5.9mm)
@@ -132,16 +134,21 @@ def outline_v11():
     o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 41T・タイヤ
     return o.difference(Point(FAN).buffer(HUB_HOLE, 64))
 
-def pockets(o):
-    """v12 のくり抜き: 電池の下の窓と、前と横のセンサの間のポケット"""
+def pockets(o, bat_win=None):
+    """くり抜き: 前と横のセンサの間のポケットと、bat_win なら電池の下の窓(v12)"""
     m, r, w = BAT_WIN_M, BAT_WIN_R, POCKET_RIM
     win = box(BAT[0] + m, -BAT[2] + m, BAT[1] - m, BAT[2] - m).buffer(-r).buffer(r)
     keep = unary_union([Point(FAN).buffer(CORE_FAN_R + w), box(-60, -60, 12.5 + w, 60)] + [footprint(k, w) for k in SENS])
     h = o.buffer(-w).difference(keep).buffer(-POCKET_R, join_style=1).buffer(POCKET_R, join_style=1)
-    return unary_union([win] + [g for g in getattr(h, 'geoms', [h]) if g.area > 15])
+    return unary_union(([win] if (BAT_WIN if bat_win is None else bat_win) else []) + [g for g in getattr(h, 'geoms', [h]) if g.area > 15])
+
+def outline_v12():
+    """v12: v11 の形から、電池の下の窓と前と横のセンサの間のポケットをくり抜く"""
+    o = outline_v11()
+    return o.difference(pockets(o, True))
 
 def outline():
-    """v12: v11 の形から、電池の下の窓と前と横のセンサの間のポケットをくり抜く"""
+    """v13: v11 の形から、前と横のセンサの間のポケットをくり抜く(電池の下は抜かない)"""
     o = outline_v11()
     return o.difference(pockets(o))
 
