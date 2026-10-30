@@ -26,7 +26,9 @@ v14(2026-10-30): 後ろも前と同じように削った(3つの案から選ん�
                  柱のまわり(半径 4 の耳)、エンコーダ基板の穴のまわり(2mm)だけ残し、へこんだ角 R3。
                  約 3050mm²(v13 から −0.44g)。1次 147Hz は変わらない(前のセンサで決まる)。3次(電池)は 303 → 280Hz
 v15(2026-10-30): UI の LED を ToraNeko.Mk3 と同じ並びにした(後ろの左右の角に2個ずつ、後ろの V 字の切り欠きの先に3個)。
-                 後ろの縁は ToraNeko と同じく V 字に切り欠き(先は x LED_APEX)、左右の角(羽)に LED を載せる"""
+                 後ろの縁は ToraNeko と同じく V 字に切り欠き(先は x LED_APEX)、左右の角(羽)に LED を載せる
+v16(2026-10-30): かっこよくするため、へこんだ角を R10、出っ張った角を R3 で大きく丸め、柱の耳のでこぼこをなめらかにつないだ
+                 (3つの案から選んだ: 直線で後ろ V 字、直線で後ろも円弧、なめらかな曲線)。v15 から +130mm²(+0.14g)"""
 import os, sys, math
 import numpy as np
 from shapely.geometry import Polygon, Point, box, LineString
@@ -35,7 +37,7 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v15'
+VER = 'v16'
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
@@ -61,6 +63,7 @@ LEDS_V14 = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                        
 # ToraNeko は後ろの縁が x −32.05 なので、角の2個は MK4 の後ろの縁(x REAR)から ToraNeko と同じ 1.85mm に置く
 LED_APEX = -24.5        # v15: 後ろの V 字の切り欠きの先(ToraNeko と同じ。真ん中の LED の 1.4mm 後ろ)
 LED_WING = (12.3, 18.5) # v15: 後ろの左右の角(羽)の |y|(内側、外側)
+R_SMOOTH_IN, R_SMOOTH_OUT = 10.0, 3.0    # v16: へこんだ角、出っ張った角の丸み
 LEDS = [(REAR + 1.85, 16.21), (REAR + 1.85, 14.29), (-23.1, 2.015), (-22.6, 0.095), (-23.1, -1.785), (REAR + 1.85, -14.385), (REAR + 1.85, -16.31)]
 
 # ---- 壁センサ(2026-10-30 からホルダに入れ、基板の裏(下)に付ける)。(x, y) はホルダの前の面(光が出る所)の真ん中、角度は光の向き(+x から反時計回り) ----
@@ -176,7 +179,7 @@ def outline_v14():
     o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 41T・タイヤ
     return o.difference(pockets(o)).difference(Point(FAN).buffer(HUB_HOLE, 64))
 
-def outline():
+def outline_v15(r_in=R_REAR, r_out=2.0):
     """v15: v14 の後ろを、ToraNeko.Mk3 と同じく V 字に切り欠き、左右の角(羽)に LED を載せる形にする"""
     x0, x1, y0 = WHEEL_CUT
     v11 = outline_v11()
@@ -186,9 +189,13 @@ def outline():
                        + [Point(p).buffer(POST_BOSS) for p in SCREWS]
                        + [box(a - ENC_RIM, c - ENC_RIM, b + ENC_RIM, d + ENC_RIM) for a, b, c, d in ENC])
     o = unary_union([v11.difference(box(-60, -60, REAR_X, 60)), keep.intersection(v11)])
-    o = o.buffer(R_REAR, join_style=1).buffer(-R_REAR, join_style=1).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
+    o = o.buffer(r_in, join_style=1).buffer(-r_in, join_style=1).buffer(-r_out, join_style=1).buffer(r_out, join_style=1)
     o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 41T・タイヤ
     return o.difference(pockets(o)).difference(Point(FAN).buffer(HUB_HOLE, 64))
+
+def outline():
+    """v16: v15 と同じ作り方で、へこんだ角を R10、出っ張った角を R3 にしてなめらかにする"""
+    return outline_v15(R_SMOOTH_IN, R_SMOOTH_OUT)
 
 def board():
     """外形からねじの穴とホルダのほぞの穴を抜いたもの"""
