@@ -23,23 +23,37 @@ for q in getattr(c, 'geoms', [c]):
     ax.fill(*q.exterior.xy, color='#5f5a50')
     for h in q.interiors:
         ax.fill(*h.xy, color='w')
-for nm, ((x, y), a) in SENS.items():
-    u = (math.cos(math.radians(a)), math.sin(math.radians(a)))
+def hit(x, y, u, ws):
     ray = LineString([(x, y), (x + 400 * u[0], y + 400 * u[1])])
     best = None
-    for wn, w in walls.items():
+    for wn, w in ws.items():
         i = ray.intersection(w)
         if not i.is_empty:
             d = Point(x, y).distance(i)
             if best is None or d < best[0]:
                 best = (d, wn)
+    if best is None:
+        return None
     d = best[0]
     hx, hy = x + d * u[0], y + d * u[1]
     if min(Point(hx, hy).distance(p) for p in posts) < 1.0:     # 柱(の角)に当たる(2026-10-30)
         best = (d, 'post')
+    return d, best[1], hx, hy
+# 前の壁がないとき: 柱は残す(2026-10-30、横のセンサで柱を見るため)
+no_front = {k: v for k, v in walls.items() if k != 'front wall'}
+no_front.update({'post': posts[0], 'post ': posts[1]})
+for nm, ((x, y), a) in SENS.items():
+    u = (math.cos(math.radians(a)), math.sin(math.radians(a)))
+    d, wn, hx, hy = hit(x, y, u, walls)
     ax.plot([x, hx], [y, hy], color='r', lw=1.2)
     ax.plot(x, y, 'o', color='r', ms=4)
-    ax.annotate(f'{nm}: {best[1]} {d:.0f} mm\nhit at ({hx:.0f}, {hy:.0f})', (hx, hy), (hx - 60 if hx > 0 else hx + 5, hy + (8 if hy > 0 else -20)), fontsize=8)
+    txt = f'{nm}: {wn} {d:.0f} mm\nhit at ({hx:.0f}, {hy:.0f})'
+    h2 = hit(x, y, u, no_front)
+    if h2 and (round(h2[2]), round(h2[3])) != (round(hx), round(hy)):
+        d2, wn2, hx2, hy2 = h2
+        ax.plot([hx, hx2], [hy, hy2], color='r', lw=1.0, ls='--')
+        txt += f'\nno front wall: {wn2.strip()} at ({hx2:.0f}, {hy2:.0f})'
+    ax.annotate(txt, (hx, hy), (hx - 60 if hx > 0 else hx + 5, hy + (8 if hy > 0 else -24)), fontsize=8)
 ax.set_aspect('equal'); ax.set_xlim(-100, 100); ax.set_ylim(-100, 100); ax.grid(alpha=.3)
-ax.set_title('wall sensors (mouse at cell center, heading +x). wall faces at 84 mm', fontsize=9)
+ax.set_title('wall sensors (mouse at cell center, heading +x). wall faces at 84 mm. dashed: without the front wall', fontsize=9)
 fig.tight_layout(); fig.savefig(sys.argv[1], dpi=100)
