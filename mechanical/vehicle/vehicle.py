@@ -126,8 +126,8 @@ for s in tn:
         continue
     if bb.ymin > -21.1 and bb.ymax < -20.4:
         s = s.translate(cq.Vector(0, 0, 0.11))
-        if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: メイン基板の裏に立てる基板(x -2.6〜5.2、y -21.0〜-20.4、z 3.3〜13.6。2026-10-29)
-            s = cq.Solid.makeBox(7.8, 0.6, 10.3, cq.Vector(-2.6, -21.0, 3.3))
+        if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: メイン基板の穴を通して上ではんだ付けする基板(x -2.65〜2.65、y -21.0〜-20.4、z 3.3〜15.6。2026-10-30)
+            s = cq.Solid.makeBox(5.3, 0.6, 12.3, cq.Vector(-2.65, -21.0, 3.3))     # 2026-10-29 は 7.8 × 10.3mm(x -2.6〜5.2、z 3.3〜13.6)
         right['enc_board'] = (s, 'fr4'); continue
     if bb.ymin > -22.3 and bb.ymax < -20.9:
         right['as5047p'] = (s.translate(cq.Vector(0, 0, 0.11)), 'resin'); continue
@@ -316,6 +316,9 @@ else:
     ]).buffer(-2.0, join_style=1).buffer(2.0, join_style=1)
 pcb_holes = ([] if SPIDER else [Point(FAN).buffer(4.6, 64)]) + [Point(p).buffer(SC['hole'] / 2, 24) for p in PCB_FAN_POSTS] \
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
+if SPIDER:
+    pcb_holes += [pcb_shape.slot(k) for k in pcb_shape.SENS]                # 壁センサのホルダのほぞの穴(基板 v7)
+    pcb_holes += [sbox(-2.45, sy * 20.7 - 0.5, 2.45, sy * 20.7 + 0.5).buffer(0.5, 32) for sy in (1, -1)]   # エンコーダ基板の穴(NPTH 1.0 × 5.9mm の長円)
 pcb_poly = pcb_outline.difference(unary_union(pcb_holes))
 add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 
@@ -323,17 +326,29 @@ add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 b = BAT
 add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + b['lz'] / 2)), 'battery')
 
-# ---------------- 壁センサ(発光 OPV332・受光 SFH 229 FA、φ3 × 4.5 を基板の上に寝かせる) ----------------
-# 2026-10-19: 前の2本はタイヤの前の耳 (12, ±30) で外へ5°、横の2本は前の角 (41, ±24) から反対側の壁へ 75°(左右で交差)
-SENS = {'FL': ((12.0, 30.0), 5.0), 'FR': ((12.0, -30.0), -5.0), 'R': ((41.0, 24.0), -75.0), 'L': ((41.0, -24.0), 75.0)}
-for nm, ((sx_, sy_), ang) in SENS.items():
-    a = math.radians(ang)
-    u = np.array([math.cos(a), math.sin(a)]); n = np.array([-u[1], u[0]])
-    for k, off in (('led', 2.0), ('pd', -2.0)):
-        c = np.array([sx_, sy_]) + n * off
-        body = (cq.Workplane('YZ').circle(1.5).extrude(4.5).translate((0, 0, Z_PCBT + 1.6))
-                .rotate((0, 0, 0), (0, 0, 1), ang).translate((c[0], c[1], 0)))
-        add(f'sensor_{nm}_{k}', body, 'sensor')
+# ---------------- 壁センサ ----------------
+# 2026-10-30(基板 v7): 発光 OPV332(上の穴)・受光 SFH 229 FA(下の穴)をホルダ(mechanical/sensor_holder、ToraNeko.Mk3 と同じ形)に入れ、
+# ホルダのほぞを基板の穴に差す。位置と向きは pcb_shape.SENS(ホルダの前の面の真ん中、光の向き)
+# それまで: 前の2本はタイヤの前の耳 (12, ±30) で外へ5°、横の2本は前の角 (41, ±24) から反対側の壁へ 75°。φ3 × 4.5 を基板の上に寝かせていた
+if SPIDER:
+    sys.path.insert(0, os.path.join(HERE, '../sensor_holder'))
+    import sensor_holder as sh
+    SENS = pcb_shape.SENS
+    for nm, ((sx_, sy_), ang) in SENS.items():
+        place = lambda w: w.rotate((0, 0, 0), (0, 0, 1), ang - 90).translate((sx_, sy_, Z_PCBT))
+        add(f'sensor_holder_{nm}', place(sh.holder()), 'resin')
+        for k, z in (('emit', sh.P['z_emit']), ('recv', sh.P['z_recv'])):     # T-1(φ3)の本体。前の面から 0.5mm 出る
+            add(f'sensor_{nm}_{k}', place(cq.Workplane('XZ').circle(1.5).extrude(-(sh.P['d'] + 0.5)).translate((0, -sh.P['d'], z))), 'sensor')
+else:
+    SENS = {'FL': ((12.0, 30.0), 5.0), 'FR': ((12.0, -30.0), -5.0), 'R': ((41.0, 24.0), -75.0), 'L': ((41.0, -24.0), 75.0)}
+    for nm, ((sx_, sy_), ang) in SENS.items():
+        a = math.radians(ang)
+        u = np.array([math.cos(a), math.sin(a)]); n = np.array([-u[1], u[0]])
+        for k, off in (('led', 2.0), ('pd', -2.0)):
+            c = np.array([sx_, sy_]) + n * off
+            body = (cq.Workplane('YZ').circle(1.5).extrude(4.5).translate((0, 0, Z_PCBT + 1.6))
+                    .rotate((0, 0, 0), (0, 0, 1), ang).translate((c[0], c[1], 0)))
+            add(f'sensor_{nm}_{k}', body, 'sensor')
 
 # ---------------- ねじ・ナット ----------------
 def screw(x, y, z_head_bottom, L, up=True, head_h=None, head_r=None, d=None):

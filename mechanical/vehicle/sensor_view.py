@@ -6,7 +6,9 @@ from shapely.geometry import LineString, box, Point
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '../../docs/calc/frame'))
 import design as dz
-SENS = {'FL': ((12.0, 30.0), 5.0), 'FR': ((12.0, -30.0), -5.0), 'R': ((41.0, 24.0), -75.0), 'L': ((41.0, -24.0), 75.0)}  # vehicle.py と同じ
+sys.path.insert(0, HERE)
+import pcb_shape
+SENS = pcb_shape.SENS   # ホルダの前の面の真ん中と光の向き(基板 v7、2026-10-30。v6 までは (12, ±30)・(41, ±24))
 P = json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/final_params.json')))
 g = dz.build(**P)
 walls = {'left wall': box(-96, 84, 96, 96), 'right wall': box(-96, -96, 96, -84), 'front wall': box(84, -96, 96, 96)}

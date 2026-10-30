@@ -1,0 +1,238 @@
+(footprint "WallSensor_Holder_Emitter"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "KOGUMA MK4 wall sensor emitter (OPV332, T-1 3mm) in the sensor holder (upper hole, z 8.1 above the board). Includes the holder peg hole (Edge.Cuts) and outline. Origin = centre of the holder front face, beam +X. Place WallSensor_Holder_Receiver at the same position and rotation")
+	(tags "wall sensor holder KOGUMA")
+	(property "Reference" "REF**"
+		(at 0 -4.2 0)
+		(layer "F.SilkS")
+		(uuid "beb61ecd-2747-4fb1-af4c-eb5f8627c923")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Value" "WallSensor_Holder_Emitter"
+		(at 0 5 0)
+		(layer "F.Fab")
+		(uuid "49235613-1ea8-4f38-89b1-7f0217cffb7d")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a82dc329-4b47-4c16-a491-12bf91896f33")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "8491c45d-05e6-4d6b-a478-fc50e3bdc63d")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(attr through_hole)
+	(pad "1" thru_hole rect
+		(at -7.04 1.27)
+		(size 1.6 1.6)
+		(drill 0.9)
+		(layers "*.Cu" "*.Mask")
+		(uuid "50f8ca50-d1b3-4443-a465-4ebe3f33f21b")
+	)
+	(pad "2" thru_hole circle
+		(at -7.04 -1.27)
+		(size 1.6 1.6)
+		(drill 0.9)
+		(layers "*.Cu" "*.Mask")
+		(uuid "cd304097-8b21-4c3a-9174-c87c7206ee42")
+	)
+	(fp_rect
+		(start -4.04 -3)
+		(end 0 3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "5739668d-c09b-4038-914a-c2f5c7d66587")
+	)
+	(fp_line
+		(start 0 0)
+		(end 3 0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "de448b51-909a-49e2-9da7-fe92ddb72ea6")
+	)
+	(fp_line
+		(start 3 0)
+		(end 2.3 -0.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "20a411ec-a8dd-405d-908d-d84100ae3590")
+	)
+	(fp_line
+		(start 3 0)
+		(end 2.3 0.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "5f6fe638-67c1-444b-8c12-4096fc5bea04")
+	)
+	(fp_line
+		(start -3.64 -1.6)
+		(end -1.44 -1.6)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "fbb45ce3-6021-4461-850b-37de8d0e85c9")
+	)
+	(fp_line
+		(start -0.94 -1.1)
+		(end -0.94 1.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "c6168324-3e58-4a35-a413-a909633676b8")
+	)
+	(fp_line
+		(start -1.44 1.6)
+		(end -3.64 1.6)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "f8c95b35-8f55-489c-a517-1bd1f594aaf4")
+	)
+	(fp_line
+		(start -4.14 1.1)
+		(end -4.14 -1.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "2749737e-cc06-4d0f-aacc-e22d3ce47579")
+	)
+	(fp_arc
+		(start -1.44 -1.6)
+		(mid -1.0864 -1.4536)
+		(end -0.94 -1.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "29c31055-c942-4589-849b-32af98899431")
+	)
+	(fp_arc
+		(start -0.94 1.1)
+		(mid -1.0864 1.4536)
+		(end -1.44 1.6)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "2bd1da93-11a7-4be4-844f-a30df68138e0")
+	)
+	(fp_arc
+		(start -3.64 1.6)
+		(mid -3.9936 1.4536)
+		(end -4.14 1.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "b82cd6ed-6b2a-4b07-bbc0-2c2c963e46b1")
+	)
+	(fp_arc
+		(start -4.14 -1.1)
+		(mid -3.9936 -1.4536)
+		(end -3.64 -1.6)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Edge.Cuts")
+		(uuid "afdce365-822f-4418-990e-a21dccd06419")
+	)
+	(fp_line
+		(start 0.15 -3.15)
+		(end 0.15 3.15)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "db15c2fa-586a-4acd-acd1-b817a1de25c1")
+	)
+	(fp_rect
+		(start -8.24 -3.25)
+		(end 0.25 3.25)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "f40761e0-80f8-499f-a739-ef13e82cc546")
+	)
+	(fp_text user "HOLDER"
+		(at -2.02 -3.5 0)
+		(layer "F.Fab")
+		(uuid "49c55fa0-4549-48bc-b8a4-a1825a2b976a")
+		(effects
+			(font
+				(size 0.4 0.4)
+				(thickness 0.06)
+			)
+		)
+	)
+	(fp_text user "EMIT (upper hole)"
+		(at -7.04 0 0)
+		(layer "F.Fab")
+		(uuid "879a32c0-618f-47d8-b544-4e141a0aa8d1")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(embedded_fonts no)
+)
