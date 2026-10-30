@@ -33,13 +33,14 @@ ASSIGN = [
     ('PB15', 'SPI2_MOSI', 'ENC_MOSI',  'エンコーダ MOSI'),
     ('PC6',  'GPIO_Output', 'ENC_L_CS', '左エンコーダ チップセレクト'),
     ('PC7',  'GPIO_Output', 'ENC_R_CS', '右エンコーダ チップセレクト'),
+    ('PC15-OSC32_OUT', 'GPIO_Output', 'ENC_CAL', 'エンコーダの校正(MT6835 の CAL_EN、左右共通。2026-10-29)'),
     # 壁センサ(MK3と同じ回路)
     ('PC0',  'ADC1_INP10', 'WALL_FL',  '壁センサ 左前'),
     ('PC1',  'ADC1_INP11', 'WALL_L',   '壁センサ 左'),
     ('PA6',  'ADC1_INP3',  'WALL_R',   '壁センサ 右'),
     ('PA7',  'ADC1_INP7',  'WALL_FR',  '壁センサ 右前'),
-    ('PB4(NJTRST)', 'GPIO_Output', 'WALL_LED_L', '壁センサの発光 左(NJU6080のPWM端子)'),
-    ('PB5',  'GPIO_Output', 'WALL_LED_R', '壁センサの発光 右(NJU6080のPWM端子)'),
+    ('PB4(NJTRST)', 'GPIO_Output', 'WALL_LED_FL_R', '壁センサの発光 FL と R(MK3 の WallLED_12)'),
+    ('PB5',  'GPIO_Output', 'WALL_LED_L_FR', '壁センサの発光 L と FR(MK3 の WallLED_34)'),
     # 電源・吸引・ブザー
     ('PB1',  'ADC2_INP5', 'BATT',      '電池の電圧(分圧)'),
     ('PB8',  'TIM16_CH1', 'FAN_PWM',   '吸引ファン(PWM)'),
@@ -64,7 +65,9 @@ ASSIGN = [
     ('PB12', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
     ('PB13', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
     ('PC14-OSC32_IN', 'GPIO_Input', 'SW', 'スイッチ'),
-    # 水晶(HSE)は付けない(2026-10-12)。内蔵のHSIからPLLで550MHzにする
+    # 発振子(HSE)10MHz、CSTNE10M0G52Z000R0(2026-10-29。MK3 と同じ。それまでは付けず HSI)
+    ('PH0-OSC_IN', 'RCC_OSC_IN',  'OSC_IN',  '発振子(HSE)'),
+    ('PH1-OSC_OUT', 'RCC_OSC_OUT', 'OSC_OUT', '発振子(HSE)'),
 ]
 
 # タイマのエンコーダモードで読むエンコーダ(A相, B相)の組。磁気式(SPI)にしたので今はない

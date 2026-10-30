@@ -1,0 +1,4 @@
+(fp_lib_table
+	(version 7)
+	(lib (name "KOGUMA-Mk4")(type "KiCad")(uri "${KIPRJMOD}/KOGUMA-Mk4.pretty")(options "")(descr "MK4 project footprints"))
+)

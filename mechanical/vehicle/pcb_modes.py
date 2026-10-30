@@ -31,10 +31,10 @@ if BAT_STIFF:                                 # 電池を両面テープで貼�
 rt = rho * T_PCB * np.ones(t.shape[1])
 rt += 2.5e-6 / area.sum()                     # 部品 2.5g を全体に広げる
 rt[bat] += 14.5e-6 / area[bat].sum()          # 電池 14.5g
-SENS = {k: v[0] for k, v in ps.SENS.items()}
-for (x0, y0) in SENS.values():                # 壁センサ 0.2g(発光 + 受光)
+SENS = {k: ps.holder(k).centroid.coords[0] for k in ps.SENS}   # ホルダの真ん中(v6 までは寝かせたセンサの位置)
+for (x0, y0) in SENS.values():                # 壁センサ 0.39g(発光 + 受光 0.2g、ホルダ 0.19g。基板 v7 から。ホルダは基板の裏)
     k = (cent[0] - x0)**2 + (cent[1] - y0)**2 <= 2.0**2
-    rt[k] += 0.2e-6 / area[k].sum()
+    rt[k] += 0.39e-6 / area[k].sum()
 bb = Basis(mesh, ElementTriMorley(), intorder=4)
 nq = bb.X.shape[1]
 ef = lambda a: np.repeat(a[:, None], nq, axis=1)

@@ -1,0 +1,122 @@
+(footprint "WallSensor_Holder_Receiver"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "KOGUMA MK4 wall sensor receiver (SFH 229 FA, T-1 3mm) in the sensor holder v2 (hole 3.2mm from the board). The holder hangs under the board: place this footprint on the back side (flipped). Origin = centre of the holder front face, beam +X. Place at the same position and rotation as WallSensor_Holder_Emitter")
+	(tags "wall sensor holder KOGUMA")
+	(property "Reference" "REF**"
+		(at 0 4.2 0)
+		(layer "F.SilkS")
+		(uuid "9e36dd39-3998-4433-b084-fdf264494ee8")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Value" "WallSensor_Holder_Receiver"
+		(at 0 5 0)
+		(layer "F.Fab")
+		(uuid "59164b21-553f-4d36-b216-3e2d4a5cadec")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "82b8a280-7f23-44c3-93e2-19773519cbeb")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "f9f6cddd-69fd-45ee-ab2b-3f246892a434")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(attr through_hole)
+	(pad "1" thru_hole rect
+		(at -4.89 1.27)
+		(size 1.6 1.6)
+		(drill 0.9)
+		(layers "*.Cu" "*.Mask")
+		(uuid "bac02816-0da8-4d79-8bb1-2c4fdda87d65")
+	)
+	(pad "2" thru_hole circle
+		(at -4.89 -1.27)
+		(size 1.6 1.6)
+		(drill 0.9)
+		(layers "*.Cu" "*.Mask")
+		(uuid "cfda8b53-311c-4479-ba21-ae4660e1e28d")
+	)
+	(fp_rect
+		(start -4.04 -3)
+		(end 0 3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "c9854317-e2d0-4dae-a6cb-1247d8f7d560")
+	)
+	(fp_line
+		(start 0 0)
+		(end 3 0)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "d4e0622a-e5ee-42d3-93ec-b9397e4a469d")
+	)
+	(fp_line
+		(start 3 0)
+		(end 2.3 -0.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "bc92ddd4-7f15-40d5-b630-bccaa9442cce")
+	)
+	(fp_line
+		(start 3 0)
+		(end 2.3 0.5)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "da14c51c-3bc7-4216-985e-19a891746600")
+	)
+	(fp_text user "RECV (near hole)"
+		(at -4.89 0 0)
+		(layer "F.Fab")
+		(uuid "31fa8c1c-d7d0-448e-87e9-bc5727f0eeb5")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(embedded_fonts no)
+)

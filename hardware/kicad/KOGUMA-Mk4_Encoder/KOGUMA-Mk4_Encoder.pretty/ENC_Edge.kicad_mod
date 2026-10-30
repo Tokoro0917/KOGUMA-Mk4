@@ -1,0 +1,252 @@
+(footprint "ENC_Edge"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "KOGUMA MK4 encoder board (5.3x12.3x0.6, motor mount v9): pads at the edge that passes through the main board slot. Pads 2-6 (CAL, MISO, MOSI, SCK, CS) on the chip side (F), 1 and 7 (3V3, GND) on the back (B), 0.2-2.0mm from the edge. Main board top face at 1.4000000000000004mm (0.6mm board), bottom face at 2.0mm. Magnet axis at 8.1mm")
+	(tags "encoder edge KOGUMA")
+	(property "Reference" "REF**"
+		(at 0 -0.6 0)
+		(layer "F.SilkS")
+		(uuid "607f180a-7f9c-47b6-8b22-7234a5941b79")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Value" "ENC_Edge"
+		(at 0 13.3 0)
+		(layer "F.Fab")
+		(uuid "35092e5f-8ff2-4f8a-a68a-409f5b0811a1")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.075)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "98edff76-41ce-489d-9b3f-0b20827ad9aa")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "20dda111-dfb5-4c73-a78f-810bcb7d1420")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.1905)
+			)
+		)
+	)
+	(attr smd)
+	(pad "1" smd roundrect
+		(at -1.3 1.1)
+		(size 2.2 1.8)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "e2a04dc5-b92f-40ea-8b5a-6fc2bf6e8499")
+	)
+	(pad "2" smd roundrect
+		(at 2 1.1)
+		(size 0.6 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "3bfc40a1-1823-4832-8147-a46f9a450b0d")
+	)
+	(pad "3" smd roundrect
+		(at 1 1.1)
+		(size 0.6 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "31b3b4cf-48cd-48aa-b139-fc638bb37c56")
+	)
+	(pad "4" smd roundrect
+		(at 0 1.1)
+		(size 0.6 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "04f41396-dcc4-4d69-a698-a111b48a4576")
+	)
+	(pad "5" smd roundrect
+		(at -1 1.1)
+		(size 0.6 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "4531cc37-4113-456d-8f01-f952172a081b")
+	)
+	(pad "6" smd roundrect
+		(at -2 1.1)
+		(size 0.6 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "120367ee-b812-4111-91c0-8d37c2ca396a")
+	)
+	(pad "7" smd roundrect
+		(at 1.3 1.1)
+		(size 2.2 1.8)
+		(layers "B.Cu" "B.Mask" "B.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "6a40ac16-0f66-4080-ac73-41d23512abe6")
+	)
+	(fp_rect
+		(start -2.65 0)
+		(end 2.65 12.3)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+		(uuid "0c4506f4-79a2-478f-9bf0-b6fac11d875a")
+	)
+	(fp_line
+		(start -3.15 1.4)
+		(end 3.15 1.4)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "bb1e3666-1976-4507-9d18-ef6771ad6768")
+	)
+	(fp_line
+		(start -3.15 2)
+		(end 3.15 2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "41eeb972-1fad-423b-8b42-e9bf30c0ccb4")
+	)
+	(fp_text user "MAIN BOARD (0.6mm)"
+		(at 0 1.7 0)
+		(layer "Dwgs.User")
+		(uuid "6292c2ee-40d0-4481-b260-836eb5a78d69")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(fp_line
+		(start -1 8.1)
+		(end 1 8.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "d5401e05-5017-45dd-80d5-d821d9be2d01")
+	)
+	(fp_line
+		(start 0 7.1)
+		(end 0 9.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "6ff63fe8-9e51-4f35-8e63-ef218336f0bd")
+	)
+	(fp_text user "MAGNET AXIS"
+		(at 0 9.5 0)
+		(layer "Dwgs.User")
+		(uuid "409a81e1-d1bf-4e72-ab2b-063dda80f879")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(fp_line
+		(start -3.15 12.3)
+		(end 3.15 12.3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "4efb321f-3a32-44ae-882f-20da92c2b775")
+	)
+	(fp_text user "BOTTOM EDGE z 3.3 (FRAME TOP z 3.0)"
+		(at 0 12.7 0)
+		(layer "Dwgs.User")
+		(uuid "64573cb7-ef99-4923-9f1a-b70121540fe3")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(fp_line
+		(start -3.15 4.3)
+		(end 3.15 4.3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "4e4fbd9c-d2d5-46a1-96b3-e601395ff479")
+	)
+	(fp_line
+		(start -3.15 11.8)
+		(end 3.15 11.8)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "Dwgs.User")
+		(uuid "3b614fc6-0bbd-4452-b1f2-a9533989cd8e")
+	)
+	(fp_text user "MOUNT RECESS"
+		(at -4.25 8.05 0)
+		(layer "Dwgs.User")
+		(uuid "1299ad66-6ae0-4ea8-93e8-5027c69931db")
+		(effects
+			(font
+				(size 0.3 0.3)
+				(thickness 0.045)
+			)
+		)
+	)
+	(fp_rect
+		(start -2.65 -0.05)
+		(end 2.65 2.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "1ed50d4a-ca10-4dc2-8847-9e24c0d6bfee")
+	)
+	(fp_rect
+		(start -2.65 -0.05)
+		(end 2.65 2.1)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "B.CrtYd")
+		(uuid "b9a8bf1c-8165-4fd2-90e0-04ad5c5b0b6f")
+	)
+	(embedded_fonts no)
+)
