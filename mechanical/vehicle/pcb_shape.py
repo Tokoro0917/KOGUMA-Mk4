@@ -12,7 +12,11 @@ v9(2026-10-30): もっと削った。フレームから 3mm 内側、前の円�
                 約 450mm² 減(−0.5g)。壁センサを形に収まる所へ: 前 (18, ±29) → (21, ±27)、横 (40, ±18) → (37.5, ±17.5)
 v10(2026-10-30): 前の腕(クワガタ)を、壁センサのホルダの所だけ残す角にした。後ろの長方形とファンのまわりの円(半径 14)を芯にし、
                  4つのセンサ(ホルダと足の穴を 1mm 広げた形)を、ファンの中心へ向かう幅 9mm の首で芯につなぎ、R7 で丸める。
-                 横の壁センサを (37.5, ±17.5) → (37.5, ±14) へ内側に(光はファンの輪の外側から 2mm 以上離す)。v9 から約 210mm² 減"""
+                 横の壁センサを (37.5, ±17.5) → (37.5, ±14) へ内側に(光はファンの輪の外側から 2mm 以上離す)。v9 から約 210mm² 減
+v11(2026-10-30): 振動対策。v10 の角は先のセンサ(0.39g)が重く、1次が 136Hz(基板 0.6mm)。面積を増やしてよいので、
+                 左右それぞれ前のセンサ(FL・FR)と横のセンサ(R・L)の間を埋め(横の縁はまっすぐ)、前の切り欠きは小さな円弧
+                 (中心 (55, 0)、半径 18)にした。1次 160Hz、約 3790mm²(v10 は 3233mm²、+0.6g)。前の切り欠きも埋めると
+                 先が重くなって 145Hz に下がる"""
 import os, sys, math
 import numpy as np
 from shapely.geometry import Polygon, Point, box, LineString
@@ -21,7 +25,7 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v10'
+VER = 'v11'
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
@@ -32,7 +36,8 @@ REAR_Y = 26.5           # 後ろ(車輪より後ろ)の横の縁 |y|
 WHEEL_CUT = (-8.0, 8.5, 25.0)   # 41T・タイヤの所は基板を置かない: x0 ≤ x ≤ x1 で |y| > y0(41T の一番上は z 13.95)
 R_IN, R_OUT = 3.0, 5.0  # へこんだ角、出っ張った角の丸み(v8・v9)
 CORE_FAN_R = 14.0       # v10: 芯にするファンのまわりの円の半径
-NECK_W, R_HORN = 9.0, 7.0   # v10: センサと芯をつなぐ首の幅、角のつけ根の丸み
+NECK_W, R_HORN = 9.0, 7.0   # v10: センサと芯をつなぐ首の幅、角のつけ根の丸み(v11 も R_HORN でへこんだ角を丸める)
+NOTCH11_C, NOTCH11_R = (55.0, 0.0), 18.0   # v11: 前の切り欠きの円弧
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
 ENC = [(-2.65, 2.65, -21.0, -20.4), (-2.65, 2.65, 20.4, 21.0)]   # エンコーダ基板が通る所(x0, x1, y0, y1)。穴は ENC_Base_Slot(NPTH 1.0 × 5.9mm)
 LEDS = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                                # UI の LED 7個(後ろの縁、4mm おき)
@@ -87,7 +92,7 @@ def outline_v9():
     o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 丸めで 41T の上にはみ出た分を戻す
     return o.difference(Point(FAN).buffer(HUB_HOLE, 64))
 
-def outline():
+def outline_v10():
     """v10: 芯(後ろの長方形 + ファンのまわりの円)に、4つのセンサの所を首でつなぐ(クワガタの角)"""
     x0, x1, y0 = WHEEL_CUT
     lim = dz.outline(0).buffer(-FRAME_MARGIN, join_style=2)
@@ -96,6 +101,24 @@ def outline():
     necks = [LineString([tuple(holder(k).centroid.coords[0]), FAN]).buffer(NECK_W / 2) for k in SENS]
     o = unary_union([core] + pods + necks).intersection(lim)
     o = o.buffer(R_HORN, join_style=1).buffer(-R_HORN, join_style=1)                           # 角のつけ根(へこんだ角)
+    o = o.buffer(-2.0, join_style=1).buffer(2.0, join_style=1)                                 # 出っ張った角
+    o = unary_union([o] + [p.intersection(dz.outline(0).buffer(-0.3, join_style=2)) for p in pods])     # センサの所はフレームの 0.3mm 内側まで
+    o = o.buffer(1.0, join_style=1).buffer(-1.0, join_style=1)
+    o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 41T・タイヤ
+    return o.difference(Point(FAN).buffer(HUB_HOLE, 64))
+
+def outline():
+    """v11: 芯(後ろの長方形 + ファンのまわりの円)と、左右それぞれ前と横のセンサを囲む形。前は小さな円弧で切る"""
+    x0, x1, y0 = WHEEL_CUT
+    lim = dz.outline(0).buffer(-FRAME_MARGIN, join_style=2)
+    core = unary_union([box(REAR, -REAR_Y, x0, REAR_Y), box(x0, -y0, 12.5, y0), Point(FAN).buffer(CORE_FAN_R, 128)])
+    pods = [footprint(k, 1.0) for k in SENS]
+    fan = Point(FAN).buffer(CORE_FAN_R)
+    sides = [unary_union([footprint(a, 1.0), footprint(b, 1.0), fan]).convex_hull.intersection(box(0, 0, 60, 60) if a == 'FL' else box(0, -60, 60, 0))
+             for a, b in (('FL', 'R'), ('FR', 'L'))]                                              # 前と横のセンサの間を埋める
+    front = unary_union([footprint('R', 1.0), footprint('L', 1.0)]).convex_hull.difference(Point(NOTCH11_C).buffer(NOTCH11_R, 128))
+    o = unary_union([core, front] + sides).intersection(lim)
+    o = o.buffer(R_HORN, join_style=1).buffer(-R_HORN, join_style=1)                           # へこんだ角
     o = o.buffer(-2.0, join_style=1).buffer(2.0, join_style=1)                                 # 出っ張った角
     o = unary_union([o] + [p.intersection(dz.outline(0).buffer(-0.3, join_style=2)) for p in pods])     # センサの所はフレームの 0.3mm 内側まで
     o = o.buffer(1.0, join_style=1).buffer(-1.0, join_style=1)
