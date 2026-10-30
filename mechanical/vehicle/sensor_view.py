@@ -35,6 +35,8 @@ for nm, ((x, y), a) in SENS.items():
                 best = (d, wn)
     d = best[0]
     hx, hy = x + d * u[0], y + d * u[1]
+    if min(Point(hx, hy).distance(p) for p in posts) < 1.0:     # 柱(の角)に当たる(2026-10-30)
+        best = (d, 'post')
     ax.plot([x, hx], [y, hy], color='r', lw=1.2)
     ax.plot(x, y, 'o', color='r', ms=4)
     ax.annotate(f'{nm}: {best[1]} {d:.0f} mm\nhit at ({hx:.0f}, {hy:.0f})', (hx, hy), (hx - 60 if hx > 0 else hx + 5, hy + (8 if hy > 0 else -20)), fontsize=8)
