@@ -377,11 +377,17 @@ for sy, side in ((1, 'L'), (-1, 'R')):
             add(f'screw_{nm_}_{side}', screw(x_, y, Z_FB, 5.0), 'steel')
             if not TAP:
                 add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'nylon')
-        add(f'screw_post_{side}', screw(xr, y, Z_PCBT, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
+        if TAP:     # 2026-10-30: ねじは鉄の低頭 M2 L5 の1種類にそろえる
+            add(f'screw_post_{side}', screw(xr, y, Z_PCBT, 5.0, up=False), 'steel')
+        else:
+            add(f'screw_post_{side}', screw(xr, y, Z_PCBT, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
         if not TAP:
             add(f'nut_post_{side}', nut(xr, y, Z_PCB - SC['depth'] + 0.05), 'nylon')
         fpx, fpy = PCB_FAN_POSTS[0 if sy > 0 else 1]
-        add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
+        if TAP:
+            add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL, 5.0, up=False), 'steel')
+        else:
+            add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
         if not TAP:
             add(f'nut_fan_{side}', nut(fpx, fpy, Z_PCB - SC['depth'] + 0.05), 'nylon')
     elif CFG['screws'] == 'small':   # 細いねじ(鉄)8組。基板のねじは短く
@@ -407,8 +413,8 @@ if FRAME_FAN:   # ファンのケースをフレームに留めるねじ(下か�
         if not TAP:
             add(f'nut_fanframe_{i}', nut(px, py, P2['ear_top'] - P2['nut_depth'] + 0.05), 'nylon')
     if SPIDER:
-        for i, (px, py) in enumerate(dz.FAN_JOINTS):   # ファンの台をマウントの腕に留める(ナイロンのなべ L6、上から)
-            add(f'screw_fanjoint_{i}', screw(px, py, 10.8, 6.0, up=False, head_h=1.6, head_r=2.0), 'nylon')
+        for i, (px, py) in enumerate(dz.FAN_JOINTS):   # ファンの台をマウントの腕に留める(上から。2026-10-30 に鉄の低頭 M2 L5 にそろえる。それまではナイロンのなべ L6)
+            add(f'screw_fanjoint_{i}', screw(px, py, 10.8, 5.0, up=False), 'steel')
     if not SPIDER:      # v3: モーターの筒を横のねじで締める(v4 は圧入)
         add('screw_fanclamp', ycyl(1.0, -2.8, 5.2, fx - 6.1, 11.5).union(ycyl(2.0, -4.4, -2.8, fx - 6.1, 11.5)), 'nylon')
         add('nut_fanclamp', ycyl(2.3, 2.8, 4.4, fx - 6.1, 11.5).cut(ycyl(1.0, 2.7, 4.5, fx - 6.1, 11.5)), 'nylon')
