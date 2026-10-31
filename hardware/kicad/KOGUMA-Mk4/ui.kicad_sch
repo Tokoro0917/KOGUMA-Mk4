@@ -3709,7 +3709,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "KOGUMA-Mk4:Buzzer_PUI_SMT-0540"
 			(at 147.32 60.96 0)
 			(effects
 				(font
@@ -4407,7 +4407,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "KOGUMA-Mk4:SW_Push_Jianfu_TVAF06"
 			(at 208.28 63.5 90)
 			(effects
 				(font
@@ -5216,7 +5216,7 @@
 		)
 		(uuid "23a79bf5-4a99-42e3-8075-9afd2c49463e")
 	)
-	(text "SW2・BZ1 のフットプリントは未作成(TVAF06-A020B-R、SMT-0540-S-R)"
+	(text "SW2・BZ1 のフットプリントは KOGUMA-Mk4.pretty(gen_footprints.py、メーカーの推奨ランド)"
 		(exclude_from_sim no)
 		(at 25.4 190.5 0)
 		(effects

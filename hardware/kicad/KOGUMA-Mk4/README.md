@@ -11,7 +11,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `ui.kicad_sch` | 表示・入力・通信: LED 7個と前の LED(D98、PB3)、ブザー、スイッチ、デバッグの端子(J7、ToraNeko.Mk3 の J6 と同じ並び)、UART_RX のテストパッド |
 | `mcu.kicad_sch` | MCU(STM32H725RGVx)、SMPS(Direct SMPS)、発振子(10MHz、CSTNE10M0G52Z000R0)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
 | `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、OPA2354、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
-| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、ENC_Base_Slot(エンコーダの基板を通す穴 NPTH 1.0 × 5.9mm と、上の面のパッド7つ。左の J5 は回転 0°、右の J6 は 180°)、WallSensor_Holder_Emitter・WallSensor_Holder_Receiver(壁センサのホルダの発光・受光の足の穴。Emitter にホルダのほぞの穴(Edge.Cuts)を含む。原点はホルダの前の面の真ん中、光は +X。ホルダは基板の裏に付けるので、同じセンサの2つを**裏の面に**、同じ位置・同じ向きに置く。位置は `mechanical/vehicle/pcb_shape.py` の `SENS`) |
+| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、SW_Slide_SPDT_Alps_SSSS8(SW1、SSSS810701。Alps の製品ページの Land Dimensions)、SW_Push_Jianfu_TVAF06(SW2、TVAF06-A020B-R。仕様書の P.C.B LAND DIMENSION)、Buzzer_PUI_SMT-0540(BZ1、SMT-0540-S-R。データシートの Suggested Land Pattern。1 が +、2 が −、番号なしはダミーの足)。この3つは `gen_footprints.py` で作る(2026-10-31)。ENC_Base_Slot(エンコーダの基板を通す穴 NPTH 1.0 × 5.9mm と、上の面のパッド7つ。左の J5 は回転 0°、右の J6 は 180°)、WallSensor_Holder_Emitter・WallSensor_Holder_Receiver(壁センサのホルダの発光・受光の足の穴。Emitter にホルダのほぞの穴(Edge.Cuts)を含む。原点はホルダの前の面の真ん中、光は +X。ホルダは基板の裏に付けるので、同じセンサの2つを**裏の面に**、同じ位置・同じ向きに置く。位置は `mechanical/vehicle/pcb_shape.py` の `SENS`) |
 | `sym-lib-table`・`fp-lib-table` | 上の2つをプロジェクトのライブラリとして登録する |
 
 ## ネットの名前
@@ -34,15 +34,17 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 ## まだ決めていないこと
 
-- SW1(SSSS810701)と J1(BT2.0 のケーブルをはんだ付けするパッド)のフットプリント。J1 は仮に `Connector_Wire:SolderWire-0.5sqmm_1x02_P4.8mm_D0.9mm_OD2.3mm`
+- J1(BT2.0 のケーブルをはんだ付けするパッド)のフットプリント。仮に `Connector_Wire:SolderWire-0.5sqmm_1x02_P4.8mm_D0.9mm_OD2.3mm`
 - C4(ポリマー 47µF 25V)の品番と大きさ。仮に 7343
 - LXDC55 のフットプリントは、データシートのランドパターンの寸法から作った。基板を注文する前に、実物か村田の最新の資料で確かめる
 - **MP6551 のフットプリント(MPS_QFN-14_2.5x3mm)は寸法の読み取りに自信がない**。データシートの図の「2.80」を上下の小さいパッドの中心の間、「1.20」を長いパッドの長さ、「1.30」を中心から長いパッドの外の端までと読んだ(パッケージの足の位置とつじつまが合う読み方)。長いパッドの幅は 0.25mm と仮定。基板を注文する前に、印刷した図に実物を重ねるなどして確かめる
 - モーター・ファンの線のパッド(J2〜J4)、ファンの還流ダイオード(D40)の品番、R41(ゲートの直列抵抗)の値
-- SW2(TVAF06-A020B-R)・BZ1(SMT-0540-S-R)のフットプリントと、LED の品番
+- LED の品番(フットプリントは 1608)
 - MCU のフットプリントは標準の `Package_DFN_QFN:QFN-68-1EP_8x8mm_P0.4mm_EP6.4x6.4mm`(KiCad の記号の既定)。ST のデータシートの図75と見比べる
 
 ## 確かめたこと(2026-10-29、kicad-cli 9.0.9)
+
+- 2026-10-31: SW1・SW2・BZ1 のフットプリントを作り、U70〜U73(NJU6080)を標準の `Package_TO_SOT_SMD:SOT-23-6` にした(ピン 1 PWM、2 GND、3 Rs、4 LED、5 EN、6 VDD は SOT-23-6 の並びのまま)。これで全部の部品にフットプリントがある。ERC エラー 0。SW1 は 2 が共通(SSSS8 の回路図の ②)、記号の 2(B)と合う。BZ1 は記号の 1 が +、2 が −
 
 - ERC: エラー 0。警告は、確かめた環境に KiCad の標準ライブラリ(Device など)が登録されていないことによるものだけ
 - ネットリストで、全部のピンが意図したネットにつながっていることを確かめた(つないでいないのは SW1 の3番、LXDC55 の NC と PG だけ)

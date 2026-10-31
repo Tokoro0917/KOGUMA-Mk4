@@ -1,0 +1,184 @@
+(footprint "SW_Push_Jianfu_TVAF06"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Zhejiang Jianfu TVAF06-A020B-R SMD tact switch 2.9x3.9mm, H2.0mm, land pattern from spec 2011101401 (P.C.B LAND DIMENSION): pads 1.6x1.05 at +-2.225, 2 holes 0.75mm")
+	(tags "switch tact push Jianfu TVAF06")
+	(property "Reference" "REF**"
+		(at 0 -3.8 0)
+		(layer "F.SilkS")
+		(uuid "d5b81406-8dd8-45a2-9359-fd6cd3d36018")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SW_Push_Jianfu_TVAF06"
+		(at 0 3.8 0)
+		(layer "F.Fab")
+		(uuid "2d221734-3d58-4b52-a1cc-c119f75fb4f0")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a31ceedb-f5b7-4a8d-89bb-fedb1fe2b182")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "7d7b2a39-f336-4c9b-84c7-e2fcf0d6426f")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(pad "1" smd roundrect
+		(at 0 -2.225)
+		(size 1.6 1.05)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "63d6a214-d87f-4bbb-89d6-24b1aacfde9a")
+	)
+	(pad "2" smd roundrect
+		(at 0 2.225)
+		(size 1.6 1.05)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "9f44a918-2bea-4435-8da5-60fe5d35c523")
+	)
+	(pad "" np_thru_hole circle
+		(at -0.9 0)
+		(size 0.75 0.75)
+		(drill 0.75)
+		(layers "*.Cu" "*.Mask")
+		(uuid "c0c28897-1af7-4bc7-a9ec-35b8394946dd")
+	)
+	(pad "" np_thru_hole circle
+		(at 0.9 0)
+		(size 0.75 0.75)
+		(drill 0.75)
+		(layers "*.Cu" "*.Mask")
+		(uuid "bf5e577a-6f3e-4907-9446-22bd1e37b5e8")
+	)
+	(fp_line
+		(start -1.45 -1.95)
+		(end 1.45 -1.95)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "eedf1f23-de6b-42f0-84ac-4eae76750f8c")
+	)
+	(fp_line
+		(start 1.45 -1.95)
+		(end 1.45 1.95)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "c90ce6d8-6954-4303-a243-9a2f153b1c99")
+	)
+	(fp_line
+		(start 1.45 1.95)
+		(end -1.45 1.95)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "cc72b042-3fb7-4d29-b22a-2e06dc5d08d0")
+	)
+	(fp_line
+		(start -1.45 1.95)
+		(end -1.45 -1.95)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "9ae0e788-fe25-4143-92be-c8586c7179f4")
+	)
+	(fp_line
+		(start -1.57 -1.4)
+		(end -1.57 1.4)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "91fa380a-04c0-49a7-80a4-c670203d336b")
+	)
+	(fp_line
+		(start 1.57 -1.4)
+		(end 1.57 1.4)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "697329ff-306b-46ad-9893-f19f689d5893")
+	)
+	(fp_line
+		(start -1.85 -3)
+		(end 1.85 -3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "277fbd91-105b-4775-ae22-59fd3a189516")
+	)
+	(fp_line
+		(start 1.85 -3)
+		(end 1.85 3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "d59dedfb-bcb2-46b0-97d1-d1b61a1b97dc")
+	)
+	(fp_line
+		(start 1.85 3)
+		(end -1.85 3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "e3c99b40-d75c-4a75-8d7b-b4a63c01a87d")
+	)
+	(fp_line
+		(start -1.85 3)
+		(end -1.85 -3)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "0f7e21ad-0c47-4669-b028-b7dddb066abf")
+	)
+	(embedded_fonts no)
+)

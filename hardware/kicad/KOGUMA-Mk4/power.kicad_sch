@@ -2963,7 +2963,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "KOGUMA-Mk4:SW_Slide_SPDT_Alps_SSSS8"
 			(at 96.52 54.61 0)
 			(effects
 				(font
