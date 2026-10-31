@@ -1,6 +1,6 @@
 # STM32H725RG ピンの割り当て(MK4)
 
-2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。2026-10-29に発振子(HSE、10MHz、MK3 と同じ CSTNE10M0G52Z000R0)を付けることにして PH0・PH1 を使う。同日にエンコーダを MT6835 に変え、校正の CAL_EN を PC15 から出す。2026-10-31 に PD2 を IMU の INT1(データ準備完了の割り込み)にする。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
+2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。2026-10-29に発振子(HSE、10MHz、MK3 と同じ CSTNE10M0G52Z000R0)を付けることにして PH0・PH1 を使う。同日にエンコーダを MT6835 に変え、校正の CAL_EN を PC15 から出す。2026-10-31 に PD2 を IMU の INT1(データ準備完了の割り込み)に、PB3 を前の LED にする。これで46本すべて使う。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
 
 ## 確かめ方
 
@@ -15,7 +15,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - そのピンに、割り当てた機能(タイマのチャンネル、ADCの入力、SPI、USARTなど)があるか
 - 同じピン、同じタイマのチャンネル、同じADCの入力を2回使っていないか
 
-**結果: OK**。使う45本、残り1本(2026-10-31)。
+**結果: OK**。使う46本、残り0本(2026-10-31)。
 
 確かめていないこと(CubeMXで.iocを作るときに確かめる): クロックの設定、DMAの割り当て、ADCを2つ同時に動かす設定、タイマの周波数。
 
@@ -62,6 +62,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 55 | PC11 | SPI3_MISO | IMU_MISO | IMU MISO |
 | 56 | PC12 | SPI3_MOSI | IMU_MOSI | IMU MOSI |
 | 57 | PD2 | GPIO_EXTI2 | IMU_INT | IMU の INT1(データ準備完了の割り込み。2026-10-31) |
+| 58 | PB3(JTDO/TRACESWO) | GPIO_Output | LED_FRONT | 前の LED(D98。前の円弧の切り欠きの真ん中。2026-10-31) |
 | 59 | PB4(NJTRST) | GPIO_Output | WALL_LED_FL_R | 壁センサの発光 FL と R(NJU6080 2個のPWM端子。MK3 の WallLED_12) |
 | 60 | PB5 | GPIO_Output | WALL_LED_L_FR | 壁センサの発光 L と FR(NJU6080 2個のPWM端子。MK3 の WallLED_34) |
 | 61 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換) |
@@ -69,11 +70,9 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
 | 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
 
-## 残りのピン(1本)
+## 残りのピン
 
-| ピン | 使える機能 | 使い道の案 |
-|---|---|---|
-| PB3 | SWO(デバッグのトレース出力)、TIM2_CH2、SPI1/3/6_SCK、UART7_RX | 予備。制御の時間を測るテストパッド(GPIO)の案(未決定)。**SWO は使わない**(2026-10-31): ログは今までどおり UART(J7 の STLINK-V3MODS の仮想COMポート)で出す。MK3 のビューア(`tools/viewer.html`)が USB シリアルで読むため。ADC にはならない |
+なし(2026-10-31 に PD2 を IMU の INT1、PB3 を前の LED にして、46本すべて使う)。**SWO は使わない**: ログは今までどおり UART(J7 の STLINK-V3MODS の仮想COMポート)で出す。MK3 のビューア(`tools/viewer.html`)が USB シリアルで読むため。ピンが足りなくなったら、LED 8個をシフトレジスタ(3本)にすれば5本空く
 
 ## 割り当ての考え方
 
@@ -85,13 +84,13 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - **吸引ファン・ブザー**: TIM16・TIM17
 - **IMU**: SPI3(PC10・PC11・PC12)、CSはPA15(GPIO)。**INT1 は PD2(EXTI2)**(2026-10-31): 新しい値ができたら割り込みで知らせる(データ準備完了)。同じ値を2回読んだり、古い値を使ったりしないため。使わないときはソフトで無視すればよい。EXTI の2番を使う入力はほかにない(スイッチ PC14 は14番、nFAULT PC9 は9番)。INT2 はつながない
 - **UART**: USART1(PB6・PB7)。PA9・PA10はモーターのPWMに、PB14・PB15はエンコーダのSPI2に使うので、USART1の3つ目の組にした
-- **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13
+- **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13、前の LED は PB3(2026-10-31)
 - **スイッチ**: PC14(OSC32_IN)。入力なので、流せる電流が小さくても問題ない
 - **発振子(HSE)**: 10MHz のセラミック発振子(CSTNE10M0G52Z000R0、MK3 と同じ)を PH0・PH1 に付ける(2026-10-29)。PLL で 550MHz にする(例: 10MHz ÷ 5 × 275 ÷ 1)。2026-10-12 には付けず HSI にしていた
 
 ## 気をつけること
 
-- **PA15(JTDI)とPB4(NJTRST)**は、リセット直後はJTAGの機能になっている。CubeMXでデバッグを「Serial Wire」にすれば、GPIOとして使える
+- **PA15(JTDI)とPB4(NJTRST)とPB3(JTDO)**は、リセット直後はJTAGの機能になっている。CubeMXでデバッグを「Serial Wire」にすれば、GPIOとして使える
 - **BOOT0**(63番)は専用ピン。10kΩ程度でGNDに落とす
 - **NRST**(12番)は専用ピン。SWDの端子にも出す
 - **電源のピン**: VFQFPN68はSMPS専用(VSSSMPS・VLXSMPS・VDDSMPS・VFBSMPS、VCAP × 3、VDDA・VSSA、VBAT)。部品は仕様書の「MCUの電源」

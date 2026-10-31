@@ -58,6 +58,7 @@ ASSIGN = [
     ('PA13(JTMS/SWDIO)', 'DEBUG_JTMS-SWDIO', 'SWDIO', '書き込み・デバッグ'),
     ('PA14(JTCK/SWCLK)', 'DEBUG_JTCK-SWCLK', 'SWCLK', '書き込み・デバッグ'),
     # 表示・入力
+    ('PB3(JTDO/TRACESWO)', 'GPIO_Output', 'LED_FRONT', '前の LED(D98。2026-10-31)'),
     ('PA0',  'GPIO_Output', 'LED_MODE0', 'モード ビット0'),
     ('PA1',  'GPIO_Output', 'LED_MODE1', 'モード ビット1'),
     ('PA2',  'GPIO_Output', 'LED_MODE2', 'モード ビット2'),

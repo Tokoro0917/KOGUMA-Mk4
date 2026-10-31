@@ -4727,9 +4727,36 @@
 			)
 		)
 	)
-	(no_connect
-		(at 180.34 116.84)
-		(uuid "3db9ec4e-6275-42e7-9456-6973d7927844")
+	(wire
+		(pts
+			(xy 180.34 116.84) (xy 185.42 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f521935d-d425-447c-b3bd-6b2565b98678")
+	)
+	(global_label "LED_FRONT"
+		(shape output)
+		(at 185.42 116.84 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "94e16ca6-6926-43aa-9ab0-ddd8a0f62c68")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 	)
 	(wire
 		(pts
@@ -8341,7 +8368,7 @@
 		)
 		(uuid "482a5eee-9c01-487c-a2d6-6ce1f29b5dc4")
 	)
-	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15 はエンコーダの校正(ENC_CAL)。PD2 は IMU の INT1(IMU_INT、2026-10-31)。PB3 は予備。PH0・PH1 は水晶(HSE)。"
+	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15 はエンコーダの校正(ENC_CAL)。PD2 は IMU の INT1(IMU_INT)、PB3 は前の LED(LED_FRONT)(2026-10-31)。PB3 は JTDO なので、CubeMX でデバッグを Serial Wire にして GPIO で使う。PH0・PH1 は水晶(HSE)。"
 		(exclude_from_sim no)
 		(at 25.4 25.4 0)
 		(effects

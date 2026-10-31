@@ -58,13 +58,14 @@ POCKET_RIM, POCKET_R = 4.5, 2.0           # v12: 前と横のセンサの間の�
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
 ENC = [(-2.65, 2.65, -21.0, -20.4), (-2.65, 2.65, 20.4, 21.0)]   # エンコーダ基板が通る所(x0, x1, y0, y1)。穴は ENC_Base_Slot(NPTH 1.0 × 5.9mm)
 LEDS_V14 = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                            # v14 までの UI の LED 7個(後ろの縁、4mm おき)
-# v15: UI の LED 7個(0402)を ToraNeko.Mk3 と同じ並びに(TORANEKO.Mk3.kicad_pcb の D18〜D24。ToraNeko の車軸は KiCad の y 66、真ん中は x 110。
+# v15: UI の LED 7個を ToraNeko.Mk3 と同じ並びに(位置だけ。ToraNeko は 0402、MK4 の回路図は 0603)(TORANEKO.Mk3.kicad_pcb の D18〜D24。ToraNeko の車軸は KiCad の y 66、真ん中は x 110。
 # MK4 の座標では x = 66 − y、y = 110 − x)。LED1・2 は左の角、LED3〜5 は V 字の切り欠きの先(真ん中が 0.5mm 前)、LED6・7 は右の角。
 # ToraNeko は後ろの縁が x −32.05 なので、角の2個は MK4 の後ろの縁(x REAR)から ToraNeko と同じ 1.85mm に置く
 LED_APEX = -24.5        # v15: 後ろの V 字の切り欠きの先(ToraNeko と同じ。真ん中の LED の 1.4mm 後ろ)
 LED_WING = (12.3, 18.5) # v15: 後ろの左右の角(羽)の |y|(内側、外側)
 R_SMOOTH_IN, R_SMOOTH_OUT = 10.0, 3.0    # v16: へこんだ角、出っ張った角の丸み
 LEDS = [(REAR + 1.85, 16.21), (REAR + 1.85, 14.29), (-23.1, 2.015), (-22.6, 0.095), (-23.1, -1.785), (REAR + 1.85, -14.385), (REAR + 1.85, -16.31)]
+LED_FRONT = (35.2, 0.0)   # 2026-10-31: 前の LED(D98、MCU の PB3)。前の円弧の切り欠きの真ん中、縁から 1.8mm(後ろの LED と同じくらい)
 
 # ---- 壁センサ(2026-10-30 からホルダに入れ、基板の裏(下)に付ける)。(x, y) はホルダの前の面(光が出る所)の真ん中、角度は光の向き(+x から反時計回り) ----
 # ホルダは sensor_holder.py(v2、高さ 9.9mm)。基板の下面 z 13.6 から下の端 z 3.7。光の高さは受光 z 10.4、発光 z 6.0
