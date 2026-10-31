@@ -17,17 +17,20 @@ DSN, SES = '/tmp/koguma_mk4.dsn', '/tmp/koguma_mk4_nognd.ses'
 DSN_NOGND = '/tmp/koguma_mk4_nognd.dsn'
 mm = pcbnew.FromMM
 
-# 線の太さ [mm]: QFN のパッド(幅 0.25mm 前後)につなげる太さにしておき、太い電流はあとでベタ(塗りつぶし)で太くする
+# 線の太さ [mm]: ふつうの線は 0.15mm(2026-10-31: MCU の QFN-68 は 0.4mm おきでパッドの幅 0.25mm。0.2mm の線ではピンから
+# まっすぐ出しても隣のパッドまで 0.175mm でクリアランス 0.2mm を守れず、自動配線が MCU から出られなかった。0.15mm なら 0.2mm)。
+# 3.3V も MCU のピンにつなぐのでふつうの線にし、太くしたい所はあとでベタで太くする
+DEFAULT_W = 0.15
 CLASSES = {
     'Battery': (0.5, ['/電源/BAT+', 'VBAT']),                                         # 電池から最大 8A(瞬間)
     'Motor':   (0.4, ['Net-(J2-Pin_1)', 'Net-(J2-Pin_2)', 'Net-(J3-Pin_1)', 'Net-(J3-Pin_2)', 'Net-(D40-A)', 'Net-(Q40-S)']),   # モーター 3A、ファン 1A
-    'Supply':  (0.3, ['+3V3', 'GND', '/MCU/VCORE', 'Net-(U4-VLXSMPS)']),
 }
 
 def set_classes():
     d = json.load(open(PRO))
     ns = d['net_settings']
     base = next(c for c in ns['classes'] if c['name'] == 'Default')
+    base['track_width'] = DEFAULT_W
     ns['classes'] = [base] + [dict(base, name=n, track_width=w, priority=i) for i, (n, (w, _)) in enumerate(CLASSES.items())]
     ns['netclass_patterns'] = [dict(netclass=n, pattern=net) for n, (_, nets) in CLASSES.items() for net in nets]
     json.dump(d, open(PRO, 'w'), indent=2)
