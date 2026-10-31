@@ -14,7 +14,8 @@
   python3 route_pcb.py ses1    → 1回目の配線を読み込む
   python3 route_pcb.py dsn2    → /tmp/koguma_mk4_s2.dsn(GND も入れ、1回目の配線はそのまま)
   xvfb-run -a java -jar freerouting-1.9.0.jar -de /tmp/koguma_mk4_s2.dsn -do /tmp/koguma_mk4_s2.ses -mp 30
-  python3 route_pcb.py ses2    → 2回目の配線を読み込み、両面に GND のベタを敷いて保存"""
+  python3 route_pcb.py ses2    → 2回目の配線を読み込む
+  python3 route_pcb.py zones   → 両面に GND のベタを敷いて保存"""
 import os, sys, json, re
 import pcbnew
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../mechanical/vehicle'))
@@ -119,7 +120,10 @@ if cmd in ('dsn', 'dsn2'):
 elif cmd in ('ses1', 'ses2'):
     board = pcbnew.LoadBoard(PCB)
     import_ses(board, f'/tmp/koguma_mk4_{"s1" if cmd == "ses1" else "s2"}.ses')
-    if cmd == 'ses2':
-        gnd_zones(board)
     board.Save(PCB)
-    print('配線', len(board.GetTracks()), 'ゾーン', len(board.Zones()))
+    print('配線を読み込んだ')
+elif cmd == 'zones':          # 配線を読み込んだのと同じプロセスでゾーンを作ると SWIG が壊れることがあるので、別にする
+    board = pcbnew.LoadBoard(PCB)
+    gnd_zones(board)
+    board.Save(PCB)
+    print('ゾーン', len(board.Zones()))
