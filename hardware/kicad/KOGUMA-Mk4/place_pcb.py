@@ -113,6 +113,9 @@ def near(ref, tx, ty, angles=(0, 90), rmax=16.0):
     put(ref, *best, force=True)
     return best
 
+def pad_nets(ref):
+    return [p.GetNetname() for p in FP[ref].Pads() if p.GetNetname() not in ('GND', '')]
+
 def near_pad(ref, ic, net=None, out=1.6, **kw):
     """IC のパッド(net。省略すると、この部品の GND 以外のネット)のそばに、IC の外へ out だけ出して置く"""
     if net is None:
@@ -214,6 +217,13 @@ for u, rs, c in (('U70', 'R70', 'C70'), ('U71', 'R71', 'C71'), ('U72', 'R72', 'C
 for u, items in (('U74', ('R74', 'C74', 'R75', 'C75')), ('U75', ('R76', 'C76', 'R77', 'C77'))):
     for r in items:
         near_pad(r, u, out=1.3, rmax=10.0)
+for c, r in (('C75', 'R75'), ('C77', 'R77')):                              # 帰還の C がアンプのそばに入らなければ、並べる R のそば
+    if c not in placed:                                                   # すき間なしで、向きも細かく探す
+        FAILED[:] = [f for f in FAILED if f[0] != c]
+        GAP, gap0 = 0.0, GAP
+        rx, ry = back(FP[r].GetPosition())
+        near(c, rx, ry, angles=tuple(range(0, 180, 10)), rmax=8.0)
+        GAP = gap0
 for u, items in (('U74', ('C83', 'C78')), ('U75', ('C84', 'C79'))):          # アンプの電源(100nF + 10µF)
     for r in items:
         near_pad(r, u, net='+3V3', out=1.3, rmax=14.0)
