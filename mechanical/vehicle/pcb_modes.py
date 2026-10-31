@@ -1,6 +1,6 @@
 """基板(FR4)の固有振動。柱で留め、部品・電池・壁センサを質量で載せる(2026-10-28)
 使い方(リポジトリの一番上で): python3 mechanical/vehicle/pcb_modes.py 厚さ [stiff]
-  stiff: 電池の所は曲がらないとみなす"""
+  stiff: 電池の所は曲がらないとみなす。holders: 壁センサのホルダの所でフレームに支えられる(ホルダ v3、2026-10-31。固く支えるとした上限)"""
 import sys, numpy as np
 sys.path.insert(0, 'docs/calc/frame'); sys.path.insert(0, 'mechanical/vehicle')
 import fem
@@ -50,6 +50,10 @@ K = asm(kf, bb, D=ef(D)); M = asm(mf, bb, rt=ef(rt))
 clampel = np.zeros(t.shape[1], bool)
 for (x0, y0) in POSTS:
     clampel |= (cent[0] - x0)**2 + (cent[1] - y0)**2 <= 1.9**2
+if 'holders' in sys.argv:   # ホルダの足元(上から見た形)をフレームで支える
+    from shapely import contains_xy
+    for k in ps.SENS:
+        clampel |= contains_xy(ps.holder(k), cent[0], cent[1])
 Dofs = np.unique(bb.element_dofs[:, clampel])
 I = np.setdiff1d(np.arange(K.shape[0]), Dofs)
 vals, vecs = eigsh(K[I][:, I], k=6, M=M[I][:, I], sigma=0, which='LM')
@@ -66,4 +70,4 @@ for i in range(6):
     for (x0, y0) in SENS.values(): ax.plot(x0, y0, 'ms', ms=5)
     ax.set_aspect('equal'); ax.set_title(f'mode {i+1}: {f[i]:.0f} Hz'); ax.set_xlim(-50, 48); ax.set_ylim(-36, 36)
 fig.suptitle(f'PCB FR4 {T_PCB} mm, posts (black), wall sensors (magenta); battery {"bonded (stiff)" if BAT_STIFF else "mass only"}')
-fig.tight_layout(); fig.savefig(f'docs/img/vehicle/pcb_modes_{ps.VER}_{T_PCB}_{"post20_" if "post20" in sys.argv else ""}{"stiff" if BAT_STIFF else "mass"}.png', dpi=90)
+fig.tight_layout(); fig.savefig(f'docs/img/vehicle/pcb_modes_{ps.VER}_{T_PCB}_{"post20_" if "post20" in sys.argv else ""}{"holders_" if "holders" in sys.argv else ""}{"stiff" if BAT_STIFF else "mass"}.png', dpi=90)

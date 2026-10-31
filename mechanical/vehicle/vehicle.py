@@ -517,6 +517,8 @@ IGN = [('pinion', 'spur41'), ('pin_', 'wheel'), ('pin_', 'brg_'), ('magnet', 'br
        ('impeller', 'fan_shaft'), ('fan_case', 'pcb'), ('fan_clamp', 'pcb'), ('fan_clamp', 'fan_motor'), ('pcb', 'battery'),
        ('pcb', 'sensor_'), ('pcb', 'mount'), ('frame', 'pc_sheet'), ('frame', 'skirt'), ('frame', 'skid'), ('pc_sheet', 'skirt'),
        ('fan_case', 'frame'), ('pcb', 'fan_motor'), ('sensor_', 'sensor_'), ('impeller', 'fan_case'), ('spur41', 'tire')]
+if SPIDER:   # 2026-10-31: 今の形では、ファンの台・羽根・ファンのモーターと基板は触れない設計なので、確かめる対象に戻す(古い形では基板をケースの柱に載せていた)
+    IGN = [p for p in IGN if p not in (('fan_case', 'pcb'), ('pcb', 'fan_motor'), ('impeller', 'fan_case'))]
 def ignored(a, b):
     for p, q in IGN:
         if (a.startswith(p) and b.startswith(q)) or (a.startswith(q) and b.startswith(p)):
