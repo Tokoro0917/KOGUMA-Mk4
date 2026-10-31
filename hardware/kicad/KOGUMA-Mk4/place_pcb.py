@@ -1,5 +1,6 @@
 """メイン基板の部品を、配置の案(docs/img/pcb_zone_plan.png、2026-10-31)どおりに置く(最初の配置)
-- 部品はすべて表。電池(x −21.25〜1.25、|y| ≤ 16)は部品の上に載せるので、その下には高さ 1.1mm 以下の部品だけ
+- 部品はすべて表。電池(x −21.25〜1.25、|y| ≤ 16)は部品の上に載せる。電池の下は高さ 2.1mm まで(2026-10-31: 電源を後ろにまとめるため、
+  1.1mm から 2.1mm に。タンタル 2.0mm・SO-8 1.75mm が入る)。押しボタン・電源スイッチ・デバッグ端子・ブザーは電池の外
 - IC・コネクタ・スイッチなどは、まとまりごとに位置を決めて置く(ANCHOR)
 - 抵抗・コンデンサは、つながる IC のパッドのそばの空いている所を探して置く(NEAR)
 - 裏は壁センサのホルダの足だけ。ねじの頭(上)、エンコーダの穴とパッド、ファンの穴を避ける
@@ -23,8 +24,8 @@ board = pcbnew.LoadBoard(PCB)
 FP = {f.GetReference(): f for f in board.GetFootprints()}
 
 BAT = box(-21.25, -16.0, 1.25, 16.0)
-LOW = 1.1                                    # 電池の下に置ける高さ
-TALL = ('C_0805', 'C_1206', 'R_1206', 'SOIC', 'CP_EIA', 'SolderWire', 'PinHeader', 'Buzzer', 'SW_Push', 'SW_Slide', 'D_SMF', 'D_SOD-123')
+LOW = 2.1                                    # 電池の下に置ける高さ(線のパッドははんだが低いので入れてよい)
+TALL = ('PinHeader', 'Buzzer', 'SW_Push', 'SW_Slide')   # 電池の下に置けないもの(触る・音を出す)
 OUTLINE = ps.outline()
 AREA = Polygon(OUTLINE.exterior).buffer(-0.25)
 for r in OUTLINE.interiors:
@@ -116,19 +117,30 @@ def near_pad(ref, ic, net=None, out=1.6, **kw):
     return near(ref, px + (px - cx) / d * out, py + (py - cy) / d * out, **kw)
 
 # ================= まとまりごとの置き方 =================
-# 1. MCU(電池の下)。上の辺(左 +y)に IMU・UART・ファン・ブザー、右の辺(前)にモーターの PWM・エンコーダの SPI、
-#    下の辺(右 −y)に ADC、左の辺(後ろ)に発振子・SMPS
-put('U4', -11.0, 0.5, 0, force=True)
-put('U76', -0.9, 0.0, 90, force=True)                                   # 2. IMU: 車軸の真上のすぐ後ろ。SPI の辺を MCU に向ける
-# 4. ドライバとモーターの線(電池のすぐ前。モーターの端子は裏の (−8.5, ±5))
-near('J2', 3.4, 4.9, angles=(90,)); near('J3', 3.4, -4.9, angles=(90,))
-near('U2', 5.0, 10.6, angles=(0, 90)); near('U3', 5.0, -10.6, angles=(0, 90))
-# 5. 電源の入口(ファンの穴の左): 大きい部品から
-near('C4', 12.5, 16.0, angles=(90, 0, 60))
-near('Q1', 9.5, 12.0, angles=(0, 90))
-near('J1', 4.0, 16.5, angles=(0, 90))
-# 6. 3.3V の DC-DC(ファンの穴の右)
-near('U1', 11.6, -13.8, angles=(0, 90))
+# 後ろから順に: 電源 → モータードライバ → マイコン(2026-10-31、ユーザーの指定)
+# SW1: V 字の斜めの縁(y 5〜11 でほぼまっすぐ)に、本体の前の辺を縁の 0.1mm 内側にそろえる
+from shapely.geometry import LineString
+e = [(LineString([(-40, y), (-10, y)]).intersection(OUTLINE).bounds[0], y) for y in (5.0, 11.0)]
+ux, uy = e[1][0] - e[0][0], e[1][1] - e[0][1]; L = math.hypot(ux, uy); ux, uy = ux / L, uy / L
+nx, ny = uy, -ux                                      # 縁から基板の中への向き
+if nx < 0: nx, ny = -nx, -ny
+mx, my = (e[0][0] + e[1][0]) / 2, (e[0][1] + e[1][1]) / 2
+# フットプリント: つまみは +y(KiCad の下)、本体の前の辺は原点から 1.3mm。機体の座標では、つまみの向きを (−nx, −ny) に向ける
+ang = math.degrees(math.atan2(-ny, -nx)) + 90         # ローカルの +y(KiCad)= 機体の −y を (−nx, −ny) へ
+put('SW1', mx + nx * 1.4, my + ny * 1.4, round(ang), force=True)
+
+# 1. MCU(電池の下の前の端、180°): 後ろの辺にモーターの PWM・エンコーダの SPI、前の辺に発振子・SMPS・壁センサの ADC(FL・L)、
+#    左の辺(+y)にモーターの電流・壁センサ(R・FR)・電池の電圧の ADC、右の辺(−y)に IMU・UART・ファン・ブザー
+put('U4', -1.0, 1.0, 180, force=True)
+near('U76', -1.5, -6.8, angles=(0, 90, 180, 270))                       # 2. IMU: MCU の右(IMU の SPI のピンの側)、車軸の近く
+# 4. ドライバとモーターの線(電池の下の真ん中。モーターの端子は裏の (−8.5, ±5))
+near('U2', -10.0, 7.5, angles=(0, 90, 180, 270)); near('U3', -10.0, -7.5, angles=(0, 90, 180, 270))
+near('J2', -9.0, 12.5, angles=(0, 90)); near('J3', -9.0, -12.5, angles=(0, 90))
+# 5. 電源(後ろ、電池の下): 電池の線、スイッチの FET、TVS、大きいコンデンサ
+near('J1', -19.5, 0.0, angles=(90, 0))
+near('Q1', -16.0, 5.0, angles=(90, 0, 180, 270))
+near('C4', -16.0, -5.0, angles=(90, 0))
+near('U1', -15.5, -12.0, angles=(0, 90, 180, 270))                       # 6. 3.3V の DC-DC
 # 7. ファン(ファンの穴の前)
 near('J4', 24.5, 0.0, angles=(90,))
 near('Q40', 25.6, 4.4, angles=(0, 90)); near('R43', 25.6, -4.4, angles=(90, 0))
@@ -141,17 +153,6 @@ near('U72', 35.0, 21.0, angles=(-27, 63)); near('U71', 35.0, -21.0, angles=(27, 
 near('SW2', -8.0, 19.5, angles=(90, 0))
 near('J7', -11.0, -19.5, angles=(0, 90))
 near('BZ1', 30.4, 0.0, angles=(0,))                                    # ブザーは電池の横に入らないので前の真ん中(音の出る穴を前へ)
-
-# SW1: V 字の斜めの縁(y 5〜11 でほぼまっすぐ)に、本体の前の辺を縁の 0.1mm 内側にそろえる
-from shapely.geometry import LineString
-e = [(LineString([(-40, y), (-10, y)]).intersection(OUTLINE).bounds[0], y) for y in (5.0, 11.0)]
-ux, uy = e[1][0] - e[0][0], e[1][1] - e[0][1]; L = math.hypot(ux, uy); ux, uy = ux / L, uy / L
-nx, ny = uy, -ux                                      # 縁から基板の中への向き
-if nx < 0: nx, ny = -nx, -ny
-mx, my = (e[0][0] + e[1][0]) / 2, (e[0][1] + e[1][1]) / 2
-# フットプリント: つまみは +y(KiCad の下)、本体の前の辺は原点から 1.3mm。機体の座標では、つまみの向きを (−nx, −ny) に向ける
-ang = math.degrees(math.atan2(-ny, -nx)) + 90         # ローカルの +y(KiCad)= 機体の −y を (−nx, −ny) へ
-put('SW1', mx + nx * 1.4, my + ny * 1.4, round(ang), force=True)
 
 # ---- 抵抗・コンデンサ ----
 # MCU のパスコンと周り
@@ -169,21 +170,20 @@ near('C50', -11.0, -6.5); near('C62', -11.0, 7.0)
 # IMU
 near_pad('C81', 'U76', net='+3V3', out=1.3); near_pad('C82', 'U76', net='+3V3', out=1.3)
 # LED の抵抗(MCU と後ろの LED の間)
-for r, t in (('R90', (-18.0, -2.0)), ('R91', (-18.0, -4.0)), ('R92', (-18.0, 2.5)), ('R93', (-18.0, -11.0)), ('R94', (-18.0, -13.0)),
-             ('R95', (-18.0, 11.0)), ('R96', (-18.0, 13.0)), ('R99', (-4.0, 6.0))):
-    near(r, *t)
+for r in ('R90', 'R91', 'R92', 'R93', 'R94', 'R95', 'R96', 'R99'):      # MCU のピンのそば(LED までは線を引く)
+    near_pad(r, 'U4', out=1.6)
 # ドライバ
 for drv, cs in (('U2', ('C21', 'C22', 'C23', 'C24', 'R21', 'R22', 'R23', 'R24', 'R25')), ('U3', ('C31', 'C32', 'C33', 'C34', 'R31', 'R32', 'R33', 'R34', 'R35'))):
     for r in cs:
         near_pad(r, drv, out=1.3)
-near('R40', 0.0, 8.5)
+near('R40', -6.0, 0.0)
 # 電源
 for r in ('C2', 'C3', 'C5', 'C6', 'D1'):
     near_pad(r, 'Q1', net='VBAT', out=2.0)
 for r in ('R1', 'R2', 'C1'):
     near_pad(r, 'Q1', net='/電源/GATE', out=1.5)
-near('R4', 9.0, 7.5); near('R5', 9.0, 5.8); near('C9', 9.0, 4.3)
-near('D2', 18.0, 9.0); near('R6', 18.0, 7.5)
+near('R4', -12.0, 1.5); near('R5', -12.0, 0.0); near('C9', -12.0, -1.5)
+near('D2', -19.5, -8.0); near('R6', -19.5, -9.6)
 for r in ('C7', 'C8'):
     near_pad(r, 'U1', net='+3V3', out=1.6)
 near_pad('R3', 'U1', net='Net-(U1-FB(11))', out=1.5)
@@ -203,7 +203,7 @@ for u, items in (('U74', ('C83', 'C78')), ('U75', ('C84', 'C79'))):          # �
         near_pad(r, u, net='+3V3', out=1.3, rmax=14.0)
 near('R78', 22.5, 9.0); near('R79', 22.5, 7.4); near('C80', 22.5, 5.6)
 # 表示・通信
-near('R98', -2.0, 19.0); near('C90', -2.0, 17.4)
+near_pad('R98', 'SW2', net='SW', out=1.5); near_pad('C90', 'SW2', net='SW', out=1.5)
 near_pad('Q90', 'BZ1', net='Net-(BZ1--)', out=2.0); near_pad('D97', 'BZ1', net='Net-(BZ1--)', out=2.0); near_pad('R97', 'Q90', net='BUZZER', out=1.5)
 near('TP1', -16.0, -17.5)
 

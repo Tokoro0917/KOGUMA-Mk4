@@ -324,7 +324,8 @@ add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 
 # ---------------- 電池 ----------------
 b = BAT
-add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + b['lz'] / 2)), 'battery')
+BAT_LIFT = 2.1     # 2026-10-31: 電池は基板の部品の上に載せる(電池の下は高さ 2.1mm まで: タンタル 2.0mm、SO-8 1.75mm)
+add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + BAT_LIFT + b['lz'] / 2)), 'battery')
 
 # ---------------- 壁センサ ----------------
 # 2026-10-30(基板 v7): 発光 OPV332・受光 SFH 229 FA をホルダ(mechanical/sensor_holder、ToraNeko.Mk3 と同じ形)に入れ、
