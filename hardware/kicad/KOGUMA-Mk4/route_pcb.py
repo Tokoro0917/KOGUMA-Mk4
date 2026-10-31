@@ -5,7 +5,8 @@
    2.1.0 はこの基板でほとんどつながらなかった(LED の線 16本だけでも、何周しても 11本残る)。1.9.0 を使う(画面が要るので xvfb-run)
 3. 結果(SES)を読み込み、両面に GND のベタを敷く
    自動配線は線とクリアランスを 0.15mm で引くので、基板の縁(0.2mm)とエンコーダの穴(0.25mm)の決まりに合うよう、
-   DSN の配線できる範囲を縁から 0.05mm 内側に、穴・ポケットのまわりの禁止の範囲を 0.05mm(エンコーダの穴は 0.1mm)広げる。
+   DSN の穴・ポケット・ホルダのほぞの穴のまわりの禁止の範囲を 0.05mm(エンコーダの穴は 0.1mm)広げる。
+   (配線できる範囲を縁から 0.05mm 内側にする boundary も足してみたが、Freerouting 1.9.0 が 2時間たっても終わらなかった)
    Freerouting 1.9.0 は名前に日本語があると読み違えることがあるので、DSN では英字にして、SES で戻す
 使い方(このフォルダで。基板は部品を置いただけの状態から):
   python3 route_pcb.py dsn     → /tmp/koguma_mk4_s1.dsn(GND を抜く)
@@ -66,7 +67,8 @@ def fix_dsn(s, drop_gnd):
     bd = Polygon(o.exterior).buffer(-0.05, join_style=2)
     holes = [Polygon(r).buffer(0.05, join_style=2) for r in o.interiors] + [ps.slot(k).buffer(0.05) for k in ps.SENS]
     holes += [LineString([(-2.45, (y0 + y1) / 2), (2.45, (y0 + y1) / 2)]).buffer(0.5 + 0.1) for _, _, y0, y1 in ps.ENC]   # エンコーダの穴(NPTH 5.9 × 1.0)
-    add = f'\n    (boundary\n      {dsn_path(bd, "signal")}\n    )' + ''.join(f'\n    (keepout "" (polygon signal 0  {dsn_path(h, "x")[10:-1]}))' for h in holes)
+    # 配線できる範囲(signal の boundary)を足すと Freerouting 1.9.0 が 2時間たっても終わらなかったので、禁止の範囲だけにする
+    add = ''.join(f'\n    (keepout "" (polygon signal 0  {dsn_path(h, "x")[10:-1]}))' for h in holes)
     k = st.index('\n    )', st.index('(boundary')) + 6                    # 基板の外形の boundary のあと
     st = st[:k] + add + st[k:]
     s = s[:a] + st + s[b:]
