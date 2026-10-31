@@ -73,7 +73,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 
 | ピン | 使える機能 | 使い道の案 |
 |---|---|---|
-| PB3 | SWO(デバッグのトレース出力)、TIM2_CH2、SPI1/3/6_SCK、UART7_RX | 予備。制御の時間を測るテストパッド(GPIO)か SWO の案(2026-10-31 に検討、未決定)。ADC にはならない |
+| PB3 | SWO(デバッグのトレース出力)、TIM2_CH2、SPI1/3/6_SCK、UART7_RX | 予備。制御の時間を測るテストパッド(GPIO)の案(未決定)。**SWO は使わない**(2026-10-31): ログは今までどおり UART(J7 の STLINK-V3MODS の仮想COMポート)で出す。MK3 のビューア(`tools/viewer.html`)が USB シリアルで読むため。ADC にはならない |
 
 ## 割り当ての考え方
 
