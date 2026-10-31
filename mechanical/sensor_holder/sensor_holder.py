@@ -5,9 +5,11 @@ ToraNeko.Mk3 のセンサホルダ v4(`mechanical/exported/TORANEKO.Mk3_v36.step
 v1(2026-10-30): ToraNeko と同じ寸法で、基板の上に立てる(高さ 10.5mm、穴 3.5・8.1mm)
 v2(2026-10-30): **基板の裏(下)にさかさまに付ける**。下はフレーム(上面 z 3.0)なので、高さを 9.9mm、穴を 3.2・7.6mm にした
                (基板の下面 z 13.6 から下の端 z 3.7、フレームまで 0.7mm)
+v3(2026-10-31): ほぞを 0.4mm 前へ(後ろの面から 0.4mm)。基板のほぞの穴が受光の足のパッド(φ1.6)に 0.04mm 食い込んでいた(DRC で見つけた)。
+               これで穴とパッドは 0.36mm 離れる。ほかの寸法は v2 と同じ
 座標 [mm]: 原点は前の面(光が出る面)の真ん中で、基板に付ける面。+y が光の向き、x は幅、+z は基板から離れる向き
 (基板の裏に付けるので、機体では下向き)。ほぞは −z 側(基板の穴に入る)。
-使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v2.step / .stl / .png
+使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v3.step / .stl / .png
 """
 import os, math
 import cadquery as cq
@@ -17,9 +19,9 @@ P = dict(
     hole_d=3.2,                     # 発光・受光を入れる穴(ToraNeko と同じ。φ3 の T-1 が入る)
     z_emit=7.6, z_recv=3.2,         # 穴の中心の基板の面からの距離。遠い方が発光、近い方が受光(ToraNeko と同じ並び。v1・ToraNeko は 8.1・3.5)
     r_front=1.6, r_top_front=1.6, r_top_side=1.0,   # 角の丸み: 前の縦の辺、前の端(基板から遠い所)の辺、端の横の辺
-    peg_w=3.0, peg_d=3.0, peg_back=0.0, peg_t=0.6, peg_r=0.4,   # ほぞ: 幅、奥行き、後ろの面からのずれ、長さ(基板の厚さ)、縦の角の丸み
+    peg_w=3.0, peg_d=3.0, peg_back=0.4, peg_t=0.6, peg_r=0.4,   # ほぞ: 幅、奥行き、後ろの面からのずれ(v3 で 0 → 0.4)、長さ(基板の厚さ)、縦の角の丸み
 )
-VER = 'v2'
+VER = 'v3'
 MOUNT = 'bottom'     # 基板の裏に付ける(2026-10-30)
 
 def holder(P=P):

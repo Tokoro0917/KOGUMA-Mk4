@@ -12,6 +12,9 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `mcu.kicad_sch` | MCU(STM32H725RGVx)、SMPS(Direct SMPS)、発振子(10MHz、CSTNE10M0G52Z000R0)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
 | `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、OPA2354、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
 | `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、SW_Slide_SPDT_Alps_SSSS8(SW1、SSSS810701。Alps の製品ページの Land Dimensions)、SW_Push_Jianfu_TVAF06(SW2、TVAF06-A020B-R。仕様書の P.C.B LAND DIMENSION)、Buzzer_PUI_SMT-0540(BZ1、SMT-0540-S-R。データシートの Suggested Land Pattern。1 が +、2 が −、番号なしはダミーの足)。この3つは `gen_footprints.py` で作る(2026-10-31)。ENC_Base_Slot(エンコーダの基板を通す穴 NPTH 1.0 × 5.9mm と、上の面のパッド7つ。左の J5 は回転 0°、右の J6 は 180°)、WallSensor_Holder_Emitter・WallSensor_Holder_Receiver(壁センサのホルダの発光・受光の足の穴。Emitter にホルダのほぞの穴(Edge.Cuts)を含む。原点はホルダの前の面の真ん中、光は +X。ホルダは基板の裏に付けるので、同じセンサの2つを**裏の面に**、同じ位置・同じ向きに置く。位置は `mechanical/vehicle/pcb_shape.py` の `SENS`) |
+| `KOGUMA-Mk4.kicad_pcb` | **メイン基板**(2026-10-31 に起こした。2層、0.6mm)。`gen_pcb.py` で回路図から作った: 外形は `mechanical/vehicle/pcb_shape.py` の v16、位置が決まっている部品(壁センサ・エンコーダの穴・LED 8個・マウントの柱の穴 H1〜H4)だけ置き、ほかは基板の右の外にシートごとに並べてある。**ここから手で配置・配線する**(`gen_pcb.py` を走らせ直すと上書きされる) |
+| `KOGUMA-Mk4.kicad_dru` | 細かいピッチの IC(U4・U74・U75・U76)のパッドの間だけ 0.14mm まで許す(ToraNeko.Mk3 と同じ考え方)。ほかはネットクラスの 0.2mm |
+| `gen_pcb.py`・`gen_footprints.py` | 基板を起こすスクリプト、手で寸法を入れるフットプリント(SW1・SW2・BZ1)を作るスクリプト |
 | `sym-lib-table`・`fp-lib-table` | 上の2つをプロジェクトのライブラリとして登録する |
 
 ## ネットの名前
@@ -42,6 +45,19 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 - LED の品番(フットプリントは 1608)
 - MCU のフットプリントは標準の `Package_DFN_QFN:QFN-68-1EP_8x8mm_P0.4mm_EP6.4x6.4mm`(KiCad の記号の既定)。ST のデータシートの図75と見比べる
 - 2026-10-31: MP6551(MPS)と STM32H725(ST)のデータシートを取りに行ったが、どちらのサイトも自動の取得を受け付けなかった(MPS はボット対策、ST は接続を切る)。PDF を手で落として渡せば、この2つのフットプリントを図と照らし合わせる
+
+## メイン基板(2026-10-31)
+
+![起こしたばかりのメイン基板](../../../docs/img/pcb_v16_start.png)
+
+- **2層、0.6mm**(ToraNeko.Mk3 と同じ)。設計ルールもエンコーダの基板・ToraNeko と同じ: クリアランス 0.2mm、線 0.2mm(最小 0.15)、ビア 0.6/0.3mm、穴と穴 0.25mm、縁まで 0.2mm
+- 座標: 機体の座標(原点は車軸の中心、+x 前、+y 左)の (x, y) を KiCad の (150 + x, 100 − y) に置く。上から見て前が右
+- 壁センサ: 発光 D70〜D73 と受光 D74〜D77 を**裏の面**に、`pcb_shape.SENS` の位置・向きで置いた(足の穴の位置を `pcb_shape.pads()` と、ほぞの穴を `pcb_shape.slot()` と照らし合わせた)
+- エンコーダの基板の穴: 左 J5(0°)、右 J6(180°)。穴の真ん中 (0, ±20.7)
+- **UI の LED**: 後ろの左右の角の4個が**ナンバー**(左の外から NUM3・NUM2、右の内から NUM1・NUM0。後ろから見て左が上の桁)、V 字の先の3個が**モード**(左から MODE2・MODE1・MODE0)、前の LED は (35.2, 0)。1608 なので長い方を前後に向けた(1.9mm おきに並べると、長い方を左右に向けては重なる)
+- マウントの柱の穴 H1〜H4(M2、φ2.2、基板だけの部品)
+- DRC(回路図との照合つき): **エラーは、まだ置いていない部品のシルクの重なり(基板の外)と、右の外の角の LED のシルクが縁にかかる所だけ**。回路図と基板の食い違い 0。つながっていないパッド 348(配線はこれから)
+- DRC で、**ほぞの穴が受光の足のパッドに 0.04mm 食い込んでいた**のを見つけた。ホルダを v3 にしてほぞを 0.4mm 前へ動かした(`mechanical/sensor_holder/`)。フットプリント `WallSensor_Holder_Emitter` のほぞの穴も 0.4mm 前へ。穴とパッドは 0.36mm 離れた
 
 ## 確かめたこと(2026-10-29、kicad-cli 9.0.9)
 
