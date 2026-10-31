@@ -28,7 +28,9 @@ v14(2026-10-30): 後ろも前と同じように削った(3つの案から選ん�
 v15(2026-10-30): UI の LED を ToraNeko.Mk3 と同じ並びにした(後ろの左右の角に2個ずつ、後ろの V 字の切り欠きの先に3個)。
                  後ろの縁は ToraNeko と同じく V 字に切り欠き(先は x LED_APEX)、左右の角(羽)に LED を載せる
 v16(2026-10-30): かっこよくするため、へこんだ角を R10、出っ張った角を R3 で大きく丸め、柱の耳のでこぼこをなめらかにつないだ
-                 (3つの案から選んだ: 直線で後ろ V 字、直線で後ろも円弧、なめらかな曲線)。v15 から +130mm²(+0.14g)"""
+                 (3つの案から選んだ: 直線で後ろ V 字、直線で後ろも円弧、なめらかな曲線)。v15 から +130mm²(+0.14g)
+v17(2026-10-31): 部品を置き始めたら、前と横のセンサの間の縁(4.5mm)に壁センサの受光アンプと帰還の部品が入らなかったので、
+                 ポケットのまわりに残す幅を 4.5 → 5.5mm にした(+0.13g)"""
 import os, sys, math
 import numpy as np
 from shapely.geometry import Polygon, Point, box, LineString
@@ -37,7 +39,7 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v16'
+VER = 'v17'
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
@@ -54,7 +56,7 @@ BAT = (-21.25, 1.25, 16.0)    # 電池(x0, x1, |y|)
 BAT_WIN_M, BAT_WIN_R = 3.0, 3.0           # v12: 電池の下の窓(電池の縁から内側へ 3mm、角 R3)
 BAT_WIN = False                           # v13: 電池の下にはマイコンを置くので窓は開けない
 REAR_SIDE, REAR_LED, POST_BOSS, ENC_RIM, R_REAR, REAR_X = 17.0, 15.0, 4.0, 2.0, 3.0, 4.0   # v14: 後ろ(x < REAR_X)に残す所: 電池の下 |y|、LED の列 |y|、柱の耳の半径、エンコーダの穴のまわり、へこんだ角
-POCKET_RIM, POCKET_R = 4.5, 2.0           # v12: 前と横のセンサの間のポケット(縁などに残す幅、角の丸み)
+POCKET_RIM, POCKET_R = 5.5, 2.0           # v12: 前と横のセンサの間のポケット(縁などに残す幅、角の丸み)
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
 ENC = [(-2.65, 2.65, -21.0, -20.4), (-2.65, 2.65, 20.4, 21.0)]   # エンコーダ基板が通る所(x0, x1, y0, y1)。穴は ENC_Base_Slot(NPTH 1.0 × 5.9mm)
 LEDS_V14 = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                            # v14 までの UI の LED 7個(後ろの縁、4mm おき)

@@ -1,6 +1,6 @@
 """メイン基板(KOGUMA-Mk4.kicad_pcb)を回路図から起こす(2026-10-31)
 - 回路図のネットリスト(kicad-cli で書き出す)から部品とネットを読む
-- 外形は mechanical/vehicle/pcb_shape.py の outline()(今は v16)。円弧はできるだけ円弧にする
+- 外形は mechanical/vehicle/pcb_shape.py の outline()(今は v17)。円弧はできるだけ円弧にする
 - 位置が決まっている部品だけ置く: 壁センサ(裏、pcb_shape.SENS)、エンコーダの基板の穴(J5・J6)、UI の LED 8個、マウントの柱の穴 H1〜H4
 - ほかの部品は基板の右(前)の外に、シートごとに並べておく(あとで配置する)
 - 2層、0.6mm。設計ルールはエンコーダの基板・ToraNeko.Mk3 と同じ(KOGUMA-Mk4.kicad_pro)

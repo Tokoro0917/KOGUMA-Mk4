@@ -14,6 +14,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、SW_Slide_SPDT_Alps_SSSS8(SW1、SSSS810701。Alps の製品ページの Land Dimensions)、SW_Push_Jianfu_TVAF06(SW2、TVAF06-A020B-R。仕様書の P.C.B LAND DIMENSION)、Buzzer_PUI_SMT-0540(BZ1、SMT-0540-S-R。データシートの Suggested Land Pattern。1 が +、2 が −、番号なしはダミーの足)。この3つは `gen_footprints.py` で作る(2026-10-31)。ENC_Base_Slot(エンコーダの基板を通す穴 NPTH 1.0 × 5.9mm と、上の面のパッド7つ。左の J5 は回転 0°、右の J6 は 180°)、WallSensor_Holder_Emitter・WallSensor_Holder_Receiver(壁センサのホルダの発光・受光の足の穴。Emitter にホルダのほぞの穴(Edge.Cuts)を含む。原点はホルダの前の面の真ん中、光は +X。ホルダは基板の裏に付けるので、同じセンサの2つを**裏の面に**、同じ位置・同じ向きに置く。位置は `mechanical/vehicle/pcb_shape.py` の `SENS`) |
 | `KOGUMA-Mk4.kicad_pcb` | **メイン基板**(2026-10-31 に起こした。2層、0.6mm)。`gen_pcb.py` で回路図から作った: 外形は `mechanical/vehicle/pcb_shape.py` の v16、位置が決まっている部品(壁センサ・エンコーダの穴・LED 8個・マウントの柱の穴 H1〜H4)だけ置き、ほかは基板の右の外にシートごとに並べてある。**ここから手で配置・配線する**(`gen_pcb.py` を走らせ直すと上書きされる) |
 | `KOGUMA-Mk4.kicad_dru` | 細かいピッチの IC(U4・U74・U75・U76)のパッドの間だけ 0.14mm まで許す(ToraNeko.Mk3 と同じ考え方)。ほかはネットクラスの 0.2mm |
+| `place_pcb.py` | 最初の配置(2026-10-31)。IC・コネクタはまとまりごとに位置を決め、抵抗・コンデンサはつながる IC のパッドのそばの空いている所を探して置く |
 | `gen_pcb.py`・`gen_footprints.py` | 基板を起こすスクリプト、手で寸法を入れるフットプリント(SW1・SW2・BZ1)を作るスクリプト |
 | `sym-lib-table`・`fp-lib-table` | 上の2つをプロジェクトのライブラリとして登録する |
 
@@ -58,6 +59,23 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 - マウントの柱の穴 H1〜H4(M2、φ2.2、基板だけの部品)
 - DRC(回路図との照合つき): **エラーは、まだ置いていない部品のシルクの重なり(基板の外)と、右の外の角の LED のシルクが縁にかかる所だけ**。回路図と基板の食い違い 0。つながっていないパッド 348(配線はこれから)
 - DRC で、**ほぞの穴が受光の足のパッドに 0.04mm 食い込んでいた**のを見つけた。ホルダを v3 にしてほぞを 0.4mm 前へ動かした(`mechanical/sensor_holder/`)。フットプリント `WallSensor_Holder_Emitter` のほぞの穴も 0.4mm 前へ。穴とパッドは 0.36mm 離れた
+
+## 部品の配置(2026-10-31、最初の案)
+
+![配置の案](../../../docs/img/pcb_zone_plan.png)
+
+![置いたところ](../../../docs/img/pcb_v17_placement.png)
+
+- **部品はすべて表**。電池は部品の上に載せる(電池の下は高さ 1.1mm 以下の部品だけ: MCU・IMU・0603・SMPS のコイル・発振子)。機体のモデルから基板の上下のすき間を測った(`docs/img/vehicle/pcb_gap_v16.png`): 裏はモーターの上と柱のまわり以外 3mm 以上空いているが、部品は表に寄せた
+- ① MCU(U4、(−11, 0.5)、0°): 前の辺にモーターの PWM・エンコーダの SPI、左の辺(+y)に IMU・UART・ファン・ブザー、右の辺(−y)に ADC、後ろの辺に発振子・SMPS。パスコンはそれぞれのピンのそば
+- ② IMU(U76): 車軸の真上のすぐ後ろ (−0.9, 0)
+- ④ ドライバ U2・U3 とモーターの線 J2・J3: 電池のすぐ前(モーターの端子は裏の (−8.5, ±5))
+- ⑤ 電源の入口(J1・Q1・C4・TVS): ファンの穴の左。⑥ 3.3V の DC-DC(U1): ファンの穴の右
+- ⑦ ファン(J4・Q40・シャント): ファンの穴の前。ブザー(BZ1)は電池の横に入らないので前の真ん中(音の穴を前へ)
+- ⑧ 受光アンプ: U74(FL・R)は左、U75(L・FR)は右の、前と横のセンサの間の縁。入らなかったので基板を v17 にした(ポケットのまわりを 5.5mm)。⑨ 発光のドライバはそれぞれのホルダのそば
+- 電源スイッチ SW1: 後ろの V 字の左の斜めの縁(つまみを斜め後ろへ出す)。押しボタン SW2 は電池の左、デバッグ端子 J7 は電池の右
+- 部品番号は、コネクタ・スイッチだけシルクに残し、ほかは Fab に
+- DRC: 部品の重なり 0、回路図との食い違い 0。残りは SW1・角の LED のシルクが縁にかかる所と、J2〜J4 の番号がパッドにかかる所だけ。つながっていないパッド 348(配線はこれから)
 
 ## 確かめたこと(2026-10-29、kicad-cli 9.0.9)
 
