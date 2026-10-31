@@ -1,17 +1,20 @@
 """メイン基板の配線(2026-10-31、自動配線の最初の案)
 1. ネットクラスを決める(KOGUMA-Mk4.kicad_pro): 電池・VBAT は太く、モーター・ファンの出力、3.3V・GND は少し太く
-2. Specctra DSN を書き出し、Freerouting(https://github.com/freerouting/freerouting、2.1.0)で自動配線する
+2. Specctra DSN を書き出し、Freerouting(https://github.com/freerouting/freerouting)で自動配線する。
+   GND は線で引かず両面のベタにするので、DSN から GND のネットを抜く
+   2.1.0 はこの基板でほとんどつながらなかった(LED の線 16本だけでも、何周しても 11本残る)。1.9.0 を使う(画面が要るので xvfb-run)
 3. 結果(SES)を読み込み、両面に GND のベタを敷く
 使い方(このフォルダで):
-  python3 route_pcb.py dsn                        → /tmp/koguma_mk4.dsn(ネットクラスも書く)
-  java -jar freerouting-2.1.0.jar -de /tmp/koguma_mk4.dsn -do /tmp/koguma_mk4.ses -mp 100
+  python3 route_pcb.py dsn                        → /tmp/koguma_mk4.dsn と GND を抜いた /tmp/koguma_mk4_nognd.dsn(ネットクラスも書く)
+  xvfb-run -a java -jar freerouting-1.9.0.jar -de /tmp/koguma_mk4_nognd.dsn -do /tmp/koguma_mk4_nognd.ses -mp 40
   python3 route_pcb.py ses                        → 配線を読み込み、GND のベタを敷いて保存"""
 import os, sys, json
 import pcbnew
 HERE = os.path.dirname(os.path.abspath(__file__))
 PCB = os.path.join(HERE, 'KOGUMA-Mk4.kicad_pcb')
 PRO = os.path.join(HERE, 'KOGUMA-Mk4.kicad_pro')
-DSN, SES = '/tmp/koguma_mk4.dsn', '/tmp/koguma_mk4.ses'
+DSN, SES = '/tmp/koguma_mk4.dsn', '/tmp/koguma_mk4_nognd.ses'
+DSN_NOGND = '/tmp/koguma_mk4_nognd.dsn'
 mm = pcbnew.FromMM
 
 # 線の太さ [mm]: QFN のパッド(幅 0.25mm 前後)につなげる太さにしておき、太い電流はあとでベタ(塗りつぶし)で太くする
@@ -33,7 +36,12 @@ if sys.argv[1] == 'dsn':
     set_classes()
     board = pcbnew.LoadBoard(PCB)
     assert pcbnew.ExportSpecctraDSN(board, DSN)
-    print('→', DSN)
+    s = open(DSN).read()                                       # GND のネットを抜く(ベタにする)
+    i = s.index('(net GND'); j = s.index('\n    )', i) + 6
+    s = s[:i] + s[j:]
+    s = s.replace(' GND ', ' ').replace(' GND\n', '\n')
+    open(DSN_NOGND, 'w').write(s)
+    print('→', DSN, DSN_NOGND)
 elif sys.argv[1] == 'ses':
     board = pcbnew.LoadBoard(PCB)
     for t in list(board.GetTracks()):
