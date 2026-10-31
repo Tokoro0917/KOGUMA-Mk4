@@ -25,7 +25,8 @@ for (x, y) in dz.FAN_JOINTS:
     msp.add_circle((x, y), 2.0, dxfattribs=ref)                                      # ファンの台のねじの頭(基板の下、頭の上 z 12.4)
 for (x, y) in ps.SCREWS:
     msp.add_circle((x, y), 3.1, dxfattribs=ref)                                      # マウントの柱
-msp.add_lwpolyline([(-21.25, -16), (1.25, -16), (1.25, 16), (-21.25, 16)], close=True, dxfattribs=ref)   # 電池(基板の上)
+bx0, bx1, by = ps.BAT
+msp.add_lwpolyline([(bx0, -by), (bx1, -by), (bx1, by), (bx0, by)], close=True, dxfattribs=ref)   # 電池(基板の上)
 for i, (x, y) in enumerate(ps.LEDS):                                                 # UI の LED(v15 から 0402 として 1.0 × 0.5、長い方が y)
     msp.add_lwpolyline([(x - 0.25, y - 0.5), (x + 0.25, y - 0.5), (x + 0.25, y + 0.5), (x - 0.25, y + 0.5)], close=True, dxfattribs=ref)
 for (x0, x1, y0, y1) in ps.ENC:                                                      # エンコーダ基板を立てる所(基板の裏)
@@ -61,7 +62,7 @@ draw(bd, color='w', lw=1.2)
 for (x, y) in ps.SCREWS:
     ax.add_patch(plt.Circle((x, y), 3.1, fill=False, ec='#aaa', lw=0.5))
 ax.add_patch(plt.Circle(ps.FAN, 17.5, fill=False, ec='#aaa', lw=0.5, ls='--'))
-ax.add_patch(plt.Rectangle((-21.25, -16), 22.5, 32, fill=False, ec='#aaa', lw=0.5, ls='--')); ax.text(-20.5, 13.5, 'battery', color='#aaa', fontsize=8)
+ax.add_patch(plt.Rectangle((ps.BAT[0], -ps.BAT[2]), ps.BAT[1] - ps.BAT[0], 2 * ps.BAT[2], fill=False, ec='#aaa', lw=0.5, ls='--')); ax.text(ps.BAT[0] + 0.75, 13.5, 'battery', color='#aaa', fontsize=8)
 for (x0, x1, y0, y1) in ps.ENC: ax.add_patch(plt.Rectangle((x0, y0), x1 - x0, y1 - y0, fill=False, ec='#ddd', lw=0.8))
 for (x, y) in ps.LEDS: ax.add_patch(plt.Rectangle((x - 0.25, y - 0.5), 0.5, 1.0, fc='#ddd'))
 for nm, ((sx, sy), ang) in ps.SENS.items():

@@ -52,7 +52,7 @@ Z_PCB = 13.6                 # 基板の下面(マウントのモーターの筒
 T_PCB = CFG['pcb_t']         # 基板の厚さ
 Z_PCBT = Z_PCB + T_PCB
 FAN = (dz.FAN_X, 0.0)        # ファンの中心
-BAT = dict(x=-10.0 if CFG.get('fan') == 'spider' else -5.0, lx=22.5, ly=32.0, lz=14.0)   # 電池: 1S 180mAh(7.5 × 32 × 14)× 3 を立てて並べる(MK3 の STEP の寸法)。v4 はファンの上の穴を避けて 5mm 後ろへ
+BAT = dict(x=-5.0, lx=22.5, ly=32.0, lz=14.0)   # 2026-10-31 に x −10 → −5(重心 −0.57 → +0.74mm)。 電池: 1S 180mAh(7.5 × 32 × 14)× 3 を立てて並べる(MK3 の STEP の寸法)。v4 はファンの上の穴を避けて 5mm 後ろへ
 
 # ---------------- 質量・密度 ----------------
 RHO = dict(carbon=1.55e-3, pc=1.4e-3, resin=1.2e-3, fr4=1.85e-3, steel=7.85e-3, ndfeb=7.5e-3, rubber=1.2e-3,
