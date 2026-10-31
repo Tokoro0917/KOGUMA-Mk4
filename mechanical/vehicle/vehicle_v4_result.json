@@ -212,6 +212,12 @@
    "overlap": 0.0
   },
   {
+   "a": "fan_case",
+   "b": "impeller",
+   "gap": 0.498,
+   "overlap": 0.0
+  },
+  {
    "a": "frame",
    "b": "tire_R",
    "gap": 0.499,
