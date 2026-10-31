@@ -91,6 +91,12 @@ def holder(nm):
     """ホルダの足元(上から見た形)"""
     w, d = HOLDER_W, HOLDER_D
     return _poly(nm, [(0, -w / 2), (0, w / 2), (-d, w / 2), (-d, -w / 2)])
+FOOT_L = 3.5            # ホルダ v3 の下の端の後ろの足の長さ(sensor_holder.py の foot_l と同じ)
+def holder_pad(nm, m=0.0):
+    """ホルダ v3 の下の端(足を含む)がフレームに当たる所。m だけ広げる"""
+    w, d = HOLDER_W, HOLDER_D
+    return _poly(nm, [(0, -w / 2), (0, w / 2), (-d - FOOT_L, w / 2), (-d - FOOT_L, -w / 2)]).buffer(m, join_style=1) if m else \
+        _poly(nm, [(0, -w / 2), (0, w / 2), (-d - FOOT_L, w / 2), (-d - FOOT_L, -w / 2)])
 def slot(nm):
     """ほぞの穴(基板を切り抜く)"""
     c = SLOT_CLR; a0 = -HOLDER_D + PEG_BACK

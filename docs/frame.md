@@ -1,10 +1,14 @@
-# MK4 フレームの強度の計算と形(frame_v6.6、リブなし)
+# MK4 フレームの強度の計算と形(frame_v6.7、リブなし)
 
 2026-10-17作成。フレーム(1mmのカーボン板 + 吸引する面をふさぐ0.2mmのポリカーボネート)を有限要素法(FEM)で計算し、強さと硬さが上がる形を探した。配置は`docs/spec.md`の「機構の配置」。
 
 計算のスクリプトは`docs/calc/frame/`、製作用のDXFは`docs/calc/frame/frame_v4.dxf`、図は`docs/img/frame/`。
 
-> **2026-10-20(frame_v6.6)**: **ファンの台の前の耳のねじ (33, 0) をなくし、ねじの穴はマウントの4つだけ**にした。ファンの台はモーターマウントの腕 (20, ±22) だけで持ち、そのかわりに**輪の壁を0.6 → 1.0mm**にして台を硬くした(輪の外側 φ35)。輪がフレームに載る所がすべてカーボンになるよう、ファンの下を埋める半径を16.5 → 17.5mm(`fan_ring` 9.0 → 10.0)にした。カーボン5.22g、前の滑り板0.42mm、前の角0.56mm、262Hz、座屈148 / 68 / 443N、材料の安全率5.9(細かいメッシュ、`results/final66_result.json`、パラメータは`results/v6_6_params.json`。強度の計算はねじの穴を含めないので、v6.5とほぼ同じ)。製作用のファイルは`mechanical/frame/`の`MK4FRAME66_T1.dxf`、`MK4PC66_*`、`frame_v6_6.dxf`、`frame_v6_6_3d.step`。
+> **2026-10-31(frame_v6.7)**: **壁センサのホルダを当てる所を作った**。ホルダ(v3、`mechanical/sensor_holder/`)の下の端を両面テープでフレームに貼るので、ホルダ(後ろの足を含む)の真下とそのまわり 1mm には窓を開けない(`design.py` の `SENSOR_PAD_M`・`sensor_pads()`、位置は `mechanical/vehicle/pcb_shape.py` の `SENS`)。4つとも、ホルダの下 45mm² がすべてカーボン(v6.6 では前の2本が 16mm²、横の2本が 6mm²)。カーボン 5.22 → **5.46g**。前の滑り板0.41mm、前の角0.51mm、265Hz、座屈156 / 76 / 510N、材料の安全率**7.2**(v6.6 は 0.42 / 0.56mm、262Hz、148 / 68 / 443N、5.9。細かいメッシュ、`results/final67_result.json`、パラメータは`results/v6_7_params.json`)。ねじの穴は v6.6 と同じ4つ。製作用のファイルは`mechanical/frame/`の`MK4FRAME67_T1.dxf`、`MK4PC67_*`、`frame_v6_7.dxf`、`frame_v6_7_3d.step`。
+>
+> ![frame_v6.7](img/frame/v6_7_drawing.png)
+>
+> **2026-10-20(frame_v6.6)**: **ファンの台の前の耳のねじ (33, 0) をなくし、ねじの穴はマウントの4つだけ**にした。ファンの台はモーターマウントの腕 (20, ±22) だけで持ち、そのかわりに**輪の壁を0.6 → 1.0mm**にして台を硬くした(輪の外側 φ35)。輪がフレームに載る所がすべてカーボンになるよう、ファンの下を埋める半径を16.5 → 17.5mm(`fan_ring` 9.0 → 10.0)にした。カーボン5.22g、前の滑り板0.42mm、前の角0.56mm、262Hz、座屈148 / 68 / 443N、材料の安全率5.9(細かいメッシュ、`results/final66_result.json`、パラメータは`results/v6_6_params.json`。強度の計算はねじの穴を含めないので、v6.5とほぼ同じ)。製作用のファイルは`mechanical/frame/`の`MK4FRAME66_T1.dxf`などだった(v6.7に置き換えた。レイヤー別のDXFは`docs/calc/frame/frame_v6_6.dxf`)。
 >
 > ![frame_v6.6](img/frame/v6_6_drawing.png)
 >
@@ -411,7 +415,7 @@ A ≤ 0.25mm、B ≤ 0.15mm、1次の固有振動数 ≥ 400Hz、D・Eで座屈�
 
 モーターマウントの4か所と吸引ファンのケースの3か所(v4.6)のほかのねじ穴(基板・電池・壁センサ・滑り板など)は、使う部品に合わせて決める。要る穴を足してから注文する。図の緑は、今ある7か所の穴を除いた所
 
-![M2の穴を置ける所](img/frame/v6_6_hole_ok.png)(`hole_map.py`で作る。ねじの太さは`design.py`の`SCREW`、`HOLE_D`)
+![M2の穴を置ける所](img/frame/v6_7_hole_ok.png)(`hole_map.py`で作る。ねじの太さは`design.py`の`SCREW`、`HOLE_D`)
 
 - 緑の所に穴の中心を置けば、肉を足さなくても穴のまわりに2mm以上残る(吸引する面の外、エンコーダの磁石から8mm以上、マウントのねじと重ならない)
 - 穴はM2用のφ2.3。細い所(外周の枠2.5mm、前後の辺3.0mm、骨G 3.5mm、筋交いA 2.0mm、背骨4mm)に開けるときは、穴のまわりを直径6.3mm以上に広げる(ボス)。M3のころより、置ける所(緑)がずっと広い
@@ -515,7 +519,7 @@ frame_v5から細くした形を計算した(粗いメッシュ、`refine.py try
 
 | 項目 | 決まり | MK4のファイル |
 |---|---|---|
-| ファイル | DXF、上から見た外形の実線だけ、1:1。寸法線・文字・中心線は入れない。ファイル名は半角英数字 | `mechanical/frame/MK4FRAME66_T1.dxf`(フレーム1枚、リブなし) |
+| ファイル | DXF、上から見た外形の実線だけ、1:1。寸法線・文字・中心線は入れない。ファイル名は半角英数字 | `mechanical/frame/MK4FRAME67_T1.dxf`(フレーム1枚、リブなし) |
 | 複数の部品 | 1つのファイルに並べてよい。部品の間は5mm以上 | フレーム1枚だけ |
 | 最小の穴・溝 | 厚さ5mm以下: 穴φ1.5mm、溝の幅1.5mm | M2の穴φ2.3mm。一番細い材料は外周の枠・前後の辺・筋交いAの2.0mm |
 | 内側の角 | 最小R0.75(尖った角はR0.75になる) | 窓R2、タイヤの穴R1 |
@@ -527,12 +531,12 @@ frame_v5から細くした形を計算した(粗いメッシュ、`refine.py try
 
 手順:
 
-1. 見積もりのフォーム(<https://cfrp-japan.com/order-board-data/>)に`MK4FRAME66_T1.dxf`を付け、厚さ1mm・綾織・クロス・マット・数量(予備を含めて2枚など)を書く。備考に「繊維の向きは図のX方向(前後)を0°に」と書く
+1. 見積もりのフォーム(<https://cfrp-japan.com/order-board-data/>)に`MK4FRAME67_T1.dxf`を付け、厚さ1mm・綾織・クロス・マット・数量(予備を含めて2枚など)を書く。備考に「繊維の向きは図のX方向(前後)を0°に」と書く
 2. 当日〜3営業日でメールで見積もりが来る。メールで注文して、支払う
 3. 届いたら、縁のバリを水をかけながら耐水ペーパーで落とす(カーボンの粉は吸わない)
-4. ポリカーボネート0.2mmは、`mechanical/frame/MK4PC66_template_A4_1to1.pdf`を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC66_T02.dxf`をレーザー加工に出す)。フレームの上面に貼る
+4. ポリカーボネート0.2mmは、`mechanical/frame/MK4PC67_template_A4_1to1.pdf`を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC67_T02.dxf`をレーザー加工に出す)。フレームの上面に貼る
 
-`make_order.py`が、穴・溝・材料の幅が1.5mmより狭い所がないかを確かめる(frame_v6.6はOK)。
+`make_order.py`が、穴・溝・材料の幅が1.5mmより狭い所がないかを確かめる(frame_v6.7はOK)。
 
 ほかの選択肢(海外): FPVドローンのフレーム用に、3Kのカーボン板をDXFから切り出す業者が多い(例: CarbonVega <https://carbonvega.com/upload/>、最小の形1.5mm)。送料と納期を比べて選ぶ。
 
@@ -543,7 +547,7 @@ cd docs/calc/frame
 python3 test_verify.py                       # 計算が正しいかの確認
 python3 analyze.py                           # 今の形(既定の値)を計算
 python3 report.py final "$(cat results/final_params.json)"   # 図と結果
-python3 make_dxf.py results/final_params.json frame_v6_6 ../../../mechanical/frame       # DXF(レイヤー別)
+python3 make_dxf.py results/final_params.json frame_v6_7 ../../../mechanical/frame       # DXF(レイヤー別)
 python3 make_order.py                        # 注文用の DXF と型紙(mechanical/frame/)
 python3 ../../../mechanical/frame_3d.py      # 3D(STEP、mechanical/frame/)
 ```

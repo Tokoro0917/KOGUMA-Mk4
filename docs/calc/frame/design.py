@@ -14,7 +14,15 @@ BOSS_R = 3.7                                    # ねじのまわりの肉(直�
 SCREW, HOLE_D = 'M2', 2.2                       # ねじは M2、通し穴 φ2.2(2026-10-19 に M3 から変更。2026-10-20 に 2.3 → 2.2、JIS の精級)
 FAN_SCREWS = []                                 # 吸引ファンの台をフレームに留めるねじ。2026-10-20 に左右の柱 (22, ±18)、続けて前の耳 (33, 0) もやめ、台はモーターマウントの腕 (FAN_JOINTS) だけで持つ
 FAN_JOINTS = [(14.0, 22.0), (14.0, -22.0)]       # ファンの台とモーターマウントの腕をつなぐねじ(上から M2、マウントの腕にねじ山)。2026-10-21 に (20, ±22) から: 継ぎ目の台(半径2.5)が窓にかからず、カーボンの上に載るように
+SENSOR_PAD_M = 1.0                              # 壁センサのホルダ(v3、下の端をフレームに両面テープで当てる)の下は窓を開けない。ホルダ(足を含む)のまわり 1mm も(2026-10-31、frame v6.7)
 FAN_BOSS_R = 3.3                                # ファンのねじのまわりに必ず残す肉(穴の縁から2.15mm。窓がここにかからない)
+
+def sensor_pads():
+    """壁センサのホルダ(足を含む)をフレームに当てる所。位置と向きは mechanical/vehicle/pcb_shape.py の SENS"""
+    import os, sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../mechanical/vehicle'))
+    import pcb_shape
+    return unary_union([pcb_shape.holder_pad(k, SENSOR_PAD_M) for k in pcb_shape.SENS])
 
 def holes():
     """フレームのねじの穴の中心: モーターマウント(左右) + 吸引ファンのケース"""
@@ -150,6 +158,8 @@ def build(**kw):
     holes = [h for g in holes for h in getattr(g, 'geoms', [g]) if not h.is_empty]
     holes = no_boss(holes, fan_boss, P['fillet'])
     holes = no_boss(holes, Point(FAN_X, 0).buffer(FAN_R + P['fan_ring'], 64), P['fillet'])   # ファンの真下(半径 FAN_R + fan_ring)はカーボンで埋める(2026-10-20)
+    if SENSOR_PAD_M is not None:
+        holes = no_boss(holes, sensor_pads(), P['fillet'])                                    # 壁センサのホルダを当てる所(2026-10-31)
     # 吸引する面の中の窓(ポリカーボネートでふさぐ)
     win = box(-SX + P['land'], -SY + P['land'], SX - P['land'], SY - P['land'])
     if P['inner_spine'] > 0:
@@ -180,6 +190,8 @@ def build(**kw):
     carbon = domain.difference(unary_union(pcw))
     if P['mount_windows']:
         mw = mount_windows(carbon, suction, P['mount_windows'])
+        if SENSOR_PAD_M is not None:   # 壁センサのホルダを当てる所にかかる窓は、そこを除いて角を丸め直す
+            mw = unary_union(no_boss([g for g in getattr(mw, 'geoms', [mw])], sensor_pads(), P['fillet']))
         domain, carbon = domain.difference(mw), carbon.difference(mw)
     clamps = [Point(x, sy * y).buffer(BOSS_R, 32) for (x, y) in MOUNT_SCREWS for sy in (1, -1)]
     # 縦に立てるリブ(1mm のカーボンを溝に差して接着)。(線, 高さ, 足元の板の幅)
