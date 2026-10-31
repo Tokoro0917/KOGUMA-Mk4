@@ -60,6 +60,11 @@ def is_tall(fp):
     n = fp.GetFPID().GetLibItemName().wx_str()
     return any(t in n for t in TALL)
 
+RINGS = {}                                   # IC のまわりの線の通り道: {IC: (形, 入ってよい部品)}
+GAP = 0.3                                    # 部品どうしのすき間(線を通すため。2026-10-31 に自動配線が通らなかったので足した)
+def ring(ic, r, allowed=()):
+    RINGS[ic] = (placed[ic].buffer(r).difference(placed[ic]), set(allowed))
+
 def legal(ref, poly):
     if not AREA.contains(poly):
         return False
@@ -67,7 +72,10 @@ def legal(ref, poly):
         return False
     if is_tall(FP[ref]) and poly.intersects(BAT):
         return False
-    return not any(q is not None and poly.intersects(q) for r, q in placed.items() if r != ref)
+    if any(ref != ic and ref not in ok and poly.intersects(rg) for ic, (rg, ok) in RINGS.items()):
+        return False
+    pg = poly.buffer(GAP / 2)
+    return not any(q is not None and pg.intersects(q.buffer(GAP / 2)) for r, q in placed.items() if r != ref)
 
 def put(ref, x, y, a=0.0, force=False):
     fp = FP[ref]
@@ -154,10 +162,18 @@ near('SW2', -8.0, 19.5, angles=(90, 0))
 near('J7', -11.0, -19.5, angles=(0, 90))
 near('BZ1', 30.4, 0.0, angles=(0,))                                    # ブザーは電池の横に入らないので前の真ん中(音の出る穴を前へ)
 
+# ---- IC のまわりに線の通り道を空ける(そこにはその IC のパスコンなどだけ)----
+MCU_NEAR = ('C55', 'C56', 'C57', 'C58', 'C59', 'C60', 'C61', 'C64', 'L1', 'C53', 'C54', 'Y1', 'FB1', 'C51', 'C52', 'C63', 'R50')
+ring('U4', 2.5, MCU_NEAR)
+ring('U2', 1.5, ('C21', 'C22', 'R21')); ring('U3', 1.5, ('C31', 'C32', 'R31'))
+ring('U76', 1.5, ('C81', 'C82'))
+ring('U74', 1.0, ('R74', 'C74', 'R75', 'C75', 'C83')); ring('U75', 1.0, ('R76', 'C76', 'R77', 'C77', 'C84'))
+ring('U1', 1.0, ('C7', 'C8', 'R3'))
+
 # ---- 抵抗・コンデンサ ----
 # MCU のパスコンと周り
 for r in ('C55', 'C56', 'C57', 'C58', 'C59', 'C60', 'C61', 'C64'):
-    near_pad(r, 'U4', out=1.5)
+    near_pad(r, 'U4', out=1.8)
 near_pad('L1', 'U4', net='Net-(U4-VLXSMPS)', out=2.2)
 near_pad('C53', 'U4', net='Net-(U4-VLXSMPS)', out=2.0)
 near_pad('C54', 'U4', net='/MCU/VCORE', out=2.5)
@@ -169,20 +185,20 @@ near_pad('R50', 'U4', net='/MCU/BOOT0', out=1.5)
 near('C50', -11.0, -6.5); near('C62', -11.0, 7.0)
 # IMU
 near_pad('C81', 'U76', net='+3V3', out=1.3); near_pad('C82', 'U76', net='+3V3', out=1.3)
-# LED の抵抗(MCU と後ろの LED の間)
-for r in ('R90', 'R91', 'R92', 'R93', 'R94', 'R95', 'R96', 'R99'):      # MCU のピンのそば(LED までは線を引く)
-    near_pad(r, 'U4', out=1.6)
+# LED の抵抗: それぞれの LED のそば(MCU のまわりを空けるため)
+for r, d in (('R90', 'D90'), ('R91', 'D91'), ('R92', 'D92'), ('R93', 'D93'), ('R94', 'D94'), ('R95', 'D95'), ('R96', 'D96'), ('R99', 'D98')):
+    near_pad(r, d, net=f'Net-({d}-A)', out=1.5)
 # ドライバ
 for drv, cs in (('U2', ('C21', 'C22', 'C23', 'C24', 'R21', 'R22', 'R23', 'R24', 'R25')), ('U3', ('C31', 'C32', 'C33', 'C34', 'R31', 'R32', 'R33', 'R34', 'R35'))):
     for r in cs:
         near_pad(r, drv, out=1.3)
-near('R40', -6.0, 0.0)
+near_pad('R40', 'U2', net='MOT_nFAULT', out=2.0)
 # 電源
 for r in ('C2', 'C3', 'C5', 'C6', 'D1'):
     near_pad(r, 'Q1', net='VBAT', out=2.0)
 for r in ('R1', 'R2', 'C1'):
     near_pad(r, 'Q1', net='/電源/GATE', out=1.5)
-near('R4', -12.0, 1.5); near('R5', -12.0, 0.0); near('C9', -12.0, -1.5)
+near('R4', -14.0, 1.5); near('R5', -14.0, 0.0); near('C9', -14.0, -1.5)
 near('D2', -19.5, -8.0); near('R6', -19.5, -9.6)
 for r in ('C7', 'C8'):
     near_pad(r, 'U1', net='+3V3', out=1.6)
