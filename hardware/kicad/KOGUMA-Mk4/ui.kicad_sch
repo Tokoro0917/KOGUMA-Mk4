@@ -3709,7 +3709,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "KOGUMA-Mk4:Buzzer_PUI_SMT-0540"
 			(at 147.32 60.96 0)
 			(effects
 				(font
@@ -4407,7 +4407,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "KOGUMA-Mk4:SW_Push_Jianfu_TVAF06"
 			(at 208.28 63.5 90)
 			(effects
 				(font
@@ -5172,7 +5172,7 @@
 		)
 		(uuid "f47cb55a-5f9c-4514-9776-21c2208b20c7")
 	)
-	(text "LED: GPIO が H で点灯(MK3 と同じ)。1kΩ で 約1mA(3.3V、LED の電圧降下 約2V)。モード3ビット + ナンバー4ビット。電源の LED は電源のシート。"
+	(text "LED: GPIO が H で点灯(MK3 と同じ)。1kΩ で 約1mA(3.3V、LED の電圧降下 約2V)。モード3ビット + ナンバー4ビット + 前の LED(D98、PB3、2026-10-31)。電源の LED は電源のシート。"
 		(exclude_from_sim no)
 		(at 25.4 27.94 0)
 		(effects
@@ -5216,7 +5216,7 @@
 		)
 		(uuid "23a79bf5-4a99-42e3-8075-9afd2c49463e")
 	)
-	(text "SW2・BZ1 のフットプリントは未作成(TVAF06-A020B-R、SMT-0540-S-R)"
+	(text "SW2・BZ1 のフットプリントは KOGUMA-Mk4.pretty(gen_footprints.py、メーカーの推奨ランド)"
 		(exclude_from_sim no)
 		(at 25.4 190.5 0)
 		(effects
@@ -5226,6 +5226,266 @@
 			(justify left top)
 		)
 		(uuid "435cfc5b-2bbb-44c4-bc01-5d45e0b7f888")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 54.61 127 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "18d1823b-f300-44b8-a0ee-bd4be015cee4")
+		(property "Reference" "R99"
+			(at 54.61 124.46 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 54.61 130.81 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 54.61 127 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 54.61 127 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 54.61 127 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "40b10b42-c103-41c9-8310-714c9b26e978")
+		)
+		(pin "2"
+			(uuid "4291e774-dfd8-4a22-9886-4689cc8806b6")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "R99")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 40.64 127) (xy 50.8 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3b89d127-0fc0-444e-808a-590ced7f83ff")
+	)
+	(global_label "LED_FRONT"
+		(shape input)
+		(at 40.64 127 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "e0c9fe88-5b89-4000-942f-513850f68c70")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 40.64 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED")
+		(at 67.31 127 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "62c2541e-3c9b-4c17-9a34-456652682719")
+		(property "Reference" "D98"
+			(at 67.31 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "FRONT"
+			(at 67.31 130.81 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "LED_SMD:LED_0603_1608Metric"
+			(at 67.31 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 67.31 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 67.31 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "659b99e8-1255-4326-96ef-2fc6ea5d4cc1")
+		)
+		(pin "2"
+			(uuid "e39d7947-5b43-447c-a7b1-0614d96e140c")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "D98")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 58.42 127) (xy 63.5 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "431cd56b-cb2e-4561-8ced-35055dfbf70e")
+	)
+	(wire
+		(pts
+			(xy 71.12 127) (xy 76.2 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7dae5f58-f61d-4c21-a09f-56347ef40b3b")
+	)
+	(wire
+		(pts
+			(xy 76.2 127) (xy 76.2 129.54)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7e9e71d8-fad6-4e06-85dd-cec351688c05")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 76.2 129.54 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8f0fe56a-fd6a-41c8-b7bf-529b31108b1f")
+		(property "Reference" "#PWR16"
+			(at 76.2 132.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 76.2 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 76.2 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 76.2 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 76.2 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6d43adb3-1227-4e96-981d-791b1ce130fb")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "#PWR16")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(embedded_fonts no)
 )

@@ -1945,7 +1945,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 50.8 71.12 0)
 			(effects
 				(font
@@ -2646,7 +2646,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 137.16 71.12 0)
 			(effects
 				(font
@@ -3347,7 +3347,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 223.52 71.12 0)
 			(effects
 				(font
@@ -4048,7 +4048,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 309.88 71.12 0)
 			(effects
 				(font
@@ -8580,9 +8580,36 @@
 			)
 		)
 	)
-	(no_connect
-		(at 91.44 238.76)
-		(uuid "4db8064e-50ae-4265-ac44-11dd5dbd7510")
+	(wire
+		(pts
+			(xy 91.44 238.76) (xy 96.52 238.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9f164d44-c343-4391-b8b5-105dda67048b")
+	)
+	(global_label "IMU_INT"
+		(shape output)
+		(at 96.52 238.76 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "76fae253-b683-456c-9d7e-a2db5468a55f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 96.52 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 	)
 	(no_connect
 		(at 91.44 241.3)
@@ -9914,7 +9941,7 @@
 		)
 		(uuid "14ffdf67-b91f-43dd-b114-d04e4c2ee18f")
 	)
-	(text "IMU: LSM6DSR を SPI(SPI3、モード3)で。SDX・SCX は GND。INT1・INT2 は今はつながない(PD2 が空いている)。"
+	(text "IMU: LSM6DSR を SPI(SPI3、モード3)で。SDX・SCX は GND。INT1 は MCU の PD2(IMU_INT、データ準備完了の割り込み。2026-10-31)。INT2 はつながない。"
 		(exclude_from_sim no)
 		(at 25.4 210.82 0)
 		(effects

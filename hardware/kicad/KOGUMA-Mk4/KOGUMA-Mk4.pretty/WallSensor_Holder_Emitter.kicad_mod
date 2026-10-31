@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "9.0")
 	(layer "F.Cu")
-	(descr "KOGUMA MK4 wall sensor emitter (OPV332, T-1 3mm) in the sensor holder v2 (hole 7.6mm from the board). The holder hangs under the board: place this footprint on the back side (flipped). Includes the holder peg hole (Edge.Cuts) and outline. Origin = centre of the holder front face, beam +X. Place WallSensor_Holder_Receiver at the same position and rotation")
+	(descr "KOGUMA MK4 wall sensor emitter (OPV332, T-1 3mm) in the sensor holder v3 (hole 7.6mm from the board, peg 0.4mm forward of the back face). The holder hangs under the board: place this footprint on the back side (flipped). Includes the holder peg hole (Edge.Cuts) and outline. Origin = centre of the holder front face, beam +X. Place WallSensor_Holder_Receiver at the same position and rotation")
 	(tags "wall sensor holder KOGUMA")
 	(property "Reference" "REF**"
 		(at 0 -4.2 0)
@@ -108,8 +108,8 @@
 		(uuid "0807c5f6-85e8-464b-ba2b-e937a369ccf0")
 	)
 	(fp_line
-		(start -3.64 -1.6)
-		(end -1.44 -1.6)
+		(start -3.24 -1.6)
+		(end -1.04 -1.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -118,8 +118,8 @@
 		(uuid "65dd61e5-bd40-4b8b-83cc-e85a511d12fa")
 	)
 	(fp_line
-		(start -0.94 -1.1)
-		(end -0.94 1.1)
+		(start -0.54 -1.1)
+		(end -0.54 1.1)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -128,8 +128,8 @@
 		(uuid "255d8dfd-2b96-4c43-ac8e-f05fdcb536b3")
 	)
 	(fp_line
-		(start -1.44 1.6)
-		(end -3.64 1.6)
+		(start -1.04 1.6)
+		(end -3.24 1.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -138,8 +138,8 @@
 		(uuid "1b2399e6-70a0-4149-8cf3-2574aa23da32")
 	)
 	(fp_line
-		(start -4.14 1.1)
-		(end -4.14 -1.1)
+		(start -3.74 1.1)
+		(end -3.74 -1.1)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -148,9 +148,9 @@
 		(uuid "1c14fa64-0ac9-42b4-86d4-e375fab562e9")
 	)
 	(fp_arc
-		(start -1.44 -1.6)
-		(mid -1.0864 -1.4536)
-		(end -0.94 -1.1)
+		(start -1.04 -1.6)
+		(mid -0.6864 -1.4536)
+		(end -0.54 -1.1)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -159,9 +159,9 @@
 		(uuid "e6cbfaf6-37e3-4a28-a350-ba4370ec9fff")
 	)
 	(fp_arc
-		(start -0.94 1.1)
-		(mid -1.0864 1.4536)
-		(end -1.44 1.6)
+		(start -0.54 1.1)
+		(mid -0.6864 1.4536)
+		(end -1.04 1.6)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -170,9 +170,9 @@
 		(uuid "79ca24e1-ac1b-4d17-92e0-793d7b010df2")
 	)
 	(fp_arc
-		(start -3.64 1.6)
-		(mid -3.9936 1.4536)
-		(end -4.14 1.1)
+		(start -3.24 1.6)
+		(mid -3.5936 1.4536)
+		(end -3.74 1.1)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -181,9 +181,9 @@
 		(uuid "68ba4cbd-54bf-40ee-a3bb-ed942fe1f292")
 	)
 	(fp_arc
-		(start -4.14 -1.1)
-		(mid -3.9936 -1.4536)
-		(end -3.64 -1.6)
+		(start -3.74 -1.1)
+		(mid -3.5936 -1.4536)
+		(end -3.24 -1.6)
 		(stroke
 			(width 0.05)
 			(type solid)
