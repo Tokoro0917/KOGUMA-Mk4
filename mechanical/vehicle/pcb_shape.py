@@ -58,7 +58,7 @@ POCKET_RIM, POCKET_R = 4.5, 2.0           # v12: 前と横のセンサの間の�
 SCREWS = [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]       # マウントの前後の柱
 ENC = [(-2.65, 2.65, -21.0, -20.4), (-2.65, 2.65, 20.4, 21.0)]   # エンコーダ基板が通る所(x0, x1, y0, y1)。穴は ENC_Base_Slot(NPTH 1.0 × 5.9mm)
 LEDS_V14 = [(REAR + 2.5, 4.0 * k) for k in range(-3, 4)]                            # v14 までの UI の LED 7個(後ろの縁、4mm おき)
-# v15: UI の LED 7個を ToraNeko.Mk3 と同じ並びに(位置だけ。ToraNeko は 0402、MK4 の回路図は 0603)(TORANEKO.Mk3.kicad_pcb の D18〜D24。ToraNeko の車軸は KiCad の y 66、真ん中は x 110。
+# v15: UI の LED 7個を ToraNeko.Mk3 と同じ並びに(位置だけ。ToraNeko は 1005、MK4 は 1608)(TORANEKO.Mk3.kicad_pcb の D18〜D24。ToraNeko の車軸は KiCad の y 66、真ん中は x 110。
 # MK4 の座標では x = 66 − y、y = 110 − x)。LED1・2 は左の角、LED3〜5 は V 字の切り欠きの先(真ん中が 0.5mm 前)、LED6・7 は右の角。
 # ToraNeko は後ろの縁が x −32.05 なので、角の2個は MK4 の後ろの縁(x REAR)から ToraNeko と同じ 1.85mm に置く
 LED_APEX = -24.5        # v15: 後ろの V 字の切り欠きの先(ToraNeko と同じ。真ん中の LED の 1.4mm 後ろ)

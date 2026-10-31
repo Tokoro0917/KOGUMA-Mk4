@@ -26,7 +26,7 @@ for (x, y) in dz.FAN_JOINTS:
 for (x, y) in ps.SCREWS:
     msp.add_circle((x, y), 3.1, dxfattribs=ref)                                      # マウントの柱
 msp.add_lwpolyline([(-21.25, -16), (1.25, -16), (1.25, 16), (-21.25, 16)], close=True, dxfattribs=ref)   # 電池(基板の上)
-for i, (x, y) in enumerate(ps.LEDS + [ps.LED_FRONT]):                                # UI の LED と前の LED(0603 として 1.6 × 0.8、長い方が y)
+for i, (x, y) in enumerate(ps.LEDS + [ps.LED_FRONT]):                                # UI の LED と前の LED(1608 で 1.6 × 0.8、長い方が y)
     msp.add_lwpolyline([(x - 0.4, y - 0.8), (x + 0.4, y - 0.8), (x + 0.4, y + 0.8), (x - 0.4, y + 0.8)], close=True, dxfattribs=ref)
 for (x0, x1, y0, y1) in ps.ENC:                                                      # エンコーダ基板を立てる所(基板の裏)
     msp.add_lwpolyline([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], close=True, dxfattribs=ref)
