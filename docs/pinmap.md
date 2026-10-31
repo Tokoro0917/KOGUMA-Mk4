@@ -1,6 +1,6 @@
 # STM32H725RG ピンの割り当て(MK4)
 
-2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。2026-10-29に発振子(HSE、10MHz、MK3 と同じ CSTNE10M0G52Z000R0)を付けることにして PH0・PH1 を使う。同日にエンコーダを MT6835 に変え、校正の CAL_EN を PC15 から出す。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
+2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。2026-10-29に発振子(HSE、10MHz、MK3 と同じ CSTNE10M0G52Z000R0)を付けることにして PH0・PH1 を使う。同日にエンコーダを MT6835 に変え、校正の CAL_EN を PC15 から出す。2026-10-31 に PD2 を IMU の INT1(データ準備完了の割り込み)にする。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
 
 ## 確かめ方
 
@@ -15,7 +15,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - そのピンに、割り当てた機能(タイマのチャンネル、ADCの入力、SPI、USARTなど)があるか
 - 同じピン、同じタイマのチャンネル、同じADCの入力を2回使っていないか
 
-**結果: OK**。使う44本、残り2本(2026-10-29)。
+**結果: OK**。使う45本、残り1本(2026-10-31)。
 
 確かめていないこと(CubeMXで.iocを作るときに確かめる): クロックの設定、DMAの割り当て、ADCを2つ同時に動かす設定、タイマの周波数。
 
@@ -61,6 +61,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 54 | PC10 | SPI3_SCK | IMU_SCK | IMU SPIクロック |
 | 55 | PC11 | SPI3_MISO | IMU_MISO | IMU MISO |
 | 56 | PC12 | SPI3_MOSI | IMU_MOSI | IMU MOSI |
+| 57 | PD2 | GPIO_EXTI2 | IMU_INT | IMU の INT1(データ準備完了の割り込み。2026-10-31) |
 | 59 | PB4(NJTRST) | GPIO_Output | WALL_LED_FL_R | 壁センサの発光 FL と R(NJU6080 2個のPWM端子。MK3 の WallLED_12) |
 | 60 | PB5 | GPIO_Output | WALL_LED_L_FR | 壁センサの発光 L と FR(NJU6080 2個のPWM端子。MK3 の WallLED_34) |
 | 61 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換) |
@@ -68,12 +69,11 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
 | 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
 
-## 残りのピン(2本)
+## 残りのピン(1本)
 
 | ピン | 使える機能 | 使い道の案 |
 |---|---|---|
-| PD2 | TIM3_ETR | IMUの割り込み(INT) |
-| PB3 | SWO(デバッグのトレース出力)、TIM2_CH2 | 予備(SWOを使うならここ) |
+| PB3 | SWO(デバッグのトレース出力)、TIM2_CH2、SPI1/3/6_SCK、UART7_RX | 予備。制御の時間を測るテストパッド(GPIO)か SWO の案(2026-10-31 に検討、未決定)。ADC にはならない |
 
 ## 割り当ての考え方
 
@@ -83,7 +83,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - **エンコーダ**: MT6835 × 2をSPI2(SCK PA12、MISO PB14、MOSI PB15)で読み、CSは左PC6・右PC7(GPIO)。バスはIMU(SPI3)と分けたまま(2026-10-17にAS5047P(モード1)で分けた。MT6835はIMUと同じモード3だが、配線の都合で分けておく)
 - **エンコーダの校正**: PC15(ENC_CAL)で左右の CAL_EN を一緒に H にする(2026-10-29)。PC15 は電流を流せない(3mAまで、2MHzまで)ピンだが、CAL_EN は入力(中に 250kΩ のプルダウン)なので問題ない。リセット中はハイインピーダンスになり、プルダウンで L に保たれる
 - **吸引ファン・ブザー**: TIM16・TIM17
-- **IMU**: SPI3(PC10・PC11・PC12)、CSはPA15(GPIO)
+- **IMU**: SPI3(PC10・PC11・PC12)、CSはPA15(GPIO)。**INT1 は PD2(EXTI2)**(2026-10-31): 新しい値ができたら割り込みで知らせる(データ準備完了)。同じ値を2回読んだり、古い値を使ったりしないため。使わないときはソフトで無視すればよい。EXTI の2番を使う入力はほかにない(スイッチ PC14 は14番、nFAULT PC9 は9番)。INT2 はつながない
 - **UART**: USART1(PB6・PB7)。PA9・PA10はモーターのPWMに、PB14・PB15はエンコーダのSPI2に使うので、USART1の3つ目の組にした
 - **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13
 - **スイッチ**: PC14(OSC32_IN)。入力なので、流せる電流が小さくても問題ない
