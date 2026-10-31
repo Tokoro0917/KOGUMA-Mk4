@@ -21,6 +21,7 @@ mm = pcbnew.FromMM
 # まっすぐ出しても隣のパッドまで 0.175mm でクリアランス 0.2mm を守れず、自動配線が MCU から出られなかった。0.15mm なら 0.2mm)。
 # 3.3V も MCU のピンにつなぐのでふつうの線にし、太くしたい所はあとでベタで太くする
 DEFAULT_W = 0.15
+CLEARANCE = 0.15   # 2026-10-31: 0.15mm の線でも MCU のピンまでちょうど 0.2mm で、自動配線が入れなかった。0.15mm に(JLC の2層は 0.127mm まで作れる)
 CLASSES = {
     'Battery': (0.5, ['/電源/BAT+', 'VBAT']),                                         # 電池から最大 8A(瞬間)
     'Motor':   (0.4, ['Net-(J2-Pin_1)', 'Net-(J2-Pin_2)', 'Net-(J3-Pin_1)', 'Net-(J3-Pin_2)', 'Net-(D40-A)', 'Net-(Q40-S)']),   # モーター 3A、ファン 1A
@@ -30,9 +31,10 @@ def set_classes():
     d = json.load(open(PRO))
     ns = d['net_settings']
     base = next(c for c in ns['classes'] if c['name'] == 'Default')
-    base['track_width'] = DEFAULT_W
+    base['track_width'] = DEFAULT_W; base['clearance'] = CLEARANCE
     ns['classes'] = [base] + [dict(base, name=n, track_width=w, priority=i) for i, (n, (w, _)) in enumerate(CLASSES.items())]
     ns['netclass_patterns'] = [dict(netclass=n, pattern=net) for n, (_, nets) in CLASSES.items() for net in nets]
+    d['board']['design_settings']['rules']['min_clearance'] = CLEARANCE
     json.dump(d, open(PRO, 'w'), indent=2)
 
 if sys.argv[1] == 'dsn':
