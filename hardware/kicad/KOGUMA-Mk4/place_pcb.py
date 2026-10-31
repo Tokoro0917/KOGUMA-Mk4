@@ -19,7 +19,7 @@ OX, OY = 150.0, 100.0
 mm = pcbnew.FromMM
 P = lambda x, y: pcbnew.VECTOR2I(mm(OX + x), mm(OY - y))
 back = lambda v: (pcbnew.ToMM(v.x) - OX, OY - pcbnew.ToMM(v.y))
-PCB = os.path.join(HERE, 'KOGUMA-Mk4.kicad_pcb')
+PCB = os.environ.get('PCB') or os.path.join(HERE, 'KOGUMA-Mk4.kicad_pcb')
 board = pcbnew.LoadBoard(PCB)
 FP = {f.GetReference(): f for f in board.GetFootprints()}
 
@@ -61,7 +61,7 @@ def is_tall(fp):
     return any(t in n for t in TALL)
 
 RINGS = {}                                   # IC のまわりの線の通り道: {IC: (形, 入ってよい部品)}
-GAP = 0.3                                    # 部品どうしのすき間(線を通すため。2026-10-31 に自動配線が通らなかったので足した)
+GAP = 0.25                                   # 部品どうしのすき間(線を通すため。2026-10-31 に自動配線が通らなかったので足した)
 def ring(ic, r, allowed=()):
     RINGS[ic] = (placed[ic].buffer(r).difference(placed[ic]), set(allowed))
 
@@ -92,7 +92,7 @@ def pad_xy(ref, net):
             return back(p.GetPosition())
     return None
 
-def near(ref, tx, ty, angles=(0, 90), rmax=12.0):
+def near(ref, tx, ty, angles=(0, 90), rmax=16.0):
     """(tx, ty) にいちばん近い、置ける所に置く"""
     best = None
     r = 0.0
@@ -165,9 +165,9 @@ near('BZ1', 30.4, 0.0, angles=(0,))                                    # ブザ�
 # ---- IC のまわりに線の通り道を空ける(そこにはその IC のパスコンなどだけ)----
 MCU_NEAR = ('C55', 'C56', 'C57', 'C58', 'C59', 'C60', 'C61', 'C64', 'L1', 'C53', 'C54', 'Y1', 'FB1', 'C51', 'C52', 'C63', 'R50')
 ring('U4', 2.5, MCU_NEAR)
-ring('U2', 1.5, ('C21', 'C22', 'R21')); ring('U3', 1.5, ('C31', 'C32', 'R31'))
+ring('U2', 1.2, ('C21', 'C22', 'R21')); ring('U3', 1.2, ('C31', 'C32', 'R31'))
 ring('U76', 1.5, ('C81', 'C82'))
-ring('U74', 1.0, ('R74', 'C74', 'R75', 'C75', 'C83')); ring('U75', 1.0, ('R76', 'C76', 'R77', 'C77', 'C84'))
+ring('U74', 0.6, ('R74', 'C74', 'R75', 'C75', 'C83')); ring('U75', 0.6, ('R76', 'C76', 'R77', 'C77', 'C84'))
 ring('U1', 1.0, ('C7', 'C8', 'R3'))
 
 # ---- 抵抗・コンデンサ ----
@@ -213,7 +213,7 @@ for u, rs, c in (('U70', 'R70', 'C70'), ('U71', 'R71', 'C71'), ('U72', 'R72', 'C
     near_pad(rs, u, out=1.2); near_pad(c, u, net='+3V3', out=1.2)
 for u, items in (('U74', ('R74', 'C74', 'R75', 'C75')), ('U75', ('R76', 'C76', 'R77', 'C77'))):
     for r in items:
-        near_pad(r, u, out=1.3, rmax=8.0)
+        near_pad(r, u, out=1.3, rmax=10.0)
 for u, items in (('U74', ('C83', 'C78')), ('U75', ('C84', 'C79'))):          # アンプの電源(100nF + 10µF)
     for r in items:
         near_pad(r, u, net='+3V3', out=1.3, rmax=14.0)
