@@ -94,7 +94,11 @@ P_V12 = dict(P, mouth=0.0)
 #   その先(磁石・チップ、y -22.4〜-21.0)はくぼみの後ろを x -2.9 で止め、モーターの筒との間に壁(0.87mm 以上)を残す
 P.update(pocket_back=-2.9, flange_y=0.7)
 P_V13 = dict(P, pocket_back=None)
-VER = 'v14'
+# v15(2026-11-01): 2つの軸受(LF-630、幅 2.0、つば 0.6)を突き当てる。内の壁(内のつばを受ける面)を y -23.1 → -23.3 にし、
+#   軸受の穴の長さを 3.0 → 2.8mm(= (2.0 - 0.6) × 2)にした。内の軸受は 0.2mm 外へ(y -24.7〜-22.7)。外の軸受・車輪・41T・磁石は動かない
+P.update(brg_seat_in=-23.3)
+P_V14 = dict(P, brg_seat_in=-23.1)
+VER = 'v15'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])

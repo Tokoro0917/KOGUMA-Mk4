@@ -140,6 +140,8 @@ for s in tn:
     if abs(bb.ymin + 23.7) < 0.05:
         right['magnet'] = (s, 'ndfeb'); continue
     if abs((bb.xmax - bb.xmin) - 7.2) < 0.05:
+        if bb.ymin > -26:     # 内の軸受: マウント v15 から外の軸受に突き当てる(内の壁 y brg_seat_in。v14 までは -23.1)
+            s = s.translate(cq.Vector(0, P2['brg_seat_in'] + 23.1, 0))
         right['brg_out' if bb.ymin < -26 else 'brg_in'] = (s, 'steel'); continue
 right['tire'] = (ycyl(7.5, -31.8, -28.3, 0, 7.5).cut(ycyl(5.75, -31.9, -28.2, 0, 7.5)).val(), 'rubber')
 right['motor'] = (ycyl(4.3, P2['motor_face'], P2['motor_face'] + 20.0, mx, mz).union(
@@ -522,7 +524,7 @@ if FAST:
 
 # ---------------- ぶつかり ----------------
 IGN = [('pinion', 'spur41'), ('pin_', 'wheel'), ('pin_', 'brg_'), ('magnet', 'brg_in'), ('brg_out', 'spur41'), ('spur41', 'wheel'),
-       ('tire', 'wheel'), ('shaft_', 'pinion'), ('motor_', 'shaft_'), ('enc_board', 'as5047p'), ('magnet', 'pin_'), ('brg_in', 'brg_out'),
+       ('tire', 'wheel'), ('shaft_', 'pinion'), ('motor_', 'shaft_'), ('enc_board', 'as5047p'), ('magnet', 'pin_'),
        ('mount', 'brg_'), ('mount', 'motor_'), ('mount', 'frame'), ('enc_board', 'frame'),
        ('screw_', 'nut_'), ('screw_', 'frame'), ('screw_', 'mount'), ('screw_', 'pcb'), ('screw_', 'fan_'), ('nut_', 'mount'), ('nut_', 'pcb'),
        ('nut_', 'fan_case'), ('nut_', 'fan_clamp'), ('fan_case', 'pc_sheet'), ('fan_case', 'fan_motor'), ('fan_motor', 'fan_shaft'),
