@@ -79,6 +79,17 @@ def poly_solid(poly, z0, z1):
         out.append(wp.translate((0, 0, z0)).val())
     return out[0] if len(out) == 1 else cq.Compound.makeCompound(out)
 
+def arc_or_poly(poly, z0, z1):
+    """板を直線と本当の円弧で作る(STEP がギザギザにならない。2026-11-01)。作れなければ折れ線で"""
+    try:
+        import dxf_arcs as dxa
+        s = dxa.arc_solid(poly.buffer(0) if poly.area >= 0.5 else poly, z0, z1)
+        if all(x.isValid() for x in s.Solids()) and abs(s.Volume() - poly.area * (z1 - z0)) < 0.01 * poly.area * (z1 - z0) + 0.5:
+            return s.Solids()[0] if len(s.Solids()) == 1 else s
+    except Exception:
+        pass
+    return poly_solid(poly, z0, z1)
+
 def mirror(s):
     return s.mirror('XZ')
 
@@ -93,11 +104,11 @@ FP = json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/final_para
 g = dz.build(**FP)
 screws_mount = dz.holes() if CFG.get('fan') in ('volute', 'spider') else [(x, sy * y) for (x, y) in dz.MOUNT_SCREWS for sy in (1, -1)]
 plate = g['carbon'].difference(unary_union([Point(c).buffer(SC['hole'] / 2, 32) for c in screws_mount]))
-add('frame', poly_solid(plate, Z_FB, Z_FT), 'carbon')
+add('frame', arc_or_poly(plate, Z_FB, Z_FT), 'carbon')
 sheet = g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
-add('pc_sheet', poly_solid(sheet, Z_FT, Z_PC), 'pc')
+add('pc_sheet', arc_or_poly(sheet, Z_FT, Z_PC), 'pc')
 skirt = g['suction'].difference(g['suction'].buffer(-0.1, join_style=2))           # 0.1mm のフィルム、床から 0.5mm
-add('skirt', poly_solid(skirt, 0.5, Z_FB), 'film')
+add('skirt', arc_or_poly(skirt, 0.5, Z_FB), 'film')
 for sx in (1, -1):
     # 滑り板: カグスベール(フリーサイズ、約1.5mm = フッ素加工の樹脂0.5 + コルク1.0)をフレームの下面に直接貼る(2026-10-19)。
     # φ5 に切る。床とのすき間は 2.0 − 1.5 = 0.5mm。加速・減速で機体が0.64°傾いて片方が床に着く(スカートの端は床から0.17mm)
@@ -334,7 +345,7 @@ if SPIDER:
     pcb_holes += [pcb_shape.slot(k) for k in pcb_shape.SENS]                # 壁センサのホルダのほぞの穴(基板 v7)
     # エンコーダ基板の穴(NPTH 1.0 × 5.9mm)は 2026-11-01 にやめた(エンコーダ基板は基板の裏に突き当ててはんだ付け)
 pcb_poly = pcb_outline.difference(unary_union(pcb_holes))
-add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
+add('pcb', arc_or_poly(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 
 # ---------------- 電池 ----------------
 b = BAT

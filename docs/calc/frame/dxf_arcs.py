@@ -107,3 +107,42 @@ def add_polygon(msp, poly, dxfattribs=None, dx=0.0, dy=0.0):
     for q in getattr(poly, 'geoms', [poly]):
         for ring in [q.exterior] + list(q.interiors):
             add_ring(msp, list(ring.coords), dxfattribs, dx, dy)
+
+
+# ---- 3D(STEP)用: DXF と同じ直線と円弧で板を作る(2026-11-01) ----
+import cadquery as cq
+
+def ring_wire(coords, z):
+    """輪の点を、DXF と同じく直線と本当の円弧(dxf_arcs.ring_entities)にして Wire にする(2026-11-01。それまでは折れ線でギザギザだった)"""
+    kind = ring_entities(coords)
+    if kind[0] == 'circle':
+        (cx, cy), r = kind[1], kind[2]
+        return cq.Wire.makeCircle(r, cq.Vector(cx, cy, z), cq.Vector(0, 0, 1))
+    pts = kind[1]
+    edges = []
+    for k in range(len(pts)):
+        x0, y0, b = pts[k]
+        x1, y1, _ = pts[(k + 1) % len(pts)]
+        if abs(x1 - x0) + abs(y1 - y0) < 1e-9:
+            continue
+        p0, p1 = cq.Vector(x0, y0, z), cq.Vector(x1, y1, z)
+        if abs(b) < 1e-9:
+            edges.append(cq.Edge.makeLine(p0, p1))
+        else:
+            c = math.hypot(x1 - x0, y1 - y0)
+            s = b * c / 2                                  # 弧の中点の、弦からの高さ(正の bulge は反時計回り → 進む向きの右へふくらむ)
+            nx, ny = (y1 - y0) / c, -(x1 - x0) / c
+            pm = cq.Vector((x0 + x1) / 2 + nx * s, (y0 + y1) / 2 + ny * s, z)
+            edges.append(cq.Edge.makeThreePointArc(p0, pm, p1))
+    return cq.Wire.assembleEdges(edges)
+
+def arc_solid(poly, z0, z1):
+    """shapely の形を、直線と本当の円弧の板(CadQuery の Solid)にする"""
+    out = []
+    for p in getattr(poly, 'geoms', [poly]):
+        outer = ring_wire(list(p.exterior.coords), z0)
+        inner = [ring_wire(list(r.coords), z0) for r in p.interiors]
+        face = cq.Face.makeFromWires(outer, inner)
+        out.append(cq.Solid.extrudeLinear(face, cq.Vector(0, 0, z1 - z0)))
+    return cq.Compound.makeCompound(out)
+

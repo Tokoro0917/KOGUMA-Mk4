@@ -8,7 +8,7 @@ from shapely.ops import unary_union
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '../docs/calc/frame'))
 sys.path.insert(0, os.path.join(HERE, 'motor_mount'))
-import design as dz, ribparts as rp
+import design as dz, ribparts as rp, dxf_arcs as dxa
 import mount as mm
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'frame')   # 製作用のファイルは mechanical/frame に置く
@@ -19,14 +19,7 @@ slots = [s for (l, h, w) in g['vribs'] for s in rp.slots_for(l)]
 holes = [Point(c).buffer(dz.HOLE_D / 2, 32) for c in dz.holes()]
 plate = g['carbon'].difference(unary_union(slots + holes))
 
-def poly_solid(poly, z0, z1):
-    out = []
-    for p in getattr(poly, 'geoms', [poly]):
-        wp = cq.Workplane().polyline(list(p.exterior.coords)[:-1]).close().extrude(z1 - z0)
-        for r in p.interiors:
-            wp = wp.cut(cq.Workplane().polyline(list(r.coords)[:-1]).close().extrude(z1 - z0))
-        out.append(wp.translate((0, 0, z0)).val())
-    return cq.Compound.makeCompound(out)
+poly_solid = dxa.arc_solid   # 直線と本当の円弧で作る(dxf_arcs.arc_solid)
 
 parts = {}
 parts['carbon'] = poly_solid(plate, 2.0, 3.0)
