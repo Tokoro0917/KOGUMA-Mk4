@@ -35,7 +35,7 @@ mm = pcbnew.FromMM
 DEFAULT_W = 0.15
 CLEARANCE = 0.15   # 2026-10-31: 0.15mm の線でも MCU のピンまでちょうど 0.2mm で、自動配線が入れなかった。0.15mm に(JLC の2層は 0.127mm まで作れる)
 CLASSES = {
-    'Battery': (0.5, ['/電源/BAT+', 'VBAT']),                                         # 電池から最大 8A(瞬間)
+    'Battery': (0.5, ['/電源/BAT+', 'VBAT', 'PGND']),                                 # 電池から最大 8A(瞬間)。PGND は大きい電流の戻り(2026-11-01)
     'Motor':   (0.4, ['Net-(J2-Pin_1)', 'Net-(J2-Pin_2)', 'Net-(J3-Pin_1)', 'Net-(J3-Pin_2)', 'Net-(D40-A)', 'Net-(Q40-S)']),   # モーター 3A、ファン 1A
 }
 

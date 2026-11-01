@@ -1527,6 +1527,107 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "KOGUMA-Mk4:PGND"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "PGND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "PGND_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "PGND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(symbol
 		(lib_id "KOGUMA-Mk4:MP6551GQB")
@@ -1788,7 +1889,7 @@
 		(uuid "bdcd12d1-4c34-41f6-a786-012acce6ac9b")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 63.5 53.34 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1805,7 +1906,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 63.5 57.15 0)
 			(effects
 				(font
@@ -1932,7 +2033,7 @@
 		(uuid "f4d9b3d6-a4de-4429-8a53-e1638f13c2fa")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 48.26 53.34 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -1949,7 +2050,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 48.26 57.15 0)
 			(effects
 				(font
@@ -2029,7 +2130,7 @@
 		(uuid "4bbdb0c7-642f-4ad4-8dac-21136778fa58")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 71.12 88.9 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2046,7 +2147,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 71.12 92.71 0)
 			(effects
 				(font
@@ -2302,7 +2403,7 @@
 		(uuid "9c4a65df-99d3-474f-9aa7-a6e788088070")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 43.18 86.36 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2319,7 +2420,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 43.18 90.17 0)
 			(effects
 				(font
@@ -3696,7 +3797,7 @@
 		(uuid "6003b678-f588-49e2-8e57-3c5d796a68ec")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 63.5 121.92 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3713,7 +3814,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 63.5 125.73 0)
 			(effects
 				(font
@@ -3840,7 +3941,7 @@
 		(uuid "42179577-303c-4981-ac9f-7ade7b9398c3")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 48.26 121.92 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3857,7 +3958,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 48.26 125.73 0)
 			(effects
 				(font
@@ -3937,7 +4038,7 @@
 		(uuid "d4f3a449-1a51-4223-8f93-51e4da197d64")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 71.12 157.48 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3954,7 +4055,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 71.12 161.29 0)
 			(effects
 				(font
@@ -4210,7 +4311,7 @@
 		(uuid "76515fb1-ab60-41a3-a596-912b99ca20d8")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 43.18 154.94 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4227,7 +4328,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 43.18 158.75 0)
 			(effects
 				(font
@@ -6195,7 +6296,7 @@
 		(uuid "f526c492-3e01-4d00-90f2-6c38ab092585")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 246.38 101.6 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6212,7 +6313,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 246.38 105.41 0)
 			(effects
 				(font
