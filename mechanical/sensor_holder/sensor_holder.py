@@ -15,6 +15,9 @@ v4(2026-11-01): **足をやめ、ホルダの形のままそのまま下まで�
 v5(2026-11-01): **ほぞをかっちりはめる**。ほぞの4つの面の真ん中に、つぶし用のリブ(幅 0.3mm、高さ 0.6mm、先 0.2mm を面取り)を付けた。
                リブの先どうしの幅 3.25mm(基板の穴 3.2mm より 0.05mm きつい)。差し込むとリブの先だけがつぶれて止まる。形はほかは v4 と同じ。
                合わせ用の試し片(リブの幅 3.15〜3.35mm の5本)は fit_test.py
+v6(2026-11-01): **カチッとはめる爪**。ほぞを真ん中のすき間(1.2mm)で左右2本の腕(厚さ 0.8mm)に分け、腕の先の爪を基板の上の面に引っかける。
+               爪は基板の穴の縁から 0.10mm 出る(長さ 2.0mm、先は斜め 0.6mm)。腕の外側にすき間(0.5mm)をホルダの中へ 1.2mm 切り込み、腕を長くしてしならせる。
+               差し込むと腕が内へしなり、基板の上へ抜けたところで爪が開いて止まる。外すときは基板の上から2本の爪をつまむ。爪は基板の上へ 0.6mm 出る
 座標 [mm]: 原点は前の面(光が出る面)の真ん中で、基板に付ける面。+y が光の向き、x は幅、+z は基板から離れる向き
 (基板の裏に付けるので、機体では下向き)。ほぞは −z 側(基板の穴に入る)。
 使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v2.step / .stl / .png
@@ -28,11 +31,14 @@ P = dict(
     z_emit=7.6, z_recv=3.2,         # 穴の中心の基板の面からの距離。遠い方が発光、近い方が受光(ToraNeko と同じ並び。v1・ToraNeko は 8.1・3.5)
     r_front=0.0, r_top_front=0.0, r_top_side=0.0,   # 角の丸み: 前の縦の辺、前の端(基板から遠い所)の辺、端の横の辺。v4 はすべて角(v3 までは 1.6・1.6・1.0)
     peg_w=3.0, peg_d=3.0, peg_back=0.0, peg_t=0.6, peg_r=0.4,   # ほぞ: 幅、奥行き、後ろの面からのずれ、長さ(基板の厚さ)、縦の角の丸み
-    rib_span=3.25, rib_w=0.3, rib_lead=0.2,   # v5: ほぞの4つの面のつぶし用リブ。リブの先どうしの幅(基板の穴 3.2 より 0.05 きつい)、リブの幅、先の面取りの長さ
+    rib_span=3.25, rib_w=0.3, rib_lead=0.2,
+    snap=dict(gap=1.2, arm_t=0.8, relief_w=0.5, relief_h=1.2, pcb_t=0.6, catch_clr=0.03, lip=0.6, hook=0.10, hook_len=2.0, slot_half=1.6),
+    # v6: 爪のほぞ。真ん中のすき間、腕の厚さ、腕の外側の切り込みの幅と深さ(ホルダの中へ)、基板の厚さ、爪と基板のすき間、爪の斜めの長さ、
+    #     爪が基板の穴の縁(半径 slot_half)から出る長さ、爪の長さ(y。基板の穴の角 R0.5 をよける)   # v5: ほぞの4つの面のつぶし用リブ。リブの先どうしの幅(基板の穴 3.2 より 0.05 きつい)、リブの幅、先の面取りの長さ
     foot_l=0.0, foot_t=1.0, foot_r=1.0,    # v3: 下の端から後ろへ出す足の長さ、厚さ、後ろの角の丸み(v4 はなし)
     base_d=0.0, base_z=5.0, base_r=0.5,    # (使わない。2026-11-01 の最初の v4 案: 基板から base_z より下を、後ろへ base_d 厚くする)
 )
-VER = 'v5'
+VER = 'v6'
 MOUNT = 'bottom'     # 基板の裏に付ける(2026-10-30)
 
 def holder(P=P):
@@ -60,8 +66,32 @@ def holder(P=P):
                 .translate((0, -d - P['foot_l'], h - P['foot_t'])).edges('|Z and <Y').fillet(P['foot_r']))
         body = body.union(foot)
     y1 = -d + P['peg_back']
+    if P.get('snap'):
+        return snap_peg(body, y1, P)
     peg = peg_shape(P).translate((0, y1, 0))
     return body.union(peg)
+
+def snap_peg(body, y1, P=P):
+    """v6: ほぞを真ん中で2本の腕に分け、腕の先の爪で基板の上の面に引っかける(カチッとはめる)。
+    腕は左右(x)。後ろには発光・受光の足のパッドがあるので爪は付けない。
+    腕を長くしてしなりやすくするため、腕の外側のすき間をホルダの中まで切り込む(z relief_h まで)"""
+    S = P['snap']
+    g, t, rw, rh = S['gap'] / 2, S['arm_t'], S['relief_w'], S['relief_h']
+    pcb, clr, lip, hook, hl = S['pcb_t'], S['catch_clr'], S['lip'], S['hook'], S['hook_len']
+    d = P['peg_d']
+    z_tip = -(pcb + clr + lip)
+    for sx in (1, -1):
+        x0, x1 = sorted((sx * g, sx * (g + t)))
+        body = body.union(cq.Workplane('XY').box(x1 - x0, d, -z_tip, centered=False).translate((x0, y1, z_tip)))     # 腕
+        # 爪: 引っかかる面は基板の上の面(z -pcb)の clr 外、そこから先へ斜め(差し込むときに腕が内へしなる)
+        xo = sx * (g + t)
+        prof = [(xo, -(pcb + clr)), (xo + sx * (S['slot_half'] + hook - (g + t)), -(pcb + clr)), (xo, z_tip)]
+        claw = cq.Workplane('XZ').polyline(prof).close().extrude(-hl).translate((0, y1 + (d - hl) / 2, 0))
+        body = body.union(claw)
+        rx0, rx1 = sorted((sx * (g + t), sx * (g + t + rw)))
+        body = body.cut(cq.Workplane('XY').box(rx1 - rx0, d + 0.02, rh, centered=False).translate((rx0, y1 - 0.01, 0)))   # 腕の外側の切り込み
+    body = body.cut(cq.Workplane('XY').box(2 * g, d + 0.02, rh - z_tip + 0.01, centered=False).translate((-g, y1 - 0.01, z_tip - 0.01)))   # 真ん中のすき間
+    return body
 
 def peg_shape(P=P, span=None):
     """ほぞ(後ろの端 y 0、z 0 から -peg_t)。v5 から4つの面の真ん中に、つぶし用のリブ(先に面取り)"""
