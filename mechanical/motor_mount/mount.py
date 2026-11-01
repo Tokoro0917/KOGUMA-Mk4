@@ -85,7 +85,11 @@ P_V10 = dict(P, enc_slot=(-21.1, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-
 #   外の面の輪(外のつばを受ける)を半径 3.7 → 4.0 にした。内のつばは内の壁(y -23.1)で全周受ける
 P.update(brg_chamfer=0.1, seat_r=4.0)
 P_V11 = dict(P, brg_chamfer=0.3, seat_r=3.7)
-VER = 'v12'
+# v13(2026-11-01): モーターの筒の内側の入口に、当たり面と逃がしの段差が見えないようにする。
+#   入口から 1.0mm(y -16.6〜-15.6)は寸法どおりの丸い穴 φ8.6(差し込むときの案内)。当たり面 φ8.5 と逃がし φ8.8 はその奥だけ
+P.update(mouth=1.0)
+P_V12 = dict(P, mouth=0.0)
+VER = 'v13'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -138,12 +142,14 @@ def build(P=P):
         a_m = math.atan2(az - mz, ax - mx)
         if P.get('wall_free'):   # v10: 当たり面を 60° 回し、2つの穴の間の壁(0.8mm)には当たり面も逃がしも置かない(寸法どおりの円)
             hw = math.radians(P['wall_free'])
-            ym0, ym1 = P['motor_face'], P['cradle_end'] + 1
+            ym0, ym1 = P['motor_face'], P['cradle_end'] + (-P['mouth'] if P.get('mouth') else 1)
             yb0, yb1 = P['brg_seat_out'] - 1, P['brg_seat_in']
             body = body.cut(relief(P['motor_d'] / 2 + P['pad_relief'], ym0, ym1, mx, mz, a_m + math.pi / 3, P['pad_w'], keep=(a_m, hw)))
             body = body.cut(relief(P['brg_od'] / 2 + P['pad_relief'], yb0, yb1, ax, az, a_m + math.pi + math.pi / 3, P['pad_w'], keep=(a_m + math.pi, hw)))
             body = body.cut(ycyl(P['motor_d'] / 2, ym0, ym1, mx, mz).intersect(wedge(P['motor_d'], ym0, ym1, mx, mz, a_m, hw)))
             body = body.cut(ycyl(P['brg_od'] / 2, yb0, yb1, ax, az).intersect(wedge(P['brg_od'], yb0, yb1, ax, az, a_m + math.pi, hw)))
+            if P.get('mouth'):   # v13: 筒の内側の入口 mouth mm は、当たり面も逃がしもないまっすぐな丸い穴(寸法どおり)
+                body = body.cut(ycyl(P['motor_d'] / 2, P['cradle_end'] - P['mouth'], P['cradle_end'] + 1, mx, mz))
         else:
             body = body.cut(relief(P['motor_d'] / 2 + P['pad_relief'], P['motor_face'], P['cradle_end'] + 1, mx, mz, a_m, P['pad_w']))
             body = body.cut(relief(P['brg_od'] / 2 + P['pad_relief'], P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az, a_m + math.pi, P['pad_w']))
