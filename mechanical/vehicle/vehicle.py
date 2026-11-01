@@ -52,7 +52,7 @@ Z_PCB = 13.6                 # 基板の下面(マウントのモーターの筒
 T_PCB = CFG['pcb_t']         # 基板の厚さ
 Z_PCBT = Z_PCB + T_PCB
 FAN = (dz.FAN_X, 0.0)        # ファンの中心
-BAT = dict(x=-10.0 if CFG.get('fan') == 'spider' else -5.0, lx=22.5, ly=32.0, lz=14.0)   # 電池: 1S 180mAh(7.5 × 32 × 14)× 3 を立てて並べる(MK3 の STEP の寸法)。v4 はファンの上の穴を避けて 5mm 後ろへ
+BAT = dict(x=-5.0, lx=22.5, ly=32.0, lz=14.0)   # 2026-10-31 に x −10 → −5(重心 −0.57 → +0.74mm)。 電池: 1S 180mAh(7.5 × 32 × 14)× 3 を立てて並べる(MK3 の STEP の寸法)。v4 はファンの上の穴を避けて 5mm 後ろへ
 
 # ---------------- 質量・密度 ----------------
 RHO = dict(carbon=1.55e-3, pc=1.4e-3, resin=1.2e-3, fr4=1.85e-3, steel=7.85e-3, ndfeb=7.5e-3, rubber=1.2e-3,
@@ -127,7 +127,7 @@ for s in tn:
     if bb.ymin > -21.1 and bb.ymax < -20.4:
         s = s.translate(cq.Vector(0, 0, 0.11))
         if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: メイン基板の穴を通して上ではんだ付けする基板(x -2.65〜2.65、y -21.0〜-20.4、z 3.3〜15.6。2026-10-30)
-            s = cq.Solid.makeBox(5.3, 0.6, 12.3, cq.Vector(-2.65, -21.0, 3.3))     # 2026-10-29 は 7.8 × 10.3mm(x -2.6〜5.2、z 3.3〜13.6)
+            s = cq.Solid.makeBox(6.0, 0.6, 10.3, cq.Vector(-3.0, -21.0, 3.3))      # 2026-11-01: ToraNeko と同じく、メイン基板に突き当ててはんだ付け(穴に通さない)。6.0 × 10.3mm(z 3.3〜13.6)。10-30 は 5.3 × 12.3mm で基板の穴に通した
         right['enc_board'] = (s, 'fr4'); continue
     if bb.ymin > -22.3 and bb.ymax < -20.9:
         right['as5047p'] = (s.translate(cq.Vector(0, 0, 0.11)), 'resin'); continue
@@ -318,13 +318,20 @@ pcb_holes = ([] if SPIDER else [Point(FAN).buffer(4.6, 64)]) + [Point(p).buffer(
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
 if SPIDER:
     pcb_holes += [pcb_shape.slot(k) for k in pcb_shape.SENS]                # 壁センサのホルダのほぞの穴(基板 v7)
-    pcb_holes += [sbox(-2.45, sy * 20.7 - 0.5, 2.45, sy * 20.7 + 0.5).buffer(0.5, 32) for sy in (1, -1)]   # エンコーダ基板の穴(NPTH 1.0 × 5.9mm の長円)
+    # エンコーダ基板の穴(NPTH 1.0 × 5.9mm)は 2026-11-01 にやめた(エンコーダ基板は基板の裏に突き当ててはんだ付け)
 pcb_poly = pcb_outline.difference(unary_union(pcb_holes))
 add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 
 # ---------------- 電池 ----------------
 b = BAT
 add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + b['lz'] / 2)), 'battery')
+# 2026-10-31: 電池のホルダ(左右、mechanical/battery_holder)。基板の上のねじ4本の頭の下に耳をはさむ
+sys.path.insert(0, os.path.join(HERE, '../battery_holder'))
+import battery_holder as bh
+BH_T = bh.P['ear_t'] if SPIDER else 0.0
+if SPIDER:
+    for sy, nm in ((1, 'L'), (-1, 'R')):
+        add(f'battery_holder_{nm}', bh.holder(sy, z0=Z_PCBT).val(), 'resin')
 
 # ---------------- 壁センサ ----------------
 # 2026-10-30(基板 v7): 発光 OPV332・受光 SFH 229 FA をホルダ(mechanical/sensor_holder、ToraNeko.Mk3 と同じ形)に入れ、
@@ -378,14 +385,14 @@ for sy, side in ((1, 'L'), (-1, 'R')):
             if not TAP:
                 add(f'nut_{nm_}_{side}', nut(x_, y, P2['ear_top'] - P2['nut_depth']), 'nylon')
         if TAP:     # 2026-10-30: ねじは鉄の低頭 M2 L5 の1種類にそろえる
-            add(f'screw_post_{side}', screw(xr, y, Z_PCBT, 5.0, up=False), 'steel')
+            add(f'screw_post_{side}', screw(xr, y, Z_PCBT + BH_T, 5.0, up=False), 'steel')
         else:
             add(f'screw_post_{side}', screw(xr, y, Z_PCBT, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
         if not TAP:
             add(f'nut_post_{side}', nut(xr, y, Z_PCB - SC['depth'] + 0.05), 'nylon')
         fpx, fpy = PCB_FAN_POSTS[0 if sy > 0 else 1]
         if TAP:
-            add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL, 5.0, up=False), 'steel')
+            add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL + BH_T, 5.0, up=False), 'steel')
         else:
             add(f'screw_fan_{side}', screw(fpx, fpy, Z_CL, SC['Lp'], up=False, head_h=1.6, head_r=2.0), 'nylon')
         if not TAP:
@@ -450,7 +457,7 @@ GROUP = [('フレーム・ポリカーボネート・スカート・滑り板', 
          ('車輪・タイヤ・41T・ピニオン・軸・軸受・磁石・エンコーダ', ('wheel', 'tire', 'spur41', 'pinion', 'pin_', 'shaft_', 'brg_', 'magnet', 'enc_board', 'as5047p')),
          ('吸引ファン(モーター・ケース・羽根' + ('・押さえ' if CFG['clamp'] else '') + ')', ('fan_', 'impeller')),
          (f'基板({T_PCB}mm)+ 部品', ('pcb',)),
-         ('電池(3S 180mAh)', ('battery',)),
+         ('電池(3S 180mAh)+ ホルダ', ('battery',)),
          ('壁センサ × 4', ('sensor_',)),
          ('ねじ・ナット', ('screw_', 'nut_')),
          ('配線', ('wiring',))]

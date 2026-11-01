@@ -24,7 +24,7 @@ cent = mesh.p[:, mesh.t].mean(axis=1)
 p, t = mesh.p, mesh.t
 a_ = p[:, t[1]] - p[:, t[0]]; b_ = p[:, t[2]] - p[:, t[0]]
 area = np.abs(a_[0] * b_[1] - a_[1] * b_[0]) / 2
-bat = (cent[0] >= -21.25) & (cent[0] <= 1.25) & (np.abs(cent[1]) <= 16.0)
+bat = (cent[0] >= ps.BAT[0]) & (cent[0] <= ps.BAT[1]) & (np.abs(cent[1]) <= ps.BAT[2])
 D = E * T_PCB**3 / (12 * (1 - nu**2)) * np.ones(t.shape[1])
 if BAT_STIFF:                                 # 電池を両面テープで貼り、電池の所は曲がらないとみなす(上限)
     D[bat] *= 1000
