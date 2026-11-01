@@ -34,7 +34,7 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 |---|---|---|---|---|
 | モーターマウント v12(右) | `mechanical/motor_mount/motor_mount_R_v12.stl` | Temp Resin | 3 | 1.28g |
 | モーターマウント v12(左) | `mechanical/motor_mount/motor_mount_L_v12.stl` | Temp Resin | 3 | 1.28g |
-| ファンの台 v1 | `mechanical/fan_mount/fan_mount_v1.stl` | Temp Resin | 3 | 1.64g |
+| ファンの台 v2 | `mechanical/fan_mount/fan_mount_v2.stl` | Temp Resin | 3 | 1.63g |
 | ホイール v1(右) | `mechanical/wheel/wheel_R_v1.stl` | Black Resin | 3 | 0.38g |
 | ホイール v1(左) | `mechanical/wheel/wheel_L_v1.stl` | Black Resin | 3 | 0.38g |
 | 壁センサのホルダ v4 | `mechanical/sensor_holder/sensor_holder_v4.stl` | Black Resin | 6(4 + 予備2) | 0.22g |
