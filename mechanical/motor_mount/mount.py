@@ -89,7 +89,12 @@ P_V11 = dict(P, brg_chamfer=0.3, seat_r=3.7)
 #   入口から 1.0mm(y -16.6〜-15.6)は寸法どおりの丸い穴 φ8.6(差し込むときの案内)。当たり面 φ8.5 と逃がし φ8.8 はその奥だけ
 P.update(mouth=1.0)
 P_V12 = dict(P, mouth=0.0)
-VER = 'v13'
+# v14(2026-11-01): モーターの筒の内側から、エンコーダのくぼみへ抜けている穴を閉じる。
+#   内の軸受のつば(φ7.2、y -23.1〜-22.5)はモーターと 0.2mm しか離れていないので、つばの所(0.7mm)だけはくぼみの後ろを x -4.0 まで開ける(細い隙間が残る)。
+#   その先(磁石・チップ、y -22.4〜-21.0)はくぼみの後ろを x -2.9 で止め、モーターの筒との間に壁(0.87mm 以上)を残す
+P.update(pocket_back=-2.9, flange_y=0.7)
+P_V13 = dict(P, pocket_back=None)
+VER = 'v14'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -162,7 +167,12 @@ def build(P=P):
         body = body.union(box(ax + ef.get('bx0', ef['x0']), ax + ef['x1'], P['brg_seat_in'] - 0.01, P['enc_slot'][0], ft, ef['ztop']))
         body = body.cut(ycyl(P['motor_d'] / 2 + P.get('pad_relief', 0.0), P['brg_seat_in'] - 0.02, P['enc_slot'][0] + 0.02, mx, mz))   # 足した肉がモーターの穴を埋めないように
         # くぼみ(AS5047P・部品・内の軸受のつば): 上は z ef['pz1'] で閉じ、前は ef['px1'] まで
-        body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], P['enc_slot'][0], pz0, ef['pz1']))
+        if P.get('pocket_back'):   # v14: 内の軸受のつばの所(厚さ flange_y)だけ後ろを x -px まで開け、その先(磁石・チップ)は x pocket_back で止めてモーターの筒との壁を残す
+            yf = P['brg_seat_in'] + P['flange_y']
+            body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], yf, pz0, ef['pz1']))
+            body = body.cut(box(ax + P['pocket_back'], ax + ef['px1'], yf - 0.01, P['enc_slot'][0], pz0, ef['pz1']))
+        else:
+            body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], P['enc_slot'][0], pz0, ef['pz1']))
         # 基板の面より内側は、基板の外形の所をすべて開ける(裏の壁をなくす)
         body = body.cut(box(ax + ef['x0'], ax + ef['wx1'], P['enc_slot'][0], P['inner_face'] + 1.0, ft - 0.01, 20.0))   # 前は x wx1 で止め、基板の前の端を受ける
     else:
