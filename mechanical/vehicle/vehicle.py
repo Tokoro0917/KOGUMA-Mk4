@@ -143,6 +143,8 @@ for s in tn:
         if bb.ymin > -26:     # 内の軸受: マウント v15 から外の軸受に突き当てる(内の壁 y brg_seat_in。v14 までは -23.1)
             s = s.translate(cq.Vector(0, P2['brg_seat_in'] + 23.1, 0))
         right['brg_out' if bb.ymin < -26 else 'brg_in'] = (s, 'steel'); continue
+if mm.P.get('stop_tabs'):   # マウント v16 から内の軸受は MR63(つばなし 3 × 6 × 2)。外の LF-630 に突き当てる(y -24.7〜-22.7)
+    right['brg_in'] = (cq.Workplane().add(right['brg_in'][0]).intersect(ycyl(3.0, -25.0, -22.0, 0, 7.5)).val(), 'steel')   # LF-630 の形からつばを除く
 right['tire'] = (ycyl(7.5, -31.8, -28.3, 0, 7.5).cut(ycyl(5.75, -31.9, -28.2, 0, 7.5)).val(), 'rubber')
 right['motor'] = (ycyl(4.3, P2['motor_face'], P2['motor_face'] + 20.0, mx, mz).union(
     ycyl(1.2, P2['motor_face'] - 0.3, P2['motor_face'], mx, mz)).val(), 'motor')

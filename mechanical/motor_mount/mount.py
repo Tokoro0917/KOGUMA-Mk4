@@ -98,7 +98,12 @@ P_V13 = dict(P, pocket_back=None)
 #   軸受の穴の長さを 3.0 → 2.8mm(= (2.0 - 0.6) × 2)にした。内の軸受は 0.2mm 外へ(y -24.7〜-22.7)。外の軸受・車輪・41T・磁石は動かない
 P.update(brg_seat_in=-23.3)
 P_V14 = dict(P, brg_seat_in=-23.1)
-VER = 'v15'
+# v16(2026-11-01): 内の軸受を**つばなしの MR63(3 × 6 × 2)**にして、モーターの筒に残っていた 0.7mm のすき間をなくす。
+#   内の軸受は外の LF-630 に突き当てる(y -24.7〜-22.7、今までと同じ)。穴は y -22.7 まで(つばの受けの壁はなくなる)。
+#   モーターとの間は 8.1 - 4.3 - 3.0 = 0.8mm の壁になる。内側へ動かないように、上と下の爪(厚さ 0.8mm、x ±1.6)で外輪だけを受ける
+P.update(brg_seat_in=-22.7, flange_y=0.0, stop_tabs=(2.6, 2.4, 1.6, 0.8))
+P_V15 = dict(P, brg_seat_in=-23.3, flange_y=0.7, stop_tabs=None)
+VER = 'v16'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -173,10 +178,16 @@ def build(P=P):
         # くぼみ(AS5047P・部品・内の軸受のつば): 上は z ef['pz1'] で閉じ、前は ef['px1'] まで
         if P.get('pocket_back'):   # v14: 内の軸受のつばの所(厚さ flange_y)だけ後ろを x -px まで開け、その先(磁石・チップ)は x pocket_back で止めてモーターの筒との壁を残す
             yf = P['brg_seat_in'] + P['flange_y']
-            body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], yf, pz0, ef['pz1']))
+            if P['flange_y'] > 0:
+                body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], yf, pz0, ef['pz1']))
             body = body.cut(box(ax + P['pocket_back'], ax + ef['px1'], yf - 0.01, P['enc_slot'][0], pz0, ef['pz1']))
         else:
             body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], P['enc_slot'][0], pz0, ef['pz1']))
+        if P.get('stop_tabs'):    # v16: つばなしの内の軸受を止める爪(上と下)。外輪(半径 2.45〜3.0)だけに当たり、チップ(z 5.4〜9.9)をよける
+            t0, t1, xh, ty = P['stop_tabs']
+            yi = P['brg_seat_in']
+            body = body.union(box(ax - xh, ax + xh, yi - 0.01, yi + ty, az + t0, ef['pz1'] + 0.01))       # 上: 天井から下ろす
+            body = body.union(box(ax - xh, ax + xh, yi - 0.01, yi + ty, pz0 - 0.01, az - t1))            # 下: 床から上げる
         # 基板の面より内側は、基板の外形の所をすべて開ける(裏の壁をなくす)
         body = body.cut(box(ax + ef['x0'], ax + ef['wx1'], P['enc_slot'][0], P['inner_face'] + 1.0, ft - 0.01, 20.0))   # 前は x wx1 で止め、基板の前の端を受ける
     else:
