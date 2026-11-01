@@ -517,7 +517,7 @@ if FAST:
 # ---------------- ぶつかり ----------------
 IGN = [('pinion', 'spur41'), ('pin_', 'wheel'), ('pin_', 'brg_'), ('magnet', 'brg_in'), ('brg_out', 'spur41'), ('spur41', 'wheel'),
        ('tire', 'wheel'), ('shaft_', 'pinion'), ('motor_', 'shaft_'), ('enc_board', 'as5047p'), ('magnet', 'pin_'), ('brg_in', 'brg_out'),
-       ('mount', 'brg_'), ('mount', 'motor_'), ('mount', 'frame'), ('mount', 'enc_board'), ('enc_board', 'frame'),
+       ('mount', 'brg_'), ('mount', 'motor_'), ('mount', 'frame'), ('enc_board', 'frame'),
        ('screw_', 'nut_'), ('screw_', 'frame'), ('screw_', 'mount'), ('screw_', 'pcb'), ('screw_', 'fan_'), ('nut_', 'mount'), ('nut_', 'pcb'),
        ('nut_', 'fan_case'), ('nut_', 'fan_clamp'), ('fan_case', 'pc_sheet'), ('fan_case', 'fan_motor'), ('fan_motor', 'fan_shaft'),
        ('impeller', 'fan_shaft'), ('fan_case', 'pcb'), ('fan_clamp', 'pcb'), ('fan_clamp', 'fan_motor'), ('pcb', 'battery'),

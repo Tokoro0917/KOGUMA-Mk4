@@ -75,7 +75,12 @@ P.update(enc_face=dict(x0=-2.8, bx0=-4.2, x1=6.0, wx1=5.4, ztop=13.6, px1=4.0, p
 #   当たり面は 60° 回し、2つの穴の間の壁(0.8mm)の所(±30°)は寸法どおりの円にする(当たり面を置くと、壁が両側から 0.05mm ずつ押されてつぶれるため)
 P.update(bore_clear=-0.1, brg_clear=-0.1, wall_free=30.0)
 P_V9 = dict(P, bore_clear=0.0, brg_clear=0.0)
-VER = 'v10'
+# v11(2026-11-01): エンコーダ基板(6.0 × 10.3mm、x -3.0〜3.0、y -21.0〜-20.4)を**マウントの面に当てる**。
+#   面を y -21.1 → -21.0 にし(基板との 0.1mm のすき間をなくす。チップと磁石の 0.5mm は変わらない)、
+#   基板の後ろの端の受けを x -2.8 → -3.1 にした(v10 は 5.3mm 幅の基板のままで、6.0mm 幅の基板と x -3.0〜-2.8 で重なっていた)
+P.update(enc_slot=(-21.0, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-3.1))
+P_V10 = dict(P, enc_slot=(-21.1, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-2.8))
+VER = 'v11'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
