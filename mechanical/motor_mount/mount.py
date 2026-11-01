@@ -80,7 +80,12 @@ P_V9 = dict(P, bore_clear=0.0, brg_clear=0.0)
 #   基板の後ろの端の受けを x -2.8 → -3.1 にした(v10 は 5.3mm 幅の基板のままで、6.0mm 幅の基板と x -3.0〜-2.8 で重なっていた)
 P.update(enc_slot=(-21.0, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-3.1))
 P_V10 = dict(P, enc_slot=(-21.1, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-2.8))
-VER = 'v11'
+# v12(2026-11-01): 軸受のつば(φ7.2 × 0.6、LF-630 の STEP で確かめた)を全周で広く受ける。
+#   軸受の穴の入口の面取りを 0.3 → 0.1mm にし(つばの当たる輪が 半径 3.4〜3.6 の 0.2mm 幅 → 3.1〜3.6 の 0.5mm 幅に)、
+#   外の面の輪(外のつばを受ける)を半径 3.7 → 4.0 にした。内のつばは内の壁(y -23.1)で全周受ける
+P.update(brg_chamfer=0.1, seat_r=4.0)
+P_V11 = dict(P, brg_chamfer=0.3, seat_r=3.7)
+VER = 'v12'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -184,8 +189,9 @@ def build(P=P):
             return cq.Workplane().add(cq.Solid.makeCone(r + c, r, c, cq.Vector(x, y, z), cq.Vector(0, sgn, 0)))
         def cone_z(r, z, sgn, x, y):
             return cq.Workplane().add(cq.Solid.makeCone(r + c, r, c, cq.Vector(x, y, z), cq.Vector(0, 0, sgn)))
-        body = body.cut(cone_y(P['brg_od'] / 2, P['brg_seat_out'], 1, ax, az))          # 外の軸受(外から入れる)
-        body = body.cut(cone_y(P['brg_od'] / 2, P['brg_seat_in'], -1, ax, az))          # 内の軸受(内から入れる)
+        cb = P.get('brg_chamfer', c)
+        body = body.cut(cq.Workplane().add(cq.Solid.makeCone(P['brg_od'] / 2 + cb, P['brg_od'] / 2, cb, cq.Vector(ax, P['brg_seat_out'], az), cq.Vector(0, 1, 0))))    # 外の軸受(外から入れる)
+        body = body.cut(cq.Workplane().add(cq.Solid.makeCone(P['brg_od'] / 2 + cb, P['brg_od'] / 2, cb, cq.Vector(ax, P['brg_seat_in'], az), cq.Vector(0, -1, 0))))   # 内の軸受(内から入れる)
         body = body.cut(cone_y(P['motor_d'] / 2, P['cradle_end'], -1, mx, mz))          # モーター(内から入れる)
         holes = [(P['screw_front'], ft, P['pcb_post'] if P.get('pcb_post_front') else P['ear_top']),
                  (P['screw_rear'], ft, P['pcb_post'] if P.get('pcb_post') else P['ear_top'])]

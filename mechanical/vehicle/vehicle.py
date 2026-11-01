@@ -215,7 +215,7 @@ elif SPIDER:            # v4: 羽根を輪で囲い、腕でモーターを真�
             case = case.union(cq.Workplane().add(poly_solid(foot, Z_FT, Z_PC + 0.05)))
     # モーターの筒: 上から圧入し、前の面をハブの底に当てる(2026-10-20。それまでは割りを入れて横のねじで締めていた)
     case = case.cut(zcyl(BORE_D / 2, Z_TOP1, Z_COL + 1, fx, fy))
-    case = case.cut(zcyl(1.5, Z_TOP0 - 0.1, Z_TOP1 + 0.1, fx, fy))
+    case = case.cut(zcyl(2.25, Z_TOP0 - 0.1, Z_TOP1 + 0.1, fx, fy))   # 2026-11-01: 羽根(mechanical/parts/impeller_v1.step)のハブの出っ張り φ3.5 が入るように φ3.0 → φ4.5
     def nut_pocket(px, py, z_top, out):
         hexp = cq.Workplane().center(px, py).polygon(6, SC['pocket'] / math.cos(math.pi / 6)).extrude(SC['depth']).translate((0, 0, z_top - SC['depth']))
         ux, uy = out
@@ -283,11 +283,17 @@ else:                   # v3: 渦巻きのケース(ボリュート)。フレー
     assert case.val().isValid() and case.val().Volume() > 500, 'ファンのケースの形が壊れた'
     add('fan_case', case, 'resin')
 R_IMP = 16.0 if SPIDER else 10.0      # 羽根の半径(2026-10-20: φ32)
-imp = zcyl(R_IMP, 7.4, 8.0, fx, fy).union(zcyl(1.5, 4.5, 8.0, fx, fy))
-for i in range(8):
-    imp = imp.union(cq.Workplane().box(R_IMP - 4.0, 0.5, 3.6).translate((fx + (R_IMP + 4.0) / 2, fy, 5.6))
-                    .rotate((fx, fy, 0), (fx, fy, 1), i * 45))
-imp = imp.cut(zcyl(0.6, 4.4, 8.1, fx, fy))
+if SPIDER:      # 2026-11-01: 自分で用意する羽根(mechanical/parts/impeller_v1.step): φ32 × 5.5mm。下に羽根6枚(3.0mm)、板 1.0mm、上にハブの出っ張り φ3.5 × 1.5mm、穴 φ0.98
+    _imp = cq.importers.importStep(os.path.join(HERE, '../parts/impeller_v1.step')).val()
+    _b = _imp.BoundingBox()
+    Z_IMP_TOP = Z_TOP1 - 0.3 - 0.1          # ハブの出っ張りの上: モーターの軸受けの出っ張り(z 9.1〜9.4)の 0.1mm 下
+    imp = cq.Workplane().add(_imp.translate(cq.Vector(fx - (_b.xmin + _b.xmax) / 2, fy - (_b.ymin + _b.ymax) / 2, Z_IMP_TOP - _b.zmax)))
+else:
+    imp = zcyl(R_IMP, 7.4, 8.0, fx, fy).union(zcyl(1.5, 4.5, 8.0, fx, fy))
+    for i in range(8):
+        imp = imp.union(cq.Workplane().box(R_IMP - 4.0, 0.5, 3.6).translate((fx + (R_IMP + 4.0) / 2, fy, 5.6))
+                        .rotate((fx, fy, 0), (fx, fy, 1), i * 45))
+    imp = imp.cut(zcyl(0.6, 4.4, 8.1, fx, fy))
 add('impeller', imp, 'resin')
 add('fan_motor', zcyl(4.3, Z_TOP1, Z_TOP1 + 20.0, fx, fy).union(zcyl(1.2, Z_TOP1 - 0.3, Z_TOP1, fx, fy)), 'fan_motor')
 add('fan_shaft', zcyl(0.6, Z_TOP1 - 5.1, Z_TOP1 - 0.3, fx, fy), 'steel')
