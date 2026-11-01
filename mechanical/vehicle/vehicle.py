@@ -127,7 +127,7 @@ for s in tn:
     if bb.ymin > -21.1 and bb.ymax < -20.4:
         s = s.translate(cq.Vector(0, 0, 0.11))
         if CFG.get('fan') == 'spider' and mm.P.get('enc_face'):    # マウント v9: メイン基板の穴を通して上ではんだ付けする基板(x -2.65〜2.65、y -21.0〜-20.4、z 3.3〜15.6。2026-10-30)
-            s = cq.Solid.makeBox(5.3, 0.6, 12.3, cq.Vector(-2.65, -21.0, 3.3))     # 2026-10-29 は 7.8 × 10.3mm(x -2.6〜5.2、z 3.3〜13.6)
+            s = cq.Solid.makeBox(6.0, 0.6, 10.3, cq.Vector(-3.0, -21.0, 3.3))      # 2026-11-01: ToraNeko と同じく、メイン基板に突き当ててはんだ付け(穴に通さない)。6.0 × 10.3mm(z 3.3〜13.6)。10-30 は 5.3 × 12.3mm で基板の穴に通した
         right['enc_board'] = (s, 'fr4'); continue
     if bb.ymin > -22.3 and bb.ymax < -20.9:
         right['as5047p'] = (s.translate(cq.Vector(0, 0, 0.11)), 'resin'); continue
@@ -318,7 +318,7 @@ pcb_holes = ([] if SPIDER else [Point(FAN).buffer(4.6, 64)]) + [Point(p).buffer(
     + [Point(dz.MOUNT_SCREWS[0][0], sy * dz.MOUNT_SCREWS[0][1]).buffer(SC['hole'] / 2, 24) for sy in (1, -1)]
 if SPIDER:
     pcb_holes += [pcb_shape.slot(k) for k in pcb_shape.SENS]                # 壁センサのホルダのほぞの穴(基板 v7)
-    pcb_holes += [sbox(-2.45, sy * 20.7 - 0.5, 2.45, sy * 20.7 + 0.5).buffer(0.5, 32) for sy in (1, -1)]   # エンコーダ基板の穴(NPTH 1.0 × 5.9mm の長円)
+    # エンコーダ基板の穴(NPTH 1.0 × 5.9mm)は 2026-11-01 にやめた(エンコーダ基板は基板の裏に突き当ててはんだ付け)
 pcb_poly = pcb_outline.difference(unary_union(pcb_holes))
 add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 

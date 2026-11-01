@@ -16,7 +16,7 @@
 
 | 項目 | 内容 |
 |---|---|
-| ファイル | `mechanical/frame/MK4FRAME68_T1.dxf`(frame v6.8、1:1、単位 mm) |
+| ファイル | `mechanical/frame/MK4FRAME69_T1.dxf`(frame v6.9、1:1、単位 mm) |
 | 厚さ・材料 | 1mm、綾織・クロス・マット |
 | 数 | 2枚(1枚は予備) |
 | 備考に書くこと | 「繊維の向きは図の X 方向(前後)を 0°に」 |
@@ -32,24 +32,23 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 
 | 部品 | ファイル | 材料 | 数 | 1個の重さ |
 |---|---|---|---|---|
-| モーターマウント v9(右) | `mechanical/motor_mount/motor_mount_R_v9.stl` | Temp Resin | 3 | 1.29g |
-| モーターマウント v9(左) | `mechanical/motor_mount/motor_mount_L_v9.stl` | Temp Resin | 3 | 1.29g |
+| モーターマウント v10(右) | `mechanical/motor_mount/motor_mount_R_v10.stl` | Temp Resin | 3 | 1.28g |
+| モーターマウント v10(左) | `mechanical/motor_mount/motor_mount_L_v10.stl` | Temp Resin | 3 | 1.28g |
 | ファンの台 v1 | `mechanical/fan_mount/fan_mount_v1.stl` | Temp Resin | 3 | 1.64g |
 | ホイール v1(右) | `mechanical/wheel/wheel_R_v1.stl` | Black Resin | 3 | 0.38g |
 | ホイール v1(左) | `mechanical/wheel/wheel_L_v1.stl` | Black Resin | 3 | 0.38g |
-| 壁センサのホルダ v3 | `mechanical/sensor_holder/sensor_holder_v3.stl` | Black Resin | 6(4 + 予備2) | 0.22g |
+| 壁センサのホルダ v4 | `mechanical/sensor_holder/sensor_holder_v4.stl` | Black Resin | 6(4 + 予備2) | 0.26g |
 | 電池のホルダ v1(左) | `mechanical/battery_holder/battery_holder_L_v1.stl` | Black Resin | 2 | 0.23g |
 | 電池のホルダ v1(右) | `mechanical/battery_holder/battery_holder_R_v1.stl` | Black Resin | 2 | 0.23g |
 
 - 仕上げは標準(色付け・研磨なし)
 - 備考に書くこと: 「φ1.6 の穴はあとでタップを立てるので、ふさがないでください」「穴のまわりの細い当たり面は削らないでください」
+- モーターマウント v10 のモーターの穴(当たり面 φ8.5)と軸受の穴(当たり面 φ5.9)は、わざと寸法より 0.1mm 小さくしてある(しまりばめ)。備考に「モーターと軸受の穴は圧入用に小さくしてあります」と書く
 - JLC3DP は M6 未満のねじ山を作らないので、M2 は届いてから自分でタップを立てる(`docs/mount.md`の「7. 注文」)
 
-## 4. DMM.make(羽根)
+## 4. 吸引ファンの羽根
 
-| 部品 | 材料 | 数 | メモ |
-|---|---|---|---|
-| 吸引ファンの羽根(φ32) | 高精細アクリル | 3〜4(振れの少ないものを選ぶ) | 形は自分で用意する。ファンの台は「羽根 φ32、羽根の上面 z 8.0」として作ってある(`mechanical/fan_mount/README.md`) |
+**羽根は自分で用意する**(2026-11-01。ここでは注文しない)。ファンの台は「羽根 φ32、羽根の上面 z 8.0、輪とのすき間 半径0.5mm」として作ってある(`mechanical/fan_mount/README.md`)。寸法が違うときは、ファンの台を直す。
 
 ## 5. 足回りの部品
 
@@ -70,13 +69,13 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 | M2 × 0.4 のハンドタップ | 1 | 印刷の部品のねじ穴(マウント1個に3つの穴、上下から) |
 | φ1.6 のドリルとピンバイス | 1 | 下穴が細いときに通す |
 | 瞬間接着剤 | 1 | 41T をホイールに、磁石を平行ピンに。圧入がゆるいとき。壁センサのホルダを基板の裏に |
-| 両面テープ(スポンジ、厚さ 0.3mm 前後) | 1 | 壁センサのホルダの下の端をフレームに貼る(ホルダ v3)。電池の底を基板に貼る(電池のホルダ) |
+| 両面テープ(スポンジ、厚さ 0.3mm 前後) | 1 | 壁センサのホルダの下の端をフレームに貼る(ホルダ v4)。電池の底を基板に貼る(電池のホルダ) |
 
 ## 7. その他
 
 | 部品 | 数 | メモ |
 |---|---|---|
-| 硬質塩ビ 0.2mm | 1枚 | `mechanical/frame/MK4PC68_template_A4_1to1.pdf` を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC68_T02.dxf`をレーザー加工に出す) |
+| 硬質塩ビ 0.2mm | 1枚 | `mechanical/frame/MK4PC69_template_A4_1to1.pdf` を「実際のサイズ」で印刷して型にし、カッターで切る(または`MK4PC69_T02.dxf`をレーザー加工に出す) |
 | カグスベール(ニチアス、フリーサイズ、約1.5mm) | 1枚 | φ5 に切って、フレームの下(x = ±45)に貼る |
 | スカートのフィルム 0.1mm | 1枚 | **材料は未定**(PET などの案) |
 | 電池 LiPo 3S 180mAh 45C | 1〜2 | **品番は未定**。軽いもの(12.5g級)を探す |

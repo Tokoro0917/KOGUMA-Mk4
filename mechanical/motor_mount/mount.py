@@ -69,7 +69,12 @@ P_V8 = dict(P)
 #   くぼみの後ろの端を x -3.8 → -4.0 にし、モーターの穴とつなげる(内の軸受のつばとモーターの間は 0.2mm しかなく、間に 0.2mm の薄い壁が残っていたため。v8 まで)
 #   くぼみの底を z 3.7 → 3.8(床の厚さ 0.8mm)、上の縁の肉を後ろ x -4.2 まで伸ばしてモーターの筒とつなげる
 P.update(enc_face=dict(x0=-2.8, bx0=-4.2, x1=6.0, wx1=5.4, ztop=13.6, px1=4.0, pz1=11.3), pocket=(4.0, 3.8, 14.0))
-VER = 'v9'
+# v10(2026-11-01): 穴を寸法どおりにすると固定できないので、マイナス公差(しまりばめ)にする。
+#   モーターの穴 φ8.6 → φ8.5、軸受の穴 φ6.0 → φ5.9(当たり面3つの所。逃がした所は今までどおり半径 +0.1mm)。
+#   印刷の誤差 ±0.2mm に対して、当たり面だけが押されてつぶれる。きつすぎるときは当たり面をカッターで軽く削る
+P.update(bore_clear=-0.1, brg_clear=-0.1)
+P_V9 = dict(P, bore_clear=0.0, brg_clear=0.0)
+VER = 'v10'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -123,7 +128,7 @@ def build(P=P):
         body = body.cut(relief(P['motor_d'] / 2 + P['pad_relief'], P['motor_face'], P['cradle_end'] + 1, mx, mz, a_m, P['pad_w']))
         body = body.cut(relief(P['brg_od'] / 2 + P['pad_relief'], P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az, a_m + math.pi, P['pad_w']))
     body = body.cut(ycyl(P['lip_hole'] / 2, y_out - 1, P['motor_face'] + 0.01, mx, mz))
-    body = body.cut(ycyl(P['brg_od'] / 2, P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az))
+    body = body.cut(ycyl(P['brg_od'] / 2 + P.get('brg_clear', 0.0) / 2, P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az))
     px, pz0, pz1 = P['pocket']
     ef = P.get('enc_face')
     if ef:   # v9: エンコーダ基板をマウントの面に当てて接着する(裏から支えない)
