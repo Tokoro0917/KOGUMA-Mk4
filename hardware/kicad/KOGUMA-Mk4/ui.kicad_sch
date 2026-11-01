@@ -1912,7 +1912,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (MODE0)"
+		(property "Value" "APTD1608LSECK/J4-PF (MODE0)"
 			(at 67.31 59.69 0)
 			(effects
 				(font
@@ -2172,7 +2172,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (MODE1)"
+		(property "Value" "APTD1608LSECK/J4-PF (MODE1)"
 			(at 67.31 69.85 0)
 			(effects
 				(font
@@ -2432,7 +2432,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (MODE2)"
+		(property "Value" "APTD1608LSECK/J4-PF (MODE2)"
 			(at 67.31 80.01 0)
 			(effects
 				(font
@@ -2692,7 +2692,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (NUM0)"
+		(property "Value" "APTD1608LSECK/J4-PF (NUM0)"
 			(at 67.31 90.17 0)
 			(effects
 				(font
@@ -2952,7 +2952,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (NUM1)"
+		(property "Value" "APTD1608LSECK/J4-PF (NUM1)"
 			(at 67.31 100.33 0)
 			(effects
 				(font
@@ -3212,7 +3212,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (NUM2)"
+		(property "Value" "APTD1608LSECK/J4-PF (NUM2)"
 			(at 67.31 110.49 0)
 			(effects
 				(font
@@ -3472,7 +3472,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (NUM3)"
+		(property "Value" "APTD1608LSECK/J4-PF (NUM3)"
 			(at 67.31 120.65 0)
 			(effects
 				(font
@@ -5342,7 +5342,7 @@
 				)
 			)
 		)
-		(property "Value" "APTD1608LSURCK (FRONT)"
+		(property "Value" "APTD1608LSECK/J4-PF (FRONT)"
 			(at 67.31 130.81 0)
 			(effects
 				(font

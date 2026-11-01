@@ -47,8 +47,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | D40 | onsemi MBR230LSFT1G(30V 2A、SOD-123FL) |
 | R41 | 100Ω |
 | R21・R31 | 0Ω(実機でノイズを見て上げる) |
-| D90〜D96・D98 | Kingbright APTD1608LSURCK(赤、小電流用) |
-| D2 | Kingbright APTD1608LZGCK(緑、小電流用) |
+| D90〜D96・D98・D2 | Kingbright APTD1608LSECK/J4-PF(オレンジ 605nm、小電流用) |
 
 ## まだ決めていないこと
 
