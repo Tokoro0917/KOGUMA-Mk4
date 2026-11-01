@@ -32,8 +32,8 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 
 | 部品 | ファイル | 材料 | 数 | 1個の重さ |
 |---|---|---|---|---|
-| モーターマウント v20(右) | `mechanical/motor_mount/motor_mount_R_v20.stl` | Temp Resin | 3 | 1.45g |
-| モーターマウント v20(左) | `mechanical/motor_mount/motor_mount_L_v20.stl` | Temp Resin | 3 | 1.45g |
+| モーターマウント v20(右) | `mechanical/motor_mount/motor_mount_R_v20.stl` | Temp Resin | 3 | 1.43g |
+| モーターマウント v20(左) | `mechanical/motor_mount/motor_mount_L_v20.stl` | Temp Resin | 3 | 1.43g |
 | ファンの台 v2 | `mechanical/fan_mount/fan_mount_v2.stl` | Temp Resin | 3 | 1.63g |
 | ホイール v1(右) | `mechanical/wheel/wheel_R_v1.stl` | Black Resin | 3 | 0.38g |
 | ホイール v1(左) | `mechanical/wheel/wheel_L_v1.stl` | Black Resin | 3 | 0.38g |
@@ -55,7 +55,7 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 | 部品 | 品番・仕様 | 数 | メモ |
 |---|---|---|---|
 | 軸受(外) | LF-630(内径3mm、外径6mm、幅2mm、つば φ7.2 付き) | 3(2 + 予備1) | 車輪の側。ToraNeko.Mk3 と同じ |
-| 軸受(内) | **MR63**(内径3mm、外径6mm、幅2mm、**つばなし**。開放形 2.0mm 幅のもの。ZZ は 2.5mm 幅なので合わない) | 3(2 + 予備1) | 2026-11-01、マウント v20。外の LF-630 に突き当て、マウントのエンコーダの部屋の天井と床で外輪を止める |
+| 軸受(内) | **MR63**(内径3mm、外径6mm、幅2mm、**つばなし**。開放形 2.0mm 幅のもの。ZZ は 2.5mm 幅なので合わない) | 3(2 + 予備1) | 2026-11-01、マウント v20。外の LF-630 に突き当て、マウントのエンコーダの部屋の左右の壁で外輪を止める |
 | 車軸 | 3 × 6 の平行ピン | 4(2 + 予備2) | ToraNeko.Mk3 と同じ |
 | エンコーダの磁石 | φ3 × 1mm、直径方向に着磁 | 4(2 + 予備2) | ToraNeko.Mk3 と同じ |
 | ピニオン | m0.3、13T、軸径1.2mm 用 | 4(2 + 予備2) | 自分で入手(`docs/spec.md`の「ピニオンの入手」) |
