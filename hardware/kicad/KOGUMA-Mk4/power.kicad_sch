@@ -3879,7 +3879,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "47u 25V"
+		(property "Value" "T521V476M025ATE040 (47u 25V)"
 			(at 142.24 80.01 0)
 			(effects
 				(font
@@ -4761,7 +4761,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "POWER"
+		(property "Value" "APTD1608LZGCK (POWER)"
 			(at 273.05 83.82 90)
 			(effects
 				(font

@@ -2341,7 +2341,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0 (仮)"
+		(property "Value" "0"
 			(at 45.72 83.82 0)
 			(effects
 				(font
@@ -4249,7 +4249,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0 (仮)"
+		(property "Value" "0"
 			(at 45.72 152.4 0)
 			(effects
 				(font
@@ -5773,7 +5773,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "Schottky 40V 2A (要選定)"
+		(property "Value" "MBR230LSFT1G"
 			(at 233.68 73.66 90)
 			(effects
 				(font
@@ -6119,7 +6119,7 @@
 				)
 			)
 		)
-		(property "Value" "100 (仮)"
+		(property "Value" "100"
 			(at 227.33 83.82 90)
 			(effects
 				(font

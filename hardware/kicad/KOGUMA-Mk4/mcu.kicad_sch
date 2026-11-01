@@ -5595,7 +5595,7 @@
 				)
 			)
 		)
-		(property "Value" "BLM18PG221 (仮)"
+		(property "Value" "BLM18PG221SN1D"
 			(at 201.93 35.56 90)
 			(effects
 				(font

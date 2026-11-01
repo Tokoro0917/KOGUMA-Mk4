@@ -773,7 +773,7 @@
 				)
 			)
 		)
-		(property "Value" "NUM0"
+		(property "Value" "APTD1608LSURCK (NUM0)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "9b82dc78-f02b-47e1-ad9e-818d578f99db")
@@ -2333,7 +2333,7 @@
 				)
 			)
 		)
-		(property "Value" "NUM3"
+		(property "Value" "APTD1608LSURCK (NUM3)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "59f02b4f-b5e4-43fe-9768-527c36864751")
@@ -3837,7 +3837,7 @@
 				)
 			)
 		)
-		(property "Value" "47u 25V"
+		(property "Value" "T521V476M025ATE040 (47u 25V)"
 			(at 0 3.1 0)
 			(layer "F.Fab")
 			(uuid "519234eb-88ec-44eb-9a40-b6e10fb4e205")
@@ -4772,7 +4772,7 @@
 				)
 			)
 		)
-		(property "Value" "MODE0"
+		(property "Value" "APTD1608LSURCK (MODE0)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "8599fd5a-b65a-4744-80b8-f80369a6803e")
@@ -4957,7 +4957,7 @@
 				)
 			)
 		)
-		(property "Value" "NUM1"
+		(property "Value" "APTD1608LSURCK (NUM1)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "5ce73a74-e271-4709-b147-2344c6b45f9c")
@@ -5142,7 +5142,7 @@
 				)
 			)
 		)
-		(property "Value" "POWER"
+		(property "Value" "APTD1608LZGCK (POWER)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "326d55d7-dd0e-4da8-9612-3d029cd58355")
@@ -6747,7 +6747,7 @@
 				)
 			)
 		)
-		(property "Value" "BLM18PG221"
+		(property "Value" "BLM18PG221SN1D"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "fb851d36-0669-40b3-a8d8-b3a809458ef6")
@@ -7924,7 +7924,7 @@
 				)
 			)
 		)
-		(property "Value" "100 (仮)"
+		(property "Value" "100"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "c637b872-2dbe-4653-a0e6-8dfd956a0d37")
@@ -9661,7 +9661,7 @@
 				)
 			)
 		)
-		(property "Value" "NUM2"
+		(property "Value" "APTD1608LSURCK (NUM2)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "0d2b2a76-62f4-4158-a4ad-bad19eb1fdc6")
@@ -11353,7 +11353,7 @@
 				)
 			)
 		)
-		(property "Value" "MODE1"
+		(property "Value" "APTD1608LSURCK (MODE1)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "07968dd8-0c42-48e4-bd27-e53bb2d0e6a2")
@@ -12952,7 +12952,7 @@
 				)
 			)
 		)
-		(property "Value" "FRONT"
+		(property "Value" "APTD1608LSURCK (FRONT)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "1261967f-8e77-4de2-b99a-d3fb72c42c63")
@@ -13817,7 +13817,7 @@
 				)
 			)
 		)
-		(property "Value" "0 (仮)"
+		(property "Value" "0"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "60153b2a-4450-4cf1-9120-d5f6a8bc6cb5")
@@ -15494,7 +15494,7 @@
 				)
 			)
 		)
-		(property "Value" "0 (仮)"
+		(property "Value" "0"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "86ddbe8d-9c66-46b6-b71e-d04b7b898f74")
@@ -18116,7 +18116,7 @@
 				)
 			)
 		)
-		(property "Value" "MODE2"
+		(property "Value" "APTD1608LSURCK (MODE2)"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "1455eb46-d39b-438b-a216-864c05b51dd9")
@@ -19115,7 +19115,7 @@
 				)
 			)
 		)
-		(property "Value" "Schottky 40V 2A (要選定)"
+		(property "Value" "MBR230LSFT1G"
 			(at 0 2.1 0)
 			(layer "F.Fab")
 			(uuid "52aaf62a-89ec-4411-8980-a814faafdf47")
@@ -19527,7 +19527,7 @@
 				)
 			)
 		)
-		(property "Value" "BLM18PG221 (仮)"
+		(property "Value" "BLM18PG221SN1D"
 			(at 0 1.43 0)
 			(layer "F.Fab")
 			(uuid "d178d855-eb50-4b60-86dc-88603100d40a")
@@ -23743,7 +23743,7 @@
 			(uuid "62ffa52a-d181-465f-924f-03b5bdfb4b37")
 		)
 		(fp_text user "HOLDER"
-			(at -2.020001 3.5 187)
+			(at -2.020002 3.5 187)
 			(layer "B.Fab")
 			(uuid "b1e9abf7-dd95-4f7c-b2bb-218757ec3d15")
 			(effects

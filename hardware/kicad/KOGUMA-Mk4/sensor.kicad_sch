@@ -10367,7 +10367,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "BLM18PG221"
+		(property "Value" "BLM18PG221SN1D"
 			(at 38.1 185.42 0)
 			(effects
 				(font
