@@ -37,7 +37,8 @@ from shapely import affinity
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../docs/calc/frame'))
 import design as dz
 
-VER = 'v17'   # v17(2026-11-01): エンコーダ基板を ToraNeko と同じく基板の裏に突き当ててはんだ付け(穴 NPTH 1.0 × 5.9mm をやめた)。突き当てる所を x ±3.0 にし、まわりの縁がわずかに広がった(+1mm²)
+VER = 'v18'   # v18(2026-11-01): 上から見てモーターマウント(v20)が隠れるように、マウントの箱と後ろの耳へのつなぎを覆う。41T・タイヤの切り欠きの縁を |y| 25.0 → 26.1
+MOUNT_COVER = True   # v17(2026-11-01): エンコーダ基板を ToraNeko と同じく基板の裏に突き当ててはんだ付け(穴 NPTH 1.0 × 5.9mm をやめた)。突き当てる所を x ±3.0 にし、まわりの縁がわずかに広がった(+1mm²)
 FAN = (dz.FAN_X, 0.0)
 HUB_HOLE = 7.0          # ファンのハブ(半径5.35、z 16.0 まで)とモーターを通す穴の半径
 HOLE = 2.2              # M2 の通し穴
@@ -45,7 +46,7 @@ REAR, FRONT = -30.0, 47.5        # 後ろの縁(LED を並べる。電池の後�
 FRAME_MARGIN = 3.0      # 外形はフレームの外形と平行に 3mm 内側(v8 は 1.5mm)
 NOTCH_C, NOTCH_R = (51.0, 0.0), 20.0   # 前の切り欠き(クワガタの腕の間)の円弧。x 31 まで(ファンの輪の前の端は x 31.7。v8 は半径 19)
 REAR_Y = 26.5           # 後ろ(車輪より後ろ)の横の縁 |y|
-WHEEL_CUT = (-8.0, 8.5, 25.0)   # 41T・タイヤの所は基板を置かない: x0 ≤ x ≤ x1 で |y| > y0(41T の一番上は z 13.95)
+WHEEL_CUT = (-8.0, 8.5, 26.1)   # 41T・タイヤの所は基板を置かない: x0 ≤ x ≤ x1 で |y| > y0(41T の一番上は z 13.95、41T の内の面は |y| 26.3)。v18 から 25.0 → 26.1(マウントの外の面まで覆う)
 R_IN, R_OUT = 3.0, 5.0  # へこんだ角、出っ張った角の丸み(v8・v9)
 CORE_FAN_R = 14.0       # v10: 芯にするファンのまわりの円の半径
 NECK_W, R_HORN = 9.0, 7.0   # v10: センサと芯をつなぐ首の幅、角のつけ根の丸み(v11 も R_HORN でへこんだ角を丸める)
@@ -185,6 +186,22 @@ def outline_v14():
     o = o.difference(box(x0, y0, x1 - 0.3, 60)).difference(box(x0, -60, x1 - 0.3, -y0))        # 41T・タイヤ
     return o.difference(pockets(o)).difference(Point(FAN).buffer(HUB_HOLE, 64))
 
+def mount_cover():
+    """v18: モーターマウント v20(mount2.py)を上から見た形(箱と、後ろの耳へのつなぎ)。左右"""
+    import os, sys, math
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../motor_mount'))
+    import mount2 as m2
+    P = m2.P
+    mx, mz = m2.motor_center(P)
+    x0 = mx - (P['motor_d'] / 2 + P['wall'])
+    y_out = -P['brg_face']                        # 外のつばの受けの輪の外の面
+    (rx, ry) = P['screw_rear']; lw = P['link_w'] / 2
+    out = []
+    for s in (1, -1):
+        out.append(box(x0, min(s * P['motor_end'], s * y_out), P['axle'][0] + P['box_front'], max(s * P['motor_end'], s * y_out)))
+        out.append(box(rx, min(s * (-ry - lw), s * (-ry + lw)), x0 + 0.5, max(s * (-ry - lw), s * (-ry + lw))))
+    return out
+
 def outline_v15(r_in=R_REAR, r_out=2.0):
     """v15: v14 の後ろを、ToraNeko.Mk3 と同じく V 字に切り欠き、左右の角(羽)に LED を載せる形にする"""
     x0, x1, y0 = WHEEL_CUT
@@ -192,6 +209,7 @@ def outline_v15(r_in=R_REAR, r_out=2.0):
     yi, yo = LED_WING
     rear = Polygon([(BAT[0] - 1, yo), (REAR, yo), (REAR, yi), (LED_APEX, 0.0), (REAR, -yi), (REAR, -yo), (BAT[0] - 1, -yo)])
     keep = unary_union([box(BAT[0] - 1, -REAR_SIDE, BAT[1] + 1, REAR_SIDE), rear]
+                       + (mount_cover() if MOUNT_COVER else [])
                        + [Point(p).buffer(POST_BOSS) for p in SCREWS]
                        + [box(a - ENC_RIM, c - ENC_RIM, b + ENC_RIM, d + ENC_RIM) for a, b, c, d in ENC])
     o = unary_union([v11.difference(box(-60, -60, REAR_X, 60)), keep.intersection(v11)])
