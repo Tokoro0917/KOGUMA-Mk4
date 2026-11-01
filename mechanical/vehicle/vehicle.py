@@ -111,14 +111,16 @@ P2 = (dict(mm.P_V1, pcb_post=Z_PCB) if CFG['screws'] == 'steel' else dict(mm.P_V
            nut_depth=SC['depth'], hole_d=SC['hole']))
 if TAP:
     P2 = dict(P2, hole_d=SC['tap'], tap=True)
-if CFG.get('fan') == 'spider':      # 2026-10-20 から: 今の mount.py の形(v5〜。前の耳から腕を伸ばしてファンの台を持ち、前の耳の上にも基板の柱)
+MM = mm
+if CFG.get('fan') == 'spider':      # 2026-11-01 から: 作り直したマウント v20(mount2.py、一つの箱から)。それまでは mount.py(v5〜v16)
+    import mount2 as MM
     _jx, _jy = dz.FAN_JOINTS[0]
-    P2 = dict(mm.P, pcb_post=Z_PCB, fan_joint=(_jx, -abs(_jy)))
+    P2 = dict(MM.P, pcb_post=Z_PCB, fan_joint=(_jx, -abs(_jy)))
 (xr_, yr_), (xf_, yf_) = dz.MOUNT_SCREWS
 P2 = dict(P2, screw_front=(xf_, -yf_), screw_rear=(xr_, -yr_))     # ねじの位置はフレームに合わせる(右側なので y は負)
-mx, mz = mm.motor_center(P2)
+mx, mz = MM.motor_center(P2)
 right = {}
-right['mount'] = (mm.build(P2).val(), 'resin')
+right['mount'] = (MM.build(P2).val(), 'resin')
 tn = cq.importers.importStep(os.path.join(HERE, '../motor_mount/tn_drive_mk4_right.step')).val().Solids()
 for s in tn:
     bb = s.BoundingBox()
@@ -140,10 +142,12 @@ for s in tn:
     if abs(bb.ymin + 23.7) < 0.05:
         right['magnet'] = (s, 'ndfeb'); continue
     if abs((bb.xmax - bb.xmin) - 7.2) < 0.05:
-        if bb.ymin > -26:     # 内の軸受: マウント v15 から外の軸受に突き当てる(内の壁 y brg_seat_in。v14 までは -23.1)
+        if bb.ymin > -26 and MM is mm:     # 内の軸受: マウント v15 から外の軸受に突き当てる(内の壁 y brg_seat_in。v14 までは -23.1)
             s = s.translate(cq.Vector(0, P2['brg_seat_in'] + 23.1, 0))
+        if bb.ymin > -26 and MM is not mm:  # v20: 内の軸受は外の軸受に突き当てて y -24.7〜-22.7
+            s = s.translate(cq.Vector(0, -0.2, 0))
         right['brg_out' if bb.ymin < -26 else 'brg_in'] = (s, 'steel'); continue
-if mm.P.get('stop_tabs'):   # マウント v16 から内の軸受は MR63(つばなし 3 × 6 × 2)。外の LF-630 に突き当てる(y -24.7〜-22.7)
+if mm.P.get('stop_tabs') or P2.get('inner_bearing') == 'MR63':   # マウント v16 から内の軸受は MR63(つばなし 3 × 6 × 2)。外の LF-630 に突き当てる(y -24.7〜-22.7)
     right['brg_in'] = (cq.Workplane().add(right['brg_in'][0]).intersect(ycyl(3.0, -25.0, -22.0, 0, 7.5)).val(), 'steel')   # LF-630 の形からつばを除く
 right['tire'] = (ycyl(7.5, -31.8, -28.3, 0, 7.5).cut(ycyl(5.75, -31.9, -28.2, 0, 7.5)).val(), 'rubber')
 right['motor'] = (ycyl(4.3, P2['motor_face'], P2['motor_face'] + 20.0, mx, mz).union(
