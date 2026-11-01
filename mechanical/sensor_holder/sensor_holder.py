@@ -9,9 +9,9 @@ v3(2026-10-31): **下の端をフレームに当てる**(フレームとの間 0
                (下の端 z 3.3)。穴の位置(光の高さ)は同じ。下の端から後ろへ**足**(長さ 3.5mm、厚さ 1.0mm)を出し、フレームの骨に当たる面積を増やす
                (横の2本は、ホルダの真下がほとんど窓なので、足がないとカーボンに当たるのが 6mm² だけ。足で 18mm²)。
                フレームがたわんでもぶつからず、基板の前の板をフレームで支えて揺れを減らす
-v4(2026-11-01): **足をやめ、ホルダの下の方をそのまま後ろへ太くして下まで伸ばす**(基板から 5.0mm より下を、後ろへ 2.2mm 厚く)。
-               フレームに当たる面 6.0 × 6.24mm(37mm²)。発光の穴はその太い所を後ろまで通す(足は後ろの面の 0.8mm 後ろで上へ曲げる)。
-               受光の足(基板から 3.2mm、後ろの面の 0.85mm 後ろで上へ)は太い所より上を通る。フレームはこの下の端の真下 + 1mm を窓なしにする
+v4(2026-11-01): **足をやめ、ホルダの形のままそのまま下まで伸ばす**(6.0 × 4.04mm の四角い柱、高さ 10.3mm)。
+               **丸めていた角をすべて角にし**、下の端の面(6.0 × 4.04mm = 24mm²)を全部平らにして、そこに緩衝材(両面テープ)を貼ってフレームに当てる。
+               フレームはこの下の端の真下 + 1mm を窓なしにする
 座標 [mm]: 原点は前の面(光が出る面)の真ん中で、基板に付ける面。+y が光の向き、x は幅、+z は基板から離れる向き
 (基板の裏に付けるので、機体では下向き)。ほぞは −z 側(基板の穴に入る)。
 使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v2.step / .stl / .png
@@ -23,10 +23,10 @@ P = dict(
     w=6.0, d=4.04, h=10.3,          # 幅、奥行き(前の面から後ろの面まで)、基板の面からの高さ(v3。v2 は 9.9、v1・ToraNeko は 10.5)
     hole_d=3.2,                     # 発光・受光を入れる穴(ToraNeko と同じ。φ3 の T-1 が入る)
     z_emit=7.6, z_recv=3.2,         # 穴の中心の基板の面からの距離。遠い方が発光、近い方が受光(ToraNeko と同じ並び。v1・ToraNeko は 8.1・3.5)
-    r_front=1.6, r_top_front=1.6, r_top_side=1.0,   # 角の丸み: 前の縦の辺、前の端(基板から遠い所)の辺、端の横の辺
+    r_front=0.0, r_top_front=0.0, r_top_side=0.0,   # 角の丸み: 前の縦の辺、前の端(基板から遠い所)の辺、端の横の辺。v4 はすべて角(v3 までは 1.6・1.6・1.0)
     peg_w=3.0, peg_d=3.0, peg_back=0.0, peg_t=0.6, peg_r=0.4,   # ほぞ: 幅、奥行き、後ろの面からのずれ、長さ(基板の厚さ)、縦の角の丸み
     foot_l=0.0, foot_t=1.0, foot_r=1.0,    # v3: 下の端から後ろへ出す足の長さ、厚さ、後ろの角の丸み(v4 はなし)
-    base_d=2.2, base_z=5.0, base_r=0.5,    # v4: 基板から base_z より下を、後ろへ base_d 厚くする。後ろの縦の角の丸み
+    base_d=0.0, base_z=5.0, base_r=0.5,    # (使わない。2026-11-01 の最初の v4 案: 基板から base_z より下を、後ろへ base_d 厚くする)
 )
 VER = 'v4'
 MOUNT = 'bottom'     # 基板の裏に付ける(2026-10-30)
@@ -34,12 +34,15 @@ MOUNT = 'bottom'     # 基板の裏に付ける(2026-10-30)
 def holder(P=P):
     w, d, h = P['w'], P['d'], P['h']
     body = cq.Workplane('XY').box(w, d, h, centered=(True, False, False)).translate((0, -d, 0))
-    body = body.edges('|Z and >Y').fillet(P['r_front'])                      # 前の縦の辺
-    body = body.edges('>Z and >Y').fillet(P['r_top_front'] - 0.01)           # 前の上の辺
-    try:
-        body = body.edges('>Z and |Y').fillet(P['r_top_side'])               # 上の横の辺(後ろ側)
-    except Exception:
-        pass
+    if P['r_front']:
+        body = body.edges('|Z and >Y').fillet(P['r_front'])                  # 前の縦の辺
+    if P['r_top_front']:
+        body = body.edges('>Z and >Y').fillet(P['r_top_front'] - 0.01)       # 前の上の辺
+    if P['r_top_side']:
+        try:
+            body = body.edges('>Z and |Y').fillet(P['r_top_side'])           # 上の横の辺(後ろ側)
+        except Exception:
+            pass
     if P.get('base_d'):     # v4: 下の方を後ろへ太くして、そのまま下まで伸ばす
         bd = P['base_d']
         base = (cq.Workplane('XY').box(w, bd + 0.5, h - P['base_z'], centered=(True, False, False))
