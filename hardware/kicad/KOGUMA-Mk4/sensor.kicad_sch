@@ -9501,7 +9501,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "KOGUMA-Mk4:ENC_Base_Slot"
+		(property "Footprint" "KOGUMA-Mk4:ENC_Base_Butt"
 			(at 220.98 231.14 0)
 			(effects
 				(font
@@ -9900,7 +9900,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "KOGUMA-Mk4:ENC_Base_Slot"
+		(property "Footprint" "KOGUMA-Mk4:ENC_Base_Butt"
 			(at 284.48 231.14 0)
 			(effects
 				(font
@@ -10327,7 +10327,7 @@
 		)
 		(uuid "26792cd9-1a7b-4346-ac1e-67988dc6620f")
 	)
-	(text "エンコーダ: MT6835(TSSOP-16、SPI モード3、最高 約16MHz)を小さな基板(5.3 × 12.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\nエンコーダの基板はメイン基板の穴(ENC_Base_Slot)を通し、上の面でパッド7つをはんだ付けする(線は使わない)。\nENC_CAL は2個の CAL_EN(左右共通、MCU の PC15)。校正のときだけ H にする。J5 は左、J6 は右(右は 180° 回して置く)。"
+	(text "エンコーダ: MT6835(TSSOP-16、SPI モード3、最高 約16MHz)を小さな基板(6.0 × 10.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\nエンコーダの基板はメイン基板の裏に突き当て(2026-11-02、穴はなし)、裏のパッド7つ(ENC_Base_Butt)とはんだ付けする(線は使わない)。\nENC_CAL は2個の CAL_EN(左右共通、MCU の PC15)。校正のときだけ H にする。J5 は左、J6 は右(右は 180° 回して置く)。"
 		(exclude_from_sim no)
 		(at 198.12 210.82 0)
 		(effects

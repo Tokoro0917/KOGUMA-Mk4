@@ -1,7 +1,7 @@
 """メイン基板(KOGUMA-Mk4.kicad_pcb)を回路図から起こす(2026-10-31)
 - 回路図のネットリスト(kicad-cli で書き出す)から部品とネットを読む
 - 外形は mechanical/vehicle/pcb_shape.py の outline()(今は v18)。円弧はできるだけ円弧にする
-- 位置が決まっている部品だけ置く: 壁センサ(裏、pcb_shape.SENS)、エンコーダの基板の穴(J5・J6)、UI の LED 8個、マウントの柱の穴 H1〜H4
+- 位置が決まっている部品だけ置く: 壁センサ(裏、pcb_shape.SENS)、エンコーダの基板を突き当てる裏のパッド(J5・J6)、UI の LED 8個、マウントの柱の穴 H1〜H4
 - ほかの部品は基板の右(前)の外に、シートごとに並べておく(あとで配置する)
 - 2層、0.6mm。設計ルールはエンコーダの基板・ToraNeko.Mk3 と同じ(KOGUMA-Mk4.kicad_pro)
 座標: 機体の座標(原点は車軸の中心、+x 前、+y 左)を KiCad の (OX + x, OY − y) に置く。上から見て前が右、左が上
@@ -129,7 +129,7 @@ for nm, ((x, y), ang) in ps.SENS.items():
             cx = (min(p[0] for p in pts) + max(p[0] for p in pts)) / 2; cy = (min(p[1] for p in pts) + max(p[1] for p in pts)) / 2
             c = ps.slot(nm).centroid
             assert math.hypot(cx - c.x, cy - c.y) < 0.6, (nm, cx, cy, c.x, c.y)
-# エンコーダの基板の穴: 左 J5 は 0°、右 J6 は 180°(穴の真ん中が原点)
+# エンコーダの基板を突き当てる所: 左 J5 は 0°、右 J6 は 180°(エンコーダ基板の真ん中が原点)
 for ref, (x0, x1, y0, y1), a in (('J5', ps.ENC[1], 0), ('J6', ps.ENC[0], 180)):
     FPS[ref].SetPosition(P((x0 + x1) / 2, (y0 + y1) / 2)); FPS[ref].SetOrientationDegrees(a)
 # UI の LED: 後ろの角の4個がナンバー(左から NUM3〜NUM0)、V 字の先の3個がモード(左から MODE2〜MODE0)。
