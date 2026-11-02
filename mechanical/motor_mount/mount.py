@@ -69,7 +69,18 @@ P_V8 = dict(P)
 #   くぼみの後ろの端を x -3.8 → -4.0 にし、モーターの穴とつなげる(内の軸受のつばとモーターの間は 0.2mm しかなく、間に 0.2mm の薄い壁が残っていたため。v8 まで)
 #   くぼみの底を z 3.7 → 3.8(床の厚さ 0.8mm)、上の縁の肉を後ろ x -4.2 まで伸ばしてモーターの筒とつなげる
 P.update(enc_face=dict(x0=-2.8, bx0=-4.2, x1=6.0, wx1=5.4, ztop=13.6, px1=4.0, pz1=11.3), pocket=(4.0, 3.8, 14.0))
-VER = 'v9'
+# v10(2026-11-01): 穴を寸法どおりにすると固定できないので、マイナス公差(しまりばめ)にする。
+#   モーターの穴 φ8.6 → φ8.5、軸受の穴 φ6.0 → φ5.9(当たり面3つの所。逃がした所は今までどおり半径 +0.1mm)。
+#   印刷の誤差 ±0.2mm に対して、当たり面だけが押されてつぶれる。きつすぎるときは当たり面をカッターで軽く削る
+#   当たり面は 60° 回し、2つの穴の間の壁(0.8mm)の所(±30°)は寸法どおりの円にする(当たり面を置くと、壁が両側から 0.05mm ずつ押されてつぶれるため)
+P.update(bore_clear=-0.1, brg_clear=-0.1, wall_free=30.0)
+P_V9 = dict(P, bore_clear=0.0, brg_clear=0.0)
+# v11(2026-11-01): エンコーダ基板(6.0 × 10.3mm、x -3.0〜3.0、y -21.0〜-20.4)を**マウントの面に当てる**。
+#   面を y -21.1 → -21.0 にし(基板との 0.1mm のすき間をなくす。チップと磁石の 0.5mm は変わらない)、
+#   基板の後ろの端の受けを x -2.8 → -3.1 にした(v10 は 5.3mm 幅の基板のままで、6.0mm 幅の基板と x -3.0〜-2.8 で重なっていた)
+P.update(enc_slot=(-21.0, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-3.1))
+P_V10 = dict(P, enc_slot=(-21.1, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-2.8))
+VER = 'v11'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -120,10 +131,19 @@ def build(P=P):
     body = body.cut(ycyl(P['motor_d'] / 2 + P['bore_clear'] / 2, P['motor_face'], P['cradle_end'] + 1, mx, mz))
     if P.get('pads'):     # 3点で受ける: 当たり面の1つを相手の穴の側に向ける
         a_m = math.atan2(az - mz, ax - mx)
-        body = body.cut(relief(P['motor_d'] / 2 + P['pad_relief'], P['motor_face'], P['cradle_end'] + 1, mx, mz, a_m, P['pad_w']))
-        body = body.cut(relief(P['brg_od'] / 2 + P['pad_relief'], P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az, a_m + math.pi, P['pad_w']))
+        if P.get('wall_free'):   # v10: 当たり面を 60° 回し、2つの穴の間の壁(0.8mm)には当たり面も逃がしも置かない(寸法どおりの円)
+            hw = math.radians(P['wall_free'])
+            ym0, ym1 = P['motor_face'], P['cradle_end'] + 1
+            yb0, yb1 = P['brg_seat_out'] - 1, P['brg_seat_in']
+            body = body.cut(relief(P['motor_d'] / 2 + P['pad_relief'], ym0, ym1, mx, mz, a_m + math.pi / 3, P['pad_w'], keep=(a_m, hw)))
+            body = body.cut(relief(P['brg_od'] / 2 + P['pad_relief'], yb0, yb1, ax, az, a_m + math.pi + math.pi / 3, P['pad_w'], keep=(a_m + math.pi, hw)))
+            body = body.cut(ycyl(P['motor_d'] / 2, ym0, ym1, mx, mz).intersect(wedge(P['motor_d'], ym0, ym1, mx, mz, a_m, hw)))
+            body = body.cut(ycyl(P['brg_od'] / 2, yb0, yb1, ax, az).intersect(wedge(P['brg_od'], yb0, yb1, ax, az, a_m + math.pi, hw)))
+        else:
+            body = body.cut(relief(P['motor_d'] / 2 + P['pad_relief'], P['motor_face'], P['cradle_end'] + 1, mx, mz, a_m, P['pad_w']))
+            body = body.cut(relief(P['brg_od'] / 2 + P['pad_relief'], P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az, a_m + math.pi, P['pad_w']))
     body = body.cut(ycyl(P['lip_hole'] / 2, y_out - 1, P['motor_face'] + 0.01, mx, mz))
-    body = body.cut(ycyl(P['brg_od'] / 2, P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az))
+    body = body.cut(ycyl(P['brg_od'] / 2 + P.get('brg_clear', 0.0) / 2, P['brg_seat_out'] - 1, P['brg_seat_in'], ax, az))
     px, pz0, pz1 = P['pocket']
     ef = P.get('enc_face')
     if ef:   # v9: エンコーダ基板をマウントの面に当てて接着する(裏から支えない)
@@ -175,10 +195,19 @@ def build(P=P):
             body = body.cut(cone_z(P['hole_d'] / 2, z0, 1, hx, hy)).cut(cone_z(P['hole_d'] / 2, z1, -1, hx, hy))
     return body
 
-def relief(r, y0, y1, x, z, a, w):
-    """穴のまわりを半径 r まで逃がし、幅 w の当たり面を角度 a(xz 面、x から z へ)と a ± 120° に残す形(これを削る)"""
+def wedge(R, y0, y1, x, z, a, hw):
+    """(x, z) から角度 a ± hw の扇形(半径 R)を y 方向に伸ばした形"""
+    lo, hi = min(y0, y1), max(y0, y1)
+    pts = [(0, 0)] + [(R * math.cos(a + t), R * math.sin(a + t)) for t in (-hw, -hw / 2, 0, hw / 2, hw)]
+    return cq.Workplane('XZ', origin=(x, 0, z)).polyline(pts).close().extrude(-(hi - lo)).translate((0, lo, 0))
+
+def relief(r, y0, y1, x, z, a, w, keep=None):
+    """穴のまわりを半径 r まで逃がし、幅 w の当たり面を角度 a(xz 面、x から z へ)と a ± 120° に残す形(これを削る)。
+    keep=(角度, 半角) の扇形も逃がさない"""
     rel = ycyl(r, y0, y1, x, z)
     lo, hi = min(y0, y1), max(y0, y1)
+    if keep:
+        rel = rel.cut(wedge(r + 2, y0, y1, x, z, keep[0], keep[1]))
     for k in range(3):
         b = a + k * 2 * math.pi / 3
         pad = (cq.Workplane().box(r + 1, hi - lo, w, centered=(False, False, True))
