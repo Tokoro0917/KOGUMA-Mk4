@@ -1,0 +1,44 @@
+* 03 Wall-sensor TIA: step response to a photocurrent pulse (.tran)
+* Photocurrent 0 -> 2 uA (output ~0.15 V -> ~1.79 V), 10 ns edges
+* (SFH 229 FA tr = 10 ns), pulse width 8 us.  Emitter (NJU6080) turn-on
+* delay (2.5 us) is NOT included - this is the receiver alone.
+* Output: out/tran_cf<val>.txt (time, v(out)), out/tran_adcrc.txt (time, v(adc))
+.include lib/models.lib
+.param cf=0.5p cpcb=1p radc=1m cadc=1f
+
+V33  v3a 0 DC 3.3
+R78  v3a pdb 1k
+R79  pdb 0 47
+XC80 pdb 0 MLCC C=10u esr=5m esl=0.6n
+XU   pdb inn out v3a 0 OPA2354B
+R74  inn out 820k
+C74  inn out {cf}
+Cpcb inn 0 {cpcb}
+XPD  0 inn SFH229FA Cj=11.5p
+Iph  inn 0 PULSE(0 2u 2u 10n 10n 8u 40u)
+* optional RC at the ADC pin (default: none)
+Radc out adc {radc}
+Cadc adc 0 {cadc}
+
+.control
+set wr_singlescale
+set wr_vecnames
+foreach val 0.2p 0.5p 0.8p 1.0p
+  alterparam cf = $val
+  reset
+  destroy all
+  tran 2n 14u 0 2n
+  set fn = "out/tran_cf{$val}.txt"
+  wrdata $fn v(out)
+end
+* Cf 0.5p with 220 ohm + 1 nF at the ADC pin
+alterparam cf = 0.5p
+alterparam radc = 220
+alterparam cadc = 1n
+reset
+destroy all
+tran 2n 14u 0 2n
+wrdata out/tran_adcrc.txt v(adc)
+quit
+.endc
+.end

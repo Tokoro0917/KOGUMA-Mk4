@@ -1,0 +1,45 @@
+* 07 Motor current sense: MP6551 CM -> RREF (R22/R23 4.7k + 4.7k, VREF 1.65 V)
+*    + C23 1 nF -> ADC2.  CM = I(low-side FET)/10,000 (+side 120 uA/A,
+*    MP6551 datasheet table). Read side = the low-side FET that stays on, so
+*    I(CM) follows the motor current continuously (docs/spec.md).
+* Motor NFP-D8620: R 1 ohm (+27 mOhm driver), L = 30 uH (ASSUMED, not
+*    measured yet), back-EMF 4 V. VBAT 12 V. Center-aligned PWM 50 kHz,
+*    slow decay.  Duty 0.5 -> 0.6 at t = 400 us.
+* Output: out/cm_tran.txt (time, imot, v(cm), tri, sw) and out/cm_ac.txt
+.include lib/models.lib
+.param lm=30u fpwm=50k
+
+* center-aligned carrier: valley at t = 0, 20u, ...; ON while tri < duty
+Vtri tri 0 PULSE(0 1 0 {0.5/fpwm-1n} {0.5/fpwm-1n} 1n {1/fpwm})
+Bdut dut 0 V = 0.5 + 0.1*u(time-400u)
+Bsw  sw 0 V = 6*(1+tanh((v(dut)-v(tri))*500))
+Rm   sw m1 1.027
+Lm   m1 m2 {lm} ic=1.45
+Vemf m2 m3 DC 4
+Vsen m3 0 DC 0
+* CM current output into RREF / VREF network
+V33  v33 0 DC 3.3
+Bcm  0 cm I = 1.2e-4*i(Vsen)
+R22  v33 cm 4.7k
+R23  cm 0 4.7k
+C23  cm 0 1n ic=2.06
+* AC of the RREF/C23 network alone (current in -> V out, normalised)
+Iac  0 cma DC 0 AC 1
+R22a v33 cma 4.7k
+R23a cma 0 4.7k
+C23a cma 0 1n
+
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+ac dec 50 100 100MEG
+let hcm = mag(v(cma))/2350
+wrdata out/cm_ac.txt hcm
+tran 10n 600u 0 5n uic
+linearize
+let imot = i(Vsen)
+wrdata out/cm_tran.txt imot v(cm) v(tri) v(sw)
+quit
+.endc
+.end

@@ -51,12 +51,14 @@ ASSIGN = [
     ('PC11', 'SPI3_MISO', 'IMU_MISO',  'IMU MISO'),
     ('PC12', 'SPI3_MOSI', 'IMU_MOSI',  'IMU MOSI'),
     ('PA15(JTDI)', 'GPIO_Output', 'IMU_CS',  'IMU チップセレクト'),
+    ('PD2',  'GPIO_EXTI2', 'IMU_INT', 'IMU の INT1(データ準備完了の割り込み、EXTI2。2026-10-31)'),
     # 通信・デバッグ
     ('PB6',  'USART1_TX', 'UART_TX',   'PCへ(USBシリアル変換)'),
     ('PB7',  'USART1_RX', 'UART_RX',   'PCから'),
     ('PA13(JTMS/SWDIO)', 'DEBUG_JTMS-SWDIO', 'SWDIO', '書き込み・デバッグ'),
     ('PA14(JTCK/SWCLK)', 'DEBUG_JTCK-SWCLK', 'SWCLK', '書き込み・デバッグ'),
     # 表示・入力
+    ('PB3(JTDO/TRACESWO)', 'GPIO_Output', 'LED_FRONT', '前の LED(D98。2026-10-31)'),
     ('PA0',  'GPIO_Output', 'LED_MODE0', 'モード ビット0'),
     ('PA1',  'GPIO_Output', 'LED_MODE1', 'モード ビット1'),
     ('PA2',  'GPIO_Output', 'LED_MODE2', 'モード ビット2'),

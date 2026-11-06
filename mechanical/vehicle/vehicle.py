@@ -324,7 +324,8 @@ add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 
 # ---------------- 電池 ----------------
 b = BAT
-add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + b['lz'] / 2)), 'battery')
+BAT_LIFT = 2.1     # 2026-10-31: 電池は基板の部品の上に載せる(電池の下は高さ 2.1mm まで: タンタル 2.0mm、SO-8 1.75mm)
+add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + BAT_LIFT + b['lz'] / 2)), 'battery')
 # 2026-10-31: 電池のホルダ(左右、mechanical/battery_holder)。基板の上のねじ4本の頭の下に耳をはさむ
 sys.path.insert(0, os.path.join(HERE, '../battery_holder'))
 import battery_holder as bh

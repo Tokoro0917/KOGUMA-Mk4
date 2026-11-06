@@ -1,0 +1,40 @@
+* 06 Fan current sense: R43 0.1 ohm (PGND) -> R44 1k -> C40 1u (GND) -> ADC1_INP9
+* Q40 IRLML6344 low side, PWM 50 kHz, D = 0.6. Fan motor current steps
+* 0 -> 1.67 A at t = 1 ms (1.0 A average battery current); motor L/R and
+* mechanics are ignored (ideal current step) to show the RC delay alone.
+* dsh = length of PGND (0.5 mm trace) that carries the fan current between
+*       the R43 ground pad and the point where GND is referenced (NT1 side).
+* Output: out/fan_<tag>.txt (time, v(adc), v(fsrc)) and out/fan_ac.txt
+.include lib/models.lib
+.param dsh=0 dfan=0.6 ifan=1.67
+
+Vpwm pw 0 PULSE(0 1 0 50n 50n {dfan/50k-50n} 20u)
+Bf   0 fsrc I = {ifan}*u(time-1m)*v(pw)
+R43  fsrc pf 0.1
+Xps  pf 0 TRACE len_mm={dsh} w_mm=0.5 lnh=0.7
+R44  fsrc adc 1k
+XC40 adc 0 MLCC C=1u esr=10m esl=0.5n
+* AC test of the RC alone (separate copy)
+Vac  ain 0 DC 0 AC 1
+R44a ain aadc 1k
+XC40a aadc 0 MLCC C=1u esr=10m esl=0.5n
+
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+ac dec 50 1 10MEG
+let hfan = mag(v(aadc))
+wrdata out/fan_ac.txt hfan
+foreach val 0 10
+  alterparam dsh = $val
+  reset
+  destroy all
+  tran 0.25u 9m 0 20n
+  linearize
+  set fn = "out/fan_d{$val}mm.txt"
+  wrdata $fn v(adc) v(fsrc)
+end
+quit
+.endc
+.end

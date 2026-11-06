@@ -2254,6 +2254,233 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "KOGUMA-Mk4:PGND"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "PGND"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "PGND_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "PGND_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:NetTie_2"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "NT"
+				(at 0 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "NetTie_2"
+				(at 0 -1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Net tie, 2 pins"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "net tie short"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Net*Tie*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "NetTie_2_0_1"
+				(polyline
+					(pts
+						(xy -1.27 0) (xy 1.27 0)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "NetTie_2_1_1"
+				(pin passive line
+					(at -2.54 0 0)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 2.54 0 180)
+					(length 2.54)
+					(name "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x02")
@@ -2346,7 +2573,7 @@
 		(uuid "2eea72c4-d570-4d19-8722-1b8e61433e33")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 30.48 82.55 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2363,7 +2590,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 30.48 86.36 0)
 			(effects
 				(font
@@ -2963,7 +3190,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "KOGUMA-Mk4:SW_Slide_SPDT_Alps_SSSS8"
 			(at 96.52 54.61 0)
 			(effects
 				(font
@@ -3652,7 +3879,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "47u 25V"
+		(property "Value" "T521V476M025ATE040 (47u 25V)"
 			(at 142.24 80.01 0)
 			(effects
 				(font
@@ -4534,7 +4761,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "POWER"
+		(property "Value" "APTD1608LSECK/J4-PF (POWER)"
 			(at 273.05 83.82 90)
 			(effects
 				(font
@@ -4760,7 +4987,7 @@
 		(uuid "4c4604bc-614a-434d-a7e6-3e2ed95794eb")
 	)
 	(symbol
-		(lib_id "power:GND")
+		(lib_id "KOGUMA-Mk4:PGND")
 		(at 133.35 95.25 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4777,7 +5004,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "GND"
+		(property "Value" "PGND"
 			(at 133.35 99.06 0)
 			(effects
 				(font
@@ -5360,6 +5587,281 @@
 			(justify left top)
 		)
 		(uuid "fdfd91d3-db17-49df-8cac-30e8456ba8d6")
+	)
+	(symbol
+		(lib_id "Device:NetTie_2")
+		(at 40.64 170.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "9c9c9539-328e-4ee6-9e32-bf5d8b37da68")
+		(property "Reference" "NT1"
+			(at 43.18 168.91 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "NetTie_2"
+			(at 43.18 171.45 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "NetTie:NetTie-2_SMD_Pad0.5mm"
+			(at 40.64 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 40.64 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 40.64 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e6c37234-5983-403e-b381-804fd725c13f")
+		)
+		(pin "2"
+			(uuid "8819ca84-13d9-4a6e-91d7-54215b48d525")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/3ced59ac-efb9-5b1e-b026-e42a9995f64f"
+					(reference "NT1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "KOGUMA-Mk4:PGND")
+		(at 38.1 170.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "79faca60-a92c-4356-b4ed-81c5b8d4945d")
+		(property "Reference" "#PWR90"
+			(at 38.1 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "PGND"
+			(at 38.1 173.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 38.1 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 38.1 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5368f96b-fb4e-46e0-9d8c-78318dea8e1e")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/3ced59ac-efb9-5b1e-b026-e42a9995f64f"
+					(reference "#PWR90")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 43.18 170.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "779005d4-fae3-4065-b8c4-b6468e957d4f")
+		(property "Reference" "#PWR91"
+			(at 43.18 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 43.18 173.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 43.18 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 43.18 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "dba12bd3-b99c-4038-90be-9b75d1d02a4c")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/3ced59ac-efb9-5b1e-b026-e42a9995f64f"
+					(reference "#PWR91")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(text "GND の分け方(2026-11-01、MK3 で吸引・車輪の PWM の電流が壁センサ FL・L にのったため):\nPGND = 電池の −、VBAT の大きいコンデンサ・TVS、DC-DC(LXDC55)と入出力のコンデンサ、モータードライバの GND・SR、ファンのシャント。\nGND(信号)とは NT1 の1か所だけでつなぐ。NT1 は DC-DC の出力のコンデンサの GND のそばに置き、大きい電流が信号の GND を流れないようにする"
+		(exclude_from_sim no)
+		(at 25.4 160.02 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e43c6fd8-b819-446a-bc01-08b3ff8ebcce")
+	)
+	(symbol
+		(lib_id "power:PWR_FLAG")
+		(at 43.18 170.18 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "77d7431e-4e62-4122-ba72-133fe1f901f3")
+		(property "Reference" "#FLG90"
+			(at 43.18 172.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "PWR_FLAG"
+			(at 43.18 166.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 43.18 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 43.18 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 43.18 170.18 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "62dc04d8-6375-44a8-bffc-ead2d8fe68d0")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/3ced59ac-efb9-5b1e-b026-e42a9995f64f"
+					(reference "#FLG90")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(embedded_fonts no)
 )
