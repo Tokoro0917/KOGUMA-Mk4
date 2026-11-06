@@ -1,4 +1,4 @@
-"""IC のまわりにコンデンサ(と、ノイズに効く小さな部品)を置き、IC ごとのグループにする(2026-11-06)
+"""IC のまわりにコンデンサと抵抗(と、ノイズに効く小さな部品)を置き、IC ごとのグループにする(2026-11-06)
 基板に部品を載せる前の準備。グループは基板の外(前の側)に並べるので、KiCad でグループごと基板に動かせる。
 
 置き方の決まり:
@@ -10,6 +10,8 @@
 - 発振子 Y1 は PH0・PH1 のピンの外に、辺に沿って置く。SMPS のインダクタ L1 は VLXSMPS のピンの外
 - DC-DC の出力のコンデンサ C7 の GND のパッドのとなりに NT1(PGND と GND の1点)を置く
 - エンコーダ基板のパスコン C86・C87 は、基板の上の J5・J6 の 3.3V のパッドの内側に置く(J5・J6 は位置が決まっているため)
+- 抵抗(2026-11-06): プルアップ・プルダウン・分圧・RC の抵抗は、つながる MCU のピンのそばに(ADC の分圧と RC は ADC のピンのすぐそば)。
+  LED の抵抗は、位置が決まっている LED のそばに基板の上で置く(基板の外形の内側、電池のホルダの載る所を避ける)
 使い方(このフォルダで): python3 place_caps.py  (gen_pcb.py で作った、部品を置く前の基板に対して使う)
 """
 import os, sys, math
@@ -139,13 +141,18 @@ mcu = [
     ('C64', 'U4', '1'),                                   # VBAT(VDD につなぐ。電流は小さい)
     ('C63', 'U4', '12'),                                  # NRST
     ('C62', 'U4', '68'),                                  # VDD のまとめの 4.7µF
+    ('R50', 'U4', '63'),                                  # BOOT0 のプルダウン
+    ('R40', 'U4', '42'),                                  # MOT_nFAULT のプルアップ
+    ('R81', 'U4', '59'), ('R82', 'U4', '60'),            # 壁センサの発光のプルダウン(PB4・PB5)
+    ('R83', 'U4', '40'), ('R84', 'U4', '41'),            # エンコーダの CS のプルアップ
 ]
 # ADC のフィルタのコンデンサ(レビュー: MCU のそばに)
 adc = {}
 u4 = FP['U4']
-for c in ('C9', 'C40', 'C23', 'C24', 'C33', 'C34'):
-    net = [p for p in FP[c].Pads() if p.GetNetname() not in ('GND',)][0].GetNetCode()
-    pin = [p.GetNumber() for p in u4.Pads() if p.GetNetCode() == net][0]
+for c in ('C9', 'C40', 'C23', 'C24', 'C33', 'C34', 'R5', 'R4', 'R44', 'R23', 'R22', 'R25', 'R24', 'R33', 'R32', 'R35', 'R34'):
+    # ADC のフィルタのコンデンサ、電池の分圧(R4・R5)、ファンの RC の R44、モーターの CM の VREF・RREF(4.7k × 2)
+    u4nets = {p.GetNetCode(): p.GetNumber() for p in u4.Pads()}
+    pin = [u4nets[p.GetNetCode()] for p in FP[c].Pads() if p.GetNetCode() in u4nets and p.GetNetname() not in ('GND', '+3V3')][0]
     mcu.append((c, 'U4', pin))
 GROUPS.append(cluster('U4 MCU', 'U4', mcu))
 
@@ -201,9 +208,12 @@ GROUPS.append(cluster('Q40 ファン', 'Q40', [
 ]))
 
 # ---------------- ブザー(BZ1)・スイッチ ----------------
-GROUPS.append(cluster('BZ1 ブザー', 'BZ1', [('C91', 'BZ1', '1'), ('D97', 'BZ1', '2'), ('Q90', 'BZ1', '2', dict(my_pin='3'))]))
+GROUPS.append(cluster('BZ1 ブザー', 'BZ1', [('C91', 'BZ1', '1'), ('D97', 'BZ1', '2'), ('Q90', 'BZ1', '2', dict(my_pin='3')), ('R97', 'Q90', '1')]))
 sw = [f.GetReference() for f in FP.values() if f.GetReference().startswith('SW') and any(p.GetNetname() == 'SW' for p in f.Pads())][0]
-GROUPS.append(cluster(f'{sw} スイッチ', sw, [('C90', sw, [p.GetNumber() for p in FP[sw].Pads() if p.GetNetname() == 'SW'][0])]))
+swpin = [p.GetNumber() for p in FP[sw].Pads() if p.GetNetname() == 'SW'][0]
+GROUPS.append(cluster(f'{sw} スイッチ', sw, [('C90', sw, swpin), ('R98', sw, swpin)]))
+GROUPS.append(cluster('FB2 +3V3A のフィルタ', 'FB2', [('R80', 'FB2', '2'), ('C85', 'R80', '2')]))
+GROUPS.append(cluster('D2 電源の LED', 'D2', [('R6', 'D2', '2')]))
 
 # ---------------- エンコーダ基板のパスコン(基板の上、J5・J6 の 3.3V のパッドの内側)----------------
 # J5・J6 のパッドは裏(エンコーダ基板の内側と外側に2列)。内側の列の 3.3V(1番)と GND(7番)の真上に、横向きに置き、
@@ -217,9 +227,64 @@ for c, j in (('C86', 'J5'), ('C87', 'J6')):
     face(c, '1', (1 if x1 > x7 else -1, 0))              # 3.3V のパッドを 1番の側に
     f.SetPosition(pcbnew.VECTOR2I(mm((x1 + x7) / 2), mm(yc)))
 
+# ---------------- LED の抵抗(基板の上、位置が決まっている LED のそば)----------------
+sys.path.insert(0, os.path.join(HERE, '../../../mechanical/vehicle'))
+import pcb_shape as ps
+from shapely.geometry import Point, box as sbox
+from shapely.ops import unary_union
+outline = ps.outline()                                   # 機体の座標の基板の外形(穴を除く)
+bat = ps.BAT                                             # 電池のホルダの壁と耳(mechanical/battery_holder): 基板の上に載る
+keep = [sbox(bat[0] - 1.3, bat[2] + 0.3, bat[1] + 1.3, bat[2] + 1.3), sbox(bat[0] - 1.3, -bat[2] - 1.3, bat[1] + 1.3, -bat[2] - 0.3)]
+keep += [Point(x, y).buffer(2.6) for (x, y) in ps.SCREWS] + [sbox(x - 2.6, min(y, 0) and y or bat[2], x + 2.6, max(y, 0) and y or -bat[2]) for (x, y) in ps.SCREWS]
+keep = unary_union(keep)
+def on_board_ok(b):
+    """KiCad の箱(mm)が基板の外形の 0.3mm 内側にあり、電池のホルダに重ならない"""
+    poly = sbox(b[0] - OX, OY - b[3], b[2] - OX, OY - b[1])
+    return outline.buffer(-0.3).contains(poly) and not poly.intersects(keep)
+onboard = {r: box(r) for r, f in FP.items() if OX - 40 < MM(f.GetPosition().x) < OX + 50 and r not in ('C86', 'C87')}
+onboard.update({c: box(c) for c in ('C86', 'C87')})
+_try = try_place
+def try_place(ref, x, y, placed):
+    b = _try(ref, x, y, placed)
+    return b if (b and (ref not in LED_R or on_board_ok(b))) else None
+LED_R = {}
+for f in FP.values():
+    r = f.GetReference()
+    if r.startswith('R9') and r not in ('R97', 'R98'):
+        led = [q.GetParentFootprint().GetReference() for p in f.Pads() for q in board.GetPads()
+               if q.GetNetCode() == p.GetNetCode() and q.GetParentFootprint().GetReference().startswith('D9')]
+        if led:
+            LED_R[r] = led[0]
+for r, led in sorted(LED_R.items()):
+    apin = [p.GetNumber() for p in FP[led].Pads() if p.GetNetCode() in {q.GetNetCode() for q in FP[r].Pads()}][0]
+    # LED は縁の近くにあるので、まわりのすべての向きから探す(抵抗のパッドと LED のパッドの距離が最小の所)
+    lx, ly = xy(pad(led, apin)); mine = [p.GetNumber() for p in FP[r].Pads() if p.GetNetCode() == pad(led, apin).GetNetCode()][0]
+    best = None
+    for ang in (0, 90, 180, 270):
+        FP[r].SetOrientationDegrees(ang)
+        for i in range(-28, 29):
+            for j in range(-28, 29):
+                x, y = lx + i * 0.25, ly + j * 0.25
+                FP[r].SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
+                d = math.dist(xy(pad(r, mine)), (lx, ly))
+                if best and d >= best[0]:
+                    continue
+                b = box(r)
+                if any(overlap(b, o) for o in onboard.values()) or not on_board_ok(b):
+                    continue
+                best = (d, ang, x, y, b)
+    d, ang, x, y, b = best
+    FP[r].SetOrientationDegrees(ang); FP[r].SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
+    onboard[r] = b
+    print(f'  {r} → {led} のパッドから {d:.1f}mm')
+    g = pcbnew.PCB_GROUP(board); g.SetName(f'{led} LED'); g.AddItem(FP[led]); g.AddItem(FP[r]); LED_GROUPS = globals().setdefault('LED_GROUPS', []); LED_GROUPS.append(g)
+
 # ---------------- グループにして、基板の外(前)に並べる ----------------
 for g in list(board.Groups()):
-    board.Remove(g)
+    if g not in globals().get('LED_GROUPS', []):
+        board.Remove(g)
+for g in globals().get('LED_GROUPS', []):
+    board.Add(g)
 x0, ytop = OX + 60.0, OY - 45.0
 col_x, y, wmax = x0, ytop, 0.0
 for name, refs in GROUPS:
@@ -239,7 +304,7 @@ for name, refs in GROUPS:
 # グループに入らない、まだ置かない部品: グループの右に並べる
 grouped = {r for _, refs in GROUPS for r in refs}
 fixed_x = (OX - 40, OX + 50)                            # 基板の上の部品(位置が決まっている)はそのまま
-loose = [r for r, f in FP.items() if r not in grouped and r not in ('C86', 'C87') and not (fixed_x[0] < MM(f.GetPosition().x) < fixed_x[1])]
+loose = [r for r, f in FP.items() if r not in grouped and r not in ('C86', 'C87') and r not in LED_R and not (fixed_x[0] < MM(f.GetPosition().x) < fixed_x[1])]
 col_x += wmax + 6; y = ytop; wmax = 0
 for r in sorted(loose):
     b = box(r); w, h = b[2] - b[0], b[3] - b[1]
