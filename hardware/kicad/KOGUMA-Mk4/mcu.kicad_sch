@@ -5061,7 +5061,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "4.7u 10V"
+		(property "Value" "10u 10V"
 			(at 172.72 58.42 0)
 			(effects
 				(font
@@ -5316,7 +5316,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1u"
+		(property "Value" "4.7u 10V"
 			(at 185.42 45.72 0)
 			(effects
 				(font
@@ -5644,16 +5644,6 @@
 				)
 			)
 		)
-	)
-	(wire
-		(pts
-			(xy 205.74 40.64) (xy 213.36 40.64)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d2079e86-c538-4234-a791-0951365da353")
 	)
 	(symbol
 		(lib_id "power:+3V3")
@@ -8411,6 +8401,75 @@
 			(justify left top)
 		)
 		(uuid "2438259c-e675-42c3-a4b4-535e4fb1310a")
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 209.55 40.64 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "daa928cb-fba4-4bee-82e9-a760887a46dc")
+		(property "Reference" "R51"
+			(at 209.55 45.72 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "2.2"
+			(at 209.55 48.26 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 209.55 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 209.55 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 209.55 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0a141583-4cd3-4278-9f1e-2e59dd8bee63")
+		)
+		(pin "2"
+			(uuid "72086fe0-5c8f-4d48-aa9a-e49ce06d0b8b")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "R51")
+					(unit 1)
+				)
+			)
+		)
 	)
 	(embedded_fonts no)
 )

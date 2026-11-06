@@ -2301,7 +2301,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(property "Description" "Power symbol creates a global label with name \"PGND\""
 				(at 0 0 0)
 				(effects
 					(font
@@ -2968,7 +2968,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100n 25V"
+		(property "Value" "220n 25V"
 			(at 53.34 57.15 0)
 			(effects
 				(font
@@ -4692,7 +4692,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "4.7k"
 			(at 271.78 74.93 0)
 			(effects
 				(font
@@ -5862,6 +5862,161 @@
 				)
 			)
 		)
+	)
+	(text "ソフトスタート(2026-11-06): C10(ゲートとドレイン)+ C1 220n(ゲートとソース)。\nON まで約0.75ms、VBAT の立ち上がり約0.3ms、突入約3A。C1:C10 = 10:1 で、電池を挿したときに勝手に ON しない"
+		(exclude_from_sim no)
+		(at 153.67 140.97 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "29b09068-6af1-429b-9e2f-84ef212d09c3")
+	)
+	(symbol
+		(lib_id "Device:C")
+		(at 158.75 151.13 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "77f0b975-127f-4143-9c4a-69a23a2b03b3")
+		(property "Reference" "C10"
+			(at 161.29 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "22n 50V"
+			(at 161.29 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 158.75 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 158.75 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 158.75 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "8b3c6364-aa9b-4159-9eb5-b20d756555fe")
+		)
+		(pin "2"
+			(uuid "cc10cc87-a48c-4b71-ae10-451ba87142bd")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/3ced59ac-efb9-5b1e-b026-e42a9995f64f"
+					(reference "C10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "KOGUMA-Mk4:VBAT")
+		(at 158.75 147.32 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e2a806f8-2aec-425b-abb3-b8d4c7bf24d2")
+		(property "Reference" "#PWR97"
+			(at 158.75 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "VBAT"
+			(at 158.75 143.51 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 158.75 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 158.75 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 158.75 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "9e735c5c-d720-43a4-80ce-33c1bb4527d1")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/3ced59ac-efb9-5b1e-b026-e42a9995f64f"
+					(reference "#PWR97")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(label "GATE"
+		(at 158.75 154.94 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "22977a8c-090f-4123-a746-f9dfd8cf2ba0")
 	)
 	(embedded_fonts no)
 )
