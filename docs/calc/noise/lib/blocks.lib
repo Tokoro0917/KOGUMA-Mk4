@@ -10,12 +10,15 @@
 *   out  : TIA output (WALL_x) as seen at the ADC pin
 *   vdda : MCU VDDA = ADC reference (VFQFPN68: VREF+ = VDDA)
 * params: iph = DC photocurrent, cf = feedback capacitance, lfb = bead L
-*         rs2 = damping R in series with FB2, rv = R in series with FB1,
-*         c51 = effective C51 (VDDA)
-* Netlist refs: FB2, C85, C78, C79, C83, C84, R78, R79, C80, U74A, R74, C74,
-*               D74, FB1, C51, C52
+*         rs2 = R80 (2.2 ohm in series with FB2), rv = R51 (2.2 ohm in series
+*         with FB1), c51 = effective C51 (VDDA)
+* Defaults = schematic of 2026-11-06 (commit a30ca35):
+*   R80 2.2, R51 2.2, C51 4.7u 10V 0603 -> 2.4u effective at 3.3 V
+* The 2026-11-01 schematic is rs2=1u rv=1u c51=0.8u (no R80/R51, C51 1u).
+* Netlist refs: FB2, R80, C85, C78, C79, C83, C84, R78, R79, C80, U74A, R74,
+*               C74, D74, R51, FB1, C51, C52
 **********************************************************************
-.subckt SENSORBLK v33 gs gm out vdda params: iph=1u cf=0.5p lfb=0.8u rs2=1u rv=1u c51=0.8u
+.subckt SENSORBLK v33 gs gm out vdda params: iph=1u cf=0.5p lfb=0.8u rs2=2.2 rv=2.2 c51=2.4u
 Rs2  v33 v33f {rs2}
 XFB2 v33f v3a BLM18PG221 Lf={lfb}
 XC85 v3a gs MLCC C=5u esr=5m esl=0.6n

@@ -2,18 +2,33 @@
 * Q40 IRLML6344 low side, PWM 50 kHz, D = 0.6. Fan motor current steps
 * 0 -> 1.67 A at t = 1 ms (1.0 A average battery current); motor L/R and
 * mechanics are ignored (ideal current step) to show the RC delay alone.
-* dsh = length of PGND (0.5 mm trace) that carries the fan current between
-*       the R43 ground pad and the point where GND is referenced (NT1 side).
-* Output: out/fan_<tag>.txt (time, v(adc), v(fsrc)) and out/fan_ac.txt
+* The fan current is the same with or without the local caps C41/C42 (they
+* only shorten the VBAT/PGND loop), so they are not in this netlist.
+*
+* Node 0 = bulk caps C2-C4 (PGND). nt = NT1 = GND reference of C40.
+* NT1 sits at the C7/C8 GND pad, which is 15 mm of 0.5 mm PGND trace away
+* from the bulk caps (no fan current flows there).
+*   2026-11-06 (baseline): R43 pad -> bulk caps 3 mm x 1 mm (Q40/R43/J4 next to
+*        C2-C4) + Kelvin PGND trace R43 pad -> NT1 (20 mm x 0.15 mm, rkel=1u)
+*   2026-11-01 (before):   R43 pad -> bulk caps 10 mm x 0.5 mm shared with
+*        the GND reference, no Kelvin trace (rkel=1G, and C40's reference
+*        is the bulk-cap end of that path)
+* Output: out/fan_<new|old>.txt (time, v(adc,nt), v(fsrc)) and out/fan_ac.txt
 .include lib/models.lib
-.param dsh=0 dfan=0.6 ifan=1.67
+.param lret=3 wret=1 rkel=1u dfan=0.6 ifan=1.67
 
 Vpwm pw 0 PULSE(0 1 0 50n 50n {dfan/50k-50n} 20u)
 Bf   0 fsrc I = {ifan}*u(time-1m)*v(pw)
-R43  fsrc pf 0.1
-Xps  pf 0 TRACE len_mm={dsh} w_mm=0.5 lnh=0.7
+R43  fsrc pr 0.1
+* fan current return: R43 pad -> bulk caps
+Xret pr 0 TRACE len_mm={lret} w_mm={wret} lnh=0.5
+* Kelvin trace R43 pad -> NT1
+Xkel pr pk TRACE len_mm=20 w_mm=0.15 lnh=0.9
+Rkel pk nt {rkel}
+* NT1 (C7/C8 GND pad) -> bulk caps
+Xtr  nt 0 TRACE len_mm=15 w_mm=0.5 lnh=0.7
 R44  fsrc adc 1k
-XC40 adc 0 MLCC C=1u esr=10m esl=0.5n
+XC40 adc nt MLCC C=1u esr=10m esl=0.5n
 * AC test of the RC alone (separate copy)
 Vac  ain 0 DC 0 AC 1
 R44a ain aadc 1k
@@ -26,15 +41,21 @@ set wr_vecnames
 ac dec 50 1 10MEG
 let hfan = mag(v(aadc))
 wrdata out/fan_ac.txt hfan
-foreach val 0 10
-  alterparam dsh = $val
-  reset
-  destroy all
-  tran 0.25u 9m 0 20n
-  linearize
-  set fn = "out/fan_d{$val}mm.txt"
-  wrdata $fn v(adc) v(fsrc)
-end
+* 2026-11-06
+tran 0.25u 9m 0 20n
+linearize
+let vadc = v(adc)-v(nt)
+wrdata out/fan_new.txt vadc v(fsrc)
+* 2026-11-01 (10 mm shared, no Kelvin; C40 reference = bulk-cap end)
+alterparam lret = 10
+alterparam wret = 0.5
+alterparam rkel = 1G
+reset
+destroy all
+tran 0.25u 9m 0 20n
+linearize
+let vadc = v(adc)-v(nt)
+wrdata out/fan_old.txt vadc v(fsrc)
 quit
 .endc
 .end

@@ -1,17 +1,26 @@
-* 04 Supply-noise path (.ac): +3V3 ripple -> FB2 + C85/C78/C79/C83/C84 -> +3V3A
-*    -> (a) OPA2354 PSRR, (b) PD_BIAS divider R78/R79 + C80 -> TIA output
-*    and +3V3 -> FB1 + C51/C52 -> VDDA (= ADC reference on VFQFPN68)
+* 04 Supply-noise path (.ac): +3V3 ripple -> FB2 + R80 + C85/C78/C79/C83/C84
+*    -> +3V3A -> (a) OPA2354 PSRR, (b) PD_BIAS divider R78/R79 + C80 -> TIA output
+*    and +3V3 -> R51 + FB1 -> C51/C52 -> VDDA (= ADC reference on VFQFPN68)
 * The AC source is the ripple on +3V3 (DC-DC U1 output, relative to GND).
 * MLCC values are effective (DC-bias derated) - see README assumptions.
-* Output: out/sup_<tag>.txt (tags: l<Lf>, pdbonly, psrronly, r<ohm>, r10only)  (frequency, |V(3V3A)|, |V(PD_BIAS)|, |V(out)|, |V(VDDA)|)
-*         all per 1 V of +3V3 ripple
+* Schematic versions:
+*   2026-11-06 (commit a30ca35, baseline): R80 2.2 ohm, R51 2.2 ohm,
+*              C51 4.7u 10V 0603 -> 2.4u effective
+*   2026-11-01 (before): no R80 / R51 (rser=rser1=1u), C51 1u -> 0.8u effective
+* Output: out/sup_<tag>.txt (frequency, |V(3V3A)|, |V(PD_BIAS)|, |V(out)|, |V(VDDA)|)
+*         all per 1 V of +3V3 ripple.  tags:
+*   new_l<Lf>      2026-11-06, ferrite low-frequency L = 0.5u / 0.8u / 1.2u
+*   new_psrronly   2026-11-06, OPA2354 PSRR path only (PD_BIAS from clean 3.3 V)
+*   new_pdbonly    2026-11-06, PD_BIAS path only (PSRR off)
+*   new_c51_10u    2026-11-06 but C51 10u (5u effective) - remaining option
+*   old_l0.8u      2026-11-01
 .include lib/models.lib
-.param lfb=0.8u lfb1=0.8u rser=1u rser1=1u c51=0.8u kpsr=1 kpd=1 cf=0.5p ceff=5u
+.param lfb=0.8u rser=2.2 rser1=2.2 c51=2.4u kpsr=1 kpd=1 cf=0.5p ceff=5u
 
 V33  v33 0 DC 3.3 AC 1
-* ---- +3V3A filter (optional series damping resistor rser) ----
-Rser v33 v33r {rser}
-XFB2 v33r v3a BLM18PG221 Lf={lfb}
+* ---- +3V3A filter: FB2 then R80 ----
+XFB2 v33 v3f BLM18PG221 Lf={lfb}
+R80  v3f v3a {rser}
 XC85 v3a 0 MLCC C={ceff} esr=5m esl=0.6n
 XC78 v3a 0 MLCC C={ceff} esr=5m esl=0.6n
 XC79 v3a 0 MLCC C={ceff} esr=5m esl=0.6n
@@ -21,7 +30,6 @@ XC84 v3a 0 MLCC C=100n esr=20m esl=0.5n
 Iqo  v3a 0 DC 14.7m
 * ---- PD_BIAS ----
 * kpd=1: divider fed from +3V3A (real circuit); kpd=0: from a clean 3.3 V
-*        (used to separate the PSRR path from the PD_BIAS path)
 Bpd  pdsrc 0 V = {kpd}*v(v3a) + {1-kpd}*3.3
 R78  pdsrc pdb 1k
 R79  pdb 0 47
@@ -32,9 +40,9 @@ R74  inn out 820k
 C74  inn out {cf}
 Cpcb inn 0 1p
 XPD  0 inn SFH229FA Cj=11.5p
-* ---- VDDA (ADC reference) ----
-Rser1 v33 v33v {rser1}
-XFB1 v33v vdda BLM18PG221 Lf={lfb1}
+* ---- VDDA (ADC reference): R51 then FB1 ----
+R51  v33 v33v {rser1}
+XFB1 v33v vdda BLM18PG221 Lf=0.8u
 XC51 vdda 0 MLCC C={c51} esr=10m esl=0.5n
 XC52 vdda 0 MLCC C=100n esr=20m esl=0.5n
 Iadc vdda 0 DC 2m
@@ -42,7 +50,7 @@ Iadc vdda 0 DC 2m
 .control
 set wr_singlescale
 set wr_vecnames
-* base + ferrite inductance sensitivity
+* ======== 2026-11-06 schematic, ferrite inductance sensitivity ========
 foreach val 0.5u 0.8u 1.2u
   alterparam lfb = $val
   reset
@@ -52,7 +60,7 @@ foreach val 0.5u 0.8u 1.2u
   let hpd = mag(v(pdb))
   let hout = mag(v(out))
   let hvdda = mag(v(vdda))
-  set fn = "out/sup_L{$val}.txt"
+  set fn = "out/sup_new_l{$val}.txt"
   wrdata $fn h3a hpd hout hvdda
 end
 alterparam lfb = 0.8u
@@ -65,7 +73,7 @@ let h3a = mag(v(v3a))
 let hpd = mag(v(pdb))
 let hout = mag(v(out))
 let hvdda = mag(v(vdda))
-wrdata out/sup_pdbonly.txt h3a hpd hout hvdda
+wrdata out/sup_new_pdbonly.txt h3a hpd hout hvdda
 alterparam kpsr = 1
 * PSRR path only (PD_BIAS from a clean source)
 alterparam kpd = 0
@@ -76,36 +84,9 @@ let h3a = mag(v(v3a))
 let hpd = mag(v(pdb))
 let hout = mag(v(out))
 let hvdda = mag(v(vdda))
-wrdata out/sup_psrronly.txt h3a hpd hout hvdda
+wrdata out/sup_new_psrronly.txt h3a hpd hout hvdda
 alterparam kpd = 1
-* fixes: series damping resistor with FB2
-foreach val 2.2 4.7
-  alterparam rser = $val
-  reset
-  destroy all
-  ac dec 100 100 100MEG
-  let h3a = mag(v(v3a))
-  let hpd = mag(v(pdb))
-  let hout = mag(v(out))
-  let hvdda = mag(v(vdda))
-  set fn = "out/sup_R{$val}.txt"
-  wrdata $fn h3a hpd hout hvdda
-end
-* 10 ohm only (FB2 shorted; FB1 unchanged)
-alterparam rser = 10
-alterparam lfb = 1p
-reset
-destroy all
-ac dec 100 100 100MEG
-let h3a = mag(v(v3a))
-let hpd = mag(v(pdb))
-let hout = mag(v(out))
-let hvdda = mag(v(vdda))
-wrdata out/sup_r10only.txt h3a hpd hout hvdda
-* VDDA fix candidate: 2.2 ohm in series with FB1, C51 1u -> 10u (eff. 5u)
-alterparam rser = 1u
-alterparam lfb = 0.8u
-alterparam rser1 = 2.2
+* remaining option: C51 10u 0603 (5u effective)
 alterparam c51 = 5u
 reset
 destroy all
@@ -114,7 +95,19 @@ let h3a = mag(v(v3a))
 let hpd = mag(v(pdb))
 let hout = mag(v(out))
 let hvdda = mag(v(vdda))
-wrdata out/sup_vddafix.txt h3a hpd hout hvdda
+wrdata out/sup_new_c51_10u.txt h3a hpd hout hvdda
+* ======== 2026-11-01 schematic (before) ========
+alterparam rser = 1u
+alterparam rser1 = 1u
+alterparam c51 = 0.8u
+reset
+destroy all
+ac dec 100 100 100MEG
+let h3a = mag(v(v3a))
+let hpd = mag(v(pdb))
+let hout = mag(v(out))
+let hvdda = mag(v(vdda))
+wrdata out/sup_old_l0.8u.txt h3a hpd hout hvdda
 quit
 .endc
 .end

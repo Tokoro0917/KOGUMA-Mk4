@@ -269,56 +269,57 @@ def supply():
     ax[0].set_title("BLM18PG221SN1D model")
     ax[0].legend(loc="lower right", fontsize=7)
 
-    runs = {"l0.5u": ("FB2 L 0.5 uH", C[0], 1.4, "-"), "l0.8u": ("FB2 L 0.8 uH (base)", "#0b0b0b", 2, "-"),
-            "l1.2u": ("FB2 L 1.2 uH", C[2], 1.4, "-"), "r2.2": ("FB2 + 2.2 ohm", C[1], 1.6, "--"),
-            "r4.7": ("FB2 + 4.7 ohm", C[6], 1.6, "--"), "r10only": ("10 ohm only (no bead)", C[3], 1.6, "--")}
+    OLD = "2026-11-01"
+    NEW = "2026-11-06"
+    runs = {"old_l0.8u": (f"{OLD}: FB2 only (L 0.8 uH)", C[1], 1.6, "--"),
+            "new_l0.5u": (f"{NEW}: FB2 + R80 2.2 ohm, L 0.5 uH", C[0], 1.2, "-"),
+            "new_l0.8u": (f"{NEW}: FB2 + R80 2.2 ohm, L 0.8 uH", "#0b0b0b", 2, "-"),
+            "new_l1.2u": (f"{NEW}: FB2 + R80 2.2 ohm, L 1.2 uH", C[2], 1.2, "-")}
     S["supply"] = {}
+
+    def store(tag, d):
+        fr = d["frequency"]
+        r = S["supply"].setdefault(tag, {})
+        for key, col in (("h3a", "h3a"), ("hout", "hout"), ("hvdda", "hvdda")):
+            k = int(np.argmax(d[col]))
+            r[f"{key}_peak_dB"] = float(db(d[col][k]))
+            r[f"{key}_peak_kHz"] = float(fr[k] / 1e3)
+            for x in (20e3, 40e3, 50e3, 80e3, 186e3, 2e6, 2.4e6):
+                r[f"{key}_dB@{int(x/1e3)}k"] = float(db(np.interp(x, fr, d[col])))
+
+    for tag in ("old_l0.8u", "new_l0.5u", "new_l0.8u", "new_l1.2u", "new_psrronly", "new_pdbonly", "new_c51_10u"):
+        store(tag, load(f"sup_{tag}.txt"))
+
     for tag, (lab, col, lw, ls) in runs.items():
         d = load(f"sup_{tag}.txt")
-        fr = d["frequency"]
-        ax[1].semilogx(fr, db(d["h3a"]), color=col, lw=lw, ls=ls, label=lab)
-        k = np.argmax(d["h3a"])
-        S["supply"][tag] = {
-            "h3a_peak_dB": float(db(d["h3a"][k])), "h3a_peak_kHz": float(fr[k] / 1e3),
-            **{f"h3a_dB@{int(x/1e3)}k": float(db(np.interp(x, fr, d["h3a"]))) for x in (20e3, 40e3, 50e3, 80e3, 2e6, 2.4e6)},
-            **{f"hout_dB@{int(x/1e3)}k": float(db(np.interp(x, fr, d["hout"]))) for x in (20e3, 40e3, 50e3, 80e3, 2e6, 2.4e6)},
-        }
+        ax[1].semilogx(d["frequency"], db(d["h3a"]), color=col, lw=lw, ls=ls, label=lab)
     ax[1].set_xlim(1e3, 1e8); ax[1].set_ylim(-100, 20)
     ax[1].set_xlabel("Frequency [Hz]"); ax[1].set_ylabel("V(+3V3A)/V(+3V3) [dB]")
     ax[1].set_title("+3V3 ripple -> +3V3A")
-    ax[1].legend(loc="lower left")
+    ax[1].legend(loc="lower left", fontsize=7)
     mark_freqs(ax[1])
 
-    for tag, lab, col, lw, ls in [("l0.8u", "total (base)", "#0b0b0b", 2, "-"),
-                                  ("psrronly", "via OPA2354 PSRR", C[0], 1.4, "-"),
-                                  ("pdbonly", "via PD_BIAS (R78/R79/C80)", C[2], 1.4, "-"),
-                                  ("r2.2", "total, FB2 + 2.2 ohm", C[1], 1.6, "--")]:
+    for tag, lab, col, lw, ls in [("old_l0.8u", f"{OLD}: total", C[1], 1.6, "--"),
+                                  ("new_l0.8u", f"{NEW}: total", "#0b0b0b", 2, "-"),
+                                  ("new_psrronly", f"{NEW}: via OPA2354 PSRR", C[0], 1.2, "-"),
+                                  ("new_pdbonly", f"{NEW}: via PD_BIAS", C[2], 1.2, "-")]:
         d = load(f"sup_{tag}.txt")
         ax[2].semilogx(d["frequency"], db(d["hout"]), color=col, lw=lw, ls=ls, label=lab)
-        S["supply"].setdefault(tag, {})
-        for x in (20e3, 40e3, 50e3, 80e3, 2e6, 2.4e6):
-            S["supply"][tag][f"hout_dB@{int(x/1e3)}k"] = float(db(np.interp(x, d["frequency"], d["hout"])))
     ax[2].set_xlim(1e3, 1e8); ax[2].set_ylim(-120, -20)
     ax[2].set_xlabel("Frequency [Hz]"); ax[2].set_ylabel("V(TIA out)/V(+3V3) [dB]")
     ax[2].set_title("+3V3 ripple -> TIA output (dark)")
-    ax[2].legend(loc="lower left")
+    ax[2].legend(loc="lower left", fontsize=7)
     mark_freqs(ax[2])
 
-    for tag, lab, col, lw, ls in [("l0.8u", "FB1 + C51 1u + C52 (base)", "#0b0b0b", 2, "-"),
-                                  ("vddafix", "FB1 + 2.2 ohm, C51 10u", C[1], 1.6, "--")]:
+    for tag, lab, col, lw, ls in [("old_l0.8u", f"{OLD}: FB1 + C51 1u", C[1], 1.6, "--"),
+                                  ("new_l0.8u", f"{NEW}: R51 2.2 ohm + FB1 + C51 4.7u", "#0b0b0b", 2, "-"),
+                                  ("new_c51_10u", "option: C51 10u", C[2], 1.4, ":")]:
         d = load(f"sup_{tag}.txt")
-        fr = d["frequency"]
-        ax[3].semilogx(fr, db(d["hvdda"]), color=col, lw=lw, ls=ls, label=lab)
-        k = np.argmax(d["hvdda"])
-        S["supply"].setdefault(tag, {})
-        S["supply"][tag]["hvdda_peak_dB"] = float(db(d["hvdda"][k]))
-        S["supply"][tag]["hvdda_peak_kHz"] = float(fr[k] / 1e3)
-        for x in (20e3, 40e3, 50e3, 80e3, 186e3, 2e6, 2.4e6):
-            S["supply"][tag][f"hvdda_dB@{int(x/1e3)}k"] = float(db(np.interp(x, fr, d["hvdda"])))
+        ax[3].semilogx(d["frequency"], db(d["hvdda"]), color=col, lw=lw, ls=ls, label=lab)
     ax[3].set_xlim(1e3, 1e8); ax[3].set_ylim(-80, 30)
     ax[3].set_xlabel("Frequency [Hz]"); ax[3].set_ylabel("V(VDDA)/V(+3V3) [dB]")
     ax[3].set_title("+3V3 ripple -> VDDA (ADC reference)")
-    ax[3].legend(loc="lower left")
+    ax[3].legend(loc="lower left", fontsize=7)
     mark_freqs(ax[3])
     fig.tight_layout()
     fig.savefig(FIG / "fig03_supply_path.png")
@@ -328,7 +329,7 @@ def supply():
     srcs = {"PWM 20 kHz (5 mVpp)": (20e3, 5e-3), "PWM 50 kHz (5 mVpp)": (50e3, 5e-3),
             "DC-DC 2 MHz (20 mVpp)": (2e6, 20e-3), "MCU SMPS 2.4 MHz (10 mVpp)": (2.4e6, 10e-3)}
     S["ripple_budget"] = {}
-    for tag in ("l0.8u", "r2.2", "vddafix"):
+    for tag in ("old_l0.8u", "new_l0.8u", "new_c51_10u"):
         d = load(f"sup_{tag}.txt")
         fr = d["frequency"]
         for name, (fx, a) in srcs.items():
@@ -357,16 +358,18 @@ def ground():
         o["tl"] = tl
         return o
 
-    base = {"a": prep("gnda_off.txt"), "b": prep("gndb_off.txt")}
+    base = {"a": prep("gnda_off.txt"), "bold": prep("gndb_old_off.txt"), "bnew": prep("gndb_new_off.txt")}
     code0 = {k: float(np.mean(v["vadc"] / v["vref"] * 65536)) for k, v in base.items()}
     cases = [("gnda_trace5mm.txt", "A: single GND, shared 5 mm (0.5 mm trace)", "a"),
              ("gnda_trace10mm.txt", "A: single GND, shared 10 mm (0.5 mm trace)", "a"),
              ("gnda_trace20mm.txt", "A: single GND, shared 20 mm (0.5 mm trace)", "a"),
              ("gnda_pour10mm.txt", "A: single GND, shared 10 mm (5 mm pour)", "a"),
-             ("gndb_nt0mm.txt", "B: PGND/GND split, NT1 at C7/C8 GND", "b"),
-             ("gndb_nt10mm.txt", "B: split, NT1 10 mm off on motor return", "b"),
-             ("gndb_nt30mm.txt", "B: split, NT1 30 mm off on motor return", "b"),
-             ("gndb_nt10mm_fix.txt", "B: NT1 10 mm off + FB1/FB2 damping fix", "b")]
+             ("gndb_old_nt0mm.txt", "B 2026-11-01: split, NT1 at C7/C8 GND", "bold"),
+             ("gndb_old_nt10mm.txt", "B 2026-11-01: NT1 10 mm off", "bold"),
+             ("gndb_old_nt30mm.txt", "B 2026-11-01: NT1 30 mm off", "bold"),
+             ("gndb_new_nt0mm.txt", "B 2026-11-06: split, NT1 at C7/C8 GND", "bnew"),
+             ("gndb_new_nt10mm.txt", "B 2026-11-06: NT1 10 mm off", "bnew"),
+             ("gndb_new_nt30mm.txt", "B 2026-11-06: NT1 30 mm off", "bnew")]
     S["ground"] = {}
     data = {}
     for fn, lab, k in cases:
@@ -374,7 +377,6 @@ def ground():
         data[fn] = o
         ph = o["tl"] % 20e-6
         c = o["code_long"] - code0[k]
-        ge = np.interp(o["tl"], o["t"], o["vgerr"]) if False else None
         on = (ph > 6e-6) & (ph < 11e-6)      # fan on + motor on
         off = (ph > 16e-6) & (ph < 19e-6)    # fan off, motor off
         vg = load(fn)
@@ -394,7 +396,7 @@ def ground():
 
     fig, ax = plt.subplots(2, 2, figsize=(12, 7))
     sel = [("gnda_trace10mm.txt", C[1]), ("gnda_pour10mm.txt", C[3]),
-           ("gndb_nt0mm.txt", C[0]), ("gndb_nt10mm.txt", C[6])]
+           ("gndb_new_nt0mm.txt", C[0]), ("gndb_new_nt10mm.txt", C[6])]
     for fn, col in sel:
         o = data[fn]
         lab = S["ground"][fn.replace(".txt", "")]["label"]
@@ -410,21 +412,23 @@ def ground():
         a.set_xlim(0, 40)
     ax[0, 0].legend(loc="upper right")
     k0 = code0
-    for fn, col in sel + [("gndb_nt10mm_fix.txt", C[2])]:
+    for fn, col in sel + [("gndb_old_nt10mm.txt", C[1])]:
         o = data[fn]
-        kk = "a" if fn.startswith("gnda") else "b"
+        kk = [c[2] for c in cases if c[0] == fn][0]
         lab = S["ground"][fn.replace(".txt", "")]["label"]
         t = (o["tl"] - 300e-6) * 1e6
-        ax[1, 0].plot(t, o["code_long"] - k0[kk], color=col, lw=1.0, label=lab)
+        if fn != "gndb_old_nt10mm.txt":
+            ax[1, 0].plot(t, o["code_long"] - k0[kk], color=col, lw=1.0, label=lab)
         if fn.startswith("gndb"):
-            ax[1, 1].plot(t, (o["vref_long"] - VREF) * 1e3, color=col, lw=1.0, label=lab)
+            ax[1, 1].plot(t, (o["vref_long"] - VREF) * 1e3, color=col, lw=1.2 if "old" in fn else 1.0,
+                          ls="--" if "old" in fn else "-", label=lab)
     ax[1, 0].set_xlim(0, 40); ax[1, 0].set_ylim(-300, 2000)
     ax[1, 0].set_xlabel("Time [us]"); ax[1, 0].set_ylabel("ADC code error [LSB, 16 bit]")
     ax[1, 0].set_title("ADC code error, input ~0.97 V (1 uA lit)")
     ax[1, 0].legend(loc="upper right", fontsize=7)
     ax[1, 1].set_xlim(-100, 100); ax[1, 1].set_ylim(-60, 50)
     ax[1, 1].set_xlabel("Time [us]"); ax[1, 1].set_ylabel("VDDA - 3.3 V [mV]")
-    ax[1, 1].set_title("Case B: VDDA (ADC reference) vs NT1 placement")
+    ax[1, 1].set_title("Case B: VDDA (ADC reference), before / after")
     ax[1, 1].legend(loc="upper right", fontsize=7)
     fig.tight_layout()
     fig.savefig(FIG / "fig04_ground_coupling.png")
@@ -434,9 +438,10 @@ def ground():
     keys = [c[0].replace(".txt", "") for c in cases]
     vals = [S["ground"][k]["code_rms_LSB16"] for k in keys]
     labs = [S["ground"][k]["label"] for k in keys]
-    fig, ax = plt.subplots(figsize=(8, 3.6))
+    fig, ax = plt.subplots(figsize=(8, 4.2))
     y = np.arange(len(keys))[::-1]
-    ax.barh(y, np.maximum(vals, 0.05), color=[C[1] if k.startswith("gnda") else C[0] for k in keys], height=0.6)
+    ax.barh(y, np.maximum(vals, 0.05), height=0.6,
+            color=[C[1] if k.startswith("gnda") else (GRAY if "_old_" in k else C[0]) for k in keys])
     for yi, v in zip(y, vals):
         ax.text(max(v, 0.05) * 1.1, yi, f"{v:.1f}" if v >= 0.1 else "< 0.1 (ideal in this model)", va="center", fontsize=8)
     ax.set_xscale("log"); ax.set_xlim(0.05, 5000)
@@ -454,9 +459,10 @@ def ground():
 def sense():
     fig, ax = plt.subplots(1, 3, figsize=(14, 3.8))
     S["fan"] = {}
-    for tag, lab, col in [("d0mm", "R43 GND = NT1 reference", "#0b0b0b"), ("d10mm", "10 mm PGND shared", C[1])]:
+    for tag, lab, col in [("new", "2026-11-06: R43 at bulk caps + Kelvin to NT1", "#0b0b0b"),
+                          ("old", "2026-11-01: 10 mm PGND shared (assumed)", C[1])]:
         d = load(f"fan_{tag}.txt")
-        t, va = d["time"], d["v(adc)"]
+        t, va = d["time"], d["vadc"]
         m = t > 8e-3
         fin = float(va[m].mean())
         k = 80
@@ -473,11 +479,11 @@ def sense():
     ax[0].axhline(100.2, color=GRAY, ls=":", lw=0.8)
     ax[0].set_xlabel("Time [ms]"); ax[0].set_ylabel("FAN_ISENSE [mV]")
     ax[0].set_title("Fan sense RC 1k/1uF: 0 -> 1 A step at 1 ms")
-    ax[0].legend(loc="lower right")
+    ax[0].legend(loc="lower right", fontsize=7)
     ax[1].set_xlabel("Time [us]"); ax[1].set_ylabel("ripple around mean [mV]")
     ax[1].set_title("Steady-state ripple (50 kHz, D 0.6)")
-    ax[1].set_ylim(-0.6, 0.75)
-    ax[1].legend(loc="upper center", ncol=2)
+    ax[1].set_ylim(-0.6, 0.85)
+    ax[1].legend(loc="upper center", ncol=1, fontsize=7)
 
     d = load("cm_tran.txt")
     t, im, vcm = d["time"], d["imot"], d["v(cm)"]

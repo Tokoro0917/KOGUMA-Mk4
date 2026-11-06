@@ -6,6 +6,7 @@
 *   fan  : 0 -> 1.67 A pulses, D = 0.6 (1 A average from the battery), 50 ns edges
 *   motor: 0 -> 3 A pulses, D = 0.5, 30 ns edges, shifted 5 us
 * Sensor: one TIA channel lit with a constant 1 uA (output ~0.97 V).
+* Supply filters = 2026-11-06 schematic (SENSORBLK defaults: R80, R51, C51 4.7u).
 * Output: out/gnda_<tag>.txt (time, vgerr = V(gs)-V(gm), vadc = V(out)-V(gm),
 *                             vref = V(vdda)-V(gm))
 .include lib/models.lib
