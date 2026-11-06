@@ -1,0 +1,70 @@
+* 05B Ground coupling, case B = MK4 PGND / GND split joined at NT1 (.tran)
+* PGND: bulk caps (0) - trunk - C7/C8 + U1 GND (pA); fan shunt R43 -> bulk caps;
+*       motor driver GND -> NT1 point (pN) -> pA.  dnt = distance of NT1
+*       from the C7/C8 ground along the motor return path (0 = as specified
+*       in docs/spec.md: "NT1 next to the DC-DC output capacitor GND").
+* GND : NT1 - MCU (gm) - sensor (gs), bottom-layer pour (3 mm eff. width).
+* Same currents and sensor as 05_ground_A.cir.
+* Output: out/gndb_<tag>.txt (time, vgerr, vadc, vref) as in 05A
+.include lib/models.lib
+.include lib/blocks.lib
+.param dnt=0 imot=3 ifan=1.67 rs2=1u rv=1u c51=0.8u
+
+Ifan 0 pf PULSE(0 {ifan} 0 50n 50n 11.95u 20u)
+Imot 0 pm PULSE(0 {imot} 5u 30n 30n 9.97u 20u)
+
+* PGND
+Xtr  pA 0  TRACE len_mm=15 w_mm=0.5 lnh=0.7
+Xpf  pf 0  TRACE len_mm=20 w_mm=0.5 lnh=0.7
+Xpm  pm pN TRACE len_mm=10 w_mm=0.5 lnh=0.7
+Xnt  pN pA TRACE len_mm={dnt} w_mm=0.5 lnh=0.7
+* GND (NT1 = node pN)
+Xg1  gm pN TRACE len_mm=10 w_mm=3 lnh=0.4
+Xg2  gs gm TRACE len_mm=20 w_mm=3 lnh=0.4
+
+V33  v33 pA DC 3.3
+Imcu v33 gm DC 150m
+XS   v33 gs gm out vdda SENSORBLK iph=1u rs2={rs2} rv={rv} c51={c51}
+
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+alterparam ifan = 0
+alterparam imot = 0
+reset
+destroy all
+tran 5n 400u 200u 5n
+let vgerr = v(gs)-v(gm)
+let vadc = v(out)-v(gm)
+let vref = v(vdda)-v(gm)
+wrdata out/gndb_off.txt vgerr vadc vref
+alterparam ifan = 1.67
+alterparam imot = 3
+foreach val 0 10 30
+  alterparam dnt = $val
+  reset
+  destroy all
+  tran 5n 400u 200u 5n
+  let vgerr = v(gs)-v(gm)
+  let vadc = v(out)-v(gm)
+  let vref = v(vdda)-v(gm)
+  set fn = "out/gndb_nt{$val}mm.txt"
+  wrdata $fn vgerr vadc vref
+end
+* NT1 misplaced by 10 mm, with the filter fixes:
+* FB2 + 2.2 ohm, FB1 + 2.2 ohm and C51 1u -> 10u (eff. 5u)
+alterparam dnt = 10
+alterparam rs2 = 2.2
+alterparam rv = 2.2
+alterparam c51 = 5u
+reset
+destroy all
+tran 5n 400u 200u 5n
+let vgerr = v(gs)-v(gm)
+let vadc = v(out)-v(gm)
+let vref = v(vdda)-v(gm)
+wrdata out/gndb_nt10mm_fix.txt vgerr vadc vref
+quit
+.endc
+.end

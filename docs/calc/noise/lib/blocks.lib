@@ -1,0 +1,42 @@
+* KOGUMA MK4 noise study - circuit blocks built from the schematic
+* (docs/calc/noise/lib/blocks.lib). Requires lib/models.lib.
+
+**********************************************************************
+* One wall-sensor channel + its supply filter + the ADC reference.
+* Pins:
+*   v33  : +3V3 rail (DC-DC U1 output)
+*   gs   : signal ground at the sensor (PD anode, U74 V-, R79/C80, C78..C85)
+*   gm   : ground at the MCU (VSSA, C51/C52)
+*   out  : TIA output (WALL_x) as seen at the ADC pin
+*   vdda : MCU VDDA = ADC reference (VFQFPN68: VREF+ = VDDA)
+* params: iph = DC photocurrent, cf = feedback capacitance, lfb = bead L
+*         rs2 = damping R in series with FB2, rv = R in series with FB1,
+*         c51 = effective C51 (VDDA)
+* Netlist refs: FB2, C85, C78, C79, C83, C84, R78, R79, C80, U74A, R74, C74,
+*               D74, FB1, C51, C52
+**********************************************************************
+.subckt SENSORBLK v33 gs gm out vdda params: iph=1u cf=0.5p lfb=0.8u rs2=1u rv=1u c51=0.8u
+Rs2  v33 v33f {rs2}
+XFB2 v33f v3a BLM18PG221 Lf={lfb}
+XC85 v3a gs MLCC C=5u esr=5m esl=0.6n
+XC78 v3a gs MLCC C=5u esr=5m esl=0.6n
+XC79 v3a gs MLCC C=5u esr=5m esl=0.6n
+XC83 v3a gs MLCC C=100n esr=20m esl=0.5n
+XC84 v3a gs MLCC C=100n esr=20m esl=0.5n
+Iqo  v3a gs DC 14.7m
+R78  v3a pdb 1k
+R79  pdb gs 47
+XC80 pdb gs MLCC C=10u esr=5m esl=0.6n
+XU   pdb inn out v3a gs OPA2354B
+R74  inn out 820k
+C74  inn out {cf}
+Cpcb inn gs 1p
+XPD  gs inn SFH229FA Cj=11.5p
+Iph  inn gs DC {iph}
+* ADC reference
+Rv   v33 v33v {rv}
+XFB1 v33v vdda BLM18PG221 Lf={lfb}
+XC51 vdda gm MLCC C={c51} esr=10m esl=0.5n
+XC52 vdda gm MLCC C=100n esr=20m esl=0.5n
+Iadc vdda gm DC 2m
+.ends SENSORBLK
