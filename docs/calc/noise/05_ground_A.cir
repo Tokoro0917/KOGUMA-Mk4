@@ -1,0 +1,70 @@
+* 05A Ground coupling, case A = MK3-like single shared ground (.tran)
+* The fan/motor return current flows through a ground segment (length lsh)
+* that lies between the sensor ground tap (gs) and the MCU/ADC ground (gm).
+* Trace model: 1 oz Cu, R = 0.49 mOhm/sq, L per mm (lib/models.lib TRACE).
+* Currents (50 kHz, MK3 conditions):
+*   fan  : 0 -> 1.67 A pulses, D = 0.6 (1 A average from the battery), 50 ns edges
+*   motor: 0 -> 3 A pulses, D = 0.5, 30 ns edges, shifted 5 us
+* Sensor: one TIA channel lit with a constant 1 uA (output ~0.97 V).
+* Supply filters = 2026-11-06 schematic (SENSORBLK defaults: R80, R51, C51 4.7u).
+* Output: out/gnda_<tag>.txt (time, vgerr = V(gs)-V(gm), vadc = V(out)-V(gm),
+*                             vref = V(vdda)-V(gm))
+.include lib/models.lib
+.include lib/blocks.lib
+.param lsh=10 wsh=0.5 nhsh=0.7 imot=3 ifan=1.67
+
+Ifan 0 gf PULSE(0 {ifan} 0 50n 50n 11.95u 20u)
+Imot 0 gf PULSE(0 {imot} 5u 30n 30n 9.97u 20u)
+
+* single ground net
+Xtr  gA1 0  TRACE len_mm=15 w_mm=0.5 lnh=0.7
+Xsh  gs gA1 TRACE len_mm={lsh} w_mm={wsh} lnh={nhsh}
+Xpw  gf gs  TRACE len_mm=10 w_mm=0.5 lnh=0.7
+Xgm  gm gA1 TRACE len_mm=5 w_mm=0.15 lnh=0.9
+
+* +3V3 from the DC-DC, referenced to its output-capacitor ground (gA1)
+V33  v33 gA1 DC 3.3
+Imcu v33 gm DC 150m
+XS   v33 gs gm out vdda SENSORBLK iph=1u
+
+.options method=gear
+.control
+set wr_singlescale
+set wr_vecnames
+* reference run without PWM current
+alterparam ifan = 0
+alterparam imot = 0
+reset
+destroy all
+tran 5n 400u 200u 5n
+let vgerr = v(gs)-v(gm)
+let vadc = v(out)-v(gm)
+let vref = v(vdda)-v(gm)
+wrdata out/gnda_off.txt vgerr vadc vref
+alterparam ifan = 1.67
+alterparam imot = 3
+foreach val 5 10 20
+  alterparam lsh = $val
+  reset
+  destroy all
+  tran 5n 400u 200u 5n
+  let vgerr = v(gs)-v(gm)
+  let vadc = v(out)-v(gm)
+  let vref = v(vdda)-v(gm)
+  set fn = "out/gnda_trace{$val}mm.txt"
+  wrdata $fn vgerr vadc vref
+end
+* shared segment as a copper pour (5 mm wide, 0.3 nH/mm), 10 mm
+alterparam lsh = 10
+alterparam wsh = 5
+alterparam nhsh = 0.3
+reset
+destroy all
+tran 5n 400u 200u 5n
+let vgerr = v(gs)-v(gm)
+let vadc = v(out)-v(gm)
+let vref = v(vdda)-v(gm)
+wrdata out/gnda_pour10mm.txt vgerr vadc vref
+quit
+.endc
+.end

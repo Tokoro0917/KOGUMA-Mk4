@@ -3,7 +3,7 @@
 	(generator "pcbnew")
 	(generator_version "9.0")
 	(layer "F.Cu")
-	(descr "KOGUMA MK4 wall sensor receiver (SFH 229 FA, T-1 3mm) in the sensor holder v2 (hole 3.2mm from the board). The holder hangs under the board: place this footprint on the back side (flipped). Origin = centre of the holder front face, beam +X. Place at the same position and rotation as WallSensor_Holder_Emitter")
+	(descr "KOGUMA MK4 wall sensor receiver (SFH 229 FA, T-1 3mm) in the sensor holder v3 (hole 3.2mm from the board). The holder hangs under the board: place this footprint on the back side (flipped). Origin = centre of the holder front face, beam +X. Place at the same position and rotation as WallSensor_Holder_Emitter")
 	(tags "wall sensor holder KOGUMA")
 	(property "Reference" "REF**"
 		(at 0 4.2 0)

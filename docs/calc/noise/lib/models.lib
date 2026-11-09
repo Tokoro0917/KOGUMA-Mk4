@@ -1,0 +1,125 @@
+* KOGUMA MK4 noise study - behavioral models for ngspice 42
+* (docs/calc/noise/lib/models.lib)
+*
+* All "helper" resistors inside the models are noisy=0 so that only the
+* intended noise sources contribute in .noise analysis.
+*
+* Noise generator trick: a diode biased at 1 mA has shot noise 2qId and
+* flicker noise KF*Id^AF/f. Two identical diodes are taken differentially so
+* the DC voltage cancels and only noise remains. With Id = 1 mA (T = 27 C):
+*   v_pair = sqrt(2) * Vt * sqrt(2q/Id) = 0.6548 nV/rtHz (white part).
+* Flicker corner fc: KF = 2*q*fc.
+
+.model DN_EN    D(IS=1e-14 KF=6.41e-15 AF=1)   ; white + 1/f corner 20 kHz
+.model DN_WHITE D(IS=1e-14)                    ; white only
+
+**********************************************************************
+* OPA2354 (one channel) - linear behavioral macro model
+* Datasheet SBOS233H (TI, rev. Aug 2026):
+*   GBW 100 MHz (G=+10), AOL 110 dB typ, Ro(open loop) 35 ohm (dual)
+*   en 6.5 nV/rtHz @1 MHz, 1/f corner ~20 kHz (Fig. 6-11: ~30 nV @1 kHz)
+*   in 50 fA/rtHz @1 MHz (OPA2354), rising ~prop. to f (Fig. 6-11)
+*   Cin 2 pF differential, 2 pF common-mode
+*   PSRR 200 uV/V typ (DC, table) and Fig. 6-16 (-20 dB/dec above ~1.5 kHz,
+*   ~50 dB @100 kHz, ~32 dB @1 MHz, ~14 dB @10 MHz)
+*   Iq 4.9 mA per channel
+* Pins: inp inn out vdd vss
+* params: ken/kin/kpsr = 1 (on) or 0 (off) ; vnom = nominal supply
+* Limitations: no slew-rate limit, no output saturation, no input stage
+* nonlinearity (all signals in this study stay well inside the rails).
+**********************************************************************
+.subckt OPA2354B inp inn out vdd vss params: ken=1 kin=1 kpsr=1 vnom=3.3
+* input capacitance
+Ccmp inp vss 2p
+Ccmn inn vss 2p
+Cdif inp inn 2p
+* --- input voltage noise (series with +input) ---
+Id1 vss dn1 DC 1m
+D1  dn1 vss DN_EN
+Id2 vss dn2 DC 1m
+D2  dn2 vss DN_EN
+Een a inp dn1 dn2 {9.927*ken}
+* --- PSRR: input-referred error H(s)*(Vsupply - vnom) ---
+* lead-lag: DC 2e-4 (200uV/V), zero 9.5 kHz, pole 47.5 MHz (-> 0 dB)
+Evs v1 vss vdd vss 1
+Vnm v1 v1b DC {vnom}
+Rp1 v1b p2 1MEG noisy=0
+Cp1 v1b p2 16.75p
+Rp2 p2 vss 200 noisy=0
+Eps b a p2 vss {kpsr}
+* --- input current noise rising with f: 1 nV white -> 7.96 pF -> mirrored
+*     into -input  => 50 fA/rtHz @ 1 MHz, prop. to f
+Id3 vss dn3 DC 1m
+D3  dn3 vss DN_WHITE
+Id4 vss dn4 DC 1m
+D4  dn4 vss DN_WHITE
+Exn xn vss dn3 dn4 {1.527*kin}
+Vsn xn xc DC 0
+Cxn xc vss 7.96p
+Fin inn vss Vsn 1
+* --- gain: AOL 110 dB, 1st pole 316 Hz (GBW 100 MHz), 2nd pole 400 MHz ---
+G1  vss n1 b inn 1m
+R1  n1 vss 316.2MEG noisy=0
+C1  n1 vss 1.592p
+E2  n2 vss n1 vss 1
+R2  n2 n3 1k noisy=0
+C2  n3 vss 0.398p
+E3  n4 vss n3 vss 1
+Ro  n4 out 35 noisy=0
+* --- quiescent current ---
+Iq  vdd vss DC 4.9m
+.ends OPA2354B
+
+**********************************************************************
+* SFH 229 FA photodiode (ams OSRAM datasheet v1.4, 2022-08-11)
+*   C0 = 13 pF @ VR=0; ~11.5 pF @ VR=0.15 V (capacitance vs VR graph)
+*   IR (dark) 0.05 nA typ @ 10 V, 25 C; we use 0.1 nA (warm, conservative)
+*   Rsh: not specified -> 10 GOhm assumed (irrelevant vs 820k)
+* Pins: a (anode) k (cathode). Signal photocurrent is applied OUTSIDE
+* (current source k->a). Ish = DC current whose shot noise is modelled
+* (dark current + photocurrent + ambient).
+**********************************************************************
+.subckt SFH229FA a k params: Cj=11.5p Ish=0.1n
+Cj  k a {Cj}
+Rsh k a 10G
+Id5 a dn5 DC 1m
+D5  dn5 a DN_WHITE
+Id6 a dn6 DC 1m
+D6  dn6 a DN_WHITE
+* shot noise current sqrt(2 q Ish), pair voltage 0.6548 nV/rtHz
+Gsh k a dn5 dn6 {sqrt(2*1.602e-19*Ish)/6.548e-10}
+.ends SFH229FA
+
+**********************************************************************
+* Murata BLM18PG221SN1D ferrite bead
+*   220 ohm +-25% @100 MHz, DCR 0.1 ohm max, 1.4 A
+*   R-L-C fit (assumption, see README): Rdc 0.05, L 0.8 uH || Rp 250 || Cp 0.9 pF
+*   -> |Z| ~5 ohm @1 MHz, ~50 ohm @10 MHz, ~235 ohm @100 MHz, peak 250 ohm @~190 MHz
+*   The low-frequency inductance (Lf) is the uncertain part -> swept.
+**********************************************************************
+.subckt BLM18PG221 1 2 params: Lf=0.8u Rdc=0.05
+Rdc 1 m {Rdc}
+Lf  m 2 {Lf}
+Rp  m 2 250
+Cp  m 2 0.9p
+.ends BLM18PG221
+
+**********************************************************************
+* MLCC with ESR/ESL. C = effective value after DC-bias derating.
+**********************************************************************
+.subckt MLCC 1 2 params: C=10u esr=5m esl=0.6n
+Rs 1 a {esr}
+Ls a b {esl}
+Cc b 2 {C}
+.ends MLCC
+
+**********************************************************************
+* PCB trace segment (1 oz Cu, 25 C): R = 0.49 mOhm/sq * len/width
+*   len_mm, w_mm, lnh = inductance per mm [nH/mm]; Rd = 10 ohm across L
+**********************************************************************
+.subckt TRACE 1 2 params: len_mm=10 w_mm=0.5 lnh=0.7
+Rt 1 a {max(0.49e-3*len_mm/w_mm,1e-6)}
+Lt a 2 {max(lnh*len_mm*1e-9,1e-15)}
+* damping (numerical + skin/radiation loss); only matters above ~200 MHz
+Rd a 2 10
+.ends TRACE
