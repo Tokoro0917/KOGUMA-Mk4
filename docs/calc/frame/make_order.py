@@ -92,4 +92,4 @@ fig.savefig(os.path.join(OUT, f'MK4PC{VER}_template_A4_1to1.pdf'))
 print('書き出し:', os.listdir(OUT))
 print('最小の幅の確認:', 'OK' if not msgs else msgs)
 bb = unary_union([plate] + parts).bounds
-print(f'全体の大きさ {bb[2] - bb[0]:.1f} × {bb[3] - bb[1]:.1f} mm、カーボン {(plate.area + sum(p.area for p in parts)) * 1.55e-3:.2f} g(1mm)')
+print(f'全体の大きさ {bb[2] - bb[0]:.1f} × {bb[3] - bb[1]:.1f} mm、カーボン {(plate.area + sum(p.area for p in parts)) * 1.55e-3 * dz.T_CF:.2f} g({dz.T_CF}mm)')

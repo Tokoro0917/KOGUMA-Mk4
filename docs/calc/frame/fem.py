@@ -15,7 +15,7 @@ from skfem.helpers import dd, sym_grad, grad
 from scipy.sparse.linalg import splu, eigsh
 
 # ---- 材料 ----
-CF = dict(E1=55000.0, E2=55000.0, nu12=0.05, G12=4000.0, t=1.0, rho=1.55e-9,
+CF = dict(E1=55000.0, E2=55000.0, nu12=0.05, G12=4000.0, t=0.8, rho=1.55e-9,   # t: 2026-11-11 に 1.0 → 0.8mm(カーボンラボ.jp で 0.8mm を頼める)
           Xt=600.0, Xc=500.0, Yt=600.0, Yc=500.0, S=90.0)          # 平織りカーボン(代表値)
 PC = dict(E=3000.0, nu=0.38, t=0.2, rho=1.40e-9)                     # 吸引する面のシート: 硬質塩ビ 0.2mm(2026-10-19。前はポリカーボネート 0.2mm: E=2400, t=0.2, rho=1.20e-9)
 
