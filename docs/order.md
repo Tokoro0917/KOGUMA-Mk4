@@ -47,18 +47,18 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 
 | 部品 | ファイル | 材料 | 数 | 1個の重さ |
 |---|---|---|---|---|
-| モーターマウント v20(右) | `mechanical/motor_mount/motor_mount_R_v20.stl` | Temp Resin | 3 | 1.43g |
-| モーターマウント v20(左) | `mechanical/motor_mount/motor_mount_L_v20.stl` | Temp Resin | 3 | 1.43g |
+| モーターマウント v21(右) | `mechanical/motor_mount/motor_mount_R_v21.stl` | Temp Resin | 3 | 1.48g |
+| モーターマウント v21(左) | `mechanical/motor_mount/motor_mount_L_v21.stl` | Temp Resin | 3 | 1.48g |
 | ファンの台 v3 | `mechanical/fan_mount/fan_mount_v3.stl` | Temp Resin | 3 | 1.63g |
 | ホイール v1(右) | `mechanical/wheel/wheel_R_v1.stl` | Black Resin | 3 | 0.38g |
 | ホイール v1(左) | `mechanical/wheel/wheel_L_v1.stl` | Black Resin | 3 | 0.38g |
-| 壁センサのホルダ v7 | `mechanical/sensor_holder/sensor_holder_v7.stl` | Black Resin | 6(4 + 予備2) | 0.22g |
+| 壁センサのホルダ v8 | `mechanical/sensor_holder/sensor_holder_v8.stl` | Black Resin | 6(4 + 予備2) | 0.22g |
 | 電池のホルダ v1(左) | `mechanical/battery_holder/battery_holder_L_v1.stl` | Black Resin | 2 | 0.23g |
 | 電池のホルダ v1(右) | `mechanical/battery_holder/battery_holder_R_v1.stl` | Black Resin | 2 | 0.23g |
 
 - 仕上げは標準(色付け・研磨なし)
 - 備考に書くこと: 「φ1.6 の穴はあとでタップを立てるので、ふさがないでください」「穴のまわりの細い当たり面は削らないでください」
-- モーターマウント v20 のモーターの穴(当たり面 φ8.5)と軸受の穴(当たり面 φ5.9)は、わざと寸法より 0.1mm 小さくしてある(しまりばめ)。備考に「モーターと軸受の穴は圧入用に小さくしてあります」と書く
+- モーターマウント v21 のモーターの穴(当たり面 φ8.5)と軸受の穴(当たり面 φ5.9)は、わざと寸法より 0.1mm 小さくしてある(しまりばめ)。備考に「モーターと軸受の穴は圧入用に小さくしてあります」と書く
 - JLC3DP は M6 未満のねじ山を作らないので、M2 は届いてから自分でタップを立てる(`docs/mount.md`の「7. 注文」)
 
 ## 4. 吸引ファンの羽根
@@ -85,7 +85,7 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 | M2 × 0.4 のハンドタップ | 1 | 印刷の部品のねじ穴(マウント1個に3つの穴、上下から) |
 | φ1.6 のドリルとピンバイス | 1 | 下穴が細いときに通す |
 | 瞬間接着剤 | 1 | 41T をホイールに、磁石を平行ピンに。圧入がゆるいとき。壁センサのホルダを基板の裏に |
-| 両面テープ(スポンジ、厚さ 0.3mm 前後) | 1 | 壁センサのホルダの下の端に貼って、フレームに当てる緩衝材(ホルダ v7)。電池の底を基板に貼る(電池のホルダ) |
+| 両面テープ(スポンジ、厚さ 0.3mm 前後) | 1 | 壁センサのホルダの下の端に貼って、フレームに当てる緩衝材(ホルダ v8)。電池の底を基板に貼る(電池のホルダ) |
 
 ## 7. その他
 

@@ -46,8 +46,9 @@ TAP = CFG.get('tap', False)
 FAST = os.environ.get('FAST') == '1'      # 重さだけ計算する(ぶつかり・STEP・図を省く)
 
 # ---------------- 高さ(床から) ----------------
-Z_FB, Z_FT = 2.2, 3.0        # フレームの下面・上面(2026-11-11 にカーボンを 1.0 → 0.8mm。上の面はそのまま、下の面が 2.0 → 2.2)
-Z_PC = 3.2                   # 吸引する面のシート(塩ビ 0.2mm、2026-10-19 にポリカーボネート 0.2mm から)の上面
+Z_FB, Z_FT = dz.Z_FB, dz.Z_FT   # フレームの下面・上面(2026-11-11 にカーボンを 1.0 → 0.8mm: 下の面 z 2.0 のまま(車高は同じ)、上の面 3.0 → 2.8)
+DZ = Z_FT - 3.0                 # 1.0mm のときからの、フレームの上に載る物の高さの変化(−0.2mm)
+Z_PC = Z_FT + 0.2            # 吸引する面のシート(塩ビ 0.2mm、2026-10-19 にポリカーボネート 0.2mm から)の上面
 Z_PCB = 13.6                 # 基板の下面(マウントのモーターの筒の上 13.36 から 0.24)
 T_PCB = CFG['pcb_t']         # 基板の厚さ
 Z_PCBT = Z_PCB + T_PCB
@@ -127,6 +128,7 @@ if CFG.get('fan') == 'spider':      # 2026-11-01 から: 作り直したマウ�
     import mount2 as MM
     _jx, _jy = dz.FAN_JOINTS[0]
     P2 = dict(MM.P, pcb_post=Z_PCB, fan_joint=(_jx, -abs(_jy)))
+    assert abs(P2['frame_top'] - Z_FT) < 1e-9, 'mount2.py の frame_top をフレームの上の面に合わせる'
 (xr_, yr_), (xf_, yf_) = dz.MOUNT_SCREWS
 P2 = dict(P2, screw_front=(xf_, -yf_), screw_rear=(xr_, -yr_))     # ねじの位置はフレームに合わせる(右側なので y は負)
 mx, mz = MM.motor_center(P2)
@@ -201,10 +203,10 @@ if not FRAME_FAN:          # v0〜v2: 丸いケース(左右に窓)、ポリカ�
 elif SPIDER:            # v4: 羽根を輪で囲い、腕でモーターを真ん中に持つ(2026-10-19。2026-10-20 から、ハブと輪を斜め45°の4本の腕でつなぎ、輪から耳を出してマウントの腕に留める)。フレームにねじ3本で留める。上へ吐き出す
     BOSS_R = CFG['boss_r']
     W = 1.0                                   # 輪の壁(2026-10-20 に 0.6 から。前の耳のねじをやめた分、輪を太くして台を硬くする)
-    R_RING, Z_RING = 16.5, 10.0               # 輪の内側の半径(囲いの内径 φ33、羽根 φ32 とのすき間 0.5mm。2026-10-20)、輪の上
-    Z_ARM0, Z_ARM1, ARM_W = 8.8, 10.8, 3.0    # 腕(羽根の上 8.0 から 0.8 上)
-    Z_TOP1 = 9.4; Z_TOP0 = Z_ARM0             # モーターの前の面を受けるハブの底
-    Z_COL = 16.0                              # ハブの上(2026-10-20: 圧入にして 13.2 から伸ばした。モーターを 6.6mm つかむ)
+    R_RING, Z_RING = 16.5, 10.0 + DZ          # 輪の内側の半径(囲いの内径 φ33、羽根 φ32 とのすき間 0.5mm。2026-10-20)、輪の上
+    Z_ARM0, Z_ARM1, ARM_W = 8.8 + DZ, 10.8 + DZ, 3.0    # 腕(2026-11-11 からフレームに合わせて DZ = −0.2mm 下げる。ファンの台・羽根・ファンのモーターごと)
+    Z_TOP1 = 9.4 + DZ; Z_TOP0 = Z_ARM0        # モーターの前の面を受けるハブの底
+    Z_COL = 16.0 + DZ                         # ハブの上(2026-10-20: 圧入にして 13.2 から伸ばした。モーターを 6.6mm つかむ)
     BORE_D = 8.6                              # モーターの穴(モーター φ8.6 を圧入。モーターマウントの軸受の穴と同じ考え方で寸法どおり)
     # 基板はモーターマウントの前後の耳の上の柱で受ける(2026-10-20。ファンの台の左右の柱はやめた)
     PCB_FAN_POSTS = [(dz.MOUNT_SCREWS[1][0], sy * dz.MOUNT_SCREWS[1][1]) for sy in (1, -1)]
@@ -451,7 +453,7 @@ if FRAME_FAN:   # ファンのケースをフレームに留めるねじ(下か�
             add(f'nut_fanframe_{i}', nut(px, py, P2['ear_top'] - P2['nut_depth'] + 0.05), 'nylon')
     if SPIDER:
         for i, (px, py) in enumerate(dz.FAN_JOINTS):   # ファンの台をマウントの腕に留める(上から。2026-10-30 に鉄の低頭 M2 L5 にそろえる。それまではナイロンのなべ L6)
-            add(f'screw_fanjoint_{i}', screw(px, py, 10.8, 5.0, up=False), 'steel')
+            add(f'screw_fanjoint_{i}', screw(px, py, Z_ARM1, 5.0, up=False), 'steel')
     if not SPIDER:      # v3: モーターの筒を横のねじで締める(v4 は圧入)
         add('screw_fanclamp', ycyl(1.0, -2.8, 5.2, fx - 6.1, 11.5).union(ycyl(2.0, -4.4, -2.8, fx - 6.1, 11.5)), 'nylon')
         add('nut_fanclamp', ycyl(2.3, 2.8, 4.4, fx - 6.1, 11.5).cut(ycyl(1.0, 2.7, 4.5, fx - 6.1, 11.5)), 'nylon')
