@@ -233,7 +233,12 @@ elif SPIDER:            # v4: 羽根を輪で囲い、腕でモーターを真�
         if foot.area > 0.5:
             case = case.union(cq.Workplane().add(poly_solid(foot, Z_FT, Z_PC + 0.05)))
     # モーターの筒: 上から圧入し、前の面をハブの底に当てる(2026-10-20。それまでは割りを入れて横のねじで締めていた)
-    case = case.cut(zcyl(BORE_D / 2, Z_TOP1, Z_COL + 1, fx, fy))
+    # 2026-11-11(ファンの台 v3): 走行用のマウント v20 と同じしまりばめ。当たり面3つ φ8.5、その間の逃がし φ8.8、上の入口 1.0mm は寸法どおりの丸い穴
+    import mount2 as _m2
+    _MOUTH = 1.0
+    _pb = _m2.press_bore(BORE_D, 0.0, Z_COL - _MOUTH - Z_TOP1, 0.0, 0.0, math.pi / 2, -math.pi / 2, dict(_m2.P, wall_free=1.0))   # y 方向に作って z へ回す
+    case = case.cut(cq.Workplane().add(_pb.val().rotate(cq.Vector(0, 0, 0), cq.Vector(1, 0, 0), 90).translate(cq.Vector(fx, fy, Z_TOP1))))
+    case = case.cut(zcyl(BORE_D / 2, Z_COL - _MOUTH - 0.01, Z_COL + 1, fx, fy))
     case = case.cut(zcyl(2.25, Z_TOP0 - 0.1, Z_TOP1 + 0.1, fx, fy))   # 2026-11-01: 羽根(mechanical/parts/impeller_v1.step)のハブの出っ張り φ3.5 が入るように φ3.0 → φ4.5
     def nut_pocket(px, py, z_top, out):
         hexp = cq.Workplane().center(px, py).polygon(6, SC['pocket'] / math.cos(math.pi / 6)).extrude(SC['depth']).translate((0, 0, z_top - SC['depth']))
