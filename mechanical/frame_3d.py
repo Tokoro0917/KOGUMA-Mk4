@@ -22,9 +22,9 @@ plate = g['carbon'].difference(unary_union(slots + holes))
 poly_solid = dxa.arc_solid   # 直線と本当の円弧で作る(dxf_arcs.arc_solid)
 
 parts = {}
-parts['carbon'] = poly_solid(plate, dz.Z_FB, dz.Z_FT)   # 下の面 z 2.0、厚さ dz.T_CF(2026-11-11 から 0.8mm、上の面 z 2.8)
+parts['carbon'] = poly_solid(plate, 2.0, 3.0)
 sheet = g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
-parts['pc_sheet'] = poly_solid(sheet, dz.Z_FT, dz.Z_FT + 0.2)     # 塩ビ 0.2mm
+parts['pc_sheet'] = poly_solid(sheet, 3.0, 3.2)     # 塩ビ 0.2mm
 ribs = []
 for (l, h, w) in g['vribs']:
     (x0, y0), (x1, y1) = l.coords[0], l.coords[-1]
