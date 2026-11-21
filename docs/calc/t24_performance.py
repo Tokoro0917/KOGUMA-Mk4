@@ -128,6 +128,12 @@ if __name__ == '__main__':
                     t2, v2 = straight(p, n * CELL, I, S, cap=False)
                     row.append(f'{n}区画 {t1 * 1000:.0f}ms({v1:.1f})' + ('' if abs(t1 - t2) < 1e-3 else f' [上限なし {t2 * 1000:.0f}ms({v2:.1f})]'))
                 P(f'    直線(片側{I}A、3 m/s で入って出る): ' + '、'.join(row))
+            row = []
+            for n in (2, 4, 8, 15):
+                tg, vg = straight_guard(p, n * CELL, S)
+                row.append(f'{n}区画 {tg * 1000:.0f}ms({vg:.1f})')
+            P(f'    直線(片側 5A・電池の電流 7.5A で見張る、2026-11-21 決定): ' + '、'.join(row)
+              + f'。走り出し {acc_guard(p, 0, S):.0f}、4 m/s {acc_guard(p, 4, S):.0f}、10 m/s {acc_guard(p, 10, S, False):.0f} m/s²')
             lat = grip(p, S)
             P('    ターンの速さの上限(横の加速度 = グリップ): ' + '、'.join(f'半径{R * 1000:.0f}mm {math.sqrt(lat * R):.2f} m/s' for R in (0.045, 0.07, 0.09, 0.135)))
             P('    V90 の入りの外側の電流: ' + '、'.join(f'{v:.1f} m/s {v90_current(p, v):.1f}A' for v in (2.2, 2.6, 3.0, 3.4)))
