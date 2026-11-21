@@ -13,7 +13,7 @@
   "cg": [
    -0.24,
    -0.0,
-   12.97
+   12.96
   ],
   "iz": 286.9,
   "groups": [
@@ -83,8 +83,8 @@
    "shaft_L": 0.023,
    "pinion_R": 0.251,
    "pinion_L": 0.251,
-   "enc_board_R": 0.061,
-   "enc_board_L": 0.061,
+   "enc_board_R": 0.058,
+   "enc_board_L": 0.058,
    "mt6835_R": 0.032,
    "mt6835_L": 0.032,
    "pin_R": 0.333,
@@ -337,18 +337,6 @@
   {
    "a": "mount_L",
    "b": "pinion_L",
-   "gap": 0.3,
-   "overlap": 0.0
-  },
-  {
-   "a": "enc_board_R",
-   "b": "battery_holder_R",
-   "gap": 0.3,
-   "overlap": 0.0
-  },
-  {
-   "a": "enc_board_L",
-   "b": "battery_holder_L",
    "gap": 0.3,
    "overlap": 0.0
   },
