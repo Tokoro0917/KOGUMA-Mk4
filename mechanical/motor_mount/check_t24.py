@@ -8,6 +8,9 @@ import cadquery as cq
 from OCP.BRepExtrema import BRepExtrema_DistShapeShape
 import mount as mm
 import mount_t24 as mt
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../wheel'))
+import wheel_t24 as wt
 
 P = mt.P
 ax, az = P['axle']
@@ -26,7 +29,7 @@ for s in cq.importers.importStep('tn_drive_mk4_right.step').val().Solids():
     else: continue
     parts[nm] = s.translate(cq.Vector(0, DY, DZ))
 parts['tire'] = ycyl(12.0, -33.3, -24.8, ax, az).cut(ycyl(10.0, -33.4, -24.7, ax, az)).val()
-parts['wheel'] = ycyl(10.0, -33.3, -24.8, ax, az).val()          # 仮(中まで詰まった円柱)
+parts['wheel'] = wt.build().val()                                 # mechanical/wheel/wheel_t24.py
 parts['spur71'] = ycyl(10.95, -24.8, -22.8, ax, az).cut(ycyl(4.0, -24.9, -22.7, ax, az)).val()   # 中の穴 φ8(外の軸受のつばが入る)
 parts['MT6835'] = box(-2.5, 2.5, -18.7, -17.5, 8.8, 15.2).val()      # TSSOP-16、足まで
 parts['enc_board'] = box(-3.0, 3.0, -17.5, -16.9, 8.3, 17.5).val()
@@ -57,7 +60,7 @@ if __name__ == '__main__':
               ('brg_out', 'spur71'), ('spur71', 'wheel'), ('tire', 'wheel'), ('shaft', 'pinion13'), ('motor', 'motor_boss'),
               ('motor_boss', 'shaft'), ('enc_board', 'MT6835'), ('brg_in', 'brg_out'), ('screw_front', 'frame'), ('screw_rear', 'frame'),
               ('frame', 'sheet'), ('battery', 'pcb'), ('pin', 'spur71')}
-    focus = ('mount', 'motor', 'shaft', 'pinion13', 'motor_boss', 'enc_board', 'MT6835', 'screw_front', 'screw_rear', 'pcb')
+    focus = ('wheel', 'mount', 'motor', 'shaft', 'pinion13', 'motor_boss', 'enc_board', 'MT6835', 'screw_front', 'screw_rear', 'pcb')
     names = list(parts); rows = []
     for i, a in enumerate(names):
         for b in names[i + 1:]:
