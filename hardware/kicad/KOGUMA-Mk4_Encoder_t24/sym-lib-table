@@ -1,0 +1,4 @@
+(sym_lib_table
+	(version 7)
+	(lib (name "KOGUMA-Mk4_Encoder")(type "KiCad")(uri "${KIPRJMOD}/KOGUMA-Mk4_Encoder.kicad_sym")(options "")(descr "MK4 encoder board symbols"))
+)

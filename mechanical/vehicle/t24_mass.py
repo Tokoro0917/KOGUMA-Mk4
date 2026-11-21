@@ -3,7 +3,7 @@
 main の機体(vehicle.py v4、56.06g)の作り方で機体を作り(FAST=1)、足回り・モーターマウント・電池のホルダをタイヤ24mm のものに入れ替えて計算する。
 入れ替えた部品とほかのすべての部品のすき間も調べる。
   入れ替えるもの: マウント(t24v2)、電池のホルダ(t24v1)、ホイール(t24v1)、タイヤ(24 × 8.5mm、ゴム)、71T(POM、厚さ2mm、穴φ8)、
-                  走行用モーター・軸・ピニオン(新しい位置)、平行ピン・軸受・磁石(main から (0, ±3.5, +4.5))、エンコーダ基板(6.0 × 9.2mm)・MT6835
+                  走行用モーター・軸・ピニオン(新しい位置)、平行ピン・軸受・磁石(main から (0, ±3.5, +4.5))、エンコーダ基板(6.0 × 8.75mm)・MT6835
   vehicle.py が t24 の値で作るもの: フレーム(frame t24v1)、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
   そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート・シート
 使い方(リポジトリの一番上で): python3 mechanical/vehicle/t24_mass.py → mechanical/vehicle/vehicle_t24_mass.json、mk4_vehicle_t24.step"""
@@ -50,7 +50,7 @@ right['spur71'] = (ycyl(10.65, -24.8, -22.8, ax, az).cut(ycyl(4.0, -24.9, -22.7,
 right['motor'] = (ycyl(4.3, P['motor_face'], P['motor_face'] + 20.0, mx, mz).union(ycyl(1.2, P['motor_face'] - 0.3, P['motor_face'], mx, mz)).val(), 'motor')
 right['shaft'] = (ycyl(0.6, P['motor_face'] - 0.3, -24.4, mx, mz).val(), 'steel')
 right['pinion'] = (ycyl(2.25, -22.4, -24.4, mx, mz).cut(ycyl(0.6, -22.3, -24.5, mx, mz)).val(), 'brass')
-right['enc_board'] = (cq.Solid.makeBox(6.0, 0.6, 9.2, cq.Vector(-3.0, -17.5, 8.3)), 'fr4')
+right['enc_board'] = (cq.Solid.makeBox(6.0, 0.6, 8.75, cq.Vector(-3.0, -17.5, 8.15)), 'fr4')   # hardware/kicad/KOGUMA-Mk4_Encoder_t24
 right['mt6835'] = (cq.Solid.makeBox(4.4, 1.2, 5.0, cq.Vector(-2.2, -18.7, 9.5)), 'resin')
 for r in rows_v:      # 平行ピン・軸受・磁石は main のものを動かす
     for k in ('pin', 'brg_out', 'brg_in', 'magnet'):
