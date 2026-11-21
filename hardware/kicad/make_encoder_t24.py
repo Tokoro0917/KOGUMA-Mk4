@@ -28,16 +28,17 @@ PAD_X = {n: round(100.0 + PITCH * (i - 3), 4) for i, n in enumerate(ORDER)}
 SIG = {'2': 4, '3': 5, '4': 6, '5': 7, '6': 8}  # J1 のピン → MT6835 のピン(CAL, MISO, MOSI, SCK, CS)
 
 def ensure_project():
-    if os.path.isdir(DST):
-        shutil.rmtree(DST)
-    os.makedirs(DST)
+    os.makedirs(DST, exist_ok=True)      # README.md・絵など、ここで作らないファイルは消さない
     for fn in os.listdir(SRC):
         s = os.path.join(SRC, fn)
         if fn == 'README.md':
             continue
         proj = fn.startswith('KOGUMA-Mk4_Encoder.kicad_') and fn.split('.')[-1] in ('kicad_pro', 'kicad_sch', 'kicad_pcb')   # 記号ライブラリ(.kicad_sym)は名前を変えない
         d = os.path.join(DST, fn.replace('KOGUMA-Mk4_Encoder.', NAME + '.') if proj else fn)
-        (shutil.copytree if os.path.isdir(s) else shutil.copy)(s, d)
+        if os.path.isdir(s):
+            shutil.copytree(s, d, dirs_exist_ok=True)
+        else:
+            shutil.copy(s, d)
     sch = os.path.join(DST, NAME + '.kicad_sch')     # 回路図の J1 のフットプリントを新しいものに
     t = open(sch).read()
     assert t.count('"KOGUMA-Mk4_Encoder:ENC_Edge"') == 1
