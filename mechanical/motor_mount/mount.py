@@ -193,6 +193,9 @@ def build(P=P):
             holes.append((P['fan_joint'], P['joint_z'][0], P['joint_z'][1]))
         for (hx, hy), z0, z1 in holes:   # タップの下穴の上下
             body = body.cut(cone_z(P['hole_d'] / 2, z0, 1, hx, hy)).cut(cone_z(P['hole_d'] / 2, z1, -1, hx, hy))
+    tc = P.get('top_cut')
+    if tc:   # タイヤ24mm(mount_t24.py): メイン基板の下面 z より上を削る。ただしメイン基板の切り欠き(x ±tc['x']、y < tc['y'])の中は残す
+        body = body.cut(box(-40, 40, -40, 0, tc['z'], 40).cut(box(-tc['x'], tc['x'], -40, tc['y'], tc['z'] - 1, 41)))
     return body
 
 def wedge(R, y0, y1, x, z, a, hw):
