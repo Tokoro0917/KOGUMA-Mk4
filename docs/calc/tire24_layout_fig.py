@@ -1,5 +1,5 @@
 """タイヤ24mm・71T:13T・フレーム70mm の配置の略図(2026-11-21)
-使い方(リポジトリの一番上で): python3 docs/calc/tire24_layout_fig.py → docs/img/tire24/layout_v1.png
+使い方(リポジトリの一番上で): python3 docs/calc/tire24_layout_fig.py → docs/img/tire24/layout_v2.png
 座標は機体と同じ(原点は車軸の中心の真下の床、+x が前、+y が左、z は床から上、mm)。
 灰色の点線は main(タイヤ15mm、41T:13T)。フレームの外形・基板は略図。高さ方向(モーター・基板)はまだ決めていない"""
 import math, os
@@ -10,7 +10,7 @@ from matplotlib.patches import Rectangle, Circle, Polygon, Wedge
 
 plt.rcParams['font.family'] = 'WenQuanYi Zen Hei'
 plt.rcParams['axes.unicode_minus'] = False   # このフォントには U+2212 がない
-OUT = 'docs/img/tire24/layout_v1.png'
+OUT = 'docs/img/tire24/layout_v2.png'
 
 # 新しい並び(右側、y の範囲)
 AX = 12.0                      # 車軸の高さ
@@ -18,6 +18,8 @@ TIRE = (-33.3, -24.8, 10.0, 12.0)   # y0, y1, ホイールの外径の半径, �
 SPUR = (-24.8, -22.8, 10.95)
 BRG_O = (-23.2, -21.2); BRG_I = (-21.0, -19.0)
 MAG = (-20.2, -19.2); CHIP = (-18.7, -17.5); ENC = (-17.5, -16.9)
+ENC_Z = (8.3, 17.5); CHIP_Z = (8.8, 15.2)   # チップは TSSOP-16、足まで入れて縦6.4mm、中心 z 12.0
+PCB_Z = (13.6, 14.2); PCB_EDGE = -16.7   # メイン基板(0.6mm)。車軸のまわり(x ±4.5)は |y| > 16.7 を切り欠く(軸受・マウント・チップが通る)
 PIN = (-25.6 + 3.5 - 3.5, None)
 MOTOR_Z = 3.0 + 0.5 + 0.6 + 4.3        # フレームの上面 + すき間 + 筒の壁 + モーターの半径 = 8.4
 MOTOR_DEG = -math.degrees(math.asin((AX - MOTOR_Z) / 12.6))   # -16.6°
@@ -60,13 +62,25 @@ rect(ax, -29.7 + 3.5, -23.7 + 3.5, AX - 1.5, AX + 1.5, fc='#e0e0e0', ec='k', lw=
 for b in (BRG_O, BRG_I):
     rect(ax, *b, AX - 3.0, AX + 3.0, fc=C['brg'], ec='k', lw=0.6, alpha=0.8)
 rect(ax, *MAG, AX - 1.5, AX + 1.5, fc=C['mag'], ec='k', lw=0.6)
-rect(ax, *CHIP, AX - 1.5, AX + 1.5, fc='#222', ec='k', lw=0.6)
-rect(ax, *ENC, AX - 4.2, AX + 6.1, fc=C['enc'], ec='k', lw=0.6)
+rect(ax, *CHIP, *CHIP_Z, fc='#222', ec='k', lw=0.6)
+rect(ax, *ENC, *ENC_Z, fc=C['enc'], ec='k', lw=0.6)
+rect(ax, PCB_EDGE, 0, *PCB_Z, fc='#6aa56a', ec='k', lw=0.6)
+rect(ax, -23.4, -18.8, AX - 3.6, AX + 3.6, fill=False, ec='#555', ls=':', lw=0.9)
+A = dict(arrowstyle='->', lw=0.6)
+def lab(txt, xy, xyt, color='k', **kw):
+    ax.annotate(txt, xy, xyt, fontsize=7.5, color=color, arrowprops=dict(A, color=color), **kw)
+lab('マウント(軸受の受け、上 z 約15.6)', (-21, AX + 3.6), (-14, 26.5), '#555')
+lab('エンコーダ基板 z 8.3〜17.5\n(メイン基板の縁に沿って立て、\n 上ではんだ付け)', (-17.2, 17.0), (-12.5, 21.0), C['enc'])
+lab('MT6835(中心 z 12.0、z 8.8〜15.2)', (-18.1, 9.5), (-14.0, -3.5), '#222')
+lab('磁石', (-19.7, AX - 1.5), (-17.5, 0.8), C['mag'])
+lab('軸受×2', (-22.2, AX - 3.0), (-23.5, -2.5), C['brg'])
+lab('メイン基板 z 13.6〜14.2(main と同じ)\n車軸のまわり x ±4.5 は\ny < -16.7 を切り欠く', (-8, 13.6), (-14.8, 6.0), '#2e6b2e')
+ax.plot([-16.0, -16.0], [PCB_Z[1], 20.0], color='#b8860b', lw=0.8, ls='--')
+lab('電池・ホルダ(|y| ≤ 17.3)', (-16.0, 19.0), (-7.5, 16.0), '#b8860b')
 ax.axvline(-FRAME_Y, color=C['frame'], lw=0.8, ls='-.')
 ax.text(-35.6, 14, 'フレームの端 y -35.0', fontsize=8, rotation=90, ha='right', va='center')
-for txt, y, z in (('タイヤ 24mm × 8.5mm\n(y -33.3〜-24.8)', -29.05, 24.6), ('71T', -23.8, 23.6),
-                  ('軸受×2', -21.1, 15.8), ('磁石', -19.7, 7.3), ('エンコーダ基板\n(高さは未定)', -14.5, 19.5)):
-    ax.text(y, z, txt, fontsize=8, ha='center')
+ax.text(-29.05, 24.6, 'タイヤ 24mm × 8.5mm\n(y -33.3〜-24.8)', fontsize=8, ha='center')
+ax.text(-23.8, 23.6, '71T', fontsize=8, ha='center')
 ax.text(-37.5, -9.5, '灰色の点線: main(タイヤ15mm・41T、車軸 7.5mm)', fontsize=8, color='#777')
 ax.plot([-33.3, -24.8], [AX, AX], color='w', lw=0.5)
 ax.axhline(AX, color='#c00', lw=0.6, ls=':')
@@ -93,7 +107,7 @@ ax.add_patch(Circle((MOTOR_X, MOTOR_Z), 4.3, fc=C['motor'], alpha=0.45, ec=C['mo
 ax.add_patch(Circle((MOTOR_X, MOTOR_Z), 4.9, fill=False, ec=C['motor'], ls=':', lw=0.8))
 ax.text(-49, 33.5, f'モーター(φ8.6)は下に(2026-11-21決定)\n  中心 x {MOTOR_X:.2f}、z {MOTOR_Z:.1f}(車軸から{MOTOR_DEG:.1f}°、軸間 12.6mm)\n'
         f'  モーターの下 z {MOTOR_Z-4.3:.1f}、上 z {MOTOR_Z+4.3:.1f}\n  点線はマウントの筒(壁0.6mm): 下 z {MOTOR_Z-4.9:.1f}(フレームの上面 z 3.0 から0.5mm)', fontsize=8, va='top', color=C['motor'])
-ax.axhline(13.6, color=C['enc'], lw=0.8, ls='--'); ax.text(49, 14.0, 'main のメイン基板の下面 z 13.6(高さは決め直す)', fontsize=8, color=C['enc'], ha='right')
+ax.axhspan(13.6, 14.2, color='#6aa56a', alpha=0.5); ax.text(49, 14.6, 'メイン基板 z 13.6〜14.2(main と同じ。車輪の所は x ±12.5 を切り欠く)', fontsize=8, color='#2e6b2e', ha='right')
 ax.text(13, -1.5, '71T の一番下 z 1.05', fontsize=8, color=C['spur'])
 ax.text(49, 31, '横から見るとモーターがタイヤに重なって見えるが、\nモーターはタイヤより内側(y が違う)なので当たらない', fontsize=8, ha='right', va='top')
 ax.set_xlim(-50, 50); ax.set_ylim(-3, 34); ax.set_aspect('equal')
@@ -135,7 +149,7 @@ ax.set_xlabel('x [mm](右が前)'); ax.set_ylabel('y [mm](上が左)')
 ax.set_title('3. 上から(フレームの外形は略図)')
 ax.grid(alpha=0.2)
 
-fig.suptitle('タイヤ24mm・71T:13T・フレーム70mm の配置(2026-11-21、v1 略図: モーターを下に)', fontsize=13)
+fig.suptitle('タイヤ24mm・71T:13T・フレーム70mm の配置(2026-11-21、v2 略図: モーターを下に、エンコーダ基板をメイン基板の上へ出す)', fontsize=13)
 fig.tight_layout()
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 fig.savefig(OUT)
