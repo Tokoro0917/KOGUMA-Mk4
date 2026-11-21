@@ -18,6 +18,24 @@ dz.G_REAR = (-25.5, 19.0)                               # 骨G の始まり(後�
 dz.MOUNT_PAD = (-25.0, 12.5, dz.SY, dz.SLOT_Y0 + 0.5)    # マウントが載る所(窓を開けない)
 dz.ENC_BOARD = (-3.0, 3.0, 16.9, 17.5)                  # エンコーダ基板はフレームまで来ないが、窓の計算の都合で残す所
 
+MOUTH_R = 1.5                                           # 切り欠きの口の角(フレームの外側の角)を丸める半径
+_build = dz.build
+def build_t24(**kw):
+    """design.build の形から、切り欠きの口の角 (±SLOT_L/2, ±YB) を半径 MOUTH_R で丸める(壁に引っかからないように)"""
+    from shapely.geometry import box, Point
+    from shapely.ops import unary_union
+    g = _build(**kw)
+    x0, y0, r = dz.SLOT_L / 2, dz.YB, MOUTH_R
+    cuts = []
+    for sx in (1, -1):
+        for sy in (1, -1):
+            sq = box(min(sx * x0, sx * (x0 + r)), min(sy * y0, sy * (y0 - r)), max(sx * x0, sx * (x0 + r)), max(sy * y0, sy * (y0 - r)))
+            cuts.append(sq.difference(Point(sx * (x0 + r), sy * (y0 - r)).buffer(r, 64)))
+    c = unary_union(cuts)
+    g['domain'], g['carbon'] = g['domain'].difference(c), g['carbon'].difference(c)
+    return g
+dz.build = build_t24
+
 import fem, analyze as an
 
 BASE = json.load(open('results/v6_9_params.json'))
@@ -80,5 +98,5 @@ if __name__ == '__main__':
         json.dump(r, open(f'results/t24_{nm}_result.json', 'w'), indent=1)
         json.dump(VARIANTS[nm], open(f'results/t24_{nm}_params.json', 'w'), ensure_ascii=False)
         print(nm, f"カーボン {r['m_carbon']:.2f}g、前 {r['dA']:.2f}mm、後ろ {r['dA_rear']:.2f}mm、角 {r['dB']:.2f}mm、{r['f1']:.0f}Hz、"
-              f"座屈 正面 {r['BK_D']:.0f} / 角 {r['BK_E']:.0f} / 横 {r['BK_F']:.0f}N、安全率 "
+              f"座屈 正面 {r['BK_D'] * an.LOADS['D_front']:.0f} / 角 {r['BK_E'] * an.LOADS['E_corner']:.0f} / 横 {r['BK_F'] * an.LOADS['F_side']:.0f}N、安全率 "
               + ' '.join(f"{k[3:]}{r[k]:.1f}" for k in r if k.startswith('SF_')) + f"、{r['time']:.0f}s", flush=True)
