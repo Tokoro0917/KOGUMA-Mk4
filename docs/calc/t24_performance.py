@@ -17,11 +17,6 @@ import argparse, math, sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import drive_calc as d
 
-ap = argparse.ArgumentParser()
-ap.add_argument('--suction', type=float, nargs='*', default=[400.0, 510.0], help='吸引の力 [g](t24 で同じ負圧なら約510g)')
-ap.add_argument('--volt', type=float, default=11.1)
-a = ap.parse_args()
-
 J_ROT = 15e-9                                   # 0.15 g·cm² → kg·m²
 MU = 91.5 * 0.078 / ((0.078 + 0.4) * d.G_ACC)   # 1.52
 CELL = 0.18
@@ -75,32 +70,38 @@ def straight(p, L, I, S, v0=3.0, cap=True):
 def v90_current(p, v):
     return d.v90_peak_current(p['dc'], p['Iz_eff'], v)
 
-out = []
-P = lambda s='': out.append(s)
-P(f'電源 {a.volt}V、μ {MU:.2f}、区画 {CELL * 1000:.0f}mm、回転数の上限 {RPM_CAP}rpm(ロータ {J_ROT * 1e7:.2f} g·cm²)')
-P()
-P('■ 質量と回る部品')
-for k in M:
-    p = model(k, a.volt)
-    P(f'  {k}: 質量 {p["m"] * 1000:.1f}g → 有効質量 {p["m_eff"] * 1000:.1f}g、慣性モーメント {p["Iz"] * 1e7:.0f} → 有効 {p["Iz_eff"] * 1e7:.0f} g·cm²')
-for S in a.suction:
+if __name__ == '__main__':
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--suction', type=float, nargs='*', default=[400.0, 510.0], help='吸引の力 [g](t24 で同じ負圧なら約510g)')
+    ap.add_argument('--volt', type=float, default=11.1)
+    a = ap.parse_args()
+
+    out = []
+    P = lambda s='': out.append(s)
+    P(f'電源 {a.volt}V、μ {MU:.2f}、区画 {CELL * 1000:.0f}mm、回転数の上限 {RPM_CAP}rpm(ロータ {J_ROT * 1e7:.2f} g·cm²)')
     P()
-    P(f'■ 吸引 {S:.0f}g')
+    P('■ 質量と回る部品')
     for k in M:
         p = model(k, a.volt)
-        P(f'  {k}')
-        P(f'    グリップの限界(加速・減速・横): {grip(p, S):.0f} m/s²(この加速に要る電流 片側 {grip(p, S) / d.accel_current_limit(p["dc"], 1):.1f}A)')
-        P(f'    加速(0 m/s): 片側3A {acc(p, 0, 3, S):.0f}、3.5A {acc(p, 0, 3.5, S):.0f}、4A {acc(p, 0, 4, S):.0f}、5A {acc(p, 0, 5, S):.0f} m/s²'
-          f' / 6 m/s で 3.5A {acc(p, 6, 3.5, S, False):.0f}、10 m/s で {acc(p, 10, 3.5, S, False):.0f} m/s²(電圧で決まる所は電流によらない)')
-        P(f'    最高速: 回転数の上限で {vcap(p):.1f} m/s、上限なし(無負荷){vmax_free(p):.1f} m/s')
-        for I in (3.0, 3.5):
-            row = []
-            for n in (2, 4, 8, 15):
-                t1, v1 = straight(p, n * CELL, I, S)
-                t2, v2 = straight(p, n * CELL, I, S, cap=False)
-                row.append(f'{n}区画 {t1 * 1000:.0f}ms({v1:.1f})' + ('' if abs(t1 - t2) < 1e-3 else f' [上限なし {t2 * 1000:.0f}ms({v2:.1f})]'))
-            P(f'    直線(片側{I}A、3 m/s で入って出る): ' + '、'.join(row))
-        lat = grip(p, S)
-        P('    ターンの速さの上限(横の加速度 = グリップ): ' + '、'.join(f'半径{R * 1000:.0f}mm {math.sqrt(lat * R):.2f} m/s' for R in (0.045, 0.07, 0.09, 0.135)))
-        P('    V90 の入りの外側の電流: ' + '、'.join(f'{v:.1f} m/s {v90_current(p, v):.1f}A' for v in (2.2, 2.6, 3.0, 3.4)))
-print('\n'.join(out))
+        P(f'  {k}: 質量 {p["m"] * 1000:.1f}g → 有効質量 {p["m_eff"] * 1000:.1f}g、慣性モーメント {p["Iz"] * 1e7:.0f} → 有効 {p["Iz_eff"] * 1e7:.0f} g·cm²')
+    for S in a.suction:
+        P()
+        P(f'■ 吸引 {S:.0f}g')
+        for k in M:
+            p = model(k, a.volt)
+            P(f'  {k}')
+            P(f'    グリップの限界(加速・減速・横): {grip(p, S):.0f} m/s²(この加速に要る電流 片側 {grip(p, S) / d.accel_current_limit(p["dc"], 1):.1f}A)')
+            P(f'    加速(0 m/s): 片側3A {acc(p, 0, 3, S):.0f}、3.5A {acc(p, 0, 3.5, S):.0f}、4A {acc(p, 0, 4, S):.0f}、5A {acc(p, 0, 5, S):.0f} m/s²'
+              f' / 6 m/s で 3.5A {acc(p, 6, 3.5, S, False):.0f}、10 m/s で {acc(p, 10, 3.5, S, False):.0f} m/s²(電圧で決まる所は電流によらない)')
+            P(f'    最高速: 回転数の上限で {vcap(p):.1f} m/s、上限なし(無負荷){vmax_free(p):.1f} m/s')
+            for I in (3.0, 3.5):
+                row = []
+                for n in (2, 4, 8, 15):
+                    t1, v1 = straight(p, n * CELL, I, S)
+                    t2, v2 = straight(p, n * CELL, I, S, cap=False)
+                    row.append(f'{n}区画 {t1 * 1000:.0f}ms({v1:.1f})' + ('' if abs(t1 - t2) < 1e-3 else f' [上限なし {t2 * 1000:.0f}ms({v2:.1f})]'))
+                P(f'    直線(片側{I}A、3 m/s で入って出る): ' + '、'.join(row))
+            lat = grip(p, S)
+            P('    ターンの速さの上限(横の加速度 = グリップ): ' + '、'.join(f'半径{R * 1000:.0f}mm {math.sqrt(lat * R):.2f} m/s' for R in (0.045, 0.07, 0.09, 0.135)))
+            P('    V90 の入りの外側の電流: ' + '、'.join(f'{v:.1f} m/s {v90_current(p, v):.1f}A' for v in (2.2, 2.6, 3.0, 3.4)))
+    print('\n'.join(out))
