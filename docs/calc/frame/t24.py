@@ -3,6 +3,7 @@ frame v6.9 のパラメータ(results/v6_9_params.json)のまま、design.py の
   - タイヤ・71T の所は外へ開いた切り欠き(|y| > 22.3、前後 SLOT_L)。フレームの外側の帯はなくす(spec「車輪の並びとフレームの幅」)
   - モーターマウント t24v2 のねじ (8, ±19.5)・(-21, ±19.5)、ファンの台の継ぎ目 (14, ±20.3)
   - 横からの衝突(F)は、切り欠きの前後のフレームの横の辺(|y| = 35、9 < |x| < 16.7)で受ける(v6.9 はタイヤの外の帯 |x| < 8)
+  - frame t24v2(案 w): 吸引する面を 68 × 34mm に広げた(v1 は 60 × 30mm)。シートはマウントが載る所を切る(g['sheet'])
 使い方(このディレクトリで): python3 t24.py [max_area(既定 0.15)] [案の名前 ...]
   → results/t24_<案>_result.json、params.json。案は下の VARIANTS"""
 import json, os, sys, time
@@ -15,7 +16,13 @@ dz.SLOT_L, dz.SLOT_Y0, dz.SLOT_Y1 = 18.0, 22.3, 40.0   # 切り欠き: 前後18m
 dz.MOUNT_SCREWS = [(-21.0, 19.5), (8.0, 19.5)]
 dz.FAN_JOINTS = [(14.0, 20.3), (14.0, -20.3)]
 dz.G_REAR = (-25.5, 19.0)                               # 骨G の始まり(後ろの耳のすぐ後ろ)
-dz.MOUNT_PAD = (-25.0, 12.5, dz.SY, dz.SLOT_Y0 + 0.5)    # マウントが載る所(窓を開けない)
+dz.MOUNT_PAD = (-25.0, 12.5, 15.0, dz.SLOT_Y0 + 0.5)    # マウントが載る所(窓を開けない)。マウントは |y| 15.3 から
+
+SUCTION = {'v1': (30.0, 15.0),     # 吸引する面の半分(x, y)。v1 は main と同じ 60 × 30mm
+           'w': (34.0, 17.0)}      # 68 × 34mm(2026-11-21): 横はマウントのねじの頭(|y| 17.6 から)、前は横の壁センサのホルダ(x 36.5 から)まで
+def set_suction(name):
+    dz.SX, dz.SY = SUCTION[name]
+SHEET_CUT = (-24.0, 11.0, 15.2)   # 吸引する面のシート(塩ビ)を切る所: マウントがカーボンに直に載る所(x0, x1, |y| から外)
 dz.ENC_BOARD = (-3.0, 3.0, 16.9, 17.5)                  # エンコーダ基板はフレームまで来ないが、窓の計算の都合で残す所
 
 MOUTH_R = 1.5                                           # 切り欠きの口の角(フレームの外側の角)を丸める半径
@@ -33,10 +40,15 @@ def build_t24(**kw):
             cuts.append(sq.difference(Point(sx * (x0 + r), sy * (y0 - r)).buffer(r, 64)))
     c = unary_union(cuts)
     g['domain'], g['carbon'] = g['domain'].difference(c), g['carbon'].difference(c)
+    # シート: 吸引する面からファンの穴と、マウントが載る所(吸引する面が |y| 15.2 より広いとき)を除く。そこはカーボンなので空気は漏れない
+    x0, x1, yc = SHEET_CUT
+    g['sheet'] = (g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
+                  .difference(box(x0, yc, x1, 60)).difference(box(x0, -60, x1, -yc)))
     return g
 dz.build = build_t24
 
 import fem, analyze as an
+set_suction('w')     # 2026-11-21 から frame t24v2(吸引する面 68 × 34mm)。t24.py を読み込むほかのスクリプト(機体・基板・注文)はこの値で作る
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BASE = json.load(open(os.path.join(HERE, 'results/v6_9_params.json')))
@@ -44,11 +56,13 @@ VARIANTS = {
     'a': dict(BASE),                                             # v6.9 そのまま(マウントの下・切り欠きの前後の横の帯に窓)
     'b': dict(BASE, mount_windows=['pad2']),                     # 切り欠きの前後の横の帯には窓を開けない
     'c': dict(BASE, mount_windows=[]),                           # マウントの下にも窓を開けない
+    'w': dict(BASE, _suction='w'),                               # a の形で、吸引する面を 68 × 34mm に
 }
 
 def run(params, max_area=0.15, h=0.45):
     """analyze.run と同じ。ただし横からの衝突 F は切り欠きの前後の横の辺で受ける"""
     params = dict(params); params.pop('base', None)
+    set_suction(params.pop('_suction', 'v1'))
     t0 = time.time()
     g = dz.build(**params)
     mc, mp, iz = dz.mass_iz(g)

@@ -1,5 +1,7 @@
 # フレームの製作用ファイル(frame v6.9)
 
+> **2026-11-21 タイヤ24mm 用 frame t24v2(ブランチ `claude/trusting-dirac-1tdt54`)**: 吸引する面を 68 × 34mm に広げた版。**注文用は `MK4FRAMET24V2_T1.dxf`(カーボン)と `MK4PCT24V2_T02.dxf`(塩ビのシート、マウントが載る所を切った形)、型紙 `MK4PCT24V2_template_A4_1to1.pdf`**。レイヤー別は `frame_t24v2.dxf`、3D は `frame_t24v2_3d.step`。作り直しは `docs/calc/frame/t24_outputs.py`。くわしくは `docs/frame.md` の t24v2。下の t24v1 の製作用ファイルは消した
+
 > **2026-11-21 タイヤ24mm 用 frame t24v1(ブランチ `claude/trusting-dirac-1tdt54`)**: `frame_t24v1.dxf`(レイヤー別: カーボン・穴・塩ビのシート)。v6.9 のパラメータのまま、タイヤと71T の所を**外へ開いた切り欠き**(|y| > 22.3、前後18mm、口の角 R1.5)にし、ねじの穴を **(8, ±19.5)・(−21, ±19.5)** に移した。外形 100 × 70mm は同じ。カーボン **4.89g**。図は `docs/img/frame/t24v1_drawing.png`。計算は `docs/frame.md` の t24v1。**注文用は `MK4FRAMET24_T1.dxf`**(実線だけ、1:1。`make_order.py` を `t24.py` を読み込んでから実行。加工できる一番細い幅の確認 OK)。塩ビのシートは v6.9 と同じ形なので `MK4PC69_T02.dxf`・型紙をそのまま使う。3D は `frame_t24v1_3d.step`(`mechanical/frame_3d.py` を `t24.py` を読み込んでから実行)
 
 今の形の DXF・型紙・3D。形の計算と経緯は`docs/frame.md`、作り直しは`docs/calc/frame/`のスクリプト(`docs/frame.md`の「計算をやり直すには」)。

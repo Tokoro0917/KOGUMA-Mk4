@@ -4,7 +4,7 @@
 >
 > | 項目 | main | タイヤ24mm |
 > |---|---|---|
-> | フレーム | `MK4FRAME69_T1.dxf`(v6.9) | **`mechanical/frame/MK4FRAMET24_T1.dxf`**(frame t24v1、実線だけ、1:1。カーボン 4.89g)。塩ビのシートは `MK4PC69_T02.dxf` のまま |
+> | フレーム | `MK4FRAME69_T1.dxf`(v6.9) | **`mechanical/frame/MK4FRAMET24V2_T1.dxf`**(frame t24v2、吸引する面 68 × 34mm、実線だけ、1:1。カーボン 5.09g)。**塩ビのシートも `MK4PCT24V2_T02.dxf`・型紙 `MK4PCT24V2_template_A4_1to1.pdf` に替える**(大きさが変わり、マウントが載る所を切ってある) |
 > | モーターマウント(Temp Resin) | v11、1.28g | **`motor_mount_R_t24v2.stl`・`_L_t24v2.stl`**、1.34g。モーターと軸受の穴は v11 と同じく 0.1mm 小さい(しまりばめ) |
 > | ホイール(Black Resin) | v1、0.38g | **`mechanical/wheel/wheel_R_t24v1.stl`・`_L_t24v1.stl`**、0.75g。**タイヤの内径と幅(φ20 × 8.5mm と推定)と 71T の穴(φ8 と推定)を測ってから頼む** |
 > | 電池のホルダ(Black Resin) | v1、0.23g | **`mechanical/battery_holder/battery_holder_R_t24v1.stl`・`_L_t24v1.stl`**、0.22g |
