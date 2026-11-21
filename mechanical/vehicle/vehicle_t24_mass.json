@@ -9,18 +9,18 @@
   "iz": 265.0
  },
  "t24": {
-  "mass": 60.1,
+  "mass": 59.41,
   "cg": [
-   -0.07,
+   -0.04,
    -0.0,
-   12.91
+   12.93
   ],
-  "iz": 292.9,
+  "iz": 287.7,
   "groups": [
    {
     "group": "フレーム・シート・スカート・滑り板",
-    "m": 5.71,
-    "iz": 61.2
+    "m": 5.48,
+    "iz": 58.1
    },
    {
     "group": "モーターマウント × 2",
@@ -30,7 +30,7 @@
    {
     "group": "走行用モーター × 2",
     "m": 10.6,
-    "iz": 33.2
+    "iz": 33.3
    },
    {
     "group": "車輪・タイヤ・71T・ピニオン・軸・軸受・磁石・エンコーダ",
@@ -49,8 +49,8 @@
    },
    {
     "group": "電池 + ホルダ",
-    "m": 14.96,
-    "iz": 24.1
+    "m": 14.5,
+    "iz": 22.1
    },
    {
     "group": "壁センサ × 4",
@@ -95,9 +95,7 @@
    "brg_in_R": 0.191,
    "brg_in_L": 0.191,
    "magnet_R": 0.053,
-   "magnet_L": 0.053,
-   "battery_holder_L": 0.232,
-   "battery_holder_R": 0.232
+   "magnet_L": 0.053
   }
  },
  "clearances": [
@@ -246,42 +244,6 @@
    "overlap": 0.0
   },
   {
-   "a": "pcb",
-   "b": "battery_holder_L",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "pcb",
-   "b": "battery_holder_R",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "screw_post_L",
-   "b": "battery_holder_L",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "screw_fan_L",
-   "b": "battery_holder_L",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "screw_post_R",
-   "b": "battery_holder_R",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "screw_fan_R",
-   "b": "battery_holder_R",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
    "a": "tire_R",
    "b": "spur71_R",
    "gap": 0.0,
@@ -330,18 +292,6 @@
    "overlap": 0.0
   },
   {
-   "a": "battery",
-   "b": "battery_holder_L",
-   "gap": 0.3,
-   "overlap": 0.0
-  },
-  {
-   "a": "battery",
-   "b": "battery_holder_R",
-   "gap": 0.3,
-   "overlap": 0.0
-  },
-  {
    "a": "mount_R",
    "b": "pinion_R",
    "gap": 0.3,
@@ -372,20 +322,8 @@
    "overlap": 0.0
   },
   {
-   "a": "mount_R",
-   "b": "battery_holder_R",
-   "gap": 0.361,
-   "overlap": 0.0
-  },
-  {
    "a": "mount_L",
    "b": "spur71_L",
-   "gap": 0.361,
-   "overlap": 0.0
-  },
-  {
-   "a": "mount_L",
-   "b": "battery_holder_L",
    "gap": 0.361,
    "overlap": 0.0
   },

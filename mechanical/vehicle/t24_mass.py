@@ -2,9 +2,10 @@
 先に docs/calc/frame/t24.py(フレーム・ねじ・ファンの台の継ぎ目)と pcb_t24.py(基板の外形)を読み込んでから、
 main の機体(vehicle.py v4、56.06g)の作り方で機体を作り(FAST=1)、足回り・モーターマウント・電池のホルダをタイヤ24mm のものに入れ替えて計算する。
 入れ替えた部品とほかのすべての部品のすき間も調べる。
-  入れ替えるもの: シート(マウントが載る所を切る)、マウント(t24v2)、電池のホルダ(t24v1)、ホイール(t24v1)、タイヤ(24 × 8.5mm、ゴム)、71T(POM、厚さ2mm、穴φ8)、
+  入れ替えるもの: シート(マウントが載る所を切る)、マウント(t24v2)、ホイール(t24v1)、タイヤ(24 × 8.5mm、ゴム)、71T(POM、厚さ2mm、穴φ8)、
                   走行用モーター・軸・ピニオン(新しい位置)、平行ピン・軸受・磁石(main から (0, ±3.5, +4.5))、エンコーダ基板(6.0 × 8.75mm)・MT6835
-  vehicle.py が t24 の値で作るもの: フレーム(frame t24v2、吸引する面 68 × 34mm)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
+  vehicle.py が t24 の値で作るもの: フレーム(frame t24v3、吸引する面 68 × 34mm、骨 1.6mm)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
+  なくすもの: 電池のホルダ(BATTERY_HOLDER = False。電池は両面テープで基板に貼る)
   そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート・シート
 使い方(リポジトリの一番上で): python3 mechanical/vehicle/t24_mass.py → mechanical/vehicle/vehicle_t24_mass.json、mk4_vehicle_t24.step、vehicle_t24.png"""
 import os, sys, json
@@ -26,8 +27,13 @@ os.environ['FAST'] = '1'
 sys.argv = [os.path.join(HERE, 'vehicle.py'), SCRATCH, 'v4']
 cwd = os.getcwd(); os.chdir(HERE); sys.path.insert(0, HERE)
 V = {'__name__': '__main__', '__file__': os.path.join(HERE, 'vehicle.py')}
+FRAME_PARAMS = os.path.join(HERE, '../../docs/calc/frame/results/t24v3_params.json')   # frame t24v3(t24_outputs.py が書く)
+_src = open(os.path.join(HERE, 'vehicle.py')).read()
+_old = "FP = json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/final_params.json')))"
+assert _old in _src
+_src = _src.replace(_old, f"FP = json.load(open({FRAME_PARAMS!r}))")
 try:
-    exec(compile(open(os.path.join(HERE, 'vehicle.py')).read(), V['__file__'], 'exec'), V)
+    exec(compile(_src, V['__file__'], 'exec'), V)
 except SystemExit:
     pass
 os.chdir(cwd)
@@ -56,14 +62,14 @@ for r in rows_v:      # 平行ピン・軸受・磁石は main のものを動�
     for k in ('pin', 'brg_out', 'brg_in', 'magnet'):
         if r['name'] == k + '_R':
             right[k] = (V['parts'][r['name']][0].translate(cq.Vector(0, 3.5, 4.5)), V['parts'][r['name']][1])
-_fp = {k: v for k, v in json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/t24_w_params.json'))).items() if k != '_suction'}
-assert json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/final_params.json'))) == _fp, 'フレームのパラメータが frame t24v2(案 w)と違う'
-assert (dz.SX, dz.SY) == (34.0, 17.0), '吸引する面が frame t24v2 の 68 × 34mm でない'
+assert (dz.SX, dz.SY) == (34.0, 17.0), '吸引する面が 68 × 34mm でない'
 new_parts = {'pc_sheet': (poly_solid(V['g']['sheet'], Z_FT, V['Z_PC']), 'pc')}   # シートはマウントが載る所を切った形(t24.py)
 for k, (s, m) in right.items():
     new_parts[k + '_R'] = (s, m); new_parts[k + '_L'] = (mirror(s), m)
-for sy, nm in ((1, 'L'), (-1, 'R')):
-    new_parts[f'battery_holder_{nm}'] = (bh.holder(sy, bht.P, z0=V['Z_PCBT']).val(), 'resin')
+BATTERY_HOLDER = False      # 2026-11-21: 電池のホルダはやめ、電池の底を両面テープで基板に貼るだけにする(−0.46g)
+if BATTERY_HOLDER:
+    for sy, nm in ((1, 'L'), (-1, 'R')):
+        new_parts[f'battery_holder_{nm}'] = (bh.holder(sy, bht.P, z0=V['Z_PCBT']).val(), 'resin')
 
 DROP = ('pc_sheet', 'mount_', 'wheel_', 'tire_', 'spur41_', 'motor_', 'shaft_', 'pinion_', 'enc_board_', 'as5047p_', 'pin_', 'brg_', 'magnet_', 'battery_holder_')
 rows = [dict(r) for r in rows_v if not any(r['name'].startswith(k) for k in DROP)]

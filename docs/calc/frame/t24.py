@@ -26,6 +26,7 @@ SHEET_CUT = (-24.0, 11.0, 15.2)   # 吸引する面のシート(塩ビ)を切る
 dz.ENC_BOARD = (-3.0, 3.0, 16.9, 17.5)                  # エンコーダ基板はフレームまで来ないが、窓の計算の都合で残す所
 
 MOUTH_R = 1.5                                           # 切り欠きの口の角(フレームの外側の角)を丸める半径
+SMALL_WINDOW = 25.0                                     # これより小さい窓(吸引する面の外)は開けない [mm²]
 _build = dz.build
 def build_t24(**kw):
     """design.build の形から、切り欠きの口の角 (±SLOT_L/2, ±YB) を半径 MOUTH_R で丸める(壁に引っかからないように)"""
@@ -40,6 +41,13 @@ def build_t24(**kw):
             cuts.append(sq.difference(Point(sx * (x0 + r), sy * (y0 - r)).buffer(r, 64)))
     c = unary_union(cuts)
     g['domain'], g['carbon'] = g['domain'].difference(c), g['carbon'].difference(c)
+    # 吸引する面の外の小さな窓(SMALL_WINDOW mm² 未満)は開けない(骨を細くすると、吸引する面の角のそばに小さな窓ができ、隣の窓との間が加工できる幅より細くなるため)
+    from shapely.geometry import Polygon
+    small = [Polygon(r) for poly in getattr(g['carbon'], 'geoms', [g['carbon']]) for r in poly.interiors
+             if Polygon(r).area < SMALL_WINDOW and not g['suction'].buffer(1.0).contains(Polygon(r).centroid)]
+    if small:
+        fill = unary_union(small).buffer(0.01)
+        g['domain'], g['carbon'] = g['domain'].union(fill.intersection(g['domain'].convex_hull)), g['carbon'].union(fill)
     # シート: 吸引する面からファンの穴と、マウントが載る所(吸引する面が |y| 15.2 より広いとき)を除く。そこはカーボンなので空気は漏れない
     x0, x1, yc = SHEET_CUT
     g['sheet'] = (g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
@@ -57,6 +65,12 @@ VARIANTS = {
     'b': dict(BASE, mount_windows=['pad2']),                     # 切り欠きの前後の横の帯には窓を開けない
     'c': dict(BASE, mount_windows=[]),                           # マウントの下にも窓を開けない
     'w': dict(BASE, _suction='w'),                               # a の形で、吸引する面を 68 × 34mm に
+    # w を軽くする案(2026-11-21): 前の骨・枠・背骨も後ろと同じ 1.6mm に(加工できる一番細い幅 1.5mm に公差を見た値)
+    'w16': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=2.0),
+    'w16l': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6),
+    # w16・w16l は、筋交い A と窓の間(35.3, ±16.7)に加工できる幅(1.5mm)より細い所ができる。筋交い A だけ 2.0mm に戻す
+    'w16a': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 2.0}, land=2.0),
+    'w16al': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 2.0}, land=1.6, inner_spine=1.6),
 }
 
 def run(params, max_area=0.15, h=0.45):
