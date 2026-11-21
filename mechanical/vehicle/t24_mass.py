@@ -6,7 +6,7 @@ main の機体(vehicle.py v4、56.06g)の作り方で機体を作り(FAST=1)、�
                   走行用モーター・軸・ピニオン(新しい位置)、平行ピン・軸受・磁石(main から (0, ±3.5, +4.5))、エンコーダ基板(6.0 × 8.75mm)・MT6835
   vehicle.py が t24 の値で作るもの: フレーム(frame t24v1)、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
   そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート・シート
-使い方(リポジトリの一番上で): python3 mechanical/vehicle/t24_mass.py → mechanical/vehicle/vehicle_t24_mass.json、mk4_vehicle_t24.step"""
+使い方(リポジトリの一番上で): python3 mechanical/vehicle/t24_mass.py → mechanical/vehicle/vehicle_t24_mass.json、mk4_vehicle_t24.step、vehicle_t24.png"""
 import os, sys, json
 import numpy as np
 import cadquery as cq
@@ -136,3 +136,34 @@ json.dump(dict(main=dict(mass=M_main, cg=list(CG_main), iz=Iz_main),
                clearances=[dict(a=a, b=b, gap=d, overlap=ov) for a, b, d, ov in rows_c]),
           open(os.path.join(HERE, 'vehicle_t24_mass.json'), 'w'), ensure_ascii=False, indent=1, default=float)
 cq.exporters.export(cq.Compound.makeCompound(list(shapes.values())), os.path.join(HERE, 'mk4_vehicle_t24.step'))
+
+# ---- 絵: 斜め前から・横から(材料ごとの色)----
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+plt.rcParams['font.family'] = 'WenQuanYi Zen Hei'; plt.rcParams['axes.unicode_minus'] = False
+mats = {k: v[1] for k, v in V['parts'].items() if not any(k.startswith(d) for d in DROP)}
+mats.update({k: v[1] for k, v in new_parts.items()})
+COLM = dict(carbon='#4a463f', pc='#9ecae1', film='#e8e8b0', skid='#f0f0f0', resin='#f28e2b', motor='#a0a0a0', fan_motor='#a0a0a0', steel='#666666',
+            brass='#d4af37', pom='#d9822b', rubber='#262626', ndfeb='#e15759', fr4='#2e8b57', battery='#e0c060', sensor='#5aa0ff', nylon='#eeeeee',
+            pa12='#888888', titanium='#999999', aluminum='#bbbbbb', ptfe='#ffffff')
+def tris(shape, tol=0.08):
+    v, t = shape.tessellate(tol, 0.4)
+    v = np.array([(p.x, p.y, p.z) for p in v])
+    return v[np.array(t)] if len(t) else np.zeros((0, 3, 3))
+TT, CC = [], []
+for k, s in shapes.items():
+    T = tris(s)
+    if len(T):
+        TT.append(T); CC += [COLM.get(mats.get(k), '#cccccc')] * len(T)
+TT = np.concatenate(TT)
+fig = plt.figure(figsize=(15, 6.5))
+for i, (el, az, ttl) in enumerate(((28, -125, '斜め前(右)から'), (0, -90, '右から(横)'), (90, -90, '上から'))):
+    ax = fig.add_subplot(1, 3, i + 1, projection='3d')
+    ax.add_collection3d(Poly3DCollection(TT, facecolors=CC, edgecolor='none'))
+    ax.set_xlim(-52, 52); ax.set_ylim(-40, 40); ax.set_zlim(0, 35); ax.set_box_aspect((104, 80, 35))
+    ax.view_init(el, az); ax.set_title(ttl, fontsize=10); ax.set_axis_off()
+fig.suptitle(f'タイヤ24mm の機体 t24: {M:.1f}g、重心 ({CG[0]:.2f}, {CG[1]:.2f}, {CG[2]:.2f}) mm、慣性モーメント {Izz:.0f} g·cm²', fontsize=12)
+fig.tight_layout(); fig.savefig(os.path.join(HERE, 'vehicle_t24.png'), dpi=100)
+print('絵', os.path.join(HERE, 'vehicle_t24.png'))
