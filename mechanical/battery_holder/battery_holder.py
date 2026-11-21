@@ -20,12 +20,15 @@ def holder(sy, P=P, z0=0.0):
     bx0, bx1, by = ps.BAT
     g, w, h = P['gap'], P['wall'], P['h']
     xi0, xi1, yi = bx0 - g, bx1 + g, by + g            # 電池のまわりの内側の線
-    side = cq.Workplane().box(xi1 - xi0 + 2 * w, w, h, centered=False).translate((xi0 - w, yi, 0))
+    holes = [(x, y) for (x, y) in ps.SCREWS if y > 0]
+    sx0, sx1 = xi0 - w, xi1 + w
+    if P.get('reach_ears'):    # t24: 壁を耳の中心まで伸ばす(耳が壁から離れているとき)
+        sx0, sx1 = min([sx0] + [hx for hx, _ in holes]), max([sx1] + [hx for hx, _ in holes])
+    side = cq.Workplane().box(sx1 - sx0, w, h, centered=False).translate((sx0, yi, 0))
     rets = [cq.Workplane().box(w, P['ret'], h, centered=False).translate((x, yi - P['ret'], 0)) for x in (xi0 - w, xi1)]
     body = side
     for r_ in rets:
         body = body.union(r_)
-    holes = [(x, y) for (x, y) in ps.SCREWS if y > 0]
     for hx, hy in holes:
         er = P['ear_r']
         ear = (cq.Workplane().center(hx, hy).circle(er).extrude(P['ear_t'])
@@ -37,6 +40,9 @@ def holder(sy, P=P, z0=0.0):
         pass
     for hx, hy in holes:
         body = body.cut(cq.Workplane().center(hx, hy).circle(P['hole_d'] / 2).extrude(20).translate((0, 0, -5)))
+    if P.get('wall_gap'):     # t24: 車軸の所(|x| ≤ wall_gap)の壁を切る(エンコーダ基板と、基板の上へ出るマウントの軸受の受けを避ける)
+        zb = P.get('bridge_z', 20.0)    # この高さより上は残して、前後の壁を橋でつなぐ
+        body = body.cut(cq.Workplane().box(2 * P['wall_gap'], 10, zb + 5, centered=(True, False, False)).translate((0, yi - 0.01, -5)))
     if sy < 0:
         body = body.mirror('XZ')
     return body.translate((0, 0, z0))
