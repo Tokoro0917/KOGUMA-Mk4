@@ -55,6 +55,15 @@ def build_t24(**kw):
     return g
 dz.build = build_t24
 
+# 前の壁センサ FL・FR を前へ(2026-11-21、(17, ±30.75) → (20.8, ±30.35)): (17, ±30.75) のままだと、ホルダの後ろから出る足の穴(x 9.9〜12.3)がタイヤ(基板の高さで x 11.9 まで、
+# |y| 24.8〜33.3)の上に来て、基板の車輪の所の切り欠きにも入る。足の穴の後ろの端が切り欠き(x 12.2)から 0.2mm 以上、
+# ホルダの外の角がフレームの外形から 0.5mm 以上内側になる一番後ろの位置。向き(外へ 7°)は同じ。pcb_shape.SENS を書き換える(フレームのホルダの当たる所・基板の外形・機体が使う)
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../mechanical/vehicle'))
+import pcb_shape as _ps
+SENS_FRONT = ((20.8, 30.35), 7.0)   # 足のパッド(1.6mm の四角)が基板の外形(切り欠きの角の丸みを含む)から 0.3mm、ホルダがフレームから 0.56mm
+_ps.SENS['FL'] = SENS_FRONT
+_ps.SENS['FR'] = ((SENS_FRONT[0][0], -SENS_FRONT[0][1]), -SENS_FRONT[1])
+
 import fem, analyze as an
 set_suction('w')     # 2026-11-21 から frame t24v2(吸引する面 68 × 34mm)。t24.py を読み込むほかのスクリプト(機体・基板・注文)はこの値で作る
 
