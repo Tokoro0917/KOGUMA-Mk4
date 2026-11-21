@@ -40,7 +40,7 @@ fig.tight_layout(); fig.savefig(f'mount_{mt.VER}_3d.png', dpi=110)
 
 fig, axs = plt.subplots(1, 3, figsize=(17, 5.6))
 for ax, (plane, val, title) in zip(axs, (('y', -22.0, '断面 y = -22.0(外の軸受・モーターの前の壁)'),
-                                          ('y', -18.0, '断面 y = -18.0(MT6835 のくぼみ)'),
+                                          ('y', -20.0, '断面 y = -20.0(肉抜きの窓・内の軸受)'),
                                           ('z', 5.0, '断面 z = 5.0(上から)'))):
     for name, s in parts.items():
         if name == 'battery':

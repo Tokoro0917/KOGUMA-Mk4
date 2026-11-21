@@ -3,7 +3,7 @@
 座標 [mm]: x 前(+)、y 左(+)、z 上(床 = 0)。車軸 (0, y, 12.0)。右側なので外側が -y。
 部品の並び(外側から、main より 3.5mm 内): タイヤ -33.3〜-24.8、71T -24.8〜-22.8、LF-630 外 -23.2〜-21.2、内 -21.0〜-19.0、
 磁石 -20.2〜-19.2、MT6835 -18.7〜-17.5、エンコーダ基板 -17.5〜-16.9。メイン基板の下面 z 13.6。
-使い方: python3 mount_t24.py → motor_mount_R_t24v1.step/.stl、motor_mount_L_t24v1.step/.stl"""
+使い方: python3 mount_t24.py → motor_mount_R_t24v2.step/.stl、motor_mount_L_t24v2.step/.stl(v1 は P_V1)"""
 import math
 import cadquery as cq
 import mount as mm
@@ -33,7 +33,30 @@ P.update(
     pcb_post=PCB_BOTTOM,
     top_cut=dict(z=PCB_BOTTOM, x=4.3, y=-16.9),   # メイン基板の切り欠き(x ±4.5、y < -16.7)の中だけ、上へ出してよい
 )
-VER = 't24v1'
+
+def windows(P, wall=0.8, strut=0.9, r_round=0.4, min_area=2.0):
+    """モーターの穴と軸受の穴の間・車軸の下の肉抜きの窓(xz 面)。穴のまわり・床・メイン基板の下面・エンコーダのくぼみの床から wall 以上離す"""
+    from shapely.geometry import Point, LineString, box as sbox
+    ax_, az_ = P['axle']; mx_, mz_ = mm.motor_center(P)
+    ft = P['frame_top']
+    region = sbox(mx_, ft + wall, ax_ + 3.2, P['top_cut']['z'] - wall)
+    region = region.difference(Point(mx_, mz_).buffer(P['motor_d'] / 2 + P.get('pad_relief', 0) + wall, 64))
+    region = region.difference(Point(ax_, az_).buffer(P['brg_od'] / 2 + P.get('pad_relief', 0) + P['axle_wall'] + 0.0, 64))
+    px, pz0, _ = P['pocket']
+    region = region.difference(sbox(ax_ + P['enc_face']['bx0'] - wall, pz0 - wall, 99, 99))   # エンコーダのくぼみの床(z 7.8)の下 wall まで
+    # 軸受の受けを支える柱を残す: モーターの穴へ(2つの中心を結ぶ線)と、真下のフレームへ。幅 2 × strut
+    region = region.difference(LineString([(mx_, mz_), (ax_, az_)]).buffer(strut))
+    region = region.difference(LineString([(ax_, az_), (ax_, ft)]).buffer(strut))
+    region = region.buffer(-r_round).buffer(r_round)
+    geoms = getattr(region, 'geoms', [region])
+    y0, y1 = P['outer_face'] - 0.1, P['inner_face'] + 0.1
+    return [([(round(x, 3), round(z, 3)) for x, z in list(g.exterior.coords)[:-1]], y0, y1) for g in geoms if g.area >= min_area]
+
+VER = 't24v2'
+P_V1 = dict(P)
+# v2(2026-11-21): モーターの穴と軸受の穴の間・車軸の下を、y 方向に抜ける窓で肉抜きする(壁 0.8mm 以上)。
+#   軸受の受けからモーターの穴へ・フレームへの柱(幅 1.8mm)は残す
+P['windows'] = windows(P)
 
 if __name__ == '__main__':
     m = mm.build(P)
