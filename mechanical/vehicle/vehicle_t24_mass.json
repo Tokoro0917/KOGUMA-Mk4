@@ -3,71 +3,19 @@
   "mass": 56.06,
   "cg": [
    0.68,
-   -0.0,
+   0.0,
    12.71
   ],
-  "iz": 265.0,
-  "groups": [
-   {
-    "group": "フレーム・シート・スカート・滑り板",
-    "m": 5.67,
-    "iz": 57.5
-   },
-   {
-    "group": "モーターマウント × 2",
-    "m": 2.56,
-    "iz": 15.5
-   },
-   {
-    "group": "走行用モーター × 2",
-    "m": 10.6,
-    "iz": 36.0
-   },
-   {
-    "group": "車輪・タイヤ・71T・ピニオン・軸・軸受・磁石・エンコーダ",
-    "m": 3.98,
-    "iz": 30.3
-   },
-   {
-    "group": "吸引ファン",
-    "m": 7.78,
-    "iz": 19.2
-   },
-   {
-    "group": "基板 + 部品",
-    "m": 5.95,
-    "iz": 39.8
-   },
-   {
-    "group": "電池 + ホルダ",
-    "m": 14.98,
-    "iz": 25.3
-   },
-   {
-    "group": "壁センサ × 4",
-    "m": 1.71,
-    "iz": 26.5
-   },
-   {
-    "group": "ねじ・ナット",
-    "m": 2.21,
-    "iz": 14.8
-   },
-   {
-    "group": "配線",
-    "m": 0.6,
-    "iz": 0.0
-   }
-  ]
+  "iz": 265.0
  },
  "t24": {
-  "mass": 60.25,
+  "mass": 59.8,
   "cg": [
-   -0.25,
+   -0.24,
    -0.0,
    12.97
   ],
-  "iz": 289.7,
+  "iz": 286.9,
   "groups": [
    {
     "group": "フレーム・シート・スカート・滑り板",
@@ -91,17 +39,17 @@
    },
    {
     "group": "吸引ファン",
-    "m": 7.78,
-    "iz": 21.3
+    "m": 7.76,
+    "iz": 21.1
    },
    {
     "group": "基板 + 部品",
-    "m": 5.95,
-    "iz": 40.5
+    "m": 5.54,
+    "iz": 38.2
    },
    {
     "group": "電池 + ホルダ",
-    "m": 14.98,
+    "m": 14.96,
     "iz": 23.9
    },
    {
@@ -112,7 +60,7 @@
    {
     "group": "ねじ・ナット",
     "m": 2.21,
-    "iz": 14.2
+    "iz": 13.9
    },
    {
     "group": "配線",
@@ -121,7 +69,6 @@
    }
   ],
   "new_parts": {
-   "frame": 4.871,
    "mount_R": 1.34,
    "mount_L": 1.34,
    "wheel_R": 0.753,
@@ -147,7 +94,335 @@
    "brg_in_R": 0.191,
    "brg_in_L": 0.191,
    "magnet_R": 0.053,
-   "magnet_L": 0.053
+   "magnet_L": 0.053,
+   "battery_holder_L": 0.232,
+   "battery_holder_R": 0.232
   }
- }
+ },
+ "clearances": [
+  {
+   "a": "screw_mountF_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 4.302
+  },
+  {
+   "a": "screw_mountR_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 4.302
+  },
+  {
+   "a": "screw_mountF_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 4.302
+  },
+  {
+   "a": "screw_mountR_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 4.302
+  },
+  {
+   "a": "screw_post_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 3.623
+  },
+  {
+   "a": "screw_fan_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 3.623
+  },
+  {
+   "a": "screw_post_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 3.623
+  },
+  {
+   "a": "screw_fan_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 3.623
+  },
+  {
+   "a": "screw_fanjoint_0",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 3.171
+  },
+  {
+   "a": "screw_fanjoint_1",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 3.171
+  },
+  {
+   "a": "mount_R",
+   "b": "motor_R",
+   "gap": 0.0,
+   "overlap": 1.49
+  },
+  {
+   "a": "mount_L",
+   "b": "motor_L",
+   "gap": 0.0,
+   "overlap": 1.49
+  },
+  {
+   "a": "mount_R",
+   "b": "brg_out_R",
+   "gap": 0.0,
+   "overlap": 0.433
+  },
+  {
+   "a": "mount_R",
+   "b": "brg_in_R",
+   "gap": 0.0,
+   "overlap": 0.433
+  },
+  {
+   "a": "mount_L",
+   "b": "brg_out_L",
+   "gap": 0.0,
+   "overlap": 0.433
+  },
+  {
+   "a": "mount_L",
+   "b": "brg_in_L",
+   "gap": 0.0,
+   "overlap": 0.433
+  },
+  {
+   "a": "frame",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_case",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_case",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "battery_holder_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "battery_holder_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "screw_post_L",
+   "b": "battery_holder_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "screw_fan_L",
+   "b": "battery_holder_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "screw_post_R",
+   "b": "battery_holder_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "screw_fan_R",
+   "b": "battery_holder_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "spur71_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "spur71_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "enc_board_R",
+   "gap": 0.1,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "enc_board_L",
+   "gap": 0.1,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "enc_board_R",
+   "gap": 0.2,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "enc_board_L",
+   "gap": 0.2,
+   "overlap": 0.0
+  },
+  {
+   "a": "pc_sheet",
+   "b": "mount_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "pc_sheet",
+   "b": "mount_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "battery",
+   "b": "battery_holder_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "battery",
+   "b": "battery_holder_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "pinion_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "pinion_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "enc_board_R",
+   "b": "battery_holder_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "enc_board_L",
+   "b": "battery_holder_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_R",
+   "b": "brg_in_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_L",
+   "b": "brg_in_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "spur71_R",
+   "gap": 0.361,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "battery_holder_R",
+   "gap": 0.361,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "spur71_L",
+   "gap": 0.361,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "battery_holder_L",
+   "gap": 0.361,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "shaft_R",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "pinion_R",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "shaft_L",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "pinion_L",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_R",
+   "b": "magnet_R",
+   "gap": 0.5,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_L",
+   "b": "magnet_L",
+   "gap": 0.5,
+   "overlap": 0.0
+  }
+ ]
 }
