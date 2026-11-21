@@ -43,6 +43,33 @@ def acc(p, v, I, S, cap=True):
         return 0.0
     return max(a_, 0.0)
 
+def i_battery_guard(p, v, I_max=5.0, I_bat=7.5, I_fan=0.9):
+    """電池の電流を見張って決める片側の電流の上限(2026-11-21)。
+    電池から出る電流 = 2 × 電流 × (R × 電流 + Ke × ω) / 電圧 + ファン ≤ I_bat、かつ 電流 ≤ I_max(MP6551 の上限)"""
+    dc = p['dc']; w = v / p['r'] * p['G']
+    a_, b_, c_ = 2 * dc['R'] / dc['V'], 2 * dc['Ke'] * w / dc['V'], -(I_bat - I_fan)
+    i = (-b_ + math.sqrt(b_ * b_ - 4 * a_ * c_)) / (2 * a_)
+    return min(I_max, i)
+
+def acc_guard(p, v, S, cap=True):
+    return acc(p, v, i_battery_guard(p, v), S, cap)
+
+def straight_guard(p, L, S, v0=3.0, cap=True):
+    """直線(電流の上限を電池の見張りで決める)。減速も 5A まで(逆起電力で電池へは戻る向き。回生は別に制限する)"""
+    dt = 1e-4; x = 0; v = v0; t = 0
+    dmax = dec(p, 5.0, S)
+    while True:
+        sd = (v * v - v0 * v0) / (2 * dmax)
+        if x + sd >= L:
+            break
+        ac = acc_guard(p, v, S, cap)
+        if ac <= 1e-6:
+            rest = L - x - sd; t += rest / v; x += rest
+            break
+        v += ac * dt; x += v * dt; t += dt
+    t += (v - v0) / dmax
+    return t, v
+
 def dec(p, I, S):
     return min(d.accel_current_limit(p['dc'], I), grip(p, S))
 
