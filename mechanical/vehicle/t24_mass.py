@@ -158,12 +158,12 @@ for k, s in shapes.items():
     if len(T):
         TT.append(T); CC += [COLM.get(mats.get(k), '#cccccc')] * len(T)
 TT = np.concatenate(TT)
-fig = plt.figure(figsize=(15, 6.5))
-for i, (el, az, ttl) in enumerate(((28, -125, '斜め前(右)から'), (0, -90, '右から(横)'), (90, -90, '上から'))):
-    ax = fig.add_subplot(1, 3, i + 1, projection='3d')
+fig = plt.figure(figsize=(16, 12))
+for i, (el, az, ttl) in enumerate(((26, -130, '斜め前(右)から'), (32, 50, '斜め後ろ(左)から'), (0, -90, '右から(横)'), (90, -90, '上から'))):
+    ax = fig.add_subplot(2, 2, i + 1, projection='3d')
     ax.add_collection3d(Poly3DCollection(TT, facecolors=CC, edgecolor='none'))
-    ax.set_xlim(-52, 52); ax.set_ylim(-40, 40); ax.set_zlim(0, 35); ax.set_box_aspect((104, 80, 35))
-    ax.view_init(el, az); ax.set_title(ttl, fontsize=10); ax.set_axis_off()
+    ax.set_xlim(-52, 52); ax.set_ylim(-40, 40); ax.set_zlim(0, 35); ax.set_box_aspect((104, 80, 35), zoom=1.45 if el != 90 else 1.25)
+    ax.view_init(el, az); ax.set_title(ttl, fontsize=11); ax.set_axis_off()
 fig.suptitle(f'タイヤ24mm の機体 t24: {M:.1f}g、重心 ({CG[0]:.2f}, {CG[1]:.2f}, {CG[2]:.2f}) mm、慣性モーメント {Izz:.0f} g·cm²', fontsize=12)
 fig.tight_layout(); fig.savefig(os.path.join(HERE, 'vehicle_t24.png'), dpi=100)
 print('絵', os.path.join(HERE, 'vehicle_t24.png'))
