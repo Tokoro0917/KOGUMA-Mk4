@@ -1,19 +1,19 @@
-"""MK3のタイヤ(23.1mm)にしたときのギアの比べ(2026-11-21)
-今の機体(56g、265 g·cm²、トレッド60mm、3S 11.1V)のまま、タイヤだけ23.1mmにして、スパーとピニオン(m0.3)の組み合わせを比べる。
+"""MK3のタイヤ(24mm)にしたときのギアの比べ(2026-11-21)
+今の機体(56g、265 g·cm²、トレッド60mm、3S 11.1V)のまま、タイヤだけ24mmにして、スパーとピニオン(m0.3)の組み合わせを比べる。
 床とのすき間はスパーの歯先とタイヤの半径から出す(タイヤが潰れない、床が平らとして)。
-使い方(リポジトリの一番上で): python3 docs/calc/tire23_study.py [--tire 23.1] [--mass 0.060]"""
+使い方(リポジトリの一番上で): python3 docs/calc/tire_mk3_study.py [--tire 24] [--mass 0.060]"""
 import sys, math, argparse; sys.path.insert(0, 'docs/calc')
 import drive_calc as d
 
 ap = argparse.ArgumentParser()
-ap.add_argument('--tire', type=float, default=23.1, help='タイヤ径[mm]')
+ap.add_argument('--tire', type=float, default=24.0, help='タイヤ径[mm]')
 ap.add_argument('--mass', type=float, default=0.056, help='質量[kg]')
 ap.add_argument('--iz', type=float, default=265, help='慣性モーメント[g·cm²]')
 a = ap.parse_args()
 tire = a.tire / 1000; m = a.mass; Iz = a.iz * 1e-7; T = 0.0601; V = 11.1
 MOD = 0.3
 # (スパー, ピニオン)。41:13 は今、71:20 は MK3
-COMBOS = [(41, 13), (71, 20), (50, 13), (60, 13), (60, 15), (66, 14), (68, 13), (71, 15)]
+COMBOS = [(41, 13), (71, 20), (60, 13), (66, 14), (68, 13), (71, 16), (71, 15), (71, 14), (71, 13)]
 
 mu = 91.5 * 0.078 / ((0.078 + 0.4) * d.G_ACC)   # gear_study.py と同じ
 
