@@ -5,7 +5,7 @@ frame v6.9 のパラメータ(results/v6_9_params.json)のまま、design.py の
   - 横からの衝突(F)は、切り欠きの前後のフレームの横の辺(|y| = 35、9 < |x| < 16.7)で受ける(v6.9 はタイヤの外の帯 |x| < 8)
 使い方(このディレクトリで): python3 t24.py [max_area(既定 0.15)] [案の名前 ...]
   → results/t24_<案>_result.json、params.json。案は下の VARIANTS"""
-import json, sys, time
+import json, os, sys, time
 import numpy as np
 from scipy.sparse.linalg import eigsh
 import design as dz
@@ -38,7 +38,8 @@ dz.build = build_t24
 
 import fem, analyze as an
 
-BASE = json.load(open('results/v6_9_params.json'))
+HERE = os.path.dirname(os.path.abspath(__file__))
+BASE = json.load(open(os.path.join(HERE, 'results/v6_9_params.json')))
 VARIANTS = {
     'a': dict(BASE),                                             # v6.9 そのまま(マウントの下・切り欠きの前後の横の帯に窓)
     'b': dict(BASE, mount_windows=['pad2']),                     # 切り欠きの前後の横の帯には窓を開けない
