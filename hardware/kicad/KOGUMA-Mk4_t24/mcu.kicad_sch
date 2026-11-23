@@ -5734,7 +5734,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_Murata_DFE201610P"
+		(property "Footprint" "KOGUMA-Mk4:L_Murata_DFE201610E"
 			(at 87.63 76.2 90)
 			(effects
 				(font
