@@ -139,6 +139,49 @@ FP['FDK_HY0020'] = footprint(
     'Pads from datasheet Ver.3.0 Figure 2-1 (bottom view mirrored about the long axis): columns B-M at 0.7mm pitch, A at x -4.31, N at x +4.335',
     'BLE Bluetooth nRF52832 FDK HY0020 module', -2.9, 2.9, b)
 
+# ---- U2・U3 モータードライバ: MPS MP6551GQB(QFN-14 2.5 × 3mm、2026-11-23 に作り直し)----
+# データシート Rev.1.0 の p.14 RECOMMENDED LAND PATTERN(docs/reference/datasheets/MP6551_MPS.pdf)。上から見た図。
+# 上下の短いパッド: 0.25 × 0.80、間 0.5、中心 y ±1.40(「2.80」は上下のパッドの中心の間)。
+# 横の長いパッド: 0.25 × 1.30(「1.30」はパッドの長さ)、間 0.5。内側の端は ±0.25(足の内側の端。本体 2.5 の端から足の長さ 0.95〜1.05)、外側の端は ±1.55。
+# 1 番だけ 1.20(内側の端が ±0.35)で、内側の上の角を 0.15 × 45° 落とす。左右の列の間は 0.5(前の版は 0.2 で、VIN(2)と GND(9)がはんだでつながるおそれがあった)
+b = ''
+for i, n in enumerate(('14', '13', '12', '11')):
+    b += smd(n, -0.75 + 0.5 * i, -1.4, 0.25, 0.8)
+for i, n in enumerate(('4', '5', '6', '7')):
+    b += smd(n, -0.75 + 0.5 * i, 1.4, 0.25, 0.8)
+b += f"""	(pad "1" smd roundrect
+		(at -0.95 -0.5)
+		(size 1.2 0.25)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(chamfer_ratio 0.6)
+		(chamfer top_right)
+		(uuid "{U()}")
+	)
+"""
+b += smd('2', -0.9, 0.0, 1.3, 0.25) + smd('3', -0.9, 0.5, 1.3, 0.25)
+b += smd('10', 0.9, -0.5, 1.3, 0.25) + smd('9', 0.9, 0.0, 1.3, 0.25) + smd('8', 0.9, 0.5, 1.3, 0.25)
+b += poly([(-1.25, -1.0), (-0.75, -1.5), (1.25, -1.5), (1.25, 1.5), (-1.25, 1.5)], 'F.Fab', 0.1)     # 本体(1 番の角を落とす)
+b += rect(-1.8, -2.05, 1.8, 2.05, 'F.CrtYd', 0.05)
+for sx in (-1, 1):
+    for sy in (-1, 1):
+        b += line(sx * 1.05, sy * 1.62, sx * 1.37, sy * 1.62, 'F.SilkS', 0.12)
+b += line(-1.37, -1.62, -1.37, -0.95, 'F.SilkS', 0.12)          # 1 番の印(左上の角を L の字に)
+FP['MPS_QFN-14_2.5x3mm'] = footprint(
+    'MPS_QFN-14_2.5x3mm',
+    'MPS QFN-14 2.5x3mm (MP6551GQB), recommended land pattern from the MP6551 datasheet Rev.1.0 p.14: short pads 0.25x0.80 at y +-1.40, long pads 0.25x1.30 from x +-0.25 to +-1.55 (pin 1 1.20 long, 0.15x45 deg chamfer). Pin 1 = top-left long pad',
+    'QFN MPS MP6551', -2.6, 2.6, b)
+
+# ---- L1 SMPS のインダクタ: 村田 DFE201610E-2R2M(2.0 × 1.6 × 1.0mm、2026-11-23)----
+# 村田の仕様書 JETE243A の推奨ランド: パッド 0.8 × 1.8、間 0.8、外の端 2.4(KiCad の L_Murata_DFE201610P は 0.55 × 1.6 で小さい)
+b = smd('1', -0.8, 0, 0.8, 1.8) + smd('2', 0.8, 0, 0.8, 1.8)
+b += rect(-1.0, -0.8, 1.0, 0.8, 'F.Fab', 0.1) + rect(-1.45, -1.15, 1.45, 1.15, 'F.CrtYd', 0.05)
+b += line(-0.25, -1.06, 0.25, -1.06, 'F.SilkS', 0.12) + line(-0.25, 1.06, 0.25, 1.06, 'F.SilkS', 0.12)
+FP['L_Murata_DFE201610E'] = footprint(
+    'L_Murata_DFE201610E',
+    'Murata DFE201610E power inductor 2.0x1.6x1.0mm, recommended land from Murata spec JETE243A: pads 0.8x1.8, gap 0.8, span 2.4',
+    'inductor Murata DFE201610E', -1.9, 1.9, b)
+
 if __name__ == '__main__':
     here = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'KOGUMA-Mk4.pretty')
     for n, s in FP.items():
