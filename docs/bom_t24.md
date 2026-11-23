@@ -133,7 +133,7 @@ IC など品番が決まっている部品の LCSC の番号は「部品の一�
 | R79 | 1 | 上 | 47 | UNI-ROYAL 0402WGF470JTCE | C25118 | 0.4 |  |
 | SW1 | 1 | 上 | SSSS810701 | Alps Alpine SSSS810701 | C97433 |  | 在庫 約340 |
 | SW2 | 1 | 上 | TVAF06-A020B-R | Jianfu TVAF06-A020B-R |  |  | **LCSC になし**(同じ系列の別の品番だけ) |
-| TP1 TP2 | 2 | 上 | UART_RX | (基板のパッド。部品なし) |  |  |  |
+| TP1 TP2 TP4 | 3 | 上 | UART_RX | (基板のパッド。部品なし) |  |  |  |
 | TP3 | 1 | 裏 | BLE_SWDCLK | (基板のパッド。部品なし) |  |  |  |
 | U1 | 1 | 上 | LXDC55FAAA-203 | Murata LXDC55FAAA-203 |  |  | **LCSC になし。生産終了の情報あり(未確認)** |
 | U2 U3 | 2 | 上 | MP6551GQB | MPS MP6551GQB |  |  | **LCSC になし**(ほかの代理店で) |
