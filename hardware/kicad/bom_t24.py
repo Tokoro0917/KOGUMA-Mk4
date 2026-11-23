@@ -58,6 +58,18 @@ FIXED = {'STM32H725RGVx': 'STM32H725RGV6(または RGV3)', 'MP6551GQB': 'MPS MP6
          '2.2u DFE201610E-2R2M': 'Murata DFE201610E-2R2M=P2', 'CSTNE10M0G52Z000R0': 'Murata CSTNE10M0G52Z000R0',
          'T521V476M025ATE040 (47u 25V)': 'KEMET T521V476M025ATE040', 'PMR18EZPFU5L00 (5m 1%)': 'ROHM PMR18EZPFU5L00',
          'SSSS810701': 'Alps Alpine SSSS810701', 'OPV332': 'TT Electronics (Optek) OPV332', 'SFH 229 FA': 'ams OSRAM SFH 229 FA(2025-11-28 生産終了。**予備を含めて在庫を確保**)', 'TVAF06-A020B-R': 'Jianfu TVAF06-A020B-R', 'SMT-0540-S-R': 'PUI Audio SMT-0540-S-R'}
+# IC など品番が決まっている部品の LCSC の番号と在庫(2026-11-23、LCSC・JLCPCB の製品ページで確かめた。在庫は LCSC の数で、JLC の組み立ての在庫とは別)
+LCSC = {'STM32H725RGVx': ('C5271073', 'RGV6。**LCSC の在庫 0**(RGV3 の C5271074 も 0)'), 'INA241A3': ('C6051860', '在庫 約6,470'),
+        'OPA2354': ('C95502', 'OPA2354AIDGKR、在庫 約4,360'), 'LSM6DSR': ('C784817', 'LSM6DSRTR、在庫 約4,200'),
+        'AO4407A': ('C16072', 'AOS のもの(UMW・MSKSEMI の同じ品番は別物)、在庫 約4,145'), 'IRLML6344': ('C53550', 'Infineon のもの、在庫 約39,800'),
+        'SMF13A': ('C315998', '在庫 約3,835'), 'MBR230LSFT1G': ('C126673', '在庫 約22,400'), 'BLM18PG221SN1D': ('C80165', '在庫 約157,900'),
+        '2.2u DFE201610E-2R2M': ('C337891', '在庫 約3,910'), 'PMR18EZPFU5L00 (5m 1%)': ('C308575', '**LCSC の在庫 0**'),
+        'SSSS810701': ('C97433', '在庫 約340'), 'SMT-0540-S-R': ('C3812104', '**LCSC の在庫 0**'), 'APTD1608LSECK/J4-PF': ('C5879215', '在庫 約660'),
+        'OPV332': ('C6622198', '**LCSC の在庫 0**'), 'SFH 229 FA': ('C3211054', '**LCSC の在庫 0**'),
+        'MP6551GQB': ('', '**LCSC になし**(ほかの代理店で)'), 'NJU6080': ('', '**LCSC になし**(日清紡の品番は NJU6080F1)'),
+        'LXDC55FAAA-203': ('', '**LCSC になし。生産終了の情報あり(未確認)**'), 'CSTNE10M0G52Z000R0': ('', '**LCSC になし**(仕様の違う CSTNE10M0G520000R0 C907958 などはある)'),
+        'T521V476M025ATE040 (47u 25V)': ('', '**LCSC になし**(DigiKey にある、納期が長い)'), 'TVAF06-A020B-R': ('', '**LCSC になし**(同じ系列の別の品番だけ)'),
+        'HY0020': ('', '**LCSC になし**(DigiKey・Arrow)')}
 NOT_SMT = ('J1', 'J2', 'J3', 'J4', 'J5', 'J6', 'J7', 'NT1', 'TP', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77')
 
 def r_is_pad(refs):
@@ -80,6 +92,11 @@ def main():
         else:
             base = v.split(' (')[0] if v.split(' (')[0] in FIXED else v
             mpn, lcsc, h, memo = (FIXED.get(v) or FIXED.get(base) or ''), '', None, ''
+            base = v.split(' (')[0]
+            for k in (v, base, 'APTD1608LSECK/J4-PF' if v.startswith('APTD1608') else None):
+                if k in LCSC:
+                    lcsc, memo = LCSC[k][0], LCSC[k][1]
+                    break
             h = {'AO4407A': 1.75, 'T521V476M025ATE040 (47u 25V)': 2.0, 'PMR18EZPFU5L00 (5m 1%)': 0.57, 'MBR230LSFT1G': 0.98, 'BLM18PG221SN1D': 0.95}.get(v, h)
             if r_is_pad(refs):
                 mpn, memo = '(基板のパッド。部品なし)', {'J1': '電池の線 BT2.0 のケーブルをはんだ付け', 'J2': 'モーターの線(裏)', 'J3': 'モーターの線(裏)', 'J4': 'ファンの線',
@@ -87,7 +104,7 @@ def main():
             if refs == ['J7']:
                 mpn, h, memo = '1.27mm 2 × 3 のピンヘッダ(縦、穴)。**手持ち**(2026-11-23)', 6.0, '高さ約 5mm。電池の外。JLC の BOM には入れない'
             if v.startswith('APTD1608'):
-                mpn, h, memo = 'Kingbright APTD1608LSECK/J4-PF', 0.95, '1番がカソード'
+                mpn, h, memo = 'Kingbright APTD1608LSECK/J4-PF', 0.95, '1番がカソード。' + memo
             if not mpn:
                 missing.append((v, fp, refs))
         out.append(dict(value=v, fp=fp, side=side, refs=refs, mpn=mpn, lcsc=lcsc, h=h, memo=memo))
