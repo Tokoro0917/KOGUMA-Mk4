@@ -5510,7 +5510,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "5m 1% 1206"
+		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
 			(at 114.3 48.26 90)
 			(effects
 				(font
@@ -6606,7 +6606,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "5m 1% 1206"
+		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
 			(at 114.3 116.84 90)
 			(effects
 				(font
