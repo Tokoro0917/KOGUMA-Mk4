@@ -33,12 +33,12 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 18 | PA1 | GPIO_Output | LED_MODE1 | モード ビット1 |
 | 19 | PA2 | GPIO_Output | LED_MODE2 | モード ビット2 |
 | 20 | PA3 | GPIO_Output | LED_NUM0 | ナンバー ビット0 |
-| 23 | PA4 | ADC2_INP18 | MOT_R_CM1 | 右モーターの電流(OUT1側の下側FET) |
-| 24 | PA5 | ADC2_INP19 | MOT_R_CM2 | 右モーターの電流(OUT2側の下側FET) |
+| 23 | PA4 | ADC2_INP18 | MOT_R_I | 右モーターの電流(INA241A3 の出力、2026-11-23。それまでは MP6551 の CM1) |
+| 24 | PA5 | — | (空き) | 2026-11-23 に空いた(MP6551 の CM2 をやめた)。ADC2_INP19 が使える |
 | 25 | PA6 | ADC1_INP3 | WALL_R | 壁センサ 右 |
 | 26 | PA7 | ADC1_INP7 | WALL_FR | 壁センサ 右前 |
-| 27 | PC4 | ADC2_INP4 | MOT_L_CM1 | 左モーターの電流(OUT1側の下側FET) |
-| 28 | PC5 | ADC2_INP8 | MOT_L_CM2 | 左モーターの電流(OUT2側の下側FET) |
+| 27 | PC4 | ADC2_INP4 | MOT_L_I | 左モーターの電流(INA241A3 の出力、2026-11-23。それまでは MP6551 の CM1) |
+| 28 | PC5 | — | (空き) | 2026-11-23 に空いた(MP6551 の CM2 をやめた)。ADC2_INP8 が使える |
 | 29 | PB0 | ADC1_INP9 | FAN_ISENSE | 吸引ファンの電流(シャント抵抗の電圧をRCで平均) |
 | 30 | PB1 | ADC2_INP5 | BATT | 電池の電圧(分圧) |
 | 31 | PB2 | GPIO_Output | MOT_EN | ドライバ2個のEN1・EN2(共通。Lでスリープ) |

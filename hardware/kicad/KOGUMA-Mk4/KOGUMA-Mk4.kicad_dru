@@ -1,7 +1,7 @@
 (version 1)
 
 # 細かいピッチの IC のパッドどうしは、フットプリントの寸法のままで 0.15〜0.19mm しか離れていない
-# (STM32H725 QFN-68 0.4mm ピッチ、LSM6DSR LGA-14 0.5mm、OPA2354 VSSOP-8 0.65mm)。
+# (STM32H725 QFN-68 0.4mm ピッチ、LSM6DSR LGA-14 0.5mm、OPA2354 VSSOP-8 0.65mm、INA241A3 SOT-23-8 0.65mm(U6・U7、2026-11-23))。
 # 同じ IC のパッドの間だけ 0.14mm まで許し、ほかはネットクラスの 0.2mm のまま(ToraNeko.Mk3 と同じ考え方)
 (rule "fine pitch pads U4"
   (constraint clearance (min 0.14mm))
@@ -18,3 +18,11 @@
 (rule "fine pitch pads U75"
   (constraint clearance (min 0.14mm))
   (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.intersectsCourtyard('U75') && B.intersectsCourtyard('U75')"))
+
+(rule "fine pitch pads U6"
+  (constraint clearance (min 0.14mm))
+  (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.intersectsCourtyard('U6') && B.intersectsCourtyard('U6')"))
+
+(rule "fine pitch pads U7"
+  (constraint clearance (min 0.14mm))
+  (condition "A.Type == 'Pad' && B.Type == 'Pad' && A.intersectsCourtyard('U7') && B.intersectsCourtyard('U7')"))
