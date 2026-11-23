@@ -65,8 +65,8 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 58 | PB3(JTDO/TRACESWO) | GPIO_Output | LED_FRONT | 前の LED(D98。前の円弧の切り欠きの真ん中。2026-10-31) |
 | 59 | PB4(NJTRST) | GPIO_Output | WALL_LED_FL_R | 壁センサの発光 FL と R(NJU6080 2個のPWM端子。MK3 の WallLED_12) |
 | 60 | PB5 | GPIO_Output | WALL_LED_L_FR | 壁センサの発光 L と FR(NJU6080 2個のPWM端子。MK3 の WallLED_34) |
-| 61 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換) |
-| 62 | PB7 | USART1_RX | UART_RX | PCから |
+| 61 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換)と BLE モジュール HY0020 の受信(P0.08、2026-11-23) |
+| 62 | PB7 | USART1_RX | UART_RX | PCから(TP1)と HY0020 の送信(P0.06、1kΩ を通す。有線をつなぐと有線が勝つ) |
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
 | 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
 
@@ -91,6 +91,6 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 ## 気をつけること
 
 - **PA15(JTDI)とPB4(NJTRST)とPB3(JTDO)**は、リセット直後はJTAGの機能になっている。CubeMXでデバッグを「Serial Wire」にすれば、GPIOとして使える
-- **BOOT0**(63番)は専用ピン。10kΩ程度でGNDに落とす
-- **NRST**(12番)は専用ピン。SWDの端子にも出す
+- **BOOT0**(63番)は専用ピン。10kΩ程度でGNDに落とす。HY0020 の P0.05 からも動かせる(2026-11-23)
+- **NRST**(12番)は専用ピン。SWDの端子にも出す。HY0020 の P0.07 からも動かせる(2026-11-23)
 - **電源のピン**: VFQFPN68はSMPS専用(VSSSMPS・VLXSMPS・VDDSMPS・VFBSMPS、VCAP × 3、VDDA・VSSA、VBAT)。部品は仕様書の「MCUの電源」
