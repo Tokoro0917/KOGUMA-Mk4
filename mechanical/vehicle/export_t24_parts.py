@@ -11,8 +11,8 @@ sys.argv = ['x', os.path.join(HERE, 'mk4_vehicle_t24.step')]
 exec(src[:src.index('\n', src.index('walk(l, TopLoc_Location(), name(l))'))])     # parts = {番号: 形}
 # (番号, ファイルの名前, 印刷する部品か, 確かめる外形 (xmin, xmax, ymin, ymax))
 PARTS = [
-    ('1', '01_frame_t24v4', False, (-50.0, 50.0, -35.0, 35.0)),             # フレーム(カーボン 1mm)。注文は MK4FRAMET24V4_T1.dxf
-    ('33', '02_pc_sheet_t24v4', False, (-40.0, 40.0, -21.3, 21.3)),         # 塩ビのシート 0.2mm。注文は MK4PCT24V4_T02.dxf
+    ('1', '01_frame_t24v5', False, (-50.0, 50.0, -35.0, 35.0)),             # フレーム(カーボン 1mm)。注文は MK4FRAMET24V5_T1.dxf
+    ('33', '02_pc_sheet_t24v5', False, (-40.0, 40.0, -21.3, 21.3)),         # 塩ビのシート 0.2mm。注文は MK4PCT24V5_T02.dxf
     ('34', '03_motor_mount_R_t24v3', True, (-23.4, 16.5, -22.6, -15.3)),    # モーターマウント 右(Temp Resin)
     ('35', '04_motor_mount_L_t24v3', True, (-23.4, 16.5, 15.3, 22.6)),      # モーターマウント 左
     ('5', '05_fan_mount_t24v2', True, (-3.3, 31.7, -22.8, 22.8)),           # ファンの台(Temp Resin)。継ぎ目 (14, ±20.3)。t24v2: 吸引する面が広がり、輪の下はシートの上(z 3.2)

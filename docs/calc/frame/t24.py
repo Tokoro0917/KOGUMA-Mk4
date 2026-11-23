@@ -32,9 +32,14 @@ MOUTH_R = 1.5                                           # 切り欠きの口の�
 SMALL_WINDOW = 25.0                                     # これより小さい窓(吸引する面の外)は開けない [mm²]
 _build = dz.build
 def build_t24(**kw):
-    """design.build の形から、切り欠きの口の角 (±SLOT_L/2, ±YB) を半径 MOUTH_R で丸める(壁に引っかからないように)"""
+    """design.build の形から、切り欠きの口の角 (±SLOT_L/2, ±YB) を半径 MOUTH_R で丸める(壁に引っかからないように)。
+    _pad_m: 壁センサのホルダの当たる所のまわりの余白(既定 1.0)、_small: 吸引する面の外の窓をこれより小さければ開けない(既定 SMALL_WINDOW)"""
     from shapely.geometry import box, Point
     from shapely.ops import unary_union
+    global SMALL_WINDOW
+    kw = dict(kw)
+    dz.SENSOR_PAD_M = kw.pop('_pad_m', 1.0)
+    small_window = kw.pop('_small', 25.0)
     g = _build(**kw)
     x0, y0, r = dz.SLOT_L / 2, dz.YB, MOUTH_R
     cuts = []
@@ -47,7 +52,7 @@ def build_t24(**kw):
     # 吸引する面の外の小さな窓(SMALL_WINDOW mm² 未満)は開けない(骨を細くすると、吸引する面の角のそばに小さな窓ができ、隣の窓との間が加工できる幅より細くなるため)
     from shapely.geometry import Polygon
     small = [Polygon(r) for poly in getattr(g['carbon'], 'geoms', [g['carbon']]) for r in poly.interiors
-             if Polygon(r).area < SMALL_WINDOW and not g['suction'].buffer(1.0).contains(Polygon(r).centroid)]
+             if Polygon(r).area < small_window and not g['suction'].buffer(1.0).contains(Polygon(r).centroid)]
     if small:
         fill = unary_union(small).buffer(0.01)
         g['domain'], g['carbon'] = g['domain'].union(fill.intersection(g['domain'].convex_hull)), g['carbon'].union(fill)
@@ -84,6 +89,15 @@ VARIANTS = {
     'w2': dict(BASE, _suction='w2'),                             # 骨は v6.9 のまま(前 2.0mm・後ろ 1.6mm)
     'w2f': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, inner_spine=1.6, land=1.6),      # 前の骨・背骨・筋交いは 2.0mm のまま、枠・辺だけ 1.6mm
     'w2lT': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['T'], rib_w=1.6),
+    # 2026-11-23(frame t24v5 の案): w2lX から、ホルダの当たる所のまわりを 1.0 → 0.3mm、窓の角の丸み 2 → 1mm、小さな窓も開ける(10mm² から)
+    'w2lXc': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6,
+                  fillet=1.0, end_window_min=10.0, _pad_m=0.3, _small=10.0),
+    'w2lXp': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, _pad_m=0.3),                                    # ホルダのまわりだけ 0.3mm
+    'w2lXs': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, end_window_min=10.0, _small=10.0),               # 小さな窓だけ
+    'w2lXf': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.0),                                     # 角の丸みだけ 1mm
+    'w2lXps': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, end_window_min=10.0, _pad_m=0.3, _small=10.0),  # ホルダのまわり + 小さな窓
+    'w2lXf15': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.5, end_window_min=10.0, _pad_m=0.3, _small=10.0),
+    'w2lXf17': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.75, end_window_min=10.0, _pad_m=0.3, _small=10.0),
     'w2lX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6),
     'w2lTX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['T', 'X'], rib_w=1.6),
     'w2l': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6),
