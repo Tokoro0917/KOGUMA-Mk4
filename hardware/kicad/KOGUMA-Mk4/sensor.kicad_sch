@@ -6,8 +6,8 @@
 	(paper "A3")
 	(title_block
 		(title "センサ")
-		(date "2026-10-29")
-		(rev "0.1")
+		(date "2026-11-23")
+		(rev "1.0")
 		(company "KOGUMA MK4")
 	)
 	(lib_symbols

@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "KOGUMA MK4")
-		(date "2026-10-29")
-		(rev "0.1")
+		(date "2026-11-23")
+		(rev "1.0")
 	)
 	(lib_symbols)
 	(text "シート: 電源・モーター・MCU・センサ・表示と通信"
