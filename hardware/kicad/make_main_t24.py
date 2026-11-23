@@ -115,6 +115,33 @@ def to_1005(t):
     out.append(t[i:])
     return ''.join(out)
 
+# ネットクラス(配線の初期値。2026-11-23)。配線はユーザーがするので、太さは目安
+NETCLASSES = [
+    # 名前, 線の太さ, すき間, ビアの径, ビアの穴, ネットの名前のパターン
+    ('Default', 0.15, 0.15, 0.6, 0.3, []),           # MCU の 0.4mm ピッチのピンから出られる太さ(main の配線の試しで 0.2mm では出られなかった)
+    ('Power', 0.6, 0.2, 0.8, 0.4, ['VBAT', '/電源/BAT+', 'PGND']),        # 電池から最大 約8A。ベタやいくつもの線で太くする
+    ('Motor', 0.5, 0.2, 0.8, 0.4, ['/モーター/MOT_?_OUT1', '/モーター/MOT_?_M1', 'Net-(J2-Pin_2)', 'Net-(J3-Pin_2)']),   # 片側 5A まで
+    ('Fan', 0.4, 0.2, 0.6, 0.3, ['Net-(D40-A)', '/モーター/FAN_SRC']),     # ファン 約1〜1.6A
+    ('Supply', 0.3, 0.15, 0.6, 0.3, ['+3V3', '+3V3A', '/MCU/VCORE', 'GND']),
+]
+def set_netclasses():
+    import json as _j
+    pro = os.path.join(DST, NAME + '.kicad_pro')
+    d = _j.load(open(pro))
+    base = d['net_settings']['classes'][0]
+    classes = []
+    for name, w, clr, vd, vh, _ in NETCLASSES:
+        c = dict(base); c.update(name=name, track_width=w, clearance=clr, via_diameter=vd, via_drill=vh)
+        if name != 'Default':
+            c['priority'] = len(classes)
+        classes.append(c)
+    d['net_settings']['classes'] = classes
+    d['net_settings']['netclass_patterns'] = [dict(netclass=name, pattern=pat) for name, *_, pats in NETCLASSES for pat in pats]
+    r = d['board']['design_settings']['rules']
+    r.update(min_clearance=0.127, min_track_width=0.127, min_via_diameter=0.5, min_through_hole_diameter=0.3, min_via_annular_width=0.13,
+             min_copper_edge_clearance=0.2, min_hole_clearance=0.25, min_hole_to_hole=0.25)
+    _j.dump(d, open(pro, 'w'), indent=2, ensure_ascii=False)
+
 # ---- 2. ネットリスト ----
 def sexp(text):
     toks = re.findall(r'\(|\)|"(?:\\.|[^"\\])*"|[^\s()]+', text)
@@ -178,7 +205,10 @@ def build():
     comps, nets = netlist()
     b = pcbnew.CreateEmptyBoard()
     ds = b.GetDesignSettings()
-    ds.m_MinClearance = MM(0.2); ds.m_TrackMinWidth = MM(0.15); ds.m_ViasMinSize = MM(0.6); ds.m_MinThroughDrill = MM(0.3)
+    # JLCPCB の2層(2026-11-23): 線・すき間 0.127mm 以上、ビアは穴 0.3mm・径 0.5mm 以上、穴のまわりの銅 0.13mm 以上。
+    # 決まりの最小は JLC に合わせ、ふだんの線・すき間(ネットクラス)はそれより太くする(set_netclasses)
+    ds.m_MinClearance = MM(0.127); ds.m_TrackMinWidth = MM(0.127); ds.m_ViasMinSize = MM(0.5); ds.m_MinThroughDrill = MM(0.3)
+    ds.m_ViasMinAnnularWidth = MM(0.13)
     ds.m_CopperEdgeClearance = MM(0.2)      # エンコーダ基板と同じ(縁まで 0.2mm)。エンコーダのパッドは切り欠きの縁から 0.2mm
     ds.SetBoardThickness(MM(0.6))
     netinfo = {}
@@ -261,6 +291,7 @@ def build():
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')
     b.Save(path)
+    set_netclasses()
     print('フットプリントが決まっていない部品(入れていない):', ', '.join(no_fp))
     return path, len(comps)
 

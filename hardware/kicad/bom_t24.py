@@ -1,6 +1,6 @@
 """タイヤ24mm のメイン基板(KOGUMA-Mk4_t24)の部品表を作る(2026-11-23、ブランチ claude/trusting-dirac-1tdt54)
 使い方(リポジトリの一番上で): /usr/bin/python3.12 hardware/kicad/bom_t24.py
-  → hardware/kicad/KOGUMA-Mk4_t24/bom_t24.csv(JLCPCB の BOM の形: Comment, Designator, Footprint, LCSC Part #)と、docs/bom_t24.md の「部品の一覧」
+  → hardware/kicad/KOGUMA-Mk4_t24/bom_t24.csv(JLCPCB の BOM の形: Comment, Designator, Footprint, LCSC Part #)、cpl_t24.csv(部品の位置)と、docs/bom_t24.md の「部品の一覧」
 品番は (値, フットプリント) で引く。LCSC の番号・定格・厚さは LCSC と Samsung の製品ページで確かめた(2026-11-23)。
 在庫は注文のときに JLCPCB の BOM ツールで確かめる"""
 import os, csv, collections
@@ -116,8 +116,29 @@ def main():
     open(doc, 'w').write(t[:i] + '## 部品の一覧\n\n' + '\n'.join(md) + '\n')
     return out, missing
 
+def cpl():
+    """JLCPCB の部品の位置(CPL: Designator, Mid X, Mid Y, Layer, Rotation)。kicad-cli の位置ファイルから作る。
+    線のパッド・壁センサ・テストパッドなど、JLC で載せない部品は入れない。向きは JLC の画面で部品ごとに確かめて直す(ライブラリで 0° の向きが違うことがある)"""
+    import subprocess, tempfile
+    tmp = os.path.join(tempfile.mkdtemp(), 'pos.csv')
+    subprocess.run(['kicad-cli', 'pcb', 'export', 'pos', '--format', 'csv', '--units', 'mm', '--side', 'both', '-o', tmp, PCB], check=True, capture_output=True)
+    rows = list(csv.DictReader(open(tmp)))
+    out = os.path.join(ROOT, 'KOGUMA-Mk4_t24', 'cpl_t24.csv')
+    n = 0
+    with open(out, 'w', newline='') as fh:
+        w = csv.writer(fh)
+        w.writerow(['Designator', 'Mid X', 'Mid Y', 'Layer', 'Rotation'])
+        for r in rows:
+            ref = r['Ref']
+            if ref.startswith(NOT_SMT) or ref.startswith('H'):
+                continue
+            w.writerow([ref, r['PosX'] + 'mm', r['PosY'] + 'mm', 'Top' if r['Side'] == 'top' else 'Bottom', r['Rot']])
+            n += 1
+    return n
+
 if __name__ == '__main__':
     out, missing = main()
     for o in out:
         print(len(o['refs']), o['value'], o['fp'], o['side'], o['mpn'], o['lcsc'], o['h'], ' '.join(o['refs']))
     print('品番なし:', missing)
+    print('CPL の部品', cpl())
