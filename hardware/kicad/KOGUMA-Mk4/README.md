@@ -6,7 +6,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 |---|---|
 | `KOGUMA-Mk4.kicad_sch` | 一番上のシート。下のシートを並べる |
 | `power.kicad_sch` | 電源(電池 → 電源スイッチ → VBAT → 3.3V、電池の電圧の分圧) |
-| `motor.kicad_sch` | モーター(MP6551 × 2、CM の分圧とコンデンサ)と吸引ファン(IRLML6344、0.1Ω のシャント) |
+| `motor.kicad_sch` | モーター(MP6551 × 2、モーターの電流は 5mΩ のシャント + INA241A3(2026-11-23))と吸引ファン(IRLML6344、0.1Ω のシャント) |
 | `sensor.kicad_sch` | センサ(A3): 壁センサの発光 4ch(OPV332 + NJU6080)、受光 4ch(SFH 229 FA + OPA2354、820kΩ ∥ 0.5pF)、PD_BIAS、IMU(LSM6DSR)、エンコーダの基板(MT6835)とのつなぎ(J5・J6、メイン基板の穴とパッド7つ) |
 | `ui.kicad_sch` | 表示・入力・通信(A3): LED 7個と前の LED(D98、PB3)、ブザー、スイッチ、デバッグの端子(J7、ToraNeko.Mk3 の J6 と同じ並び)、UART_RX のテストパッド、**BLE モジュール HY0020(U5、2026-11-23)** |
 | `mcu.kicad_sch` | MCU(STM32H725RGVx)、SMPS(Direct SMPS)、発振子(10MHz、CSTNE10M0G52Z000R0)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
@@ -32,7 +32,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `MOT_L_IN1`・`MOT_L_IN2`・`MOT_R_IN1`・`MOT_R_IN2` | MP6551 の IN(TIM1 の CH1〜CH4) |
 | `MOT_EN` | 2個の MP6551 の EN1・EN2(共通) |
 | `MOT_nFAULT` | 2個の nFAULT(オープンドレインを共通に、10kΩ で 3.3V へ) |
-| `MOT_L_CM1`・`MOT_L_CM2`・`MOT_R_CM1`・`MOT_R_CM2` | CM の電圧(ADC2) |
+| `MOT_L_I`・`MOT_R_I` | モーターの電流(INA241A3 の出力、0.25V/A、0A で 1.65V、ADC2)。2026-11-23 までは MP6551 の CM(`MOT_*_CM1`・`CM2`) |
 | `FAN_PWM`・`FAN_ISENSE` | ファンの PWM(TIM16)と電流(ADC1) |
 | `WALL_FL`・`WALL_L`・`WALL_R`・`WALL_FR` | 壁センサの受光のアンプの出力(ADC1) |
 | `WALL_LED_FL_R`・`WALL_LED_L_FR` | 壁センサの発光(対角の2個ずつ。MK3 の WallLED_12 / WallLED_34) |
@@ -56,7 +56,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 ## IC ごとのグループ(2026-11-06、`place_caps.py`)
 
-基板に部品を載せる前に、IC とそのコンデンサ・抵抗を、ノイズと線の長さを考えて並べ、**KiCad のグループ**にした(基板の外に18個、基板の上の LED に8個)。グループは基板の外(前の側)にあり、グループごと基板に動かせる(グループの中の部品は、ダブルクリックでグループに入って動かせる)。
+基板に部品を載せる前に、IC とそのコンデンサ・抵抗を、ノイズと線の長さを考えて並べ、**KiCad のグループ**にした(基板の外に20個、基板の上の LED に8個)。グループは基板の外(前の側)にあり、グループごと基板に動かせる(グループの中の部品は、ダブルクリックでグループに入って動かせる)。
 
 ![IC ごとのグループ](place_caps.png)
 
@@ -69,7 +69,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 | グループ | 中身(IC のピン) |
 |---|---|
-| U4 MCU | 抵抗: R50(BOOT0)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R22〜R25・R32〜R35(モーターの CM の VREF・RREF)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54 10µF(VFBSMPS 7)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C24・C33・C34(それぞれの ADC のピン) |
+| U4 MCU | 抵抗: R50(BOOT0)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R23・R33(モーターの電流の RC の 100Ω)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54 10µF(VFBSMPS 7)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C33(それぞれの ADC のピン) |
 | U1 DC-DC | C6 100nF・C5 10µF(VIN)、C7・C8 22µF(VOUT)、R3(FB)、**NT1(C7 の PGND のパッドのとなり)** |
 | U2・U3 MP6551 | C21・C31 100nF と C22・C32 10µF(VIN 2番)、R21・R31(SR) |
 | U74・U75 受光アンプ | C83・C84 100nF と C78・C79 10µF(V+ 8番)、帰還の 820k・0.5pF(出力と − 入力の間に、辺に沿って)。U74 に PD_BIAS(C80・R78・R79) |
@@ -81,6 +81,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | SW2 スイッチ | C90、R98(プルアップ) |
 | FB2 +3V3A のフィルタ | FB2、R80 2.2Ω、C85 10µF(DC-DC の出力のそばに置く) |
 | D2 電源の LED | D2、R6 |
+| U6・U7 INA241A3(モーターの電流、2026-11-23) | INA241A3、C24・C34 100nF(VS)、シャント R22・R32 5mΩ(IN+ と IN− の間に辺に沿って)。MP6551 の OUT1 のそばに置き、シャントからモーターの線へ |
 | U5 BLE モジュール(2026-11-23) | HY0020、C92 100nF(VDD)、R100 1kΩ(P0.06 の送信)。**電池の下に置かない**(アンテナがシールドの上の面)。基板の縁の近く、モーター・ファンの線から離す |
 | D90〜D96・D98 LED(基板の上) | LED と抵抗 R90〜R96・R99。抵抗は LED のパッドから 1.7mm、基板の外形の 0.3mm 内側で、電池のホルダの載る所を避けた |
 

@@ -72,10 +72,10 @@ def try_place(ref, x, y, placed):
     b = box(ref)
     return b if not any(overlap(b, o) for o in placed.values()) else None
 
-def place_at(ref, anchor, apin, placed, my_pin=None, mode='radial', pin2=None, gap=0.15, wlat=1.0):
+def place_at(ref, anchor, apin, placed, my_pin=None, mode='radial', pin2=None, gap=0.15, wlat=1.0, normal=None):
     """anchor のパッド apin の外に ref を置く。my_pin は anchor のピンに向けるパッド(省略すると同じネットのパッド)
     mode: 'radial' = 辺に直角(パッドの1つをピンに向ける)、'tangent' = 辺に沿う(apin と pin2 の間)"""
-    ap = pad(anchor, apin); n = side_normal(anchor, ap)
+    ap = pad(anchor, apin); n = normal or side_normal(anchor, ap)
     if my_pin is None:
         my_pin = [p.GetNumber() for p in FP[ref].Pads() if p.GetNetCode() == ap.GetNetCode()][0]
     px, py = xy(ap)
@@ -149,8 +149,8 @@ mcu = [
 # ADC のフィルタのコンデンサ(レビュー: MCU のそばに)
 adc = {}
 u4 = FP['U4']
-for c in ('C9', 'C40', 'C23', 'C24', 'C33', 'C34', 'R5', 'R4', 'R44', 'R23', 'R22', 'R25', 'R24', 'R33', 'R32', 'R35', 'R34'):
-    # ADC のフィルタのコンデンサ、電池の分圧(R4・R5)、ファンの RC の R44、モーターの CM の VREF・RREF(4.7k × 2)
+for c in ('C9', 'C40', 'C23', 'C33', 'R5', 'R4', 'R44', 'R23', 'R33'):
+    # ADC のフィルタのコンデンサ、電池の分圧(R4・R5)、ファンの RC の R44、モーターの電流の RC(R23・R33 100Ω + C23・C33 1nF、2026-11-23)
     u4nets = {p.GetNetCode(): p.GetNumber() for p in u4.Pads()}
     pin = [u4nets[p.GetNetCode()] for p in FP[c].Pads() if p.GetNetCode() in u4nets and p.GetNetname() not in ('GND', '+3V3')][0]
     mcu.append((c, 'U4', pin))
@@ -215,6 +215,9 @@ GROUPS.append(cluster(f'{sw} スイッチ', sw, [('C90', sw, swpin), ('R98', sw,
 GROUPS.append(cluster('FB2 +3V3A のフィルタ', 'FB2', [('R80', 'FB2', '2'), ('C85', 'R80', '2')]))
 GROUPS.append(cluster('D2 電源の LED', 'D2', [('R6', 'D2', '2')]))
 GROUPS.append(cluster('U5 BLE モジュール', 'U5', [('C92', 'U5', 'D1'), ('R100', 'U5', 'H1')]))   # 2026-11-23: VDD のパスコン、送信の 1kΩ
+# 2026-11-23: モーターの電流。シャントは INA の IN+(8)と IN−(1)の間に、辺に沿って(ケルビン接続の線を最短に)。VS のパスコン
+for u, rs, c in (('U6', 'R22', 'C24'), ('U7', 'R32', 'C34')):
+    GROUPS.append(cluster(f'{u} INA241A3(モーターの電流)', u, [(c, u, '6'), (rs, u, '8', dict(mode='tangent', pin2='1', normal=(0, -1)))]))   # シャントは IC の上(1 番と 8 番の並ぶ辺)
 
 # ---------------- エンコーダ基板のパスコン(基板の上、J5・J6 の 3.3V のパッドの内側)----------------
 # J5・J6 のパッドは裏(エンコーダ基板の内側と外側に2列)。内側の列の 3.3V(1番)と GND(7番)の真上に、横向きに置き、

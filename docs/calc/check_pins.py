@@ -23,10 +23,9 @@ ASSIGN = [
     ('PA11', 'TIM1_CH4',  'MOT_R_IN2', '右モーター IN2(PWM)'),
     ('PB2',  'GPIO_Output', 'MOT_EN', 'ドライバ2個のEN1・EN2(共通。Lでスリープ)'),
     ('PC9',  'GPIO_Input',  'MOT_nFAULT', 'ドライバ2個のnFAULT(オープンドレインを共通に)'),
-    ('PC4',  'ADC2_INP4',  'MOT_L_CM1', '左モーターの電流(OUT1側の下側FET)'),
-    ('PC5',  'ADC2_INP8',  'MOT_L_CM2', '左モーターの電流(OUT2側の下側FET)'),
-    ('PA4',  'ADC2_INP18', 'MOT_R_CM1', '右モーターの電流(OUT1側の下側FET)'),
-    ('PA5',  'ADC2_INP19', 'MOT_R_CM2', '右モーターの電流(OUT2側の下側FET)'),
+    ('PC4',  'ADC2_INP4',  'MOT_L_I', '左モーターの電流(INA241A3 の出力、2026-11-23)'),
+    ('PA4',  'ADC2_INP18', 'MOT_R_I', '右モーターの電流(INA241A3 の出力、2026-11-23)'),
+    # PC5・PA5 は 2026-11-23 に空いた(MP6551 の CM2 をやめた)
     # エンコーダ(AS5047P × 2、SPI2。IMUのSPI3とはSPIのモードが違うのでバスを分ける)(2026-10-17)
     ('PA12', 'SPI2_SCK',  'ENC_SCK',   'エンコーダ SPIクロック'),
     ('PB14', 'SPI2_MISO', 'ENC_MISO',  'エンコーダ MISO'),
