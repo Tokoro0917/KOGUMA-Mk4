@@ -15,7 +15,7 @@ import t24                     # design.py の定数をタイヤ24mm に(先に�
 sys.path.insert(0, HERE)
 import pcb_shape as ps
 
-ps.VER = 't24v3'     # 2026-11-22: 案1。B 案(v11 の広さ)に、後ろの V 字の切り欠き・羽と、角の丸み(v16 と同じ考え方)。t24v2 は B 案のまま(3,432mm²)、t24v1 は v16 の形(2,784mm²)
+ps.VER = 't24v4'     # 2026-11-23: マウントのねじを (6.8, ±18.9)・(-21, ±18.9) へ(frame t24v4、吸引する面 80 × 42.6mm)。t24v3(2026-11-22): 案1。B 案(v11 の広さ)に、後ろの V 字の切り欠き・羽と、角の丸み(v16 と同じ考え方)。t24v2 は B 案のまま(3,432mm²)、t24v1 は v16 の形(2,784mm²)
 ps.WHEEL_CUT = (-12.2, 12.5, 22.3)           # x0, x1(実際は x1 - 0.3 まで), |y| y0。タイヤは基板の高さで x ±11.89 まで(2026-11-21 に ±12.5 から。前の壁センサの足の穴のため)
 ps.ENC = [(-3.0, 3.0, -16.7, -16.1), (-3.0, 3.0, 16.1, 16.7)]   # エンコーダ基板をはんだ付けするパッドの所(基板の上の面)
 AXLE_CUT = (4.5, 16.7)                       # 車軸のまわり: |x| ≤ 4.5 で |y| > 16.7
@@ -54,6 +54,7 @@ def outline():
     o = o.difference(c).difference(Point(ps.FAN).buffer(ps.HUB_HOLE, 64))
     keep = unary_union([Point(p).buffer(3.1) for p in ps.SCREWS] + [box(-3.6, 15.4, 3.6, 16.7), box(-3.6, -16.7, 3.6, -15.4)]
                        + [ps.footprint(k, 1.0) for k in ps.SENS]).intersection(o)
+    keep = keep.difference(box(-xa, ya, xa, 60)).difference(box(-xa, -60, xa, -ya))     # 柱のまわりを残しても、車軸の切り欠きには入れない(t24v4、前の柱が x 6.8 で切り欠きに近い)
     o = o.buffer(-R_CUT, join_style=1).buffer(R_CUT, join_style=1).union(keep)
     return o.buffer(-0.01).buffer(0.01).simplify(0.002)      # 近すぎる点をまとめる(DXF の円弧にするときに止まるため)
 ps.outline = outline

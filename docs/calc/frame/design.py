@@ -162,6 +162,7 @@ def build(**kw):
         holes = no_boss(holes, sensor_pads(), P['fillet'])                                    # 壁センサのホルダを当てる所(2026-10-31)
     # 吸引する面の中の窓(ポリカーボネートでふさぐ)
     win = box(-SX + P['land'], -SY + P['land'], SX - P['land'], SY - P['land'])
+    win = win.difference(pad.buffer(P['land'], join_style=2))      # マウントが載る所(と縁 land)はカーボンのまま(2026-11-23、t24v4: 吸引する面がマウントの下まで広がったため。main は届かないので変わらない)
     if P['inner_spine'] > 0:
         win = win.difference(box(-60, -P['inner_spine'] / 2, 60, P['inner_spine'] / 2))
     ribs = []

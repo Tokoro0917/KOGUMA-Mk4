@@ -3,7 +3,7 @@
 座標 [mm]: x 前(+)、y 左(+)、z 上(床 = 0)。車軸 (0, y, 12.0)。右側なので外側が -y。
 部品の並び(外側から、main より 3.5mm 内): タイヤ -33.3〜-24.8、71T -24.8〜-22.8、LF-630 外 -23.2〜-21.2、内 -21.0〜-19.0、
 磁石 -20.2〜-19.2、MT6835 -18.7〜-17.5、エンコーダ基板 -17.5〜-16.9。メイン基板の下面 z 13.6。
-使い方: python3 mount_t24.py → motor_mount_R_t24v2.step/.stl、motor_mount_L_t24v2.step/.stl(v1 は P_V1)"""
+使い方: python3 mount_t24.py → motor_mount_R_t24v3.step/.stl、motor_mount_L_t24v3.step/.stl(v1 は P_V1)"""
 import math
 import cadquery as cq
 import mount as mm
@@ -28,7 +28,10 @@ P.update(
     enc_face=dict(x0=-3.1, bx0=-4.2, x1=6.0, wx1=3.1, ztop=16.0, px1=4.0, pz1=16.5),
     pocket=(4.0, 7.8, 16.5),
     # ねじ: 71T(|y| 22.8〜24.8、半径 10.95)とモーターの筒(x -17.2〜-6.9)を避ける
-    screw_front=(8.0, -19.5), screw_rear=(-21.0, -19.5),
+    # t24v3(2026-11-23): (8, -19.5)・(-21, -19.5) から内へ。吸引する面を横 ±21.3 に広げ、ねじの頭をその中に入れるため(frame t24v4)。
+    #   前の柱(半径 2.4)はファンの囲い(半径 17.5)から 0.4mm、ねじの頭(φ3.8)は基板の車軸の切り欠き(x 4.5)から 0.4mm
+    screw_front=(6.8, -18.9), screw_rear=(-21.0, -18.9),
+    boss_r=2.4, post_r=2.4,    # t24v3: 2.6 → 2.4(前の柱をファンの囲いから離すため。ねじの頭 φ3.8 は柱の上に収まる)
     fan_joint=(14.0, -20.3),   # ファンの囲い(中心 x 14.2、半径 17.5)から 0.3mm
     pcb_post=PCB_BOTTOM,
     top_cut=dict(z=PCB_BOTTOM, x=4.3, y=-16.9),   # メイン基板の切り欠き(x ±4.5、y < -16.7)の中だけ、上へ出してよい
@@ -52,7 +55,7 @@ def windows(P, wall=0.8, strut=0.9, r_round=0.4, min_area=2.0):
     y0, y1 = P['outer_face'] - 0.1, P['inner_face'] + 0.1
     return [([(round(x, 3), round(z, 3)) for x, z in list(g.exterior.coords)[:-1]], y0, y1) for g in geoms if g.area >= min_area]
 
-VER = 't24v2'
+VER = 't24v3'      # 2026-11-23: ねじを (6.8, ±18.9)・(-21, ±18.9) へ、柱を半径 2.4 に(t24v2 は (8, ±19.5)・(-21, ±19.5)、半径 2.6)
 P_V1 = dict(P)
 # v2(2026-11-21): モーターの穴と軸受の穴の間・車軸の下を、y 方向に抜ける窓で肉抜きする(壁 0.8mm 以上)。
 #   軸受の受けからモーターの穴へ・フレームへの柱(幅 1.8mm)は残す

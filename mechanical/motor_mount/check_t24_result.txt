@@ -1,4 +1,4 @@
-マウント t24v2: 体積 1116 mm³(1.34 g)、モーターの中心 (-12.01, 8.20)
+マウント t24v3: 体積 1046 mm³(1.25 g)、モーターの中心 (-12.01, 8.20)
 mount        - brg_out      すき間  0.000 mm  重なり   0.433 mm³ ぶつかる
 mount        - brg_in       すき間  0.000 mm  重なり   0.433 mm³ ぶつかる
 mount        - motor        すき間  0.000 mm  重なり   1.490 mm³ ぶつかる
@@ -41,5 +41,6 @@ spur71       - motor        すき間  1.300 mm  重なり   0.000 mm³
 mount        - magnet       すき間  1.448 mm  重なり   0.000 mm³ 
 mount        - pin          すき間  1.448 mm  重なり   0.000 mm³ 
 wheel        - pcb          すき間  1.471 mm  重なり   0.000 mm³ 
+fan_ring     - screw_front  すき間  1.498 mm  重なり   0.000 mm³ 
 brg_in       - enc_board    すき間  1.500 mm  重なり   0.000 mm³ 
 pin          - MT6835       すき間  1.500 mm  重なり   0.000 mm³ 

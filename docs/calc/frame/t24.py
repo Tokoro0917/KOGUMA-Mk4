@@ -13,13 +13,16 @@ import design as dz
 
 # ---- タイヤ24mm の並び(右側の値を正の y で) ----
 dz.SLOT_L, dz.SLOT_Y0, dz.SLOT_Y1 = 18.0, 22.3, 40.0   # 切り欠き: 前後18mm(z 3.0 でタイヤの前後 ±7.94、すき間約1mm)、71T の内の面 22.8 から 0.5mm
-dz.MOUNT_SCREWS = [(-21.0, 19.5), (8.0, 19.5)]
+dz.MOUNT_SCREWS = [(-21.0, 18.9), (6.8, 18.9)]    # 2026-11-23(t24v4): (-21, ±19.5)・(8, ±19.5) から内へ。吸引する面を横 ±21.3 に広げ、ねじの頭(φ3.8)を面の中に入れるため。
+                                                  # 前は柱(半径 2.4)がファンの囲い(半径 17.5)から 0.4mm、ねじの頭が基板の車軸の切り欠き(x 4.5)から 0.4mm になる所
 dz.FAN_JOINTS = [(14.0, 20.3), (14.0, -20.3)]
 dz.G_REAR = (-25.5, 19.0)                               # 骨G の始まり(後ろの耳のすぐ後ろ)
 dz.MOUNT_PAD = (-25.0, 12.5, 15.0, dz.SLOT_Y0 + 0.5)    # マウントが載る所(窓を開けない)。マウントは |y| 15.3 から
 
 SUCTION = {'v1': (30.0, 15.0),     # 吸引する面の半分(x, y)。v1 は main と同じ 60 × 30mm
-           'w': (34.0, 17.0)}      # 68 × 34mm(2026-11-21): 横はマウントのねじの頭(|y| 17.6 から)、前は横の壁センサのホルダ(x 36.5 から)まで
+           'w': (34.0, 17.0),      # 68 × 34mm(2026-11-21): 横はマウントのねじの頭(|y| 17.6 から)、前は横の壁センサのホルダ(x 36.5 から)まで
+           'w2': (40.0, 21.3)}     # 80 × 42.6mm(2026-11-23、t24v4): 前後は滑り板(x ±45、φ5)の手前、横はタイヤ・71T の切り欠き(|y| 22.3)まで 1.0mm。
+                                   # マウントのねじの頭(|y| 17.0〜20.8)は面の中。壁センサのホルダはフレームの上なのでぶつからない(docs/calc/t24_suction_wider.py)
 def set_suction(name):
     dz.SX, dz.SY = SUCTION[name]
 SHEET_CUT = (-24.0, 11.0, 15.2)   # 吸引する面のシート(塩ビ)を切る所: マウントがカーボンに直に載る所(x0, x1, |y| から外)
@@ -65,7 +68,7 @@ _ps.SENS['FL'] = SENS_FRONT
 _ps.SENS['FR'] = ((SENS_FRONT[0][0], -SENS_FRONT[0][1]), -SENS_FRONT[1])
 
 import fem, analyze as an
-set_suction('w')     # 2026-11-21 から frame t24v2(吸引する面 68 × 34mm)。t24.py を読み込むほかのスクリプト(機体・基板・注文)はこの値で作る
+set_suction('w2')    # 2026-11-23 から frame t24v4(吸引する面 80 × 42.6mm。t24v2・v3 は 'w' の 68 × 34mm)。t24.py を読み込むほかのスクリプト(機体・基板・注文)はこの値で作る
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BASE = json.load(open(os.path.join(HERE, 'results/v6_9_params.json')))
@@ -77,6 +80,13 @@ VARIANTS = {
     # w を軽くする案(2026-11-21): 前の骨・枠・背骨も後ろと同じ 1.6mm に(加工できる一番細い幅 1.5mm に公差を見た値)
     'w16': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=2.0),
     'w16l': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6),
+    # 2026-11-23(frame t24v4): w16l の形で、吸引する面を 80 × 42.6mm に
+    'w2': dict(BASE, _suction='w2'),                             # 骨は v6.9 のまま(前 2.0mm・後ろ 1.6mm)
+    'w2f': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, inner_spine=1.6, land=1.6),      # 前の骨・背骨・筋交いは 2.0mm のまま、枠・辺だけ 1.6mm
+    'w2lT': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['T'], rib_w=1.6),
+    'w2lX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6),
+    'w2lTX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['T', 'X'], rib_w=1.6),
+    'w2l': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6),
     # w16・w16l は、筋交い A と窓の間(35.3, ±16.7)に加工できる幅(1.5mm)より細い所ができる。筋交い A だけ 2.0mm に戻す
     'w16a': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 2.0}, land=2.0),
     'w16al': dict(BASE, _suction='w', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 2.0}, land=1.6, inner_spine=1.6),
