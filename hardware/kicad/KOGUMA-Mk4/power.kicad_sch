@@ -3879,7 +3879,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "T521V476M025ATE040 (47u 25V)"
+		(property "Value" "T521D107M025ATE040 (100u 25V)"
 			(at 137.16 96.52 0)
 			(effects
 				(font
@@ -3888,7 +3888,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D"
 			(at 139.7 78.74 0)
 			(effects
 				(font
