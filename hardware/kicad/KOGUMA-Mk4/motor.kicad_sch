@@ -4988,7 +4988,7 @@
 		)
 		(uuid "e8878783-630c-4fc1-a48f-72e8e4a6e18b")
 	)
-	(text "駆動: IN1・IN2 の両方を TIM1 の PWM に。前進は IN1 = PWM・IN2 = 0、後退はその逆。PWM の OFF では両方 L(下側のFETで減衰)。\n電流: 0 に固定している側の CM(前進なら CM2)を読む。その下側のFETには ON でも OFF でもモーターの電流が流れる。CM1 と CM2 はつながない。"
+	(text "駆動: IN1・IN2 の両方を TIM1 の PWM に。前進は IN1 = PWM・IN2 = 0、後退はその逆。PWM の OFF では両方 L(下側のFETで減衰)。\n電流: OUT1 とモーターの間の 5mΩ を INA241A3 で測る(下の説明、2026-11-23)。CM1・CM2 はつないで 4.7k × 2 で終端し、ADC で電池から出る電流の目安に使う。"
 		(exclude_from_sim no)
 		(at 25.4 25.4 0)
 		(effects
@@ -4999,7 +4999,7 @@
 		)
 		(uuid "5f5c95c8-9665-49da-8d38-c947ba022be9")
 	)
-	(text "CM: VOUT = 1.65V + RREF × I / 10,000、RREF = 4.7k ∥ 4.7k = 2.35kΩ。+側 約0.29V/A(約5.4Aまで)、−側 約0.22V/A。\nCM の抵抗とコンデンサは MCU の ADC のピンのそばに置く。ADC の基準と同じ 3.3V で分圧する(比で読む)。\n比は typ. しかない(+1A で 120〜125µA、−1A で −91〜−95µA)ので、1個ずつ・向きごとに校正する。0A は起動のときに測る。"
+	(text "CM(CM1 + CM2、MOT_*_CMS): VOUT = 1.65V + RREF × I / 10,000、RREF = R24 ∥ R25 = 2.35kΩ。+側 約0.29V/A(約5.4Aまで)、−側 約0.22V/A。\nCM の終端の抵抗は MCU の ADC のピンのそばに置く。ADC の基準と同じ 3.3V で分圧する(比で読む)。\n比は typ. しかない(+1A で 120〜125µA、−1A で −91〜−95µA)ので、使うなら1個ずつ校正する。0A は起動のときに測る。"
 		(exclude_from_sim no)
 		(at 25.4 172.72 0)
 		(effects
@@ -5032,7 +5032,7 @@
 		)
 		(uuid "4b1d1d45-7d16-43a5-8b3d-4855e072699e")
 	)
-	(text "モーター・ファンの線を基板にはんだ付けするパッド(J2〜J4)は仮(線の太さで決める)"
+	(text "モーター・ファンの線のパッド(J2〜J4): main は穴(SolderWire)。t24 は J2・J3 を裏の面の SMD のパッド(MotorWire_SMD、make_main_t24.py が替える)"
 		(exclude_from_sim no)
 		(at 25.4 190.5 0)
 		(effects
@@ -5063,7 +5063,7 @@
 		)
 		(uuid "2fb9b428-fedc-4c4e-a306-7156a5e0c460")
 	)
-	(text "ファンの VBAT のコンデンサ(2026-11-06): J4 のすぐそばに置く。Q40・D40・R43・J4 は電源のコンデンサ C2〜C4 のそばにまとめる。\nR43 の PGND 側は、ほかの電流と共用しない線で NT1 のそばへ(ケルビン接続)。R42 の下の端は Q40 のソース(FAN_SRC)"
+	(text "ファンの VBAT のコンデンサ(2026-11-06): J4 のすぐそばに置く。\nQ40・D40・R43・J4 は電源のコンデンサ C2〜C4 のそばにまとめる。\nR43 の PGND 側は、ほかの電流と共用しない線で NT1 のそばへ(ケルビン接続)。\nR42 の下の端は Q40 のソース(FAN_SRC)"
 		(exclude_from_sim no)
 		(at 196.85 140.97 0)
 		(effects
@@ -5690,136 +5690,6 @@
 	)
 	(symbol
 		(lib_id "KOGUMA-Mk4:+3V3A")
-		(at 129.54 78.74 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "387d0708-e30f-4b3a-81d5-f670b79af9db")
-		(property "Reference" "#PWR303"
-			(at 129.54 81.28 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3A"
-			(at 129.54 74.93 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 129.54 78.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 129.54 78.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 129.54 78.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "bad7807d-f2ee-44ae-ae9a-eeb735a2538b")
-		)
-		(instances
-			(project "KOGUMA-Mk4"
-				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
-					(reference "#PWR303")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 129.54 81.28 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "73520e9f-9c09-40e0-bb63-dc1091bfaae1")
-		(property "Reference" "#PWR304"
-			(at 129.54 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 129.54 85.09 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 129.54 81.28 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 129.54 81.28 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 129.54 81.28 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "d922f6ac-e97a-4280-ae54-0e05588b44ef")
-		)
-		(instances
-			(project "KOGUMA-Mk4"
-				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
-					(reference "#PWR304")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "KOGUMA-Mk4:+3V3A")
 		(at 137.16 66.04 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -6292,7 +6162,7 @@
 		(dnp no)
 		(uuid "0818c7ec-addf-4501-8d92-21b8dea69dd4")
 		(property "Reference" "C23"
-			(at 154.94 77.47 0)
+			(at 154.94 79.375 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6301,7 +6171,7 @@
 			)
 		)
 		(property "Value" "1n C0G"
-			(at 154.94 80.01 0)
+			(at 154.94 81.915 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6652,136 +6522,6 @@
 			(justify right bottom)
 		)
 		(uuid "aa39b54e-00a8-42f6-9a80-d84766d4f2d4")
-	)
-	(symbol
-		(lib_id "KOGUMA-Mk4:+3V3A")
-		(at 129.54 147.32 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "80e405e6-8c9e-4445-93e2-031d67095018")
-		(property "Reference" "#PWR342"
-			(at 129.54 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3A"
-			(at 129.54 143.51 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 129.54 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 129.54 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 129.54 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "2fdaad7b-3a5d-49cd-8f30-ad9270cf2188")
-		)
-		(instances
-			(project "KOGUMA-Mk4"
-				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
-					(reference "#PWR342")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 129.54 149.86 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "580ec374-8725-4ec2-b820-60bade7f87a8")
-		(property "Reference" "#PWR343"
-			(at 129.54 152.4 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 129.54 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 129.54 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 129.54 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 129.54 149.86 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "ed110fa1-66d8-4a2d-9a89-b0ea38841914")
-		)
-		(instances
-			(project "KOGUMA-Mk4"
-				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
-					(reference "#PWR343")
-					(unit 1)
-				)
-			)
-		)
 	)
 	(symbol
 		(lib_id "KOGUMA-Mk4:+3V3A")
@@ -7257,7 +6997,7 @@
 		(dnp no)
 		(uuid "6331edc1-a7e3-4536-8709-103935eb0771")
 		(property "Reference" "C33"
-			(at 154.94 146.05 0)
+			(at 154.94 147.955 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7266,7 +7006,7 @@
 			)
 		)
 		(property "Value" "1n C0G"
-			(at 154.94 148.59 0)
+			(at 154.94 150.495 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7402,7 +7142,7 @@
 			)
 		)
 	)
-	(text "モーターの電流(2026-11-23): MP6551 の OUT1 とモーターの間の 5mΩ(R22・R32)の電圧を INA241A3(ゲイン 50、U6・U7)で測る。0.25V/A、0A で 1.65V(REF1 = +3V3A、REF2 = GND)、約 ±5.8A。\nPWM の ON・OFF・向きにかかわらず、モーターに流れる電流そのものを測る(MP6551 の CM は下の FET の電流だけで、ずれが大きいのでやめた)。CM1・CM2 はつないで(2つの下の FET の電流の和 ≒ 電池から出る電流)、データシートどおり 4.7k × 2 で終端し、空いた ADC(MOT_L_CMS PC5・MOT_R_CMS PA5)へ。INA と照らし合わせ、電池の電流の見張りに使う。\nシャントはケルビン接続(INA の IN+・IN− の線はシャントのパッドから別に引く)。R23・R33 100Ω + C23・C33 1nF は MCU の ADC のそば"
+	(text "モーターの電流(2026-11-23): OUT1 とモーターの間の 5mΩ(R22・R32)を INA241A3(ゲイン 50、U6・U7)で測る。0.25V/A、0A で 1.65V、約 ±5.8A。\nPWM の ON・OFF・向きにかかわらずモーターの電流そのものを測る。CM1・CM2 はつないで 4.7k × 2 で終端し ADC へ(電池の電流の見張り)。\nシャントはケルビン接続(IN+・IN− はシャントのパッドから別に引く)。R23・R33 100Ω + C23・C33 1nF は MCU の ADC のそば"
 		(exclude_from_sim no)
 		(at 74.93 104.14 0)
 		(effects
@@ -8070,6 +7810,328 @@
 					(size 1.27 1.27)
 				)
 				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 129.54 78.74) (xy 121.92 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0b1df430-8d10-465d-8500-fc15b0c2805e")
+	)
+	(symbol
+		(lib_id "KOGUMA-Mk4:+3V3A")
+		(at 121.92 78.74 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b184fe09-ae56-4784-9f79-3c7e19eb2530")
+		(property "Reference" "#PWR401"
+			(at 121.92 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3A"
+			(at 118.11 77.216 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 121.92 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 121.92 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 121.92 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "670fa16e-d050-4691-9d94-b8a4c2b2606a")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
+					(reference "#PWR401")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 129.54 81.28) (xy 124.46 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5b727c9a-cb34-47b5-8de5-1bfa405612b5")
+	)
+	(wire
+		(pts
+			(xy 124.46 81.28) (xy 124.46 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b21db225-fa78-42e5-b50a-33fda4df9540")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 124.46 83.82 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b7887558-0d58-4cc6-96ea-a8aa29bc702c")
+		(property "Reference" "#PWR402"
+			(at 124.46 86.36 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 124.46 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 124.46 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 124.46 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 124.46 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c5b62803-f112-4f0b-98ba-40ccef40e89c")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
+					(reference "#PWR402")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 129.54 147.32) (xy 121.92 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3d4b4c4e-a9c9-4888-9a72-e09956d79d4a")
+	)
+	(symbol
+		(lib_id "KOGUMA-Mk4:+3V3A")
+		(at 121.92 147.32 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e0d2736f-9cee-4166-a381-8d1d82b39df4")
+		(property "Reference" "#PWR403"
+			(at 121.92 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3A"
+			(at 118.11 145.796 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" ""
+			(at 121.92 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 121.92 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 121.92 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "a3468ab1-d18e-4072-bbe5-a900a3ebdcdd")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
+					(reference "#PWR403")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 129.54 149.86) (xy 124.46 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c0bf714b-96c5-4621-9654-2a7e5a1680ed")
+	)
+	(wire
+		(pts
+			(xy 124.46 149.86) (xy 124.46 152.4)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9acfd218-dcda-4ef0-9ec5-7add048659e9")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 124.46 152.4 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "39adebd1-20eb-4a96-bec7-c256b93e60b4")
+		(property "Reference" "#PWR404"
+			(at 124.46 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 124.46 156.21 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 124.46 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 124.46 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 124.46 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d89be16e-b308-4c3c-ba27-604b5a230496")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/b3ecc577-4e99-536f-af5d-c45eb9b9dc15"
+					(reference "#PWR404")
+					(unit 1)
+				)
 			)
 		)
 	)

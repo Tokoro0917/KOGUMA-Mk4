@@ -3879,8 +3879,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "T521V476M025ATE040 (47u 25V)"
-			(at 142.24 80.01 0)
+		(property "Value" "T521D107M025ATE040 (100u 25V)"
+			(at 137.16 96.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3888,7 +3888,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V"
+		(property "Footprint" "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D"
 			(at 139.7 78.74 0)
 			(effects
 				(font
@@ -5577,7 +5577,7 @@
 		)
 		(uuid "4b090e26-cfe8-423b-9793-9e9c86b0cbb4")
 	)
-	(text "SW1・J1 のフットプリントは未作成(SSSS810701、BT2.0 の線の太さで決める)"
+	(text "フットプリント: SW1 は SW_Slide_SPDT_Alps_SSSS8(SSSS810701)、J1 は BT2.0 の線をはんだ付けするパッド。C5 10u・C6 100n は DC-DC(U1)の入力のそば"
 		(exclude_from_sim no)
 		(at 25.4 146.05 0)
 		(effects
