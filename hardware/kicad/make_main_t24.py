@@ -62,6 +62,8 @@ def ensure_project():
             t = t.replace('"KOGUMA-Mk4:ENC_Base_Butt"', '"KOGUMA-Mk4:ENC_Base_Edge_T24"')
             t = t.replace('を小さな基板(6.0 × 10.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\\nエンコーダの基板はメイン基板の裏に突き当て(2026-11-02、穴はなし)、裏のパッド(ENC_Base_Butt、エンコーダ基板の両側に7つずつ)と両面ではんだ付けする(線は使わない)。',
                           'を小さな基板(6.0 × 8.75mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder_t24)に載せる。\\nエンコーダの基板はメイン基板の切り欠きの縁に沿って立て、上の面のパッド7つ(ENC_Base_Edge_T24)にはんだ付けする(線は使わない)。')
+        if os.environ.get('T24_CAP') == '1005':      # 試し: コンデンサ 0603 → 1005
+            t = t.replace('"Capacitor_SMD:C_0603_1608Metric"', '"Capacitor_SMD:C_0402_1005Metric"')
         open(d, 'w').write(t)
     # モーターの線のパッド J2・J3: 穴のパッド → 裏の面の SMD のパッド2つ(MotorWire_SMD_1x02_P3.2mm、2026-11-23)。
     # モーターの端子 (-12, ±1.5) から線を前へ出し、モーターとファンの囲いの間(裏 x -6.9〜-3.3)ではんだ付けする。上の面が空くので、MCU のグループを電池の下の真ん中に置ける
