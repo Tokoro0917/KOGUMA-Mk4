@@ -5731,27 +5731,6 @@
 		)
 		(uuid "2a23525a-0b11-4cec-8a94-c03a1c2a96d4")
 	)
-	(global_label "UART_RX"
-		(shape output)
-		(at 175.26 162.56 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0bc99f3a-b49c-472c-b8b9-3ae9c9cb2bdd")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 175.26 162.56 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
 	(text "表示・入力・通信"
 		(exclude_from_sim no)
 		(at 25.4 20.32 0)
@@ -5796,7 +5775,7 @@
 		)
 		(uuid "1f337daa-e608-4786-bd8d-23917d571f18")
 	)
-	(text "J7: ToraNeko.Mk3 の J6 と同じ並び(1 3.3V、2 UART_TX、3 NRST、4 SWCLK、5 GND、6 SWDIO、1.27mm 2 × 3)。\nSTLINK-V3MODS で書き込み・デバッグとログ(仮想COMポート)。UART_RX は TP1(使うときだけ線をつなぐ)。"
+	(text "J7: ToraNeko.Mk3 の J6 と同じ並び(1 3.3V、2 UART_TX、3 NRST、4 SWCLK、5 GND、6 SWDIO、1.27mm 2 × 3)。\nSTLINK-V3MODS で書き込み・デバッグとログ(仮想COMポート)。UART_RX は TP1(使うときだけ線をつなぐ。D100 を通す)。"
 		(exclude_from_sim no)
 		(at 119.38 121.92 0)
 		(effects
@@ -6968,27 +6947,6 @@
 		)
 		(uuid "27ff7ab2-d18b-48a9-8c3d-8d870c157de1")
 	)
-	(global_label "NRST"
-		(shape bidirectional)
-		(at 62.23 233.68 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "7096cd01-4da1-4765-b910-3d5e3460fb2d")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 62.23 233.68 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
 	(label "BLE_SWDIO"
 		(at 62.23 264.16 0)
 		(effects
@@ -7016,10 +6974,6 @@
 	(no_connect
 		(at 62.23 223.52)
 		(uuid "f34abf33-13b4-4ee2-9008-e40b380b537d")
-	)
-	(no_connect
-		(at 62.23 226.06)
-		(uuid "1279d505-dc92-405f-beec-73273b029123")
 	)
 	(no_connect
 		(at 62.23 238.76)
@@ -7256,73 +7210,6 @@
 			)
 		)
 	)
-	(symbol
-		(lib_id "Device:R")
-		(at 92.71 224.79 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "9d939021-52e4-4d53-963c-648434b62c30")
-		(property "Reference" "R100"
-			(at 92.71 222.25 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "1k"
-			(at 92.71 228.6 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 92.71 224.79 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 92.71 224.79 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 92.71 224.79 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "f06e9d26-e8bf-47d3-95da-6f3faaa3bc3c")
-		)
-		(pin "2"
-			(uuid "4e888472-8061-428c-9a71-5228f378c5f3")
-		)
-		(instances
-			(project "KOGUMA-Mk4_t24"
-				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
-					(reference "R100")
-					(unit 1)
-				)
-			)
-		)
-	)
 	(label "BLE_TX"
 		(at 92.71 220.98 0)
 		(effects
@@ -7506,7 +7393,7 @@
 		)
 		(uuid "393700a5-f3b9-4b13-a417-a5d3daf98e55")
 	)
-	(text "BLE モジュール HY0020(U5、2026-11-23): ログ・書き込み・パラメータ・ターンの自動調整を無線で(PC と BLE)。\nMCU の USART1(PB6・PB7)とつなぐ。P0.06 の送信は R100 1kΩ を通す(有線の USB シリアルをつなぐと、そちらが勝つ)。P0.07 で NRST を動かす(MCU のピンは増えない)。BOOT0 にはつながない(2026-11-23、AN2606: H72x の書き込み用のプログラムの USART1 は PA9・PA10 だけで、PB6・PB7 では使えない。誤って H にすると MCU が止まって見えるため)。\nDC/DC を使う(DCC と DEC4 をつなぐ、データシートの図5-2)。RFIO と ANT は最短でつなぐ。TP2・TP3 は nRF52832 の書き込み(SWD)。\n置き場所: アンテナはシールドの上の面なので、電池の下に置かない。基板の縁の近く、モーター・ファンの線から離す"
+	(text "BLE モジュール HY0020(U5、2026-11-23): ログ・書き込み・パラメータ・ターンの自動調整を無線で(PC と BLE)。\nMCU の USART1(PB6・PB7)とつなぐ。P0.06 の送信は D99 で UART_RX を L に引くだけ(有線の TP1 も D100 で同じ。R101 で引き上げ)。P0.04 で UART_RX を見る。P0.07 は D101 で NRST を L に引くだけ(MCU のピンは増えない)。BOOT0 にはつながない(2026-11-23、AN2606: H72x の書き込み用のプログラムの USART1 は PA9・PA10 だけで、PB6・PB7 では使えない。誤って H にすると MCU が止まって見えるため)。\nDC/DC を使う(DCC と DEC4 をつなぐ、データシートの図5-2)。RFIO と ANT は最短でつなぐ。TP2・TP3 は nRF52832 の書き込み(SWD)。\n置き場所: アンテナはシールドの上の面なので、電池の下に置かない。基板の縁の近く、モーター・ファンの線から離す"
 		(exclude_from_sim no)
 		(at 19.05 213.35999999999999 0)
 		(effects
@@ -7520,6 +7407,480 @@
 	(no_connect
 		(at 62.23 228.6)
 		(uuid "9f690958-a767-4172-a158-6353afbce6c1")
+	)
+	(label "UART_RX_W"
+		(at 175.26 162.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f3ca825a-7415-461a-8312-9eaa29a8390a")
+	)
+	(symbol
+		(lib_id "Device:D_Schottky")
+		(at 92.71 224.79 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e35009fa-eae8-4fef-8651-e195f8423816")
+		(property "Reference" "D99"
+			(at 90.17 224.79 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "BAT54WS"
+			(at 90.17 227.33 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-323"
+			(at 92.71 224.79 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 92.71 224.79 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 92.71 224.79 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7eddf71a-34af-414b-9086-5cde427f33bd")
+		)
+		(pin "2"
+			(uuid "ee3ec60f-a5ec-4a3e-8fcc-ecdc9b46d41b")
+		)
+		(instances
+			(project "KOGUMA-Mk4_t24"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "D99")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(label "BLE_NRST"
+		(at 62.23 233.68 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0c5a1435-44f1-4fa5-9811-7dbc6dd41cf2")
+	)
+	(global_label "UART_RX"
+		(shape bidirectional)
+		(at 62.23 226.06 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e7f4ef34-9b3e-4c87-867c-6dbdfc564d61")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 62.23 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Schottky")
+		(at 90.17 264.16 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e7847972-8e02-46b2-8837-4da2b27acff0")
+		(property "Reference" "D100"
+			(at 87.63 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "BAT54WS"
+			(at 87.63 266.7 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-323"
+			(at 90.17 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 90.17 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 90.17 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "50c607d8-4a65-4ce4-8488-c25e7b2cbc03")
+		)
+		(pin "2"
+			(uuid "06378e96-cf8e-4ae0-a924-cab099d3e3c3")
+		)
+		(instances
+			(project "KOGUMA-Mk4_t24"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "D100")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:D_Schottky")
+		(at 105.41 264.16 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "843e7a27-9718-4b20-84e7-eb8e1a877234")
+		(property "Reference" "D101"
+			(at 102.87 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "BAT54WS"
+			(at 102.87 266.7 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-323"
+			(at 105.41 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 105.41 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 105.41 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "39b16568-8e28-4503-80bc-3e41a727c055")
+		)
+		(pin "2"
+			(uuid "80d4dc52-75d8-41db-8213-0e8ab7a6db66")
+		)
+		(instances
+			(project "KOGUMA-Mk4_t24"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "D101")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 120.65 264.16 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "2f6e2f45-4426-4aad-8521-3465cfb1aa40")
+		(property "Reference" "R101"
+			(at 120.65 261.62 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "4.7k"
+			(at 120.65 267.97 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 120.65 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 120.65 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 120.65 264.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "18431602-0b81-4a1a-a777-4dc4f922a1b5")
+		)
+		(pin "2"
+			(uuid "399cfa23-5d0f-4a6a-be0f-f43126279170")
+		)
+		(instances
+			(project "KOGUMA-Mk4_t24"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "R101")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(label "UART_RX_W"
+		(at 90.17 260.35 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "ab25e042-faff-4173-b1ad-421d46ad1e45")
+	)
+	(global_label "UART_RX"
+		(shape bidirectional)
+		(at 90.17 267.97 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f4253835-40aa-494d-8a78-921827dbff37")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 90.17 267.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(label "BLE_NRST"
+		(at 105.41 260.35 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "88a4a2c3-cf7e-474a-ab2d-2ff93df30998")
+	)
+	(global_label "NRST"
+		(shape bidirectional)
+		(at 105.41 267.97 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ea39246a-78f6-4eb1-b29b-d066bcb7fb48")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 105.41 267.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 120.65 260.35 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e3bf0a53-e501-47b6-9733-61a2533330d4")
+		(property "Reference" "#PWR97"
+			(at 120.65 262.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 120.65 256.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 120.65 260.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 120.65 260.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 120.65 260.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "29285b29-8f14-432e-a7f5-57be0b53447b")
+		)
+		(instances
+			(project "KOGUMA-Mk4_t24"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "#PWR97")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "UART_RX"
+		(shape bidirectional)
+		(at 120.65 267.97 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "bc60ca83-1f5e-4e7c-b93e-d5e37fa1d820")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 120.65 267.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(text "有線と無線をぶつけない(2026-11-23): UART_RX は R101 で引き上げ、送る側(HY0020 の P0.06、TP1 の有線)は\nそれぞれダイオード(D99・D100)で L に引くだけ(ワイヤード AND)。どちらからも送れ、H どうしがぶつからない。\n電源を切っているときに有線から MCU に電流が回らない。HY0020 の P0.04 で UART_RX を見て、有線が送っている間は待つ。\nNRST は D101 で HY0020 から L に引くだけ(STLINK・MCU の中のリセットとぶつからない)"
+		(exclude_from_sim no)
+		(at 82.55 251.45999999999998 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e2b66414-ab1b-461a-8ab0-72dc75d7caee")
 	)
 	(embedded_fonts no)
 )
