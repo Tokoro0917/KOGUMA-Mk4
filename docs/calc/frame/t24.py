@@ -18,6 +18,10 @@ dz.MOUNT_SCREWS = [(-21.0, 18.9), (6.8, 18.9)]    # 2026-11-23(t24v4): (-21, ±1
 dz.FAN_JOINTS = [(14.0, 20.3), (14.0, -20.3)]
 dz.G_REAR = (-25.5, 19.0)                               # 骨G の始まり(後ろの耳のすぐ後ろ)
 dz.MOUNT_PAD = (-25.0, 12.5, 15.0, dz.SLOT_Y0 + 0.5)    # マウントが載る所(窓を開けない)。マウントは |y| 15.3 から
+MOUNT_PAD_DEFAULT = dz.MOUNT_PAD
+# 2026-11-23(t24v6): ねじのまわりの肉(半径 BOSS_R + 0.8 = 4.5)が上の四角から 0.5〜0.6mm はみ出して、窓の辺に段やへこみができていたので、
+# 四角をねじのまわりの肉を含む大きさにする(窓の辺がまっすぐになる)
+MOUNT_PAD_SMOOTH = (-21.0 - 4.5, 12.5, 18.9 - 4.5, 18.9 + 4.5)
 
 SUCTION = {'v1': (30.0, 15.0),     # 吸引する面の半分(x, y)。v1 は main と同じ 60 × 30mm
            'w': (34.0, 17.0),      # 68 × 34mm(2026-11-21): 横はマウントのねじの頭(|y| 17.6 から)、前は横の壁センサのホルダ(x 36.5 から)まで
@@ -39,6 +43,7 @@ def build_t24(**kw):
     global SMALL_WINDOW
     kw = dict(kw)
     dz.SENSOR_PAD_M = kw.pop('_pad_m', 1.0)
+    dz.MOUNT_PAD = kw.pop('_mount_pad', MOUNT_PAD_DEFAULT)      # マウントが載る所(窓を開けない四角)
     small_window = kw.pop('_small', 25.0)
     g = _build(**kw)
     x0, y0, r = dz.SLOT_L / 2, dz.YB, MOUTH_R
@@ -98,6 +103,7 @@ VARIANTS = {
     'w2lXps': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, end_window_min=10.0, _pad_m=0.3, _small=10.0),  # ホルダのまわり + 小さな窓
     'w2lXf15': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.5, end_window_min=10.0, _pad_m=0.3, _small=10.0),
     'w2lXf17': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.75, end_window_min=10.0, _pad_m=0.3, _small=10.0),
+    'w2lXf15s': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.5, end_window_min=10.0, _pad_m=0.3, _small=10.0, _mount_pad=MOUNT_PAD_SMOOTH),   # frame t24v6: 窓の辺をまっすぐに
     'w2lX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6),
     'w2lTX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['T', 'X'], rib_w=1.6),
     'w2l': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6),

@@ -191,6 +191,15 @@ def build(**kw):
     carbon = domain.difference(unary_union(pcw))
     if P['mount_windows']:
         mw = mount_windows(carbon, suction, P['mount_windows'])
+        # 吸引する面(と縁 land)には入れない(2026-11-23、t24v6: 吸引する面がマウントの下まで広がり、モーターの筒の下の窓が吸引する面に穴を開けていた。main は届かないので変わらない)
+        keep_mw = []
+        for g_ in getattr(mw, 'geoms', [mw]):
+            if g_.intersection(suction).area > 1e-6:        # 吸引する面に入り込んでいる窓だけ切る
+                g_ = g_.difference(suction.buffer(P['land'], join_style=2)).difference(box(MOUNT_PAD[0], -MOUNT_PAD[3], MOUNT_PAD[1], MOUNT_PAD[3]))     # マウントが載る所の辺(|y| MOUNT_PAD[3])にもそろえる(窓の辺に段を作らない)
+                keep_mw += [rounded(h, P['fillet']) for h in getattr(g_, 'geoms', [g_]) if h.area > P['end_window_min']]
+            else:
+                keep_mw.append(g_)
+        mw = unary_union(keep_mw)
         if SENSOR_PAD_M is not None:   # 壁センサのホルダを当てる所にかかる窓は、そこを除いて角を丸め直す
             mw = unary_union(no_boss([g for g in getattr(mw, 'geoms', [mw])], sensor_pads(), P['fillet']))
         domain, carbon = domain.difference(mw), carbon.difference(mw)
