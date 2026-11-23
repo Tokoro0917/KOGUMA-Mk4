@@ -31,7 +31,7 @@ sys.path.insert(0, 'mechanical/vehicle'); sys.path.insert(0, 'docs/calc/frame')
 import pcb_t24, pcb_shape as ps
 o = ps.outline()
 rings = [list(r.coords) for g in getattr(o, 'geoms', [o]) for r in [g.exterior] + list(g.interiors)]
-print(json.dumps(dict(rings=rings, SENS=ps.SENS, LEDS=ps.LEDS, SCREWS=ps.SCREWS,
+print(json.dumps(dict(rings=rings, SENS=ps.SENS, LEDS=ps.LEDS, LED_FRONT=ps.LED_FRONT, SCREWS=ps.SCREWS,
                       pads={k: dict(emit=ps.pads(k, 'emit'), recv=ps.pads(k, 'recv')) for k in ps.SENS})))
 '''
 import json
@@ -39,16 +39,11 @@ _g = json.loads(subprocess.run(['python3', '-c', GEOM], cwd=REPO, capture_output
 class ps:
     SENS = {k: (tuple(v[0]), v[1]) for k, v in _g['SENS'].items()}
     LEDS = [tuple(p) for p in _g['LEDS']]
+    LED_FRONT = tuple(_g['LED_FRONT'])
     SCREWS = [tuple(p) for p in _g['SCREWS']]
     @staticmethod
     def pads(nm, part):
         return [tuple(p) for p in _g['pads'][nm][part]]
-def _reserve():
-    import ast
-    t = open(os.path.join(ROOT, 'place_main_t24.py')).read()
-    i = t.index('RESERVE = {'); j = t.index('}', i)
-    return ast.literal_eval(t[i + len('RESERVE = '):j + 1])
-RESERVE = _reserve()      # フットプリントがまだない部品の場所(仮)。place_main_t24.py と同じ
 UI_LEDS = ['D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D96']   # ps.LEDS の順(左の角2つ、V 字の先3つ、右の角2つ)に置く。仮
 SENSORS = {'FL': ('D70', 'D74'), 'L': ('D71', 'D77'), 'R': ('D72', 'D75'), 'FR': ('D73', 'D76')}   # (発光, 受光)。回路図の値の (FL) などから
 
@@ -61,24 +56,47 @@ def ensure_project():
         d = os.path.join(DST, fn.replace('KOGUMA-Mk4.', NAME + '.') if fn.startswith('KOGUMA-Mk4.') else fn)
         t = open(os.path.join(SRC, fn)).read()
         t = t.replace('(project "KOGUMA-Mk4"', f'(project "{NAME}"')          # 記号の番号はプロジェクトの名前ごとに持っている
-        if fn == 'ui.kicad_sch':      # UI の LED: 機構の並び(pcb_shape.LEDS、ToraNeko.Mk3 と同じ、1.9mm おき)は 0402 で決めてあるので 0402 にする(main の回路図は 0603)
-            n = t.count('"LED_SMD:LED_0603_1608Metric"')
-            t = t.replace('"LED_SMD:LED_0603_1608Metric"', '"LED_SMD:LED_0402_1005Metric"')
-            print(f'  ui: LED の 0603 → 0402 を {n} 個')
+        # UI の LED は回路図のまま 1608(2026-11-23、ユーザーの決定)。1.9mm おきの並び(pcb_shape.LEDS)に、長い方を x(前後)に向けて置く
         if fn == 'sensor.kicad_sch':
-            # NJU6080(U70〜U73)は SOT-23-6(docs/bom.md。記号の既定のフットプリントも SOT-23-6)。main の回路図ではまだ空なので、ここで入れる
-            parts = t.split('(lib_id "KOGUMA-Mk4:NJU6080")')
-            assert len(parts) == 5
-            t = parts[0] + ''.join('(lib_id "KOGUMA-Mk4:NJU6080")' + q.replace('(property "Footprint" ""', '(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"', 1) for q in parts[1:])
-            assert t.count('"KOGUMA-Mk4:ENC_Base_Slot"') == 2
-            t = t.replace('"KOGUMA-Mk4:ENC_Base_Slot"', '"KOGUMA-Mk4:ENC_Base_Edge_T24"')
-            t = t.replace('を小さな基板(5.3 × 12.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\\nエンコーダの基板はメイン基板の穴(ENC_Base_Slot)を通し、上の面でパッド7つをはんだ付けする(線は使わない)。',
+            assert t.count('"KOGUMA-Mk4:ENC_Base_Butt"') == 2      # main(タイヤ15mm)はエンコーダ基板 v2 を裏に突き当てる形(2026-11-02)
+            t = t.replace('"KOGUMA-Mk4:ENC_Base_Butt"', '"KOGUMA-Mk4:ENC_Base_Edge_T24"')
+            t = t.replace('を小さな基板(6.0 × 10.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\\nエンコーダの基板はメイン基板の裏に突き当て(2026-11-02、穴はなし)、裏のパッド(ENC_Base_Butt、エンコーダ基板の両側に7つずつ)と両面ではんだ付けする(線は使わない)。',
                           'を小さな基板(6.0 × 8.75mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder_t24)に載せる。\\nエンコーダの基板はメイン基板の切り欠きの縁に沿って立て、上の面のパッド7つ(ENC_Base_Edge_T24)にはんだ付けする(線は使わない)。')
         open(d, 'w').write(t)
+    # モーターの線のパッド J2・J3: 穴のパッド → 裏の面の SMD のパッド2つ(MotorWire_SMD_1x02_P3.2mm、2026-11-23)。
+    # モーターの端子 (-12, ±1.5) から線を前へ出し、モーターとファンの囲いの間(裏 x -6.9〜-3.3)ではんだ付けする。上の面が空くので、MCU のグループを電池の下の真ん中に置ける
+    write_motor_wire_fp()
+    t = open(os.path.join(DST, 'motor.kicad_sch')).read()
+    for ref in ('J2', 'J3'):
+        i = t.index(f'(property "Reference" "{ref}"')
+        j = t.index('"Connector_Wire:SolderWire-0.25sqmm_1x02_P4.2mm_D0.65mm_OD1.7mm"', i)
+        t = t[:j] + '"KOGUMA-Mk4:MotorWire_SMD_1x02_P3.2mm"' + t[j + len('"Connector_Wire:SolderWire-0.25sqmm_1x02_P4.2mm_D0.65mm_OD1.7mm"'):]
+    open(os.path.join(DST, 'motor.kicad_sch'), 'w').write(t)
+    # 細かいピッチの IC(U4・U74・U75・U76)のパッドの間だけ 0.14mm まで許す設計ルール(main と同じ)
+    shutil.copy(os.path.join(SRC, 'KOGUMA-Mk4.kicad_dru'), os.path.join(DST, NAME + '.kicad_dru'))
     open(os.path.join(DST, 'fp-lib-table'), 'w').write(
         '(fp_lib_table\n\t(version 7)\n\t(lib (name "KOGUMA-Mk4")(type "KiCad")(uri "${KIPRJMOD}/../KOGUMA-Mk4/KOGUMA-Mk4.pretty")(options "")(descr "MK4 project footprints"))\n)\n')
     open(os.path.join(DST, 'sym-lib-table'), 'w').write(
         '(sym_lib_table\n\t(version 7)\n\t(lib (name "KOGUMA-Mk4")(type "KiCad")(uri "${KIPRJMOD}/../KOGUMA-Mk4/KOGUMA-Mk4.kicad_sym")(options "")(descr "MK4 project symbols"))\n)\n')
+
+def write_motor_wire_fp():
+    """モーターの線をはんだ付けする SMD のパッド2つ(1.6 × 2.6mm、間 3.2mm)。裏の面に置く"""
+    pads = ''.join(f"""
+	(pad "{n}" smd roundrect (at {x} 0) (size 1.6 2.6) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0.15))""" for n, x in (('1', -1.6), ('2', 1.6)))
+    txt = f"""(footprint "MotorWire_SMD_1x02_P3.2mm"
+	(version 20241229)
+	(generator "make_main_t24.py")
+	(layer "F.Cu")
+	(descr "Two SMD pads 1.6x2.6mm, pitch 3.2mm, to solder motor wires (0.25sqmm) on the bottom of the KOGUMA-Mk4 t24 main board")
+	(tags "wire pad SMD motor")
+	(property "Reference" "REF**" (at 0 -2.2 0) (layer "F.SilkS") (effects (font (size 0.8 0.8) (thickness 0.12))))
+	(property "Value" "MotorWire_SMD_1x02_P3.2mm" (at 0 2.2 0) (layer "F.Fab") (effects (font (size 0.8 0.8) (thickness 0.12))))
+	(attr smd exclude_from_pos_files exclude_from_bom)
+	(fp_rect (start -2.65 -1.55) (end 2.65 1.55) (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd"))
+	(fp_rect (start -2.4 -1.3) (end 2.4 1.3) (stroke (width 0.1) (type solid)) (fill none) (layer "F.Fab")){pads}
+)
+"""
+    open(os.path.join(SRC, 'KOGUMA-Mk4.pretty', 'MotorWire_SMD_1x02_P3.2mm.kicad_mod'), 'w').write(txt)
 
 # ---- 2. ネットリスト ----
 def sexp(text):
@@ -143,9 +161,7 @@ def build():
     comps, nets = netlist()
     b = pcbnew.CreateEmptyBoard()
     ds = b.GetDesignSettings()
-    # すき間 0.1mm・線 0.1mm(MCU の 0.4mm ピッチ・IMU の 0.5mm ピッチのパッドの間が 0.2mm に足りないため。JLCPCB の4層は 0.09mm、2層は 0.127mm まで)
-    ds.m_MinClearance = MM(0.1); ds.m_TrackMinWidth = MM(0.1)
-    nc = ds.m_NetSettings.GetDefaultNetclass(); nc.SetClearance(MM(0.1)); nc.SetTrackWidth(MM(0.15)); ds.m_ViasMinSize = MM(0.6); ds.m_MinThroughDrill = MM(0.3)
+    ds.m_MinClearance = MM(0.2); ds.m_TrackMinWidth = MM(0.15); ds.m_ViasMinSize = MM(0.6); ds.m_MinThroughDrill = MM(0.3)
     ds.m_CopperEdgeClearance = MM(0.2)      # エンコーダ基板と同じ(縁まで 0.2mm)。エンコーダのパッドは切り欠きの縁から 0.2mm
     ds.SetBoardThickness(MM(0.6))
     netinfo = {}
@@ -196,31 +212,16 @@ def build():
         sh = pcbnew.PCB_SHAPE(b); sh.SetShape(pcbnew.SHAPE_T_SEGMENT); sh.SetLayer(pcbnew.Cmts_User); sh.SetWidth(MM(0.15))
         sh.SetStart(P(*a)); sh.SetEnd(P(*c_)); b.Add(sh)
     note(b, 'BATTERY (top): parts <= 1.2mm high only (battery on 1.5mm spacer)', OX - 15.5, OY - 13.5, 0.8)
-    # UI の LED(長い方を y に)
+    # UI の LED(1608。1.9mm おきなので長い方を x(前後)に向ける)と前の LED(D98、PB3)
     for ref, (x, y) in zip(UI_LEDS, ps.LEDS):
-        fps[ref].SetPosition(P(x, y)); fps[ref].SetOrientationDegrees(90.0); placed.add(ref)
+        fps[ref].SetPosition(P(x, y)); fps[ref].SetOrientationDegrees(0.0); placed.add(ref)
+    fps['D98'].SetPosition(P(*ps.LED_FRONT)); fps['D98'].SetOrientationDegrees(0.0); placed.add('D98')
     # ねじの穴(基板だけの部品)
     for i, (x, y) in enumerate(ps.SCREWS):
         h = load_fp('MountingHole:MountingHole_2.2mm_M2'); h.SetReference(f'H{i + 1}'); h.SetValue('M2')
         h.SetAttributes(h.GetAttributes() | pcbnew.FP_BOARD_ONLY | pcbnew.FP_EXCLUDE_FROM_BOM | pcbnew.FP_EXCLUDE_FROM_POS_FILES)
         h.SetPosition(P(x, y)); b.Add(h)
-    # ほかの部品: place_main_t24.py が決めた場所(KOGUMA-Mk4_t24/place.json)に置く。まだ無ければ、基板の右にシートごとに並べる
-    pj = os.path.join(DST, 'place.json')
-    if os.path.exists(pj):
-        for ref, d in json.load(open(pj)).items():
-            if ref not in fps or ref in placed:
-                continue
-            fp = fps[ref]
-            if fp.IsFlipped() != (d['side'] == 'B'):
-                fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
-            fp.SetPosition(P(d['x'], d['y'])); fp.SetOrientationDegrees(d['rot']); placed.add(ref)
-        print(f'  place.json で {len(placed)} 個を置いた(機構で決まる部品を含む)')
-        # フットプリントがまだない部品の場所(仮)を Cmts.User に
-        for ref, (a, b_, c, d, side) in RESERVE.items():
-            for (p0, p1) in (((a, b_), (c, b_)), ((c, b_), (c, d)), ((c, d), (a, d)), ((a, d), (a, b_))):
-                sh = pcbnew.PCB_SHAPE(b); sh.SetShape(pcbnew.SHAPE_T_SEGMENT); sh.SetLayer(pcbnew.Cmts_User); sh.SetWidth(MM(0.1))
-                sh.SetStart(P(*p0)); sh.SetEnd(P(*p1)); b.Add(sh)
-            note(b, ref + ' (tentative, no footprint yet)', OX + a, OY - d - 0.8, 0.6)
+    # ほかの部品: 基板の右に、シートごとに並べる
     x0 = OX + 60
     sheets = {}
     for c in comps:
@@ -239,8 +240,7 @@ def build():
                 x = x0; y += 6
         y += 10
     note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v3 (mechanical/pcb/pcb_outline_t24v3.dxf), 0.6mm. '
-            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (order tentative), H1-H4 M2 posts. '
-            'Others: tentative placement by hardware/kicad/place_main_t24.py (not routed)', OX - 50, OY - 42, 1.0)
+            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, order tentative), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')
     b.Save(path)

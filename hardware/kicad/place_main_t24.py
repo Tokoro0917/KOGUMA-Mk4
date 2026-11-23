@@ -1,18 +1,19 @@
-"""タイヤ24mm 用のメイン基板(KOGUMA-Mk4_t24)の部品の仮の配置(2026-11-23、ブランチ claude/trusting-dirac-1tdt54)
-使い方(リポジトリの一番上で):
-  1. /usr/bin/python3.12 hardware/kicad/make_main_t24.py   … 基板の土台(機構で決まる部品だけ置く)
-  2. python3 hardware/kicad/place_main_t24.py              … 部品の置き場所を決めて KOGUMA-Mk4_t24/place.json と floorplan.png に書く
-  3. /usr/bin/python3.12 hardware/kicad/make_main_t24.py   … place.json のとおりに置き直す
+"""タイヤ24mm 用のメイン基板(KOGUMA-Mk4_t24)の部品を基板に置く(仮の配置、2026-11-23、ブランチ claude/trusting-dirac-1tdt54)
+使い方(リポジトリの一番上で。KiCad 9 の Python 3.12 に shapely・numpy・scipy・matplotlib が要る):
+  1. /usr/bin/python3.12 hardware/kicad/make_main_t24.py          … 基板の土台(機構で決まる部品だけ置く)
+  2. (cd hardware/kicad/KOGUMA-Mk4 && /usr/bin/python3.12 place_caps.py t24)   … IC ごとにコンデンサ・抵抗を近くに並べたグループ(基板の外)
+  3. /usr/bin/python3.12 hardware/kicad/place_main_t24.py         … グループと残りの部品を基板に置き、基板のファイルに書く(place.json・floorplan.png も)
 決め方:
-  - 回路の要の部品(MCU・IMU・モータードライバ・電源・アンプ・線のパッド)は FIXED に手で置く(下の説明)
-  - ほかの部品(抵抗・コンデンサなど)は、つながる先の近くへ1個ずつ置く(つながりの多いものから)。
-    置く所の値 = 各パッドから同じネットの置いた部品のパッドまでの距離の和(GND は小さい重み。電源のネットは IC・コネクタのパッドだけを相手にする)。裏の面は少し損にする
+  - グループ(place_caps.py の IC ごとの塊)は、中の並びを変えずに塊のまま動かす(回すのは 90° おき、上の面だけ)
+  - 要の部品・グループは FIXED に手で置く(下の説明)。ほかのグループと部品は、つながる先の近くへ1つずつ置く(グループから、つながりの多いものから)。
+    置く所の値 = 各パッドから同じネットのもう置いた部品のパッドまでの距離の和(GND は小さい重み。電源のネットは同じシートの IC・コネクタのパッドだけを相手にする)。裏の面は少し損にする
   - 置いてよい所: 外形の中(コートヤードが外形の中)。上の面の電池の下(x -16.25〜6.25、y ±16)は高さ 1.2mm 以下の部品だけ。
     裏の面はモーター・マウント・ファンの囲い・壁センサのホルダの所に置かない。ファンのモーターの穴・柱・エンコーダのパッド・壁センサの足の穴をよける
 座標は機体の座標(x 前、y 左)。KiCad の X = 150 + x、Y = 100 − y"""
 import os, sys, json, math, subprocess
 import numpy as np
-from shapely.geometry import Polygon, Point, box, MultiPolygon
+import shapely
+from shapely.geometry import Polygon, Point, box
 from shapely.ops import unary_union
 from shapely.prepared import prep
 from shapely import affinity
@@ -21,47 +22,58 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.join(ROOT, '../..')
 DST = os.path.join(ROOT, 'KOGUMA-Mk4_t24')
 PCB = os.path.join(DST, 'KOGUMA-Mk4_t24.kicad_pcb')
+PY = '/usr/bin/python3.12'
 sys.path.insert(0, os.path.join(REPO, 'mechanical/vehicle')); sys.path.insert(0, os.path.join(REPO, 'docs/calc/frame'))
 cwd = os.getcwd(); os.chdir(REPO)
 import pcb_t24, pcb_shape as ps
 os.chdir(cwd)
 
-# ---- 手で置く部品: ref → (x, y, 回転[°], 面 'T'/'B')。(x, y) はコートヤードの外の四角の真ん中 ----
+# ---- 手で置く部品・グループ: ref(グループならその IC)→ (x, y, 回転[°] の list か None, 面 'T'/'B', 探す半径[mm], 縁に付けるか) ----
+# (x, y) は、ひとつの部品ならコートヤードの外の四角の真ん中、グループなら IC のコートヤードの真ん中。
+# 半径 > 0 なら、その近くで空いている所を探す(値 = 4 × 目当てからの距離 + 0.25 × つなぐ先までの長さ)。回転が None なら 4つの向きから。
+# 縁に付ける('SW1')なら、つまみ(フットプリントの +Y、0° で機体の -y)の側がコートヤードから 0.8mm 外で外形の外になる所だけ(つまみを外に出す)
 FIXED = {
-    # MCU は電池の下の後ろ寄り(真下はモーター。パスコンは上の面に)。回転はつなぐ先までの長さで決める(None)
-    'U4': (-11.1, 0.0, None, 'T'),
-    # IMU は回転の中心(車軸の真ん中)の近く
-    'U76': (1.0, 0.0, None, 'T'),
-    # モーターの線のパッド: モーターの端子 (-12, ±1.5) から線を前へ出し、モーターとファンの囲いの間(裏の面 x -6.9〜-3.3)で下から通す
-    'J2': (-4.85, 4.7, 90.0, 'T'), 'J3': (-4.85, -4.7, 90.0, 'T'),
-    # モータードライバは線のパッドのすぐ前
-    'U2': (-1.0, 7.4, None, 'T'), 'U3': (-1.0, -7.4, None, 'T'),
-    # 電源: 電池の線(J1)・電源スイッチの MOSFET(Q1)・大きいコンデンサ(C4)は高いので、電池の後ろ(x -22〜-16.25)
-    'J1': (-19.3, 10.2, 90.0, 'T'), 'C4': (-19.2, 0.0, 90.0, 'T'), 'Q1': (-19.25, -9.6, 90.0, 'T'),
-    # 3.3V の SMPS(高さ 1.0mm)は電池の下の前寄り
-    'U1': (2.8, 12.8, None, 'T'),
-    # 壁センサの受光のアンプ: U74 は FL と R(左の前)、U75 は FR と L(右の前)
-    'U74': (31.0, 18.0, None, 'T'), 'U75': (31.0, -18.0, None, 'T'),
-    # ファンの線のパッドはファンのモーターの穴の横
-    'J4': (14.2, 10.2, 0.0, 'T'),
+    # モーターの線のパッド(裏の SMD)。モーターの端子 (-12, ±1.5) から線を前へ出し、モーターとファンの囲いの間(裏 x -6.9〜-3.3)ではんだ付けする
+    'J2': (-5.1, 12.0, [90], 'B', 0, False), 'J3': (-5.1, -12.0, [90], 'B', 0, False),
+    # 電池の線(高さのある穴のパッド)は電池の後ろの左
+    'J1': (-19.3, 11.0, [90], 'T', 3, False),
+    # 電源スイッチ(つまみ +Y = 機体の -y が 0°)は前の円弧の縁(真ん中は前の LED D98、その右は抵抗 R99)の左に、つまみを前(+x、90°)へ。
+    # 後ろの縁は UI の LED、横の縁はタイヤ・スパー(つまみが当たる)、後ろの羽の縁は柱があって入らない
+    'SW1': (36.0, 5.0, [90], 'T', 8, 'SW1'),
     # デバッグの端子(高い)は後ろの右の羽
-    'J7': (-24.6, -9.0, 0.0, 'T'),
-    # 電源の LED は後ろの左の羽(UI の LED のそば)
-    'D2': (-25.6, 10.6, 90.0, 'T'),
+    'J7': (-25.4, -11.0, [0, 90], 'T', 4, False),
+    # 電池の 47µF(高さ 2.0mm)は裏の後ろ(モーターの後ろ、x < -17.2)
+    'C4': (-21.0, -5.0, [90, 270], 'B', 6, False),
+    # MCU のグループ(約 25 × 25mm)は電池の下の真ん中
+    'U4': (-4.5, 0.0, None, 'T', 8, False),
+    # 電源スイッチの MOSFET のグループ(47µF の C4・22µF の C2・C3 は高い)は電池の後ろ
+    'Q1': (-21.0, -4.0, None, 'T', 8, False),
+    # モータードライバは線のパッドの近く
+    'U2': (-8.0, 16.5, None, 'T', 8, False), 'U3': (-8.0, -16.5, None, 'T', 8, False),
+    # IMU は回転の中心(車軸の真ん中)の近く
+    'U76': (0.0, 0.0, None, 'T', 12, False),
+    # 3.3V の DC-DC(出力の 22µF は高さ 1.25mm)は電池の前
+    'U1': (10.0, -12.0, None, 'T', 8, False),
+    # ファン(Q40 のグループ。線のパッド J4 も入る)はファンのモーターの穴の横
+    'Q40': (14.2, 13.0, None, 'T', 8, False),
+    # 壁センサの受光のアンプ: U74 は FL と R(左の前)、U75 は FR と L(右の前)
+    'U74': (30.0, 17.5, None, 'T', 6, False), 'U75': (30.0, -17.5, None, 'T', 6, False),
+    # ブザーは前の真ん中(音の穴は前)
+    'BZ1': (27.0, 0.0, [0], 'T', 8, False),
+    # スイッチ SW2 は後ろの右
+    'SW2': (-24.0, -19.0, None, 'T', 10, False),
 }
-# フットプリントがまだない部品の場所(仮に取っておく): ref → (x0, y0, x1, y1, 面)
-RESERVE = {
-    'SW1': (-29.0, 17.6, -23.8, 22.2, 'T'),      # 電源スイッチ(SSSS810701)。左の後ろの縁、つまみを外へ
-    'SW2': (-29.0, -22.2, -23.8, -17.6, 'T'),    # スイッチ(TVAF06-A020B-R)。右の後ろの縁
-    'BZ1': (28.6, -2.8, 34.2, 2.8, 'T'),         # ブザー(SMT-0540-S-R、5 × 5mm)。前の真ん中(前の縁は y 0 で x 37)
-}
+EDGE_PARTS = {'SW1'}
+WHEELS = unary_union([box(-12.5, 22.0, 12.5, 40.0), box(-12.5, -40.0, 12.5, -22.0)])     # タイヤ・71T(つまみを向けない)
+ORDER = ['J2', 'J3', 'J1', 'SW1', 'J7', 'C4', 'U4', 'Q1', 'U2', 'U3', 'U76', 'U1', 'Q40', 'U74', 'U75', 'BZ1', 'SW2']
 BATTERY = box(-16.25, -16.0, 6.25, 16.0)
 H_MAX_BAT = 1.2
 # 部品の高さ(最大、mm)。フットプリントの名前の一部で引く
 HEIGHT = [('C_0603', 0.9), ('R_0603', 0.55), ('L_0603', 0.95), ('C_0805', 1.25), ('C_1206', 1.8), ('R_1206', 0.6), ('CP_EIA-7343', 2.0),
           ('SOIC-8', 1.75), ('SOT-23-6', 1.45), ('SOT-23', 1.2), ('VSSOP-8', 1.1), ('LGA-14', 0.86), ('QFN-68', 1.0), ('MPS_QFN', 1.0),
           ('LXDC55', 1.0), ('DFE201610', 1.0), ('CSTNE', 1.0), ('D_SMF', 1.08), ('SOD-123F', 1.08), ('SOD-323', 1.1), ('LED_0402', 0.5),
-          ('LED_0603', 0.8), ('TestPoint', 0.1), ('SolderWire', 1.0), ('PinHeader', 6.0)]
+          ('LED_0603', 0.8), ('TestPoint', 0.1), ('SolderWire', 1.0), ('PinHeader', 6.0), ('SSSS8', 1.4), ('TVAF06', 2.0),
+          ('SMT-0540', 2.0), ('NetTie', 0.05)]
 THIN = {'C22': 0.95, 'C32': 0.95}      # モータードライバの VBAT の 10µF 25V(0805)は厚さ 0.85mm の品(村田 GRM219 系など)にして、ドライバのすぐ横(電池の下)に置く
 def height(fp, ref=None):
     if ref in THIN:
@@ -77,11 +89,11 @@ UNDER = unary_union([box(-17.2, -22.1, -6.9, 22.1),                             
                     + [ps.holder(k).buffer(0.3, join_style=2) for k in ps.SENS])
 # 両方の面でよける所
 BOTH = unary_union([Point(ps.FAN).buffer(ps.HUB_HOLE + 0.3, 64)] + [Point(p).buffer(2.6) for p in ps.SCREWS])
-TOP_ONLY = unary_union([box(x0 - 0.3, y0 - 0.3, x1 + 0.3, y1 + 0.3) for (x0, x1, y0, y1) in ps.ENC]
-                       + [box(a, b_, c, d) for (a, b_, c, d, s) in RESERVE.values() if s == 'T'])
+TOP_ONLY = unary_union([box(x0 - 0.3, y0 - 0.3, x1 + 0.3, y1 + 0.3) for (x0, x1, y0, y1) in ps.ENC])
 SIGNAL_W, GND_W, BOTTOM_COST = 1.0, 0.12, 2.5
-POWER = {'+3V3', 'VBAT', '/電源/BAT+'}
-ACTIVE = ('U', 'Q', 'J', 'Y', 'D7')      # 電源のネットで相手にする部品(IC・コネクタ・発振子・壁センサ)
+POWER = {'+3V3', '+3V3A', 'VBAT', '/電源/BAT+', 'PGND'}
+GNDS = {'GND', 'PGND'}
+ACTIVE = ('U', 'Q', 'J', 'Y', 'D7', 'SW', 'BZ', 'FB')      # 電源のネットで相手にする部品(IC・コネクタ・発振子・壁センサなど)
 
 DUMP = r'''
 import pcbnew, json, sys
@@ -105,7 +117,6 @@ for fp in b.GetFootprints():
                              bb=(bb.GetLeft() / 1e6 - ox, oy - bb.GetBottom() / 1e6, bb.GetRight() / 1e6 - ox, oy - bb.GetTop() / 1e6)))
         return cy, pads
     d['cy'], d['pads'] = geo(150.0, 100.0)          # 今の位置で(機体の座標に)
-    keep = (fp.GetPosition(), fp.GetOrientationDegrees(), fp.IsFlipped())
     fp.SetPosition(pcbnew.VECTOR2I(0, 0))
     for side in ('T', 'B'):
         if fp.IsFlipped() != (side == 'B'):
@@ -114,139 +125,268 @@ for fp in b.GetFootprints():
             fp.SetOrientationDegrees(r)
             d['var'][f'{side}{r}'] = geo()
     out[ref] = d
-json.dump(out, open(sys.argv[2], 'w'))
+groups = [(g.GetName(), [it.Cast().GetReference() for it in g.GetItems() if hasattr(it.Cast(), 'GetReference')]) for g in b.Groups()]
+json.dump(dict(fps=out, groups=groups), open(sys.argv[2], 'w'))
+'''
+
+APPLY = r'''
+import pcbnew, json, sys
+b = pcbnew.LoadBoard(sys.argv[1])
+P = json.load(open(sys.argv[2]))
+for fp in b.GetFootprints():
+    q = P.get(fp.GetReference())
+    if q is None:
+        continue
+    if fp.IsFlipped() != (q['side'] == 'B'):
+        fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
+    fp.SetPosition(pcbnew.VECTOR2I(pcbnew.FromMM(150 + q['x']), pcbnew.FromMM(100 - q['y'])))
+    fp.SetOrientationDegrees(q['rot'])
+b.Save(sys.argv[1])
 '''
 
 def dump():
     path = os.path.join(DST, 'fps.json')
-    subprocess.run(['/usr/bin/python3.12', '-c', DUMP, PCB, path], check=True, capture_output=True)
+    subprocess.run([PY, '-c', DUMP, PCB, path], check=True, capture_output=True)
     d = json.load(open(path)); os.remove(path)
-    return d
+    return d['fps'], d['groups']
 
-def poly_of(cy, dx=0.0, dy=0.0):
-    ps_ = [Polygon([(x + dx, y + dy) for x, y in c]).buffer(0) for c in cy if len(c) >= 3]
-    return unary_union(ps_) if ps_ else None
+def polys(cy):
+    out = [Polygon(c).buffer(0) for c in cy if len(c) >= 3]
+    return unary_union(out) if out else None
 
-def pads_of(pads, dx=0.0, dy=0.0):
-    return [dict(p, x=p['x'] + dx, y=p['y'] + dy, bb=(p['bb'][0] + dx, p['bb'][1] + dy, p['bb'][2] + dx, p['bb'][3] + dy)) for p in pads]
+def pad_poly(pads):
+    """コートヤードのない部品(ネットタイ NT1 など)は、パッドの箱 + 0.25mm"""
+    if not pads:
+        return None
+    return unary_union([box(*p['bb']) for p in pads]).envelope.buffer(0.25, join_style=2)
+
+def rot_pt(x, y, a):
+    c, s = math.cos(math.radians(a)), math.sin(math.radians(a))
+    return x * c - y * s, x * s + y * c
+
+class Unit:
+    """部品1つか、グループ(塊のまま動かす)。geo(side, rot) は基準点からの相対の [(ref, コートヤード, パッドの list)]"""
+    def __init__(self, name, refs, F, anchor):
+        self.name, self.refs, self.F, self.anchor = name, refs, F, anchor
+        self.group = len(refs) > 1
+        if self.group:     # 基準点 = IC のコートヤードの真ん中
+            self.px, self.py = polys(F[anchor]['cy']).envelope.centroid.coords[0]
+        self._cache = {}
+        self.hmap = {r: height(F[r]['fp'], r) for r in refs}
+    def sides(self):
+        return ('T',) if self.group else ('T', 'B')
+    def geo(self, side, rot):
+        k = (side, rot)
+        if k in self._cache:
+            return self._cache[k]
+        if not self.group:
+            cy, pads = self.F[self.anchor]['var'][f'{side}{rot}']
+            items = [(self.anchor, polys(cy) or pad_poly(pads), [dict(p, ref=self.anchor) for p in pads])]
+        else:
+            items = []
+            for r in self.refs:
+                d = self.F[r]
+                pg = polys(d['cy']) or pad_poly(d['pads'])
+                pg = None if pg is None else affinity.rotate(affinity.translate(pg, -self.px, -self.py), rot, origin=(0, 0))
+                pads = []
+                for p in d['pads']:
+                    x, y = rot_pt(p['x'] - self.px, p['y'] - self.py, rot)
+                    bb = affinity.rotate(affinity.translate(box(*p['bb']), -self.px, -self.py), rot, origin=(0, 0))
+                    pads.append(dict(p, x=x, y=y, bb=bb.bounds, ref=r))
+                items.append((r, pg, pads))
+        self._cache[k] = items
+        return items
+    def center_offset(self, side, rot):
+        """(x, y) の決まり(ひとつならコートヤードの外の四角の真ん中、グループなら IC の真ん中 = 基準点)に合わせるずれ"""
+        if self.group:
+            return 0.0, 0.0
+        pg = unary_union([g for _, g, _ in self.geo(side, rot) if g is not None])
+        return pg.envelope.centroid.coords[0]
+    def final(self, side, rot, X, Y):
+        """各部品の最後の位置と向き(KiCad の向き)"""
+        out = {}
+        for r in self.refs:
+            if not self.group:
+                out[r] = dict(x=round(X, 4), y=round(Y, 4), rot=float(rot), side=side)
+            else:
+                d = self.F[r]
+                x, y = rot_pt(d['x'] - self.px, d['y'] - self.py, rot)
+                out[r] = dict(x=round(X + x, 4), y=round(Y + y, 4), rot=float((d['rot'] + rot + 180) % 360 - 180), side='T')
+        return out
 
 def plan():
-    F = dump()
+    F, G = dump()
     board = ps.outline()
     board = unary_union([Polygon(g.exterior, g.interiors) for g in getattr(board, 'geoms', [board])])
     board = board.difference(unary_union([ps.slot(k) for k in ps.SENS]))       # ほぞの穴
-    placed = {}     # ref → dict(side, rot, x, y, poly, pads)
-    fixed_mech = [r for r in F if r[0] == 'H' or r in ('J5', 'J6') or r.startswith('D7') or r in ('D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D96')]
-    for r in fixed_mech:
+    onboard = {r for r, d in F.items() if -40 < d['x'] < 50 and abs(d['y']) < 40}   # 機構で決まる部品・LED とその抵抗・C86・C87(make_main_t24・place_caps が置いた)
+    units, unit_of = [], {}
+    for name, refs in G:
+        if any(r in onboard for r in refs):
+            continue
+        u = Unit(name, refs, F, name.split()[0]); units.append(u)
+        for r in refs:
+            unit_of[r] = u
+    for r in F:
+        if r not in onboard and r not in unit_of:
+            u = Unit(r, [r], F, r); units.append(u); unit_of[r] = u
+    for ref in FIXED:       # グループの中の部品を手で置くなら、グループから外す
+        u = unit_of.get(ref)
+        if u is not None and u.group and u.anchor != ref:
+            units.remove(u)
+            g2 = Unit(u.name, [r for r in u.refs if r != ref], F, u.anchor); units.append(g2)
+            for r in g2.refs:
+                unit_of[r] = g2
+            v = Unit(ref, [ref], F, ref); units.append(v); unit_of[ref] = v
+    by_anchor = {u.anchor: u for u in units}
+    placed = {}     # ref → dict(side, poly, pads, mech)
+    for r in onboard:
         d = F[r]
-        placed[r] = dict(side='B' if d['flip'] else 'T', rot=d['rot'], x=d['x'], y=d['y'], poly=poly_of(d['cy']), pads=d['pads'], mech=True)
-    th_all = []
+        placed[r] = dict(side='B' if d['flip'] else 'T', poly=polys(d['cy']), pads=[dict(p, ref=r) for p in d['pads']], mech=True)
+    result = {}
     def obstacles(side):
         obs = [BOTH] + ([TOP_ONLY] if side == 'T' else [UNDER])
         for r, q in placed.items():
-            if q['poly'] is not None and (q['side'] == side):
+            if q['poly'] is not None and q['side'] == side:
                 obs.append(q['poly'])
             for p in q['pads']:
                 if p['th']:
                     obs.append(box(*p['bb']).buffer(0.25, join_style=2))
         return unary_union(obs)
-    def put(ref, x, y, rot, side):
-        v = F[ref]['var'][f'{side}{int(rot) % 360}']
-        placed[ref] = dict(side=side, rot=rot, x=x, y=y, poly=poly_of(v[0], x, y), pads=pads_of(v[1], x, y), mech=False)
-    def targets(net, ref):
-        """ネット net の、置いた部品のパッドの位置(電源のネットは IC・コネクタだけ)"""
+    def targets(net, u):
         pts = []
+        sheets = {F[x]['sheet'] for x in u.refs}
         for r, q in placed.items():
-            if r == ref:
+            if r in u.refs:
                 continue
-            if net in POWER and (not r.startswith(ACTIVE) or F[r]['sheet'] != F[ref]['sheet']):
+            if net in POWER and (not r.startswith(ACTIVE) or F[r]['sheet'] not in sheets):    # 電源のネット: 同じシートの IC・コネクタだけ
                 continue
             pts += [(p['x'], p['y']) for p in q['pads'] if p['net'] == net]
         return np.array(pts) if pts else None
     def weight(net):
-        return GND_W if net == 'GND' else SIGNAL_W
-    def cost_grid(ref, side, rot, X, Y):
-        v = F[ref]['var'][f'{side}{rot}']
-        c = np.zeros_like(X)
-        for p in v[1]:
-            if not p['net'] or p['net'].startswith('unconnected'):
-                continue
-            t = targets(p['net'], ref)
+        return GND_W if net in GNDS else SIGNAL_W
+    def ext_pads(u, side, rot):
+        return [p for _, _, pads in u.geo(side, rot) for p in pads if p['net'] and not p['net'].startswith('unconnected')]
+    def cost_grid(u, side, rot, X, Y):
+        c = np.zeros_like(X, dtype=float)
+        tcache = {}
+        for p in ext_pads(u, side, rot):
+            n = p['net']
+            if n not in tcache:
+                tcache[n] = targets(n, u)
+            t = tcache[n]
             if t is None:
                 continue
             px, py = X + p['x'], Y + p['y']
-            dd = np.min(np.hypot(px[..., None] - t[:, 0], py[..., None] - t[:, 1]), axis=-1)
-            c += weight(p['net']) * dd
+            c += weight(n) * np.min(np.hypot(px[..., None] - t[:, 0], py[..., None] - t[:, 1]), axis=-1)
         return c
-    # 1. 手で置く部品(回転が None なら、つなぐ先まで一番短い回転)
-    order = ['J2', 'J3', 'J1', 'C4', 'Q1', 'J4', 'J7', 'D2', 'U76', 'U74', 'U75', 'U2', 'U3', 'U4', 'U1']
-    for ref in order:
-        x, y, rot, side = FIXED[ref]
-        if rot is None:
-            best = min((float(cost_grid(ref, side, r, np.array([[x]]), np.array([[y]]))[0, 0]), r) for r in (0, 90, 180, 270))
-            rot = best[1]
-        cx, cy_ = poly_of(F[ref]['var'][f'{side}{int(rot) % 360}'][0]).envelope.centroid.coords[0]   # (x, y) はコートヤードの真ん中(原点が1番ピンの部品があるため)
-        put(ref, round(x - cx, 3), round(y - cy_, 3), rot, side)
-    # 2. ほかの部品
-    rest = [r for r in F if r not in placed]
-    def attach(ref):
-        s = 0.0
-        for p in F[ref]['var']['T0'][1]:
-            if p['net'] and targets(p['net'], ref) is not None:
-                s += weight(p['net'])
-        return s
+    def put(u, side, rot, X, Y):
+        for r, g, pads in u.geo(side, rot):
+            placed[r] = dict(side=side, poly=None if g is None else affinity.translate(g, X, Y),
+                             pads=[dict(p, x=p['x'] + X, y=p['y'] + Y, bb=(p['bb'][0] + X, p['bb'][1] + Y, p['bb'][2] + X, p['bb'][3] + Y)) for p in pads], mech=False)
+        result.update(u.final(side, rot, X, Y))
+    def fits(u, side, rot, X, Y, pf, pb):
+        for r, g, pads in u.geo(side, rot):
+            if g is None:
+                continue
+            if r in EDGE_PARTS:      # つまみ(コートヤードの +Y の 1.4mm より先)は外形の外に出てよい
+                g = g.difference(affinity.rotate(box(-10, -10, 10, -1.4), rot, origin=(0, 0)))
+            gg = affinity.translate(g, X, Y)
+            if not pf[side].contains(gg.buffer(0.01, join_style=2)):
+                return False
+            if side == 'T' and u.hmap[r] > H_MAX_BAT and pb.intersects(gg):
+                return False
+        return True
     xs = np.arange(-30.0, 46.0, 0.25); ys = np.arange(-34.0, 34.25, 0.25)
     X, Y = np.meshgrid(xs, ys)
-    free = {}
-    def free_area(side):
-        a = board.difference(obstacles(side))
-        return a
-    free = {s: free_area(s) for s in ('T', 'B')}
-    bat_free_T = None
-    log = []
-    while rest:
-        rest.sort(key=lambda r: (-attach(r), r))
-        ref = rest.pop(0)
-        h = height(F[ref]['fp'], ref)
-        cands = []
-        for side in ('T', 'B'):
-            for rot in (0, 90, 180, 270):
-                c = cost_grid(ref, side, rot, X, Y) + (BOTTOM_COST if side == 'B' else 0.0)
-                cands.append((c, side, rot))
-        import shapely
-        for i, (c, side, rot) in enumerate(cands):
-            inside = shapely.contains_xy(free[side], X, Y)
-            cands[i] = (np.where(inside, c, np.inf), side, rot)
+    free = {s_: board.difference(obstacles(s_)) for s_ in ('T', 'B')}
+    edge = board.boundary
+    def place(u, cands, need_edge=False):
+        """cands = [(値の格子, 面, 回転)]。値の小さい順に、置ける所を探す"""
         allc = np.concatenate([c.ravel() for c, _, _ in cands])
-        idx = np.argsort(allc, kind='stable')
-        idx = idx[np.isfinite(allc[idx])]
+        idx = np.argsort(allc, kind='stable'); idx = idx[np.isfinite(allc[idx])]
         n = X.size
-        ok = False
-        pf = {s: prep(free[s]) for s in ('T', 'B')}
-        pbat = prep(BATTERY)
+        pf = {s_: prep(free[s_]) for s_ in ('T', 'B')}; pb = prep(BATTERY)
         for k in idx:
-            ci, j = divmod(int(k), n)
+            ci, j_ = divmod(int(k), n)
             _, side, rot = cands[ci]
-            x, y = X.flat[j], Y.flat[j]
-            v = F[ref]['var'][f'{side}{rot}']
-            poly = poly_of(v[0], x, y)
-            if poly is None:
+            x, y = float(X.flat[j_]), float(Y.flat[j_])
+            if not fits(u, side, rot, x, y, pf, pb):
                 continue
-            if not pf[side].contains(poly.buffer(0.01, join_style=2)):
-                continue
-            if side == 'T' and h > H_MAX_BAT and pbat.intersects(poly):
-                continue
-            put(ref, x, y, rot, side)
-            free[side] = free[side].difference(poly)
-            for p in placed[ref]['pads']:
-                if p['th']:
-                    o = box(*p['bb']).buffer(0.25, join_style=2)
-                    free['T'] = free['T'].difference(o); free['B'] = free['B'].difference(o)
-            log.append((ref, side, rot, round(float(allc[k]), 2)))
-            ok = True
-            break
-        if not ok:
-            print('置けない:', ref)
+            if need_edge:      # 本体の前の面(原点から 1.3mm)が縁から 1.3mm 以内で、つまみ(4.4mm まで)は外へ
+                dx, dy = math.sin(math.radians(rot)), -math.cos(math.radians(rot))      # つまみの向き(機体の座標)
+                if board.contains(Point(x + dx * 2.6, y + dy * 2.6)) or not board.contains(Point(x + dx * 1.0, y + dy * 1.0)):
+                    continue
+                if WHEELS.contains(Point(x + dx * 4.4, y + dy * 4.4)):
+                    continue
+            put(u, side, rot, x, y)
+            for r in u.refs:
+                q = placed[r]
+                if q['poly'] is not None:
+                    free[side] = free[side].difference(q['poly'])
+                for p in q['pads']:
+                    if p['th']:
+                        o = box(*p['bb']).buffer(0.25, join_style=2)
+                        free['T'] = free['T'].difference(o); free['B'] = free['B'].difference(o)
+            return True
+        return False
+    dissolved = []
+    def dissolve(u):
+        """置けないグループは、ばらして部品ごとに(裏の面も使って)置く。IC を先に"""
+        if not u.group:
+            print('置けない:', u.name)
+            return
+        dissolved.append(u.name)
+        if u in units:
+            units.remove(u)
+        for r in u.refs:
+            v = Unit(r, [r], F, r); units.append(v); unit_of[r] = v
+    # 1. 手で置くもの(目当ての近くで)
+    for ref in ORDER:
+        x, y, rots, side, R, need_edge = FIXED[ref]
+        u = by_anchor[ref]
+        cands = []
+        for rot in (rots or (0, 90, 180, 270)):
+            rot = int(rot) % 360
+            cx, cy_ = u.center_offset(side, rot)
+            d = np.hypot(X - (x - cx), Y - (y - cy_))
+            if R == 0:
+                c = np.where(d < 0.13, 0.0, np.inf)
+            else:
+                c = np.where(d <= R, 4.0 * d + 0.25 * cost_grid(u, side, rot, X, Y), np.inf)
+            cands.append((c, side, rot))
+        if R == 0:      # ちょうどその位置に(格子からずれないよう、格子の点を目当てに置き換える)
+            cands = []
+            for rot in (rots or (0, 90, 180, 270)):
+                rot = int(rot) % 360
+                cx, cy_ = u.center_offset(side, rot)
+                put(u, side, rot, round(x - cx, 3), round(y - cy_, 3))
+                break
+            for r in u.refs:
+                q = placed[r]
+                if q['poly'] is not None:
+                    free[side] = free[side].difference(q['poly'])
+        else:
+            if not place(u, cands, need_edge):
+                dissolve(u)
+        if u in units:
+            units.remove(u)
+    # 2. ほかのグループと部品
+    def attach(u):
+        return sum(weight(p['net']) for p in ext_pads(u, 'T', 0) if targets(p['net'], u) is not None) + (100 if u.group else 0) + (50 if u.anchor[0] in 'UQ' or u.anchor.startswith('C4') else 0)
+    while units:
+        units.sort(key=lambda u: (-attach(u), u.name))
+        u = units.pop(0)
+        cands = []
+        for side in u.sides():
+            inside = shapely.contains_xy(free[side], X, Y) if not u.group else np.ones_like(X, dtype=bool)
+            for rot in (0, 90, 180, 270):
+                c = cost_grid(u, side, rot, X, Y) + (BOTTOM_COST if side == 'B' else 0.0)
+                cands.append((np.where(inside, c, np.inf), side, rot))
+        if not place(u, cands):
+            dissolve(u)
+    print('ばらしたグループ:', dissolved if dissolved else 'なし')
+    # 3. 確かめ: 重なり・外形・電池の下の高さ・裏の機構・よける所
     bad = []
     items = [(r, q) for r, q in placed.items() if q['poly'] is not None and not r.startswith('H')]
     for i, (r1, q1) in enumerate(items):
@@ -254,14 +394,18 @@ def plan():
             if q1['side'] == q2['side'] and q1['poly'].intersection(q2['poly']).area > 1e-4:
                 bad.append(f'{r1}-{r2}')
     for r, q in items:
-        if not q['mech'] and not board.contains(q['poly']):
+        if q['mech']:
+            continue
+        if r not in EDGE_PARTS and not board.contains(q['poly']):
             bad.append(f'{r} が外形の外')
-        if not q['mech'] and q['side'] == 'T' and height(F[r]['fp'], r) > H_MAX_BAT and BATTERY.intersection(q['poly']).area > 1e-4:
+        if q['side'] == 'T' and height(F[r]['fp'], r) > H_MAX_BAT and BATTERY.intersection(q['poly']).area > 1e-4:
             bad.append(f'{r} が電池の下(高さ {height(F[r]["fp"], r)}mm)')
-        if not q['mech'] and q['side'] == 'B' and UNDER.intersection(q['poly']).area > 1e-4:
+        if q['side'] == 'B' and UNDER.intersection(q['poly']).area > 1e-4:
             bad.append(f'{r} が裏の機構に当たる')
+        if BOTH.intersection(q['poly']).area > 1e-4 or (q['side'] == 'T' and TOP_ONLY.intersection(q['poly']).area > 1e-4):
+            bad.append(f'{r} がよける所に当たる')
     print('重なり・はみ出し:', bad if bad else 'なし')
-    return F, board, placed, log
+    return F, G, board, placed, result
 
 def mst(pts):
     """点の最小全域木の長さ(ネットの線の長さの目安)"""
@@ -274,15 +418,16 @@ def mst(pts):
         d = np.minimum(d, np.hypot(*(pts - pts[j]).T))
     return L
 
-def draw(F, board, placed, path):
+def draw(F, G, board, placed, path):
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
+    import logging; logging.getLogger('matplotlib.font_manager').setLevel(logging.ERROR)
     plt.rcParams['font.family'] = 'WenQuanYi Zen Hei'; plt.rcParams['axes.unicode_minus'] = False
     frame = ps.dz.outline(0)
     fig, axs = plt.subplots(1, 2, figsize=(20, 9.6))
     colors = {'/MCU/': '#4e79a7', '/センサ/': '#59a14f', '/モーター/': '#e15759', '/電源/': '#f28e2b', '/表示・通信/': '#b07aa1'}
-    for ax, side, title in ((axs[0], 'T', '上の面'), (axs[1], 'B', '裏の面(上から見た図。裏から見ると左右が逆)')):
+    for ax, side, title in ((axs[0], 'T', '上の面'), (axs[1], 'B', '裏の面(上から透かして見た図。裏から見ると左右が逆)')):
         ax.fill(*frame.exterior.xy, color='#f0f0f0', ec='#aaa', lw=0.6)
         for g in getattr(board, 'geoms', [board]):
             ax.fill(*g.exterior.xy, color='#dfeee2', ec='k', lw=1.0)
@@ -290,17 +435,17 @@ def draw(F, board, placed, path):
                 ax.fill(*r_.xy, color='#f0f0f0', ec='k', lw=0.6)
         if side == 'T':
             ax.fill(*BATTERY.exterior.xy, fill=False, hatch='//', ec='#b8860b', lw=0.8)
-            ax.text(-5, -15.2, '電池の下: 高さ 1.2mm まで', fontsize=8, color='#8b6508', ha='center')
-            for k, (a, b_, c, d, s) in RESERVE.items():
-                ax.add_patch(plt.Rectangle((a, b_), c - a, d - b_, fill=False, ec='#333', ls='--', lw=0.8))
-                ax.text((a + c) / 2, (b_ + d) / 2, k + '\n(仮)', fontsize=7, ha='center', va='center')
+            ax.text(-5, -15.3, '電池の下: 高さ 1.2mm まで', fontsize=8, color='#8b6508', ha='center')
         else:
             for g in getattr(UNDER, 'geoms', [UNDER]):
                 ax.fill(*g.exterior.xy, fill=False, hatch='\\\\', ec='#8a5cc7', lw=0.6)
             ax.text(-12, 0, 'モーター', fontsize=8, color='#5b3a8c', ha='center', rotation=90)
             ax.text(14.2, -12, 'ファンの囲い', fontsize=8, color='#5b3a8c', ha='center')
-        for (x, y) in ps.SCREWS:
-            ax.add_patch(plt.Circle((x, y), 1.1, color='w', ec='k', lw=0.6))
+        for name, refs in G:      # グループの枠
+            pg = [placed[r]['poly'] for r in refs if r in placed and placed[r]['poly'] is not None and placed[r]['side'] == side]
+            if len(pg) > 2 and not name.endswith('LED'):
+                env = unary_union(pg).buffer(0.4, join_style=2).envelope
+                ax.plot(*env.exterior.xy, color='#555', lw=0.6, ls=':')
         for r, q in placed.items():
             if r.startswith('H'):
                 continue
@@ -309,8 +454,7 @@ def draw(F, board, placed, path):
                 for g in getattr(q['poly'], 'geoms', [q['poly']]):
                     ax.fill(*g.exterior.xy, color=col, alpha=0.35 if q['mech'] else 0.55, ec=col, lw=0.6)
                 c = q['poly'].centroid
-                big = q['poly'].area > 12
-                ax.text(c.x, c.y, r, fontsize=6.5 if big else 4.6, ha='center', va='center')
+                ax.text(c.x, c.y, r, fontsize=6.5 if q['poly'].area > 12 else 4.4, ha='center', va='center')
             for p in q['pads']:
                 if p['th'] or q['side'] == side:
                     x0, y0, x1, y1 = p['bb']
@@ -318,26 +462,27 @@ def draw(F, board, placed, path):
         ax.set_aspect('equal'); ax.set_xlim(-33, 48); ax.set_ylim(-37, 37); ax.set_title(title, fontsize=12)
         ax.set_xlabel('x [mm](前 →)'); ax.set_ylabel('y [mm](左 ↑)'); ax.grid(alpha=0.15)
     hs = [plt.Rectangle((0, 0), 1, 1, color=c, alpha=0.6) for c in colors.values()]
-    fig.legend(hs, [s.strip('/') for s in colors], loc='upper center', ncol=5, fontsize=10, bbox_to_anchor=(0.5, 0.96))
+    fig.legend(hs + [plt.Line2D([], [], color='#555', ls=':')], [s.strip('/') for s in colors] + ['IC ごとのグループ'], loc='upper center', ncol=6, fontsize=10, bbox_to_anchor=(0.5, 0.96))
     fig.suptitle('KOGUMA-Mk4_t24 メイン基板の仮の配置(hardware/kicad/place_main_t24.py)', fontsize=13)
-    fig.tight_layout(rect=(0, 0, 1, 0.93))
+    fig.subplots_adjust(left=0.04, right=0.99, bottom=0.07, top=0.9, wspace=0.08)
     fig.savefig(path, dpi=90)
 
 if __name__ == '__main__':
-    F, board, placed, log = plan()
-    out = {r: dict(x=round(q['x'], 3), y=round(q['y'], 3), rot=q['rot'], side=q['side']) for r, q in placed.items() if not q['mech']}
-    json.dump(out, open(os.path.join(DST, 'place.json'), 'w'), indent=0, ensure_ascii=False, sort_keys=True)
-    # ネットごとの線の長さの目安(最小全域木)
+    F, G, board, placed, result = plan()
+    pj = os.path.join(DST, 'place.json')
+    json.dump(result, open(pj, 'w'), indent=0, ensure_ascii=False, sort_keys=True)
+    subprocess.run([PY, '-c', APPLY, PCB, pj], check=True, capture_output=True)
     nets = {}
     for r, q in placed.items():
         for p in q['pads']:
             if p['net'] and not p['net'].startswith('unconnected'):
                 nets.setdefault(p['net'], []).append((p['x'], p['y']))
     L = {n: mst(v) for n, v in nets.items()}
-    sig = sum(v for n, v in L.items() if n not in POWER and n != 'GND')
-    print(f'置いた部品 {len(out)}、信号のネットの長さの目安 合計 {sig:.0f}mm')
-    for n, v in sorted(L.items(), key=lambda kv: -kv[1])[:15]:
+    sig = sum(v for n, v in L.items() if n not in POWER and n not in GNDS)
+    nT = sum(1 for q in result.values() if q['side'] == 'T'); nB = len(result) - nT
+    bat = sum(1 for r, q in placed.items() if not q['mech'] and q['side'] == 'T' and q['poly'] is not None and BATTERY.contains(q['poly'].centroid))
+    print(f'置いた部品 {len(result)}(上 {nT}・裏 {nB}、電池の下 {bat})、信号のネットの長さの目安 合計 {sig:.0f}mm')
+    for n, v in sorted(L.items(), key=lambda kv: -kv[1])[:12]:
         print(f'  {n:24s} {v:6.1f}mm')
-    draw(F, board, placed, os.path.join(DST, 'floorplan.png'))
-    nB = sum(1 for q in out.values() if q['side'] == 'B')
-    print('裏の面に置いた部品:', nB, sorted(r for r, q in out.items() if q['side'] == 'B'))
+    print('裏の面:', sorted(r for r, q in result.items() if q['side'] == 'B'))
+    draw(F, G, board, placed, os.path.join(DST, 'floorplan.png'))
