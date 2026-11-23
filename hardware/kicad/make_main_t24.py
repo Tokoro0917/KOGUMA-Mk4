@@ -4,7 +4,7 @@ KiCad 9 の pcbnew で動かす(Ubuntu 24.04 の KiCad は Python 3.12 向け): 
 
   1. main の回路図(KOGUMA-Mk4)を KOGUMA-Mk4_t24 に写す。J5・J6 のフットプリントを ENC_Base_Edge_T24 に替える(回路は同じ)
   2. 回路図からネットリストを出し(kicad-cli)、部品とネットをすべて基板に読み込む(回路図とのつながり = KIID のパスも付ける)
-  3. 外形: mechanical/vehicle/pcb_t24.py の外形(t24v4。2026-11-23 にマウントのねじを (6.8, ±18.9)・(-21, ±18.9) へ)を Edge.Cuts に。壁センサのホルダのほぞの穴はフットプリントに入っている
+  3. 外形: mechanical/vehicle/pcb_t24.py の外形(t24v5。2026-11-23 にマウントのねじを (6.8, ±18.4)・(-21, ±17.7) へ)を Edge.Cuts に。壁センサのホルダのほぞの穴はフットプリントに入っている
   4. 機構で位置が決まる部品を置く: エンコーダのパッド J5・J6、壁センサのホルダ D70〜D77(裏)、UI の LED D90〜D96、ねじの穴 4つ(基板だけの部品)。
      ほかの部品は、基板の右に、回路図のシートごとに並べておく(配置と配線はこれから)
   5. 置いた壁センサの足の穴が pcb_shape.pads() と合っているか確かめる
@@ -289,7 +289,7 @@ def build():
             if x > x0 + 70:
                 x = x0; y += 6
         y += 10
-    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v4 (mechanical/pcb/pcb_outline_t24v4.dxf), 0.6mm. '
+    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v5 (mechanical/pcb/pcb_outline_t24v5.dxf), 0.6mm. '
             'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, same assignment as ToraNeko.Mk3), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')

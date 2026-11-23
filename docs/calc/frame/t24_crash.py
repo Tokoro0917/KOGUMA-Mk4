@@ -1,10 +1,10 @@
-"""frame t24v7 の衝突で割れる力・座屈する力と、割れやすい所(2026-11-23)。使い方(このディレクトリで): python3 t24_crash.py
+"""frame t24v8 の衝突で割れる力・座屈する力と、割れやすい所(2026-11-23)。使い方(このディレクトリで): python3 t24_crash.py
 正面(30mm・柱 12mm・端寄り)、前の角に柱(45°)、横。力 1N で解いて、Tsai-Hill が 1 になる力を出す。図は docs/img/frame/t24v6_crash_spots.png(手で印を付けた)"""
 import json, sys, numpy as np
 sys.path.insert(0, '.')
 import t24, design as dz, fem
 from scipy.sparse.linalg import eigsh
-P = dict(json.load(open('results/t24v7_params.json'))); t24.set_suction('w2')
+P = dict(json.load(open('results/t24v8_params.json'))); t24.set_suction('w2')
 g = dz.build(**P)
 mesh = fem.make_mesh(g['domain'], g['pc'], 0.45, 0.15)
 M = fem.Model(mesh, g['pc'], g['clamps'], ribs=g['vribs'])
