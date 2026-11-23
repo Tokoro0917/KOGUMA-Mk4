@@ -214,6 +214,7 @@ swpin = [p.GetNumber() for p in FP[sw].Pads() if p.GetNetname() == 'SW'][0]
 GROUPS.append(cluster(f'{sw} スイッチ', sw, [('C90', sw, swpin), ('R98', sw, swpin)]))
 GROUPS.append(cluster('FB2 +3V3A のフィルタ', 'FB2', [('R80', 'FB2', '2'), ('C85', 'R80', '2')]))
 GROUPS.append(cluster('D2 電源の LED', 'D2', [('R6', 'D2', '2')]))
+GROUPS.append(cluster('U5 BLE モジュール', 'U5', [('C92', 'U5', 'D1'), ('R100', 'U5', 'H1')]))   # 2026-11-23: VDD のパスコン、送信の 1kΩ
 
 # ---------------- エンコーダ基板のパスコン(基板の上、J5・J6 の 3.3V のパッドの内側)----------------
 # J5・J6 のパッドは裏(エンコーダ基板の内側と外側に2列)。内側の列の 3.3V(1番)と GND(7番)の真上に、横向きに置き、

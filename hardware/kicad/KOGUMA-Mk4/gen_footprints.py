@@ -117,6 +117,28 @@ FP['Buzzer_PUI_SMT-0540'] = footprint(
     'PUI Audio SMT-0540-S-R magnetic buzzer 5x5x2mm, side sound hole (+x), suggested land pattern from the datasheet: pads 1.30x1.50, 1 = +, 2 = -, unnumbered pad = dummy lead',
     'buzzer magnetic transducer PUI SMT-0540', -4.1, 4.1, b)
 
+# ---- U5 BLE モジュール: FDK HY0020(nRF52832、3.5 × 10 × 1.05mm、LGA 29、2026-11-23)----
+# データシート Ver.3.0 の Figure 2-1 Outline(下から見た図)と Figure 4-1 Pinout(下から見た図)。下から見た図は長い辺を軸に裏返した形
+# (上から見たときの 1 番の印は左上)なので、上から見た KiCad の座標は (x, y) = (図の x, 図の上向きの y)。
+# 列 B〜M は 0.7mm おき(G が真ん中)、A は x −4.31、N は x +4.335。パッド: 真ん中 22個 0.3 × 0.55、A の3つ 0.6 × 0.3、N の4つ 0.55 × 0.35。
+# 行: 1 は y −1.075(A1・N1 は −1.175)、上の行 E4〜M4 は +0.975、B3〜D3 は +0.525、A2 −0.275・A3 +0.625、N2 −0.4・N3 +0.3・N4 +1.075。
+# アンテナはシールドの上のスロット(「大きな禁止の範囲は要らない」)。上に電池などの金属をかぶせない
+COL = {c: (i - 5) * 0.7 for i, c in enumerate('BCDEFGHJKLM')}
+b = ''.join(smd(f'{c}1', COL[c], -1.075, 0.3, 0.55) for c in 'BCDEFGHJKLM')
+b += ''.join(smd(f'{c}3', COL[c], 0.525, 0.3, 0.55) for c in 'BCD')
+b += ''.join(smd(f'{c}4', COL[c], 0.975, 0.3, 0.55) for c in 'EFGHJKLM')
+b += ''.join(smd(n, -4.31, y, 0.6, 0.3) for n, y in (('A1', -1.175), ('A2', -0.275), ('A3', 0.625)))
+b += ''.join(smd(n, 4.335, y, 0.55, 0.35) for n, y in (('N1', -1.175), ('N2', -0.4), ('N3', 0.3), ('N4', 1.075)))
+b += rect(-5.0, -1.75, 5.0, 1.75, 'F.Fab', 0.1)
+b += line(-5.12, -1.87, 5.12, -1.87, 'F.SilkS', 0.12) + line(-5.12, 1.87, 5.12, 1.87, 'F.SilkS', 0.12)
+b += line(-5.12, -1.87, -5.12, -1.4, 'F.SilkS', 0.12) + line(-5.4, -2.1, -4.8, -2.1, 'F.SilkS', 0.12)   # 1 番(A1)の印
+b += rect(-5.25, -2.0, 5.25, 2.0, 'F.CrtYd', 0.05)
+FP['FDK_HY0020'] = footprint(
+    'FDK_HY0020',
+    'FDK HY0020 Bluetooth LE module (Nordic nRF52832), 3.5x10x1.05mm LGA-29, slot antenna on the shield (no large keep-out required; keep metal such as a battery off the top). '
+    'Pads from datasheet Ver.3.0 Figure 2-1 (bottom view mirrored about the long axis): columns B-M at 0.7mm pitch, A at x -4.31, N at x +4.335',
+    'BLE Bluetooth nRF52832 FDK HY0020 module', -2.9, 2.9, b)
+
 if __name__ == '__main__':
     here = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'KOGUMA-Mk4.pretty')
     for n, s in FP.items():

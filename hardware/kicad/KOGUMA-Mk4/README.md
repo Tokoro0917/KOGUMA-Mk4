@@ -8,10 +8,10 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `power.kicad_sch` | 電源(電池 → 電源スイッチ → VBAT → 3.3V、電池の電圧の分圧) |
 | `motor.kicad_sch` | モーター(MP6551 × 2、CM の分圧とコンデンサ)と吸引ファン(IRLML6344、0.1Ω のシャント) |
 | `sensor.kicad_sch` | センサ(A3): 壁センサの発光 4ch(OPV332 + NJU6080)、受光 4ch(SFH 229 FA + OPA2354、820kΩ ∥ 0.5pF)、PD_BIAS、IMU(LSM6DSR)、エンコーダの基板(MT6835)とのつなぎ(J5・J6、メイン基板の穴とパッド7つ) |
-| `ui.kicad_sch` | 表示・入力・通信: LED 7個と前の LED(D98、PB3)、ブザー、スイッチ、デバッグの端子(J7、ToraNeko.Mk3 の J6 と同じ並び)、UART_RX のテストパッド |
+| `ui.kicad_sch` | 表示・入力・通信(A3): LED 7個と前の LED(D98、PB3)、ブザー、スイッチ、デバッグの端子(J7、ToraNeko.Mk3 の J6 と同じ並び)、UART_RX のテストパッド、**BLE モジュール HY0020(U5、2026-11-23)** |
 | `mcu.kicad_sch` | MCU(STM32H725RGVx)、SMPS(Direct SMPS)、発振子(10MHz、CSTNE10M0G52Z000R0)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
 | `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、OPA2354、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
-| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、SW_Slide_SPDT_Alps_SSSS8(SW1、SSSS810701。Alps の製品ページの Land Dimensions)、SW_Push_Jianfu_TVAF06(SW2、TVAF06-A020B-R。仕様書の P.C.B LAND DIMENSION)、Buzzer_PUI_SMT-0540(BZ1、SMT-0540-S-R。データシートの Suggested Land Pattern。1 が +、2 が −、番号なしはダミーの足)。この3つは `gen_footprints.py` で作る(2026-10-31)。ENC_Base_Butt(エンコーダの基板 v2 を突き当てる、裏の面のパッド7つ × 2列(エンコーダ基板の内側と外側。両面ではんだ付け)。穴はなし。左の J5 は回転 0°、右の J6 は 180°。`../KOGUMA-Mk4_Encoder/gen_encoder.py` で作る。2026-11-02 までは穴 NPTH 1.0 × 5.9mm の ENC_Base_Slot)、WallSensor_Holder_Emitter・WallSensor_Holder_Receiver(壁センサのホルダの発光・受光の足の穴。Emitter にホルダのほぞの穴(Edge.Cuts)を含む。原点はホルダの前の面の真ん中、光は +X。ホルダは基板の裏に付けるので、同じセンサの2つを**裏の面に**、同じ位置・同じ向きに置く。位置は `mechanical/vehicle/pcb_shape.py` の `SENS`) |
+| `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、SW_Slide_SPDT_Alps_SSSS8(SW1、SSSS810701。Alps の製品ページの Land Dimensions)、SW_Push_Jianfu_TVAF06(SW2、TVAF06-A020B-R。仕様書の P.C.B LAND DIMENSION)、Buzzer_PUI_SMT-0540(BZ1、SMT-0540-S-R。データシートの Suggested Land Pattern。1 が +、2 が −、番号なしはダミーの足)、FDK_HY0020(U5、BLE モジュール。データシート Ver.3.0 の図2-1、2026-11-23)。この4つは `gen_footprints.py` で作る(2026-10-31)。ENC_Base_Butt(エンコーダの基板 v2 を突き当てる、裏の面のパッド7つ × 2列(エンコーダ基板の内側と外側。両面ではんだ付け)。穴はなし。左の J5 は回転 0°、右の J6 は 180°。`../KOGUMA-Mk4_Encoder/gen_encoder.py` で作る。2026-11-02 までは穴 NPTH 1.0 × 5.9mm の ENC_Base_Slot)、WallSensor_Holder_Emitter・WallSensor_Holder_Receiver(壁センサのホルダの発光・受光の足の穴。Emitter にホルダのほぞの穴(Edge.Cuts)を含む。原点はホルダの前の面の真ん中、光は +X。ホルダは基板の裏に付けるので、同じセンサの2つを**裏の面に**、同じ位置・同じ向きに置く。位置は `mechanical/vehicle/pcb_shape.py` の `SENS`) |
 | `KOGUMA-Mk4.kicad_pcb` | **メイン基板**(2026-10-31 に起こした。2層、0.6mm)。`gen_pcb.py` で回路図から作った: 外形は `mechanical/vehicle/pcb_shape.py` の v16、位置が決まっている部品(壁センサ・エンコーダの穴・LED 8個・マウントの柱の穴 H1〜H4)だけ置き、ほかは基板の右の外にシートごとに並べてある。**ここから手で配置・配線する**(`gen_pcb.py` を走らせ直すと上書きされる) |
 | `KOGUMA-Mk4.kicad_dru` | 細かいピッチの IC(U4・U74・U75・U76)のパッドの間だけ 0.14mm まで許す(ToraNeko.Mk3 と同じ考え方)。ほかはネットクラスの 0.2mm |
 | `place_pcb.py` | 最初の配置(2026-10-31)。IC・コネクタはまとまりごとに位置を決め、抵抗・コンデンサはつながる IC のパッドのそばの空いている所を探して置く |
@@ -56,7 +56,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 ## IC ごとのグループ(2026-11-06、`place_caps.py`)
 
-基板に部品を載せる前に、IC とそのコンデンサ・抵抗を、ノイズと線の長さを考えて並べ、**KiCad のグループ**にした(基板の外に17個、基板の上の LED に8個)。グループは基板の外(前の側)にあり、グループごと基板に動かせる(グループの中の部品は、ダブルクリックでグループに入って動かせる)。
+基板に部品を載せる前に、IC とそのコンデンサ・抵抗を、ノイズと線の長さを考えて並べ、**KiCad のグループ**にした(基板の外に18個、基板の上の LED に8個)。グループは基板の外(前の側)にあり、グループごと基板に動かせる(グループの中の部品は、ダブルクリックでグループに入って動かせる)。
 
 ![IC ごとのグループ](place_caps.png)
 
@@ -81,10 +81,11 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | SW2 スイッチ | C90、R98(プルアップ) |
 | FB2 +3V3A のフィルタ | FB2、R80 2.2Ω、C85 10µF(DC-DC の出力のそばに置く) |
 | D2 電源の LED | D2、R6 |
+| U5 BLE モジュール(2026-11-23) | HY0020、C92 100nF(VDD)、R100 1kΩ(P0.06 の送信)。**電池の下に置かない**(アンテナがシールドの上の面)。基板の縁の近く、モーター・ファンの線から離す |
 | D90〜D96・D98 LED(基板の上) | LED と抵抗 R90〜R96・R99。抵抗は LED のパッドから 1.7mm、基板の外形の 0.3mm 内側で、電池のホルダの載る所を避けた |
 
 - エンコーダ基板のパスコン C86・C87 は、基板の上の J5・J6 の内側の列の 3.3V と GND のパッドの真上に横向きに置いた(機体の |y| 18.6。電池のホルダの壁から 0.57mm)。それぞれのパッドの上からビアで裏の J5・J6 へ
-- グループに入れなかった部品(コネクタ J1・J2・J3・J7、スライドスイッチ SW1、テストパッド TP1 の6個)は、グループの右に並べてある
+- グループに入れなかった部品(コネクタ J1・J2・J3・J7、スライドスイッチ SW1、テストパッド TP1〜TP3 の8個)は、グループの右に並べてある
 - 部品の番号・値の文字(シルク)の重なりの警告が出るが、基板に置いてから直す
 - 作り直すとき: `python3 gen_pcb.py`(プロジェクトの設定を書き直すので、あとで `git checkout KOGUMA-Mk4.kicad_pro`)→ `python3 place_caps.py`
 
