@@ -147,6 +147,7 @@ mcu = [
     ('C63', 'U4', '12'),                                  # NRST
     ('C62', 'U4', '68'),                                  # VDD のまとめの 4.7µF
     ('R50', 'U4', '63'),                                  # BOOT0 のプルダウン
+    ('R101', 'U4', '62'), ('D100', 'U4', '62'),           # UART_RX のプルアップと、有線(TP1)のダイオード(2026-11-23、有線と無線をぶつけない)
     ('R40', 'U4', '42'),                                  # MOT_nFAULT のプルアップ
     ('R81', 'U4', '59'), ('R82', 'U4', '60'),            # 壁センサの発光のプルダウン(PB4・PB5)
     ('R83', 'U4', '40'), ('R84', 'U4', '41'),            # エンコーダの CS のプルアップ
@@ -219,7 +220,7 @@ swpin = [p.GetNumber() for p in FP[sw].Pads() if p.GetNetname() == 'SW'][0]
 GROUPS.append(cluster(f'{sw} スイッチ', sw, [('C90', sw, swpin), ('R98', sw, swpin)]))
 GROUPS.append(cluster('FB2 +3V3A のフィルタ', 'FB2', [('R80', 'FB2', '2'), ('C85', 'R80', '2')]))
 GROUPS.append(cluster('D2 電源の LED', 'D2', [('R6', 'D2', '2')]))
-GROUPS.append(cluster('U5 BLE モジュール', 'U5', [('C92', 'U5', 'D1'), ('R100', 'U5', 'H1')]))   # 2026-11-23: VDD のパスコン、送信の 1kΩ
+GROUPS.append(cluster('U5 BLE モジュール', 'U5', [('C92', 'U5', 'D1'), ('D99', 'U5', 'H1'), ('D101', 'U5', 'K1')]))   # 2026-11-23: VDD のパスコン、送信と NRST のダイオード
 # 2026-11-23: モーターの電流。シャントは INA の IN+(8)と IN−(1)の間に、辺に沿って(ケルビン接続の線を最短に)。VS のパスコン
 for u, rs, c in (('U6', 'R22', 'C24'), ('U7', 'R32', 'C34')):
     GROUPS.append(cluster(f'{u} INA241A3(モーターの電流)', u, [(c, u, '6'), (rs, u, '8', dict(mode='tangent', pin2='1', normal=(0, -1)))]))   # シャントは IC の上(1 番と 8 番の並ぶ辺)

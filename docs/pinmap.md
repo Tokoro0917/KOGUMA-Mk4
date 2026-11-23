@@ -66,7 +66,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 | 59 | PB4(NJTRST) | GPIO_Output | WALL_LED_FL_R | 壁センサの発光 FL と R(NJU6080 2個のPWM端子。MK3 の WallLED_12) |
 | 60 | PB5 | GPIO_Output | WALL_LED_L_FR | 壁センサの発光 L と FR(NJU6080 2個のPWM端子。MK3 の WallLED_34) |
 | 61 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換)と BLE モジュール HY0020 の受信(P0.08、2026-11-23) |
-| 62 | PB7 | USART1_RX | UART_RX | PCから(TP1)と HY0020 の送信(P0.06、1kΩ を通す。有線をつなぐと有線が勝つ) |
+| 62 | PB7 | USART1_RX | UART_RX | PCから(TP1、D100)と HY0020 の送信(P0.06、D99)。R101 4.7kΩ で引き上げ、ダイオードで L に引くだけ(ワイヤード AND、両方つないだままでよい。`docs/ble.md` の9章)。HY0020 の P0.04 も見る |
 | 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
 | 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
 
