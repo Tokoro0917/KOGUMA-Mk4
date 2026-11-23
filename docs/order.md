@@ -7,6 +7,7 @@
 > | フレーム | `MK4FRAME69_T1.dxf`(v6.9) | **`mechanical/frame/MK4FRAMET24V3_T1.dxf`**(frame t24v3、吸引する面 68 × 34mm、骨 1.6mm、実線だけ、1:1。カーボン 4.87g)。**塩ビのシートも `MK4PCT24V3_T02.dxf`・型紙 `MK4PCT24V3_template_A4_1to1.pdf` に替える**(大きさが変わり、マウントが載る所を切ってある) |
 > | モーターマウント(Temp Resin) | v11、1.28g | **`motor_mount_R_t24v2.stl`・`_L_t24v2.stl`**、1.34g。モーターと軸受の穴は v11 と同じく 0.1mm 小さい(しまりばめ) |
 > | ホイール(Black Resin) | v1、0.38g | **`mechanical/wheel/wheel_R_t24v1.stl`・`_L_t24v1.stl`**、0.75g。**タイヤの内径と幅(φ20 × 8.5mm と推定)と 71T の穴(φ8 と推定)を測ってから頼む** |
+> | ファンの台(Temp Resin) | v1(継ぎ目 (14, ±22)) | **`mechanical/order_t24/05_fan_mount_t24v1.stl`**(継ぎ目 (14, ±20.3)、1.60g)。t24 の部品は `mechanical/order_t24/` に、機体の座標の STEP で1つずつ置いた(Fusion で確かめる用) |
 > | 電池のホルダ(Black Resin) | v1、0.23g | **なし**(2026-11-21。電池の底を両面テープで基板に貼るだけ。−0.46g) |
 > | スパー | 41T(手持ち) | **71T(MK3 と同じ、手持ち)**、m0.3、厚さ2mm |
 > | ピニオン | 13T | 13T(同じ) |
