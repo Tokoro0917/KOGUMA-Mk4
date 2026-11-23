@@ -120,7 +120,7 @@ static void mpu_config(void)
 
     HAL_MPU_Disable();
     r.Enable           = MPU_REGION_ENABLE;
-    r.Number           = MPU_REGION_NUMBER0;
+    r.Number           = MPU_REGION_NUMBER1;     /* Region 0 は CubeMX が入れる 4GB の「読まない」設定に残す(番号の大きいほうが勝つ) */
     r.BaseAddress      = 0x30000000;             /* SRAM1・SRAM2 */
     r.Size             = MPU_REGION_SIZE_32KB;
     r.SubRegionDisable = 0x00;
@@ -145,7 +145,7 @@ int main(void)
 }
 ```
 
-- CubeMX の「Cortex_M7」の画面でも同じ設定ができる(MPU Region 0: 0x30000000、32KB、TEX level 1、Cacheable・Bufferable・Shareable を Disable)。どちらで入れてもよいが、**1か所だけ** にする
+- CubeMX の「CORTEX_M7」の画面でも同じ設定ができる(MPU Region 1: 0x30000000、32KB、TEX level 1、Cacheable・Bufferable・Shareable を NOT。`software/main-controller/CUBEMX_SETUP.md` の2章)。**MK4 は CubeMX で入れる**(上のコードは中身の説明)。どちらか**1か所だけ** にする
 
 ## 5. ほかに気をつけること
 
