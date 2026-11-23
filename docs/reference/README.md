@@ -18,3 +18,5 @@
 | `NJU6080.pdf` | 日清紡 NJU6080(壁センサの発光の定電流ドライバ) |
 | `HY0020_FDK_Ver3.0.pdf` | FDK HY0020(BLE モジュール) |
 | `INA241A_TI_SBOSA30D.pdf` | TI INA241A(モーターの電流センスアンプ) |
+| `DFE201610E_Murata_JETE243A.pdf` | 村田 DFE201610E(SMPS のインダクタ L1、2.2µH)。ユーザーから(2026-11-23) |
+| `SMF_Littelfuse.pdf` | Littelfuse SMF シリーズ(VBAT の TVS D1、SMF13A)。ユーザーから(2026-11-23) |
