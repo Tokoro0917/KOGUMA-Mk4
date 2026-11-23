@@ -2,9 +2,9 @@
 先に docs/calc/frame/t24.py(フレーム・ねじ・ファンの台の継ぎ目)と pcb_t24.py(基板の外形)を読み込んでから、
 main の機体(vehicle.py v4、56.06g)の作り方で機体を作り(FAST=1)、足回り・モーターマウント・電池のホルダをタイヤ24mm のものに入れ替えて計算する。
 入れ替えた部品とほかのすべての部品のすき間も調べる。
-  入れ替えるもの: シート(マウントが載る所を切る)、マウント(t24v4)、ホイール(t24v1)、タイヤ(24 × 8.5mm、ゴム)、71T(POM、厚さ2mm、穴φ8)、
+  入れ替えるもの: シート(マウントが載る所を切る)、マウント(t24v5)、ホイール(t24v1)、タイヤ(24 × 8.5mm、ゴム)、71T(POM、厚さ2mm、穴φ8)、
                   走行用モーター・軸・ピニオン(新しい位置)、平行ピン・軸受・磁石(main から (0, ±3.5, +4.5))、エンコーダ基板(6.0 × 8.75mm)・MT6835
-  vehicle.py が t24 の値で作るもの: フレーム(frame t24v8、吸引する面 80 × 42.6mm、骨 1.6mm、2026-11-23)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
+  vehicle.py が t24 の値で作るもの: フレーム(frame t24v9、吸引する面 80 × 42.6mm、骨 1.6mm、2026-11-23)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
   なくすもの: 電池のホルダ(BATTERY_HOLDER = False。電池は両面テープで基板に貼る)
   動かすもの: 電池を 1.5mm 上へ(BATTERY_LIFT。電池の下に高さ 1.2mm までの部品を置くので、スペーサーで浮かせる)
   そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート・シート
@@ -28,7 +28,7 @@ os.environ['FAST'] = '1'
 sys.argv = [os.path.join(HERE, 'vehicle.py'), SCRATCH, 'v4']
 cwd = os.getcwd(); os.chdir(HERE); sys.path.insert(0, HERE)
 V = {'__name__': '__main__', '__file__': os.path.join(HERE, 'vehicle.py')}
-FRAME_PARAMS = os.path.join(HERE, '../../docs/calc/frame/results/t24v8_params.json')   # frame t24v8(ねじを内へ、前の辺 2.5mm、t24_outputs.py が書く。2026-11-23、吸引する面 80 × 42.6mm、窓の角の丸み 1.5mm、窓の辺をまっすぐに)
+FRAME_PARAMS = os.path.join(HERE, '../../docs/calc/frame/results/t24v9_params.json')   # frame t24v9(ねじを |y| 18.4 にそろえた、前の辺 2.5mm、t24_outputs.py が書く。2026-11-23、吸引する面 80 × 42.6mm、窓の角の丸み 1.5mm、窓の辺をまっすぐに)
 _src = open(os.path.join(HERE, 'vehicle.py')).read()
 _old = "FP = json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/final_params.json')))"
 assert _old in _src
@@ -46,7 +46,7 @@ rows_v, M_v, CG_v, Iz_v = V['rows'], V['M'], V['CG'], V['Izz']
 M_main, CG_main, Iz_main = 56.06, np.array([0.68, 0.0, 12.71]), 265.0     # main(vehicle.py v4、2026-11-01)の値
 props, RHO, FIXED, ycyl, mirror = V['props'], V['RHO'], V['FIXED'], V['ycyl'], V['mirror']
 poly_solid, Z_FB, Z_FT = V['poly_solid'], V['Z_FB'], V['Z_FT']
-assert V['dz'] is dz and V['dz'].MOUNT_SCREWS == [(-21.0, 17.7), (6.8, 18.4)]     # 2026-11-23(マウント t24v4)
+assert V['dz'] is dz and V['dz'].MOUNT_SCREWS == [(-21.0, 18.4), (6.8, 18.4)]     # 2026-11-23(マウント t24v5)
 
 # ---- 入れ替えるタイヤ24mm の部品(vehicle.py は main の足回り・マウント・電池のホルダを作るので、それを入れ替える)----
 import mount as mm, mount_t24 as mt, wheel_t24 as wt, battery_holder as bh, battery_holder_t24 as bht
