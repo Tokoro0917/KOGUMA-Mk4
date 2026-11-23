@@ -20,3 +20,8 @@
 | `INA241A_TI_SBOSA30D.pdf` | TI INA241A(モーターの電流センスアンプ) |
 | `DFE201610E_Murata_JETE243A.pdf` | 村田 DFE201610E(SMPS のインダクタ L1、2.2µH)。ユーザーから(2026-11-23) |
 | `SMF_Littelfuse.pdf` | Littelfuse SMF シリーズ(VBAT の TVS D1、SMF13A)。ユーザーから(2026-11-23) |
+| `IRLML6344_Infineon.pdf` | Infineon IRLML6344(ファンの MOSFET Q40)。ユーザーから(2026-11-23) |
+| `LSM6DSR_ST.pdf` | ST LSM6DSR(IMU)。ユーザーから(2026-11-23) |
+| `OPA2354_TI_ja.pdf` | TI OPAx354(受光アンプ、日本語版 Rev.H)。ユーザーから(2026-11-23) |
+| `AN5419_STM32H72x_hardware.pdf` | ST AN5419(STM32H72x/73x のハードウェアの始め方。電源のコンデンサ)。ユーザーから(2026-11-23) |
+| `AN2606_STM32_bootloader.pdf` | ST AN2606(STM32 の書き込み用のプログラム。H72x は USART1 が PA9・PA10 だけ)。ユーザーから(2026-11-23) |
