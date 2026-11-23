@@ -33,6 +33,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `MOT_EN` | 2個の MP6551 の EN1・EN2(共通) |
 | `MOT_nFAULT` | 2個の nFAULT(オープンドレインを共通に、10kΩ で 3.3V へ) |
 | `MOT_L_I`・`MOT_R_I` | モーターの電流(INA241A3 の出力、0.25V/A、0A で 1.65V、ADC2)。2026-11-23 までは MP6551 の CM(`MOT_*_CM1`・`CM2`) |
+| `MOT_L_CMS`・`MOT_R_CMS` | MP6551 の CM1 + CM2(4.7k × 2 で終端。電池から出る電流の目安、2026-11-23) |
 | `FAN_PWM`・`FAN_ISENSE` | ファンの PWM(TIM16)と電流(ADC1) |
 | `WALL_FL`・`WALL_L`・`WALL_R`・`WALL_FR` | 壁センサの受光のアンプの出力(ADC1) |
 | `WALL_LED_FL_R`・`WALL_LED_L_FR` | 壁センサの発光(対角の2個ずつ。MK3 の WallLED_12 / WallLED_34) |
@@ -69,7 +70,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 | グループ | 中身(IC のピン) |
 |---|---|
-| U4 MCU | 抵抗: R50(BOOT0)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R23・R33(モーターの電流の RC の 100Ω)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54 10µF(VFBSMPS 7)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C33(それぞれの ADC のピン) |
+| U4 MCU | 抵抗: R50(BOOT0)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R23・R33(モーターの電流の RC の 100Ω)・R24・R25・R34・R35(CM の終端)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54 10µF(VFBSMPS 7)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C33(それぞれの ADC のピン) |
 | U1 DC-DC | C6 100nF・C5 10µF(VIN)、C7・C8 22µF(VOUT)、R3(FB)、**NT1(C7 の PGND のパッドのとなり)** |
 | U2・U3 MP6551 | C21・C31 100nF と C22・C32 10µF(VIN 2番)、R21・R31(SR) |
 | U74・U75 受光アンプ | C83・C84 100nF と C78・C79 10µF(V+ 8番)、帰還の 820k・0.5pF(出力と − 入力の間に、辺に沿って)。U74 に PD_BIAS(C80・R78・R79) |

@@ -153,7 +153,7 @@ mcu = [
 # ADC のフィルタのコンデンサ(レビュー: MCU のそばに)
 adc = {}
 u4 = FP['U4']
-for c in ('C9', 'C40', 'C23', 'C33', 'R5', 'R4', 'R44', 'R23', 'R33'):
+for c in ('C9', 'C40', 'C23', 'C33', 'R5', 'R4', 'R44', 'R23', 'R33', 'R25', 'R24', 'R35', 'R34'):   # R24・R25・R34・R35 は CM の終端(2026-11-23)
     # ADC のフィルタのコンデンサ、電池の分圧(R4・R5)、ファンの RC の R44、モーターの電流の RC(R23・R33 100Ω + C23・C33 1nF、2026-11-23)
     u4nets = {p.GetNetCode(): p.GetNumber() for p in u4.Pads()}
     pin = [u4nets[p.GetNetCode()] for p in FP[c].Pads() if p.GetNetCode() in u4nets and p.GetNetname() not in ('GND', '+3V3')][0]
