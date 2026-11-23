@@ -40,14 +40,44 @@
 5. R43(ファンの電流 0.1Ω、2512)は厚膜で温度係数 ±800ppm/°C。電流の精度が要るなら金属板の品に
 6. 受光の帰還 0.5pF は ±0.1pF の品(±0.05pF なら GJM1555C1HR50WB01D、C76912)
 
+## 入手(LCSC・JLCPCB、2026-11-23)
+
+IC など品番が決まっている部品の LCSC の番号は「部品の一覧」の LCSC の列。在庫は LCSC の数(JLC の組み立ての在庫は別で、JLC の画面では STM32H725RGV6 が 0 だった)。
+
+| 状況 | 部品 |
+|---|---|
+| LCSC にあり、在庫あり | INA241A3(C6051860)、OPA2354AIDGKR(C95502)、LSM6DSRTR(C784817)、AO4407A(C16072、AOS。同じ品番の UMW・MSKSEMI は別物)、IRLML6344TRPBF(C53550)、SMF13A(C315998)、MBR230LSFT1G(C126673)、BLM18PG221SN1D(C80165)、DFE201610E-2R2M(C337891)、SSSS810701(C97433、約340)、APTD1608LSECK/J4-PF(C5879215、約660)、MT6835GT-STD-R(C2932578、エンコーダ基板)、受動部品すべて |
+| **LCSC にあるが在庫 0** | **STM32H725RGV6(C5271073)・RGV3(C5271074)**、PMR18EZPFU5L00(C308575)、SMT-0540-S-R(C3812104)、OPV332(C6622198)、SFH 229 FA(C3211054) |
+| **LCSC になし** | **MP6551GQB**、NJU6080(日清紡の品番は NJU6080F1)、**LXDC55FAAA-203**(生産終了という情報が1つあったが、村田の資料では確かめられなかった)、CSTNE10M0G52Z000R0(仕様の違う兄弟品 C907958・C907976 はある)、T521V476M025ATE040(DigiKey、納期が長い)、TVAF06-A020B-R、HY0020(DigiKey・Arrow) |
+
+**載せ方(2026-11-23、ユーザーの決定): JLC に載せてもらう**。LXDC55 は手持ち・在庫を確保する。
+
+| 載せ方 | 部品 |
+|---|---|
+| JLC(LCSC の在庫から) | 受動部品すべて、INA241A3、OPA2354、LSM6DSR、上の面の半導体(IRLML6344・SMF13A・MBR230LSF・2N7002・BAT54WS)、BLM18PG221、DFE201610E、SSSS810701、APTD1608 |
+| JLC(グローバルソーシング、または自分で送る) | **STM32H725RGV6**、**MP6551GQB**、NJU6080、**LXDC55FAAA-203**(確保した品を送る)、CSTNE10M0G52Z000R0、PMR18EZPFU5L00、TVAF06-A020B-R、SMT-0540-S-R、**HY0020** |
+| 自分ではんだ付け | **裏の面の C4(47µF)・Q1(AO4407A)**(JLC を上の面だけの組み立てにするため。どちらも大きい部品)、壁センサ OPV332・SFH 229 FA(穴、ホルダに入れてから)、J7(手持ちのヘッダ)、線(電池・モーター・ファン)、エンコーダ基板 |
+
+- `bom_t24.csv`・`cpl_t24.csv` には、JLC に載せてもらう上の面の部品だけを入れる(裏の C4・Q1、穴の部品、線のパッド、テストパッドは入れない)
+- 在庫は JLC の画面で、注文するときに確かめる(LCSC の在庫と JLC の組み立ての在庫は別)
+- 生産終了・在庫の少ない部品(SFH 229 FA、LXDC55、STM32H725)は早めに確保する
+
+## エンコーダ基板(`hardware/kicad/KOGUMA-Mk4_Encoder_t24`、左右で同じ、2枚 + 予備)
+
+| 部品 | 数(1枚) | 面 | 品番 | LCSC | メモ |
+|---|---|---|---|---|---|
+| U1 | 1 | 上(チップの面) | MagnTek(NOVOSENSE)MT6835GT-STD-R(TSSOP-16) | C2932578 | 在庫 約809 |
+| C1 | 1 | 裏 | Samsung CL05B104KO5NNNC(100nF 16V X7R、1005) | C1525 | JLC Basic |
+| J1 | — | — | (基板のパッド。メイン基板にはんだ付け) | | |
+
 ## 部品の一覧
 
 | 部品 | 数 | 面 | 値 | 品番 | LCSC | 高さ[mm] | メモ |
 |---|---|---|---|---|---|---|---|
-| BZ1 | 1 | 上 | SMT-0540-S-R | PUI Audio SMT-0540-S-R |  |  |  |
+| BZ1 | 1 | 上 | SMT-0540-S-R | PUI Audio SMT-0540-S-R | C3812104 |  | **LCSC の在庫 0** |
 | C1 | 1 | 上 | 220n 25V | Samsung CL05A224KA5NNNC (25V X5R) | C47129 | 0.55 | BAT+ とゲートの間 |
 | C2 C3 | 2 | 上 | 22u 25V | Samsung CL31A226KAHNNNE (25V X5R) | C12891 | 1.8 | 厚さ 1.60±0.20。電池の外に置く。JLC Basic |
-| C4 | 1 | 裏 | T521V476M025ATE040 | KEMET T521V476M025ATE040 |  | 2.0 |  |
+| C4 | 1 | 裏 | T521V476M025ATE040 | KEMET T521V476M025ATE040 |  | 2.0 | **LCSC になし**(DigiKey にある、納期が長い) |
 | C5 C22 C32 C41 | 4 | 上 | 10u 25V | Samsung CL21A106KACLRNC (25V X5R) | C318687 | 0.95 | **厚さ 0.85±0.10**(電池の下の C22・C32 のため。ほかも同じ品にそろえる) |
 | C6 C21 C31 C42 | 4 | 上 | 100n 25V | Samsung CL05A104KA5NNNC (25V X5R) | C100072 | 0.55 | VBAT(12.6V) |
 | C7 C8 | 2 | 上 | 22u 10V | Samsung CL21A226MPCLRNC (10V X5R) | C307529 | 0.95 | 厚さ 0.85±0.10 |
@@ -62,22 +92,22 @@
 | C54 C65 | 2 | 上 | 10u | Samsung CL05A106MQ5NUNC (6.3V X5R) | C15525 | 0.7 | VCORE(約1.2V)だけ。厚さ 0.50±0.20。JLC Basic |
 | C74 C75 C76 C77 | 4 | 上 | 0.5p C0G | Murata GJM1555C1HR50BB01D (50V C0G ±0.1pF) | C76911 | 0.55 | 受光アンプの帰還。±0.05pF なら GJM1555C1HR50WB01D(C76912) |
 | C86 C87 | 2 | 上 | 2.2u 10V | Samsung CL05A225MP5NNNC (10V X5R) | C107370 | 0.55 |  |
-| D1 | 1 | 上 | SMF13A | Littelfuse SMF13A |  |  |  |
-| D2 D90 D91 D92 D93 D94 D95 D96 D98 | 9 | 上 | APTD1608LSECK/J4-PF | Kingbright APTD1608LSECK/J4-PF |  | 0.95 | 1番がカソード |
-| D40 | 1 | 上 | MBR230LSFT1G | onsemi MBR230LSFT1G |  | 0.98 |  |
-| D70 D71 D72 D73 | 4 | 裏 | OPV332 | TT Electronics (Optek) OPV332 |  |  |  |
-| D74 D75 D76 D77 | 4 | 裏 | SFH 229 FA | ams OSRAM SFH 229 FA(2025-11-28 生産終了。**予備を含めて在庫を確保**) |  |  |  |
+| D1 | 1 | 上 | SMF13A | Littelfuse SMF13A | C315998 |  | 在庫 約3,835 |
+| D2 D90 D91 D92 D93 D94 D95 D96 D98 | 9 | 上 | APTD1608LSECK/J4-PF | Kingbright APTD1608LSECK/J4-PF | C5879215 | 0.95 | 1番がカソード。在庫 約660 |
+| D40 | 1 | 上 | MBR230LSFT1G | onsemi MBR230LSFT1G | C126673 | 0.98 | 在庫 約22,400 |
+| D70 D71 D72 D73 | 4 | 裏 | OPV332 | TT Electronics (Optek) OPV332 | C6622198 |  | **LCSC の在庫 0** |
+| D74 D75 D76 D77 | 4 | 裏 | SFH 229 FA | ams OSRAM SFH 229 FA(2025-11-28 生産終了。**予備を含めて在庫を確保**) | C3211054 |  | **LCSC の在庫 0** |
 | D97 D99 D100 D101 | 4 | 上 | BAT54WS | Jingdao BAT54WS (30V 200mA) | C438012 | 1.1 | JSCJ(C2991936)・LGE(C402232)の BAT54WS は 100mA なので使わない |
-| FB1 FB2 | 2 | 上 | BLM18PG221SN1D | Murata BLM18PG221SN1D |  | 0.95 |  |
+| FB1 FB2 | 2 | 上 | BLM18PG221SN1D | Murata BLM18PG221SN1D | C80165 | 0.95 | 在庫 約157,900 |
 | J1 | 1 | 上 | BATT | (基板のパッド。部品なし) |  |  | 電池の線 BT2.0 のケーブルをはんだ付け |
 | J2 J3 | 2 | 裏 | MOTOR_L | (基板のパッド。部品なし) |  |  | モーターの線(裏) |
 | J4 | 1 | 上 | FAN | (基板のパッド。部品なし) |  |  | ファンの線 |
 | J5 J6 | 2 | 上 | ENC_L | (基板のパッド。部品なし) |  |  | エンコーダ基板をはんだ付け |
 | J7 | 1 | 上 | DEBUG | 1.27mm 2 × 3 のピンヘッダ(縦、穴)。**手持ち**(2026-11-23) |  | 6.0 | 高さ約 5mm。電池の外。JLC の BOM には入れない |
-| L1 | 1 | 上 | 2.2u DFE201610E-2R2M | Murata DFE201610E-2R2M=P2 |  |  |  |
+| L1 | 1 | 上 | 2.2u DFE201610E-2R2M | Murata DFE201610E-2R2M=P2 | C337891 |  | 在庫 約3,910 |
 | NT1 | 1 | 上 | NetTie_2 | (基板のパッド。部品なし) |  |  | PGND と GND の1点 |
-| Q1 | 1 | 裏 | AO4407A | AOS AO4407A |  | 1.75 |  |
-| Q40 | 1 | 上 | IRLML6344 | Infineon IRLML6344TRPBF |  |  |  |
+| Q1 | 1 | 裏 | AO4407A | AOS AO4407A | C16072 | 1.75 | AOS のもの(UMW・MSKSEMI の同じ品番は別物)、在庫 約4,145 |
+| Q40 | 1 | 上 | IRLML6344 | Infineon IRLML6344TRPBF | C53550 |  | Infineon のもの、在庫 約39,800 |
 | Q90 | 1 | 上 | 2N7002 | CJ 2N7002 | C8545 | 1.2 | JLC Basic |
 | R1 | 1 | 上 | 100k | UNI-ROYAL 0402WGF1003TCE | C25741 | 0.4 | JLC Basic |
 | R2 R40 R42 R50 R83 R84 R97 R98 R5 | 9 | 上 | 10k | UNI-ROYAL 0402WGF1002TCE | C25744 | 0.4 | JLC Basic |
@@ -85,7 +115,7 @@
 | R4 R82 | 2 | 上 | 47k 1% | UNI-ROYAL 0402WGF4702TCE | C25792 | 0.4 | JLC Basic |
 | R6 R81 R101 R24 R25 R34 R35 | 7 | 上 | 4.7k | UNI-ROYAL 0402WGF4701TCE | C25900 | 0.4 | JLC Basic |
 | R21 R31 | 2 | 上 | 0 | UNI-ROYAL 0402WGF0000TCE | C17168 | 0.4 | JLC Basic |
-| R22 R32 | 2 | 上 | PMR18EZPFU5L00 | ROHM PMR18EZPFU5L00 |  | 0.57 |  |
+| R22 R32 | 2 | 上 | PMR18EZPFU5L00 | ROHM PMR18EZPFU5L00 | C308575 | 0.57 | **LCSC の在庫 0** |
 | R23 R33 R41 | 3 | 上 | 100 | UNI-ROYAL 0402WGF1000TCE | C25076 | 0.4 | JLC Basic |
 | R43 | 1 | 上 | 0.1 1W | UNI-ROYAL 25121WF100LT4E (1W ±1%、厚膜) | C25466 | 0.65 | ファンの電流。温度係数 ±800ppm/°C(精度が要るなら金属板の品に) |
 | R44 R78 R90 R91 R92 R93 R94 R95 R96 R99 | 10 | 上 | 1k | UNI-ROYAL 0402WGF1001TCE | C11702 | 0.4 | JLC Basic |
@@ -93,16 +123,16 @@
 | R70 R71 R72 R73 | 4 | 上 | 20 1% | UNI-ROYAL 0402WGF200JTCE | C25089 | 0.4 |  |
 | R74 R75 R76 R77 | 4 | 上 | 820k | UNI-ROYAL 0402WGF8203TCE | C67558 | 0.4 |  |
 | R79 | 1 | 上 | 47 | UNI-ROYAL 0402WGF470JTCE | C25118 | 0.4 |  |
-| SW1 | 1 | 上 | SSSS810701 | Alps Alpine SSSS810701 |  |  |  |
-| SW2 | 1 | 上 | TVAF06-A020B-R | Jianfu TVAF06-A020B-R |  |  |  |
+| SW1 | 1 | 上 | SSSS810701 | Alps Alpine SSSS810701 | C97433 |  | 在庫 約340 |
+| SW2 | 1 | 上 | TVAF06-A020B-R | Jianfu TVAF06-A020B-R |  |  | **LCSC になし**(同じ系列の別の品番だけ) |
 | TP1 TP2 | 2 | 上 | UART_RX | (基板のパッド。部品なし) |  |  |  |
 | TP3 | 1 | 裏 | BLE_SWDCLK | (基板のパッド。部品なし) |  |  |  |
-| U1 | 1 | 上 | LXDC55FAAA-203 | Murata LXDC55FAAA-203 |  |  |  |
-| U2 U3 | 2 | 上 | MP6551GQB | MPS MP6551GQB |  |  |  |
-| U4 | 1 | 上 | STM32H725RGVx | STM32H725RGV6(または RGV3) |  |  |  |
-| U5 | 1 | 上 | HY0020 | FDK HY0020 |  |  |  |
-| U6 U7 | 2 | 上 | INA241A3 | TI INA241A3IDDFR(SOT-23-8) |  |  |  |
-| U70 U71 U72 U73 | 4 | 上 | NJU6080 | NJR NJU6080 |  |  |  |
-| U74 U75 | 2 | 上 | OPA2354 | TI OPA2354(VSSOP-8) |  |  |  |
-| U76 | 1 | 上 | LSM6DSR | ST LSM6DSR |  |  |  |
-| Y1 | 1 | 上 | CSTNE10M0G52Z000R0 | Murata CSTNE10M0G52Z000R0 |  |  |  |
+| U1 | 1 | 上 | LXDC55FAAA-203 | Murata LXDC55FAAA-203 |  |  | **LCSC になし。生産終了の情報あり(未確認)** |
+| U2 U3 | 2 | 上 | MP6551GQB | MPS MP6551GQB |  |  | **LCSC になし**(ほかの代理店で) |
+| U4 | 1 | 上 | STM32H725RGVx | STM32H725RGV6(または RGV3) | C5271073 |  | RGV6。**LCSC の在庫 0**(RGV3 の C5271074 も 0) |
+| U5 | 1 | 上 | HY0020 | FDK HY0020 |  |  | **LCSC になし**(DigiKey・Arrow) |
+| U6 U7 | 2 | 上 | INA241A3 | TI INA241A3IDDFR(SOT-23-8) | C6051860 |  | 在庫 約6,470 |
+| U70 U71 U72 U73 | 4 | 上 | NJU6080 | NJR NJU6080 |  |  | **LCSC になし**(日清紡の品番は NJU6080F1) |
+| U74 U75 | 2 | 上 | OPA2354 | TI OPA2354(VSSOP-8) | C95502 |  | OPA2354AIDGKR、在庫 約4,360 |
+| U76 | 1 | 上 | LSM6DSR | ST LSM6DSR | C784817 |  | LSM6DSRTR、在庫 約4,200 |
+| Y1 | 1 | 上 | CSTNE10M0G52Z000R0 | Murata CSTNE10M0G52Z000R0 |  |  | **LCSC になし**(仕様の違う CSTNE10M0G520000R0 C907958 などはある) |

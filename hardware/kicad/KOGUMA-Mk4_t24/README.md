@@ -61,7 +61,9 @@
 - **C22・C32(モータードライバの VBAT の 10µF 25V、0805)は厚さ 0.85mm の品にする**(村田 GRM219 系など。電池の下のドライバのすぐ横に置くため)。注文する前に品番を確かめる
 - SW1 から Q1 のゲートまでの線は約 49mm になる(電流はほとんど流れない)。TVS の D1 は電池の入り口(J1)から離れている(配線のときに見直す)
 
-**部品表**: `docs/bom_t24.md`(品番・LCSC の番号・高さ)と、JLCPCB に出す `bom_t24.csv`(`/usr/bin/python3.12 hardware/kicad/bom_t24.py` で作る。2026-11-23)。層は **2層・0.6mm**(JLCPCB は 4層を 0.6mm で作らない)、配線はユーザーがする。
+**部品表**: `docs/bom_t24.md`(品番・LCSC の番号・高さ)と、JLCPCB に出す `bom_t24.csv`(`/usr/bin/python3.12 hardware/kicad/bom_t24.py` で作る。2026-11-23)。層は **2層・0.6mm**(JLCPCB は 4層を 0.6mm で作らない)、配線はユーザーがする。JLC で部品を載せてもらうときの位置は `cpl_t24.csv`(同じスクリプト)。
+
+**設計ルール(JLCPCB の2層、2026-11-23)**: 最小は線・すき間 0.127mm、ビア 穴 0.3・径 0.5mm、穴のまわりの銅 0.13mm。細かいピッチの IC のパッドの間は `.kicad_dru` で 0.14mm。**ネットクラス**(配線の初期値): Default 0.15mm(すき間 0.15)、Power(VBAT・BAT+・PGND)0.6mm、Motor(MP6551 の出力・シャント・モーターの線)0.5mm、Fan 0.4mm、Supply(+3V3・+3V3A・VCORE・GND)0.3mm。ビアは 0.6/0.3mm(Power・Motor は 0.8/0.4mm)。
 
 作り直すとき(リポジトリの一番上で。KiCad の Python 3.12 に shapely・numpy・scipy・matplotlib が要る):
 
