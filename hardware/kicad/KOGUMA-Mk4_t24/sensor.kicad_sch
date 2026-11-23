@@ -1945,7 +1945,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 50.8 71.12 0)
 			(effects
 				(font
@@ -2646,7 +2646,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 137.16 71.12 0)
 			(effects
 				(font
@@ -3347,7 +3347,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 223.52 71.12 0)
 			(effects
 				(font
@@ -4048,7 +4048,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
 			(at 309.88 71.12 0)
 			(effects
 				(font

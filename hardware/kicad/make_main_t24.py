@@ -43,6 +43,12 @@ class ps:
     @staticmethod
     def pads(nm, part):
         return [tuple(p) for p in _g['pads'][nm][part]]
+def _reserve():
+    import ast
+    t = open(os.path.join(ROOT, 'place_main_t24.py')).read()
+    i = t.index('RESERVE = {'); j = t.index('}', i)
+    return ast.literal_eval(t[i + len('RESERVE = '):j + 1])
+RESERVE = _reserve()      # フットプリントがまだない部品の場所(仮)。place_main_t24.py と同じ
 UI_LEDS = ['D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D96']   # ps.LEDS の順(左の角2つ、V 字の先3つ、右の角2つ)に置く。仮
 SENSORS = {'FL': ('D70', 'D74'), 'L': ('D71', 'D77'), 'R': ('D72', 'D75'), 'FR': ('D73', 'D76')}   # (発光, 受光)。回路図の値の (FL) などから
 
@@ -60,6 +66,10 @@ def ensure_project():
             t = t.replace('"LED_SMD:LED_0603_1608Metric"', '"LED_SMD:LED_0402_1005Metric"')
             print(f'  ui: LED の 0603 → 0402 を {n} 個')
         if fn == 'sensor.kicad_sch':
+            # NJU6080(U70〜U73)は SOT-23-6(docs/bom.md。記号の既定のフットプリントも SOT-23-6)。main の回路図ではまだ空なので、ここで入れる
+            parts = t.split('(lib_id "KOGUMA-Mk4:NJU6080")')
+            assert len(parts) == 5
+            t = parts[0] + ''.join('(lib_id "KOGUMA-Mk4:NJU6080")' + q.replace('(property "Footprint" ""', '(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"', 1) for q in parts[1:])
             assert t.count('"KOGUMA-Mk4:ENC_Base_Slot"') == 2
             t = t.replace('"KOGUMA-Mk4:ENC_Base_Slot"', '"KOGUMA-Mk4:ENC_Base_Edge_T24"')
             t = t.replace('を小さな基板(5.3 × 12.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\\nエンコーダの基板はメイン基板の穴(ENC_Base_Slot)を通し、上の面でパッド7つをはんだ付けする(線は使わない)。',
@@ -133,7 +143,9 @@ def build():
     comps, nets = netlist()
     b = pcbnew.CreateEmptyBoard()
     ds = b.GetDesignSettings()
-    ds.m_MinClearance = MM(0.2); ds.m_TrackMinWidth = MM(0.15); ds.m_ViasMinSize = MM(0.6); ds.m_MinThroughDrill = MM(0.3)
+    # すき間 0.1mm・線 0.1mm(MCU の 0.4mm ピッチ・IMU の 0.5mm ピッチのパッドの間が 0.2mm に足りないため。JLCPCB の4層は 0.09mm、2層は 0.127mm まで)
+    ds.m_MinClearance = MM(0.1); ds.m_TrackMinWidth = MM(0.1)
+    nc = ds.m_NetSettings.GetDefaultNetclass(); nc.SetClearance(MM(0.1)); nc.SetTrackWidth(MM(0.15)); ds.m_ViasMinSize = MM(0.6); ds.m_MinThroughDrill = MM(0.3)
     ds.m_CopperEdgeClearance = MM(0.2)      # エンコーダ基板と同じ(縁まで 0.2mm)。エンコーダのパッドは切り欠きの縁から 0.2mm
     ds.SetBoardThickness(MM(0.6))
     netinfo = {}
@@ -192,7 +204,23 @@ def build():
         h = load_fp('MountingHole:MountingHole_2.2mm_M2'); h.SetReference(f'H{i + 1}'); h.SetValue('M2')
         h.SetAttributes(h.GetAttributes() | pcbnew.FP_BOARD_ONLY | pcbnew.FP_EXCLUDE_FROM_BOM | pcbnew.FP_EXCLUDE_FROM_POS_FILES)
         h.SetPosition(P(x, y)); b.Add(h)
-    # ほかの部品: 基板の右に、シートごとに並べる
+    # ほかの部品: place_main_t24.py が決めた場所(KOGUMA-Mk4_t24/place.json)に置く。まだ無ければ、基板の右にシートごとに並べる
+    pj = os.path.join(DST, 'place.json')
+    if os.path.exists(pj):
+        for ref, d in json.load(open(pj)).items():
+            if ref not in fps or ref in placed:
+                continue
+            fp = fps[ref]
+            if fp.IsFlipped() != (d['side'] == 'B'):
+                fp.Flip(fp.GetPosition(), pcbnew.FLIP_DIRECTION_LEFT_RIGHT)
+            fp.SetPosition(P(d['x'], d['y'])); fp.SetOrientationDegrees(d['rot']); placed.add(ref)
+        print(f'  place.json で {len(placed)} 個を置いた(機構で決まる部品を含む)')
+        # フットプリントがまだない部品の場所(仮)を Cmts.User に
+        for ref, (a, b_, c, d, side) in RESERVE.items():
+            for (p0, p1) in (((a, b_), (c, b_)), ((c, b_), (c, d)), ((c, d), (a, d)), ((a, d), (a, b_))):
+                sh = pcbnew.PCB_SHAPE(b); sh.SetShape(pcbnew.SHAPE_T_SEGMENT); sh.SetLayer(pcbnew.Cmts_User); sh.SetWidth(MM(0.1))
+                sh.SetStart(P(*p0)); sh.SetEnd(P(*p1)); b.Add(sh)
+            note(b, ref + ' (tentative, no footprint yet)', OX + a, OY - d - 0.8, 0.6)
     x0 = OX + 60
     sheets = {}
     for c in comps:
@@ -211,7 +239,8 @@ def build():
                 x = x0; y += 6
         y += 10
     note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v3 (mechanical/pcb/pcb_outline_t24v3.dxf), 0.6mm. '
-            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (order tentative), H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
+            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (order tentative), H1-H4 M2 posts. '
+            'Others: tentative placement by hardware/kicad/place_main_t24.py (not routed)', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')
     b.Save(path)
