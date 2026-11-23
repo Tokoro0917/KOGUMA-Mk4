@@ -44,7 +44,9 @@ class ps:
     @staticmethod
     def pads(nm, part):
         return [tuple(p) for p in _g['pads'][nm][part]]
-UI_LEDS = ['D90', 'D91', 'D92', 'D93', 'D94', 'D95', 'D96']   # ps.LEDS の順(左の角2つ、V 字の先3つ、右の角2つ)に置く。仮
+# UI の LED を ps.LEDS の順(左の角2つ、V 字の先3つ、右の角2つ)に置く。割り当ては ToraNeko.Mk3 と同じ(2026-11-23 決定、docs/software.md の 6.2):
+# 左の角 = No. の 8・4(LED_NUM3 D96・LED_NUM2 D95)、V 字の先 = モードの 4・2・1(LED_MODE2 D92・MODE1 D91・MODE0 D90)、右の角 = No. の 2・1(LED_NUM1 D94・LED_NUM0 D93)
+UI_LEDS = ['D96', 'D95', 'D92', 'D91', 'D90', 'D94', 'D93']
 SENSORS = {'FL': ('D70', 'D74'), 'L': ('D71', 'D77'), 'R': ('D72', 'D75'), 'FR': ('D73', 'D76')}   # (発光, 受光)。回路図の値の (FL) などから
 
 # ---- 1. プロジェクト ----
@@ -288,7 +290,7 @@ def build():
                 x = x0; y += 6
         y += 10
     note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v4 (mechanical/pcb/pcb_outline_t24v4.dxf), 0.6mm. '
-            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, order tentative), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
+            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, same assignment as ToraNeko.Mk3), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')
     b.Save(path)
