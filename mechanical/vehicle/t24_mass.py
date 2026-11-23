@@ -6,6 +6,7 @@ main の機体(vehicle.py v4、56.06g)の作り方で機体を作り(FAST=1)、�
                   走行用モーター・軸・ピニオン(新しい位置)、平行ピン・軸受・磁石(main から (0, ±3.5, +4.5))、エンコーダ基板(6.0 × 8.75mm)・MT6835
   vehicle.py が t24 の値で作るもの: フレーム(frame t24v3、吸引する面 68 × 34mm、骨 1.6mm)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
   なくすもの: 電池のホルダ(BATTERY_HOLDER = False。電池は両面テープで基板に貼る)
+  動かすもの: 電池を 1.5mm 上へ(BATTERY_LIFT。電池の下に高さ 1.2mm までの部品を置くので、スペーサーで浮かせる)
   そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート・シート
 使い方(リポジトリの一番上で): python3 mechanical/vehicle/t24_mass.py → mechanical/vehicle/vehicle_t24_mass.json、mk4_vehicle_t24.step、vehicle_t24.png"""
 import os, sys, json
@@ -73,6 +74,11 @@ if BATTERY_HOLDER:
 
 DROP = ('pc_sheet', 'mount_', 'wheel_', 'tire_', 'spur41_', 'motor_', 'shaft_', 'pinion_', 'enc_board_', 'as5047p_', 'pin_', 'brg_', 'magnet_', 'battery_holder_')
 rows = [dict(r) for r in rows_v if not any(r['name'].startswith(k) for k in DROP)]
+BATTERY_LIFT = 1.5     # 2026-11-23: 電池の下に背の低い部品(高さ 1.2mm まで)を置くので、電池を厚さ 1.5mm のスペーサーで浮かせる
+for r in rows:
+    if r['name'] == 'battery':
+        r['c'] = r['c'] + np.array([0.0, 0.0, BATTERY_LIFT]); r['lifted'] = True
+assert any(r.get('lifted') for r in rows), '電池が見つからない'
 for name, (shape, mat) in new_parts.items():
     v, c, I = props(shape)
     if mat in FIXED:
@@ -107,6 +113,7 @@ print('入れ替えた部品', parts_new)
 # ---- ぶつかり: 入れ替えた部品と、ほかのすべての部品のすき間 ----
 from OCP.BRepExtrema import BRepExtrema_DistShapeShape
 shapes = {k: v[0] for k, v in V['parts'].items() if not any(k.startswith(d) for d in DROP)}
+shapes['battery'] = shapes['battery'].translate(cq.Vector(0, 0, BATTERY_LIFT))
 shapes.update({k: v[0] for k, v in new_parts.items()})
 IGN = {frozenset(p) for p in [('pinion_R', 'spur71_R'), ('pinion_L', 'spur71_L')]}
 for sd in 'RL':     # 組み合わせて使う所(圧入・はめ合い・接着・載せる)

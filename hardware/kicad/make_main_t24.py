@@ -179,6 +179,11 @@ def build():
             fp.SetOrientationDegrees(best[1]); placed.add(ref)
             print(f'  {ref} {nm} {part}: 向き {best[1]:.1f}°、足の穴のずれ {best[0]:.3f}mm')
             assert best[0] < 0.01, f'{ref} の足の穴が pcb_shape.pads() と合わない'
+    # 電池の下(上の面): 高さ 1.2mm までの部品だけ置いてよい(2026-11-23)。電池は厚さ 1.5mm のスペーサーで浮かせる
+    for (a, c_) in (((-16.25, -16.0), (6.25, -16.0)), ((6.25, -16.0), (6.25, 16.0)), ((6.25, 16.0), (-16.25, 16.0)), ((-16.25, 16.0), (-16.25, -16.0))):
+        sh = pcbnew.PCB_SHAPE(b); sh.SetShape(pcbnew.SHAPE_T_SEGMENT); sh.SetLayer(pcbnew.Cmts_User); sh.SetWidth(MM(0.15))
+        sh.SetStart(P(*a)); sh.SetEnd(P(*c_)); b.Add(sh)
+    note(b, 'BATTERY (top): parts <= 1.2mm high only (battery on 1.5mm spacer)', OX - 15.5, OY - 13.5, 0.8)
     # UI の LED(長い方を y に)
     for ref, (x, y) in zip(UI_LEDS, ps.LEDS):
         fps[ref].SetPosition(P(x, y)); fps[ref].SetOrientationDegrees(90.0); placed.add(ref)
