@@ -121,7 +121,7 @@ def main():
         w = csv.writer(fh)
         w.writerow(['Comment', 'Designator', 'Footprint', 'LCSC Part #'])
         for o in out:
-            if all(r.startswith(NOT_SMT) for r in o['refs']):
+            if all(r.startswith(NOT_SMT) for r in o['refs']) or o['side'] == 'B':     # 裏の部品(C4・Q1)は手ではんだ付け(JLC は上の面だけ)
                 continue
             w.writerow([o['value'] if not o['mpn'] else o['mpn'].split(' (')[0], ','.join(o['refs']), o['fp'], o['lcsc']])
     md = ['| 部品 | 数 | 面 | 値 | 品番 | LCSC | 高さ[mm] | メモ |', '|---|---|---|---|---|---|---|---|']
@@ -147,7 +147,7 @@ def cpl():
         w.writerow(['Designator', 'Mid X', 'Mid Y', 'Layer', 'Rotation'])
         for r in rows:
             ref = r['Ref']
-            if ref.startswith(NOT_SMT) or ref.startswith('H'):
+            if ref.startswith(NOT_SMT) or ref.startswith('H') or r['Side'] != 'top':     # JLC は上の面だけ
                 continue
             w.writerow([ref, r['PosX'] + 'mm', r['PosY'] + 'mm', 'Top' if r['Side'] == 'top' else 'Bottom', r['Rot']])
             n += 1
