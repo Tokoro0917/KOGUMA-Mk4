@@ -2,12 +2,12 @@
 先に docs/calc/frame/t24.py(フレーム・ねじ・ファンの台の継ぎ目)と pcb_t24.py(基板の外形)を読み込んでから、
 main の機体(vehicle.py v4、56.06g)の作り方で機体を作り(FAST=1)、足回り・モーターマウント・電池のホルダをタイヤ24mm のものに入れ替えて計算する。
 入れ替えた部品とほかのすべての部品のすき間も調べる。
-  入れ替えるもの: シート(マウントが載る所を切る)、マウント(t24v5)、ホイール(t24v1)、タイヤ(24 × 8.5mm、ゴム)、71T(POM、厚さ2mm、穴φ8)、
+  入れ替えるもの: マウント(t24v6)、ホイール(t24v1)、タイヤ(24 × 8.5mm、ゴム)、71T(POM、厚さ2mm、穴φ8)、
                   走行用モーター・軸・ピニオン(新しい位置)、平行ピン・軸受・磁石(main から (0, ±3.5, +4.5))、エンコーダ基板(6.0 × 8.75mm)・MT6835
-  vehicle.py が t24 の値で作るもの: フレーム(frame t24v9、吸引する面 80 × 42.6mm、骨 1.6mm、2026-11-23)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
+  vehicle.py が t24 の値で作るもの: フレーム(frame t24v10、0.8mm・吸引する面を埋めた、z 2.0〜2.8、2026-11-23)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
   なくすもの: 電池のホルダ(BATTERY_HOLDER = False。電池は両面テープで基板に貼る)
   動かすもの: 電池を 1.5mm 上へ(BATTERY_LIFT。電池の下に高さ 1.2mm までの部品を置くので、スペーサーで浮かせる)
-  そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート・シート
+  そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート
 使い方(リポジトリの一番上で): python3 mechanical/vehicle/t24_mass.py → mechanical/vehicle/vehicle_t24_mass.json、mk4_vehicle_t24.step、vehicle_t24.png"""
 import os, sys, json
 import numpy as np
@@ -28,12 +28,22 @@ os.environ['FAST'] = '1'
 sys.argv = [os.path.join(HERE, 'vehicle.py'), SCRATCH, 'v4']
 cwd = os.getcwd(); os.chdir(HERE); sys.path.insert(0, HERE)
 V = {'__name__': '__main__', '__file__': os.path.join(HERE, 'vehicle.py')}
-FRAME_PARAMS = os.path.join(HERE, '../../docs/calc/frame/results/t24v9_params.json')   # frame t24v9(ねじを |y| 18.4 にそろえた、前の辺 2.5mm、t24_outputs.py が書く。2026-11-23、吸引する面 80 × 42.6mm、窓の角の丸み 1.5mm、窓の辺をまっすぐに)
+FRAME_PARAMS = os.path.join(HERE, '../../docs/calc/frame/results/t24v10_params.json')   # frame t24v10(2026-11-23: 吸引する面の窓をカーボンで埋めて 0.8mm に、塩ビなし。t24_outputs.py が書く。t24v9 は 1mm + 塩ビ)
 _src = open(os.path.join(HERE, 'vehicle.py')).read()
 _old = "FP = json.load(open(os.path.join(HERE, '../../docs/calc/frame/results/final_params.json')))"
 assert _old in _src
 _src = _src.replace(_old, f"FP = json.load(open({FRAME_PARAMS!r}))")
 # main のマウント(v11 の形)は、t24 のねじの位置(t24v4 は |y| 17.7・18.4)では作れない(耳をつなぐ箱が裏返る)ので、t24 のマウントを作る(あとで入れ替えるのと同じもの)
+# 2026-11-23(frame t24v10): フレームは 0.8mm(下の面 z 2.0 のまま、上の面 z 2.8)、塩ビのシートはない。ファンの台の輪はフレームの上(z 2.8)に載る
+_old3 = "Z_FB, Z_FT = 2.0, 3.0"
+assert _old3 in _src
+_src = _src.replace(_old3, "Z_FB, Z_FT = 2.0, 2.8")
+_old4 = "Z_PC = 3.2 "
+assert _old4 in _src
+_src = _src.replace(_old4, "Z_PC = 2.8 ")
+_old5 = "add('pc_sheet', poly_solid(sheet, Z_FT, Z_PC), 'pc')"
+assert _old5 in _src
+_src = _src.replace(_old5, "pass   # 塩ビのシートなし(t24v10)")
 _old2 = "right['mount'] = (mm.build(P2).val(), 'resin')"
 assert _old2 in _src
 _src = _src.replace(_old2, "import mount_t24 as _mt; right['mount'] = (mm.build(_mt.P).val(), 'resin')")
@@ -68,7 +78,7 @@ for r in rows_v:      # 平行ピン・軸受・磁石は main のものを動�
         if r['name'] == k + '_R':
             right[k] = (V['parts'][r['name']][0].translate(cq.Vector(0, 3.5, 4.5)), V['parts'][r['name']][1])
 assert (dz.SX, dz.SY) == (40.0, 21.3), '吸引する面が 80 × 42.6mm でない'     # 2026-11-23(frame t24v4)
-new_parts = {'pc_sheet': (poly_solid(V['g']['sheet'], Z_FT, V['Z_PC']), 'pc')}   # シートはマウントが載る所を切った形(t24.py)
+new_parts = {}   # 2026-11-23(frame t24v10): 塩ビのシートはない(t24v9 まではマウントが載る所を切ったシートをここで足していた)
 for k, (s, m) in right.items():
     new_parts[k + '_R'] = (s, m); new_parts[k + '_L'] = (mirror(s), m)
 BATTERY_HOLDER = False      # 2026-11-21: 電池のホルダはやめ、電池の底を両面テープで基板に貼るだけにする(−0.46g)

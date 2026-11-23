@@ -1,4 +1,4 @@
-"""frame t24v9 と main のねじれの硬さと、揺れ方(固有振動数の上から5つ)。使い方(このディレクトリで): python3 t24_twist.py t24 / python3 t24_twist.py main
+"""frame t24v10(0.8mm、窓を埋めた)と main のねじれの硬さと、揺れ方(固有振動数の上から5つ)。使い方(このディレクトリで): python3 t24_twist.py t24 / python3 t24_twist.py main
 マウントのねじの所を固定(マウントと基板は硬いとみる)。前・後ろの角 (±49.2, ±22) に上下逆の力 ±0.5N をかけて、左右の角の高さの差からねじれの角度を出す(2026-11-23)"""
 import json, sys, numpy as np
 sys.path.insert(0, '.')
@@ -6,7 +6,7 @@ which = sys.argv[1]
 if which == 't24':
     import t24; t24.set_suction('w2')
     import design as dz
-    P = dict(json.load(open('results/t24v9_params.json')))
+    P = dict(json.load(open('results/t24v10_params.json')))
 else:
     import design as dz
     P = dict(json.load(open('results/final_params.json')))

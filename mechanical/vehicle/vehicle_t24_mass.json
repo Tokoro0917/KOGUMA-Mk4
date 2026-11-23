@@ -9,28 +9,28 @@
   "iz": 265.0
  },
  "t24": {
-  "mass": 59.92,
+  "mass": 59.91,
   "cg": [
-   0.07,
+   -0.14,
    0.0,
-   13.78
+   13.77
   ],
-  "iz": 296.2,
+  "iz": 293.5,
   "groups": [
    {
     "group": "フレーム・シート・スカート・滑り板",
-    "m": 5.8,
-    "iz": 62.3
+    "m": 5.69,
+    "iz": 59.2
    },
    {
     "group": "モーターマウント × 2",
-    "m": 2.29,
-    "iz": 11.7
+    "m": 2.34,
+    "iz": 11.9
    },
    {
     "group": "走行用モーター × 2",
     "m": 10.6,
-    "iz": 33.6
+    "iz": 33.0
    },
    {
     "group": "車輪・タイヤ・71T・ピニオン・軸・軸受・磁石・エンコーダ",
@@ -39,23 +39,23 @@
    },
    {
     "group": "吸引ファン",
-    "m": 7.75,
-    "iz": 20.3
+    "m": 7.8,
+    "iz": 21.0
    },
    {
     "group": "基板 + 部品",
     "m": 6.13,
-    "iz": 44.9
+    "iz": 45.1
    },
    {
     "group": "電池 + ホルダ",
     "m": 14.5,
-    "iz": 22.2
+    "iz": 21.9
    },
    {
     "group": "壁センサ × 4",
     "m": 1.71,
-    "iz": 28.0
+    "iz": 28.2
    },
    {
     "group": "ねじ・ナット",
@@ -69,9 +69,8 @@
    }
   ],
   "new_parts": {
-   "pc_sheet": 0.785,
-   "mount_R": 1.147,
-   "mount_L": 1.147,
+   "mount_R": 1.171,
+   "mount_L": 1.171,
    "wheel_R": 0.753,
    "wheel_L": 0.753,
    "tire_R": 1.41,
@@ -103,25 +102,25 @@
    "a": "screw_mountF_L",
    "b": "mount_L",
    "gap": 0.0,
-   "overlap": 4.302
+   "overlap": 4.528
   },
   {
    "a": "screw_mountR_L",
    "b": "mount_L",
    "gap": 0.0,
-   "overlap": 4.302
+   "overlap": 4.528
   },
   {
    "a": "screw_mountF_R",
    "b": "mount_R",
    "gap": 0.0,
-   "overlap": 4.302
+   "overlap": 4.528
   },
   {
    "a": "screw_mountR_R",
    "b": "mount_R",
    "gap": 0.0,
-   "overlap": 4.302
+   "overlap": 4.528
   },
   {
    "a": "screw_post_L",
@@ -197,12 +196,6 @@
   },
   {
    "a": "frame",
-   "b": "pc_sheet",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "frame",
    "b": "mount_R",
    "gap": 0.0,
    "overlap": 0.0
@@ -210,12 +203,6 @@
   {
    "a": "frame",
    "b": "mount_L",
-   "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "fan_case",
-   "b": "pc_sheet",
    "gap": 0.0,
    "overlap": 0.0
   },
@@ -253,30 +240,6 @@
    "a": "tire_L",
    "b": "spur71_L",
    "gap": 0.0,
-   "overlap": 0.0
-  },
-  {
-   "a": "sensor_holder_R",
-   "b": "pc_sheet",
-   "gap": 0.1,
-   "overlap": 0.0
-  },
-  {
-   "a": "sensor_holder_L",
-   "b": "pc_sheet",
-   "gap": 0.1,
-   "overlap": 0.0
-  },
-  {
-   "a": "pc_sheet",
-   "b": "mount_R",
-   "gap": 0.1,
-   "overlap": 0.0
-  },
-  {
-   "a": "pc_sheet",
-   "b": "mount_L",
-   "gap": 0.1,
    "overlap": 0.0
   },
   {

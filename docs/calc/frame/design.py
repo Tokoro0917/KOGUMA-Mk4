@@ -4,6 +4,7 @@ from shapely.geometry import Polygon, box, Point, LineString
 from shapely.ops import unary_union
 from shapely import affinity
 
+T_CF = 1.0                    # カーボンの板の厚さ [mm](t24v10 は 0.8。t24.py が書き換える)
 XE, YE = 50.0, 25.3          # 前後の端、端の辺の半幅(2026-10-19 に 50.5 から。前後 100mm)
 XB, YB = 16.7, 35.0          # 真ん中の帯の半幅、最大の半幅(2026-10-19 に 35.3 から。左右 70mm)
 SX, SY = 30.0, 15.0          # 吸引する面の半分(2026-10-19 に 30.25、15.25 から。60 × 30mm)
@@ -258,8 +259,10 @@ def mass_iz(g):
     mc = contains_xy(g['carbon'], X, Y)
     mp = contains_xy(unary_union(g['pc']), X, Y) if g['pc'] else np.zeros_like(mc)
     sheet = contains_xy(g['suction'].difference(Point(FAN_X, 0).buffer(FAN_R, 64)), X, Y)
+    if not g['pc']:          # 窓をカーボンで埋めた形(t24v10)は塩ビのシートがない
+        sheet = np.zeros_like(mc)
     r2 = X**2 + Y**2
-    dc = 1.55e-3 * 0.01      # g / (0.1mm)² セル(1mm厚)
+    dc = 1.55e-3 * 0.01 * T_CF   # g / (0.1mm)² セル(厚さ T_CF。ふつうは 1mm)
     dp = 0.2 * 1.4e-3 * 0.01  # シート: 塩ビ 0.2mm(2026-10-19 にポリカーボネート 0.2mm から)
     m_c = mc.sum() * dc
     m_p = sheet.sum() * dp

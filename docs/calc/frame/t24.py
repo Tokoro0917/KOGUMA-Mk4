@@ -46,6 +46,11 @@ def build_t24(**kw):
     dz.SENSOR_PAD_M = kw.pop('_pad_m', 1.0)
     dz.MOUNT_PAD = kw.pop('_mount_pad', MOUNT_PAD_DEFAULT)      # マウントが載る所(窓を開けない四角)
     small_window = kw.pop('_small', 25.0)
+    solid = kw.pop('_solid', False)           # 2026-11-23(t24v10): 吸引する面の窓をカーボンで埋め、塩ビのシートをなくす(ユーザー)
+    thick = kw.pop('_t', 1.0)                 # カーボンの板の厚さ [mm](t24v10 は 0.8mm。下の面は z 2.0 のまま、上の面が z 2.8)
+    import fem as _fem
+    _fem.CF['t'] = thick                      # FEM の板の厚さ(Model を作るときに読む)
+    dz.T_CF = thick                           # 質量の計算(design.mass_iz)の板の厚さ
     g = _build(**kw)
     x0, y0, r = dz.SLOT_L / 2, dz.YB, MOUTH_R
     cuts = []
@@ -66,6 +71,11 @@ def build_t24(**kw):
     x0, x1, yc = SHEET_CUT
     g['sheet'] = (g['suction'].difference(Point(dz.FAN_X, 0).buffer(dz.FAN_R, 64))
                   .difference(box(x0, yc, x1, 60)).difference(box(x0, -60, x1, -yc)))
+    if solid:
+        # 窓(塩ビを貼る所)をカーボンにする。窓は domain に含まれ carbon から抜いてあるので、足し戻す
+        g['carbon'] = g['carbon'].union(unary_union(g['pc']))
+        g['pc'] = []
+        g['sheet'] = None
     return g
 dz.build = build_t24
 
@@ -105,6 +115,7 @@ VARIANTS = {
     'w2lXf15': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.5, end_window_min=10.0, _pad_m=0.3, _small=10.0),
     'w2lXf17': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.75, end_window_min=10.0, _pad_m=0.3, _small=10.0),
     'w2lXf15s': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.5, end_window_min=10.0, _pad_m=0.3, _small=10.0, _mount_pad=MOUNT_PAD_SMOOTH),   # frame t24v6: 窓の辺をまっすぐに
+    'w2lXf15se8': dict(BASE, _suction='w2', rim=1.6, end_edge=2.5, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.5, end_window_min=10.0, _pad_m=0.3, _small=10.0, _mount_pad=MOUNT_PAD_SMOOTH, _solid=True, _t=0.8),   # frame t24v10: t24v9 の形で、吸引する面の窓を埋めて 0.8mm に(塩ビなし)
     'w2lXf15se': dict(BASE, _suction='w2', rim=1.6, end_edge=2.5, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6, fillet=1.5, end_window_min=10.0, _pad_m=0.3, _small=10.0, _mount_pad=MOUNT_PAD_SMOOTH),   # frame t24v7: 前の辺 2.5mm(後ろは end_edge_rear 1.6 のまま)
     'w2lX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['X'], rib_w=1.6),
     'w2lTX': dict(BASE, _suction='w2', rim=1.6, end_edge=1.6, spine_root=1.6, spine_tip=1.6, brace_w=1.6, brace_w_each={'A': 1.6}, land=1.6, inner_spine=1.6, rect_ribs=['T', 'X'], rib_w=1.6),

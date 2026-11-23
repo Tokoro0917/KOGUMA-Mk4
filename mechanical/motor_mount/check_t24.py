@@ -39,13 +39,12 @@ parts['shaft'] = ycyl(0.6, P['motor_face'] - 0.3, -24.4, mx, mz).val()
 parts['pinion13'] = ycyl(2.25, -22.4, -24.4, mx, mz).cut(ycyl(0.6, -22.3, -24.5, mx, mz)).val()
 screws = [P['screw_front'], P['screw_rear']]
 pcb = box(-30, 45, -34.6, 0, 13.6, 14.2).cut(box(-4.5, 4.5, -40, -16.7, 13, 15)).cut(box(-12.5, 12.5, -40, -22.3, 13, 15))
-frame = box(-50, 50, -35, 0, 2.0, 3.0).cut(box(-9.5, 9.5, -40, -22.3, 1, 4))
+frame = box(-50, 50, -35, 0, 2.0, mt.FRAME_TOP).cut(box(-9.5, 9.5, -40, -22.3, 1, 4))
 for sx, sy in screws:
     pcb = pcb.cut(zcyl(1.1, 13, 15, sx, sy)); frame = frame.cut(zcyl(1.1, 1, 4, sx, sy))
 parts['pcb'] = pcb.val()
 parts['frame'] = frame.val()
-parts['sheet'] = box(-30, 30, -15, 0, 3.0, 3.2).val()
-parts['fan_ring'] = zcyl(17.5, 3.2, 10.0, 14.2, 0).cut(zcyl(16.5, 3.1, 10.1, 14.2, 0)).val()
+parts['fan_ring'] = zcyl(17.5, mt.FRAME_TOP, 10.0, 14.2, 0).cut(zcyl(16.5, mt.FRAME_TOP - 0.1, 10.1, 14.2, 0)).val()   # 2026-11-23: 塩ビのシートをなくし、輪はフレーム(0.8mm)の上に載る
 parts['battery'] = box(-16.25, 6.25, -16.0, 0, 14.2, 20.0).val()
 for nm, (sx, sy) in (('front', P['screw_front']), ('rear', P['screw_rear'])):
     parts[f'screw_{nm}'] = cq.Compound.makeCompound([zcyl(1.9, 0.9, 2.0, sx, sy).val(), zcyl(P['hole_d'] / 2, 2.0, 7.0, sx, sy).val()])
@@ -59,7 +58,7 @@ if __name__ == '__main__':
     ignore = {('pinion13', 'spur71'), ('pin', 'wheel'), ('pin', 'brg_out'), ('pin', 'brg_in'), ('magnet', 'brg_in'), ('magnet', 'pin'),
               ('brg_out', 'spur71'), ('spur71', 'wheel'), ('tire', 'wheel'), ('shaft', 'pinion13'), ('motor', 'motor_boss'),
               ('motor_boss', 'shaft'), ('enc_board', 'MT6835'), ('brg_in', 'brg_out'), ('screw_front', 'frame'), ('screw_rear', 'frame'),
-              ('frame', 'sheet'), ('battery', 'pcb'), ('pin', 'spur71')}
+              ('battery', 'pcb'), ('pin', 'spur71')}
     focus = ('wheel', 'mount', 'motor', 'shaft', 'pinion13', 'motor_boss', 'enc_board', 'MT6835', 'screw_front', 'screw_rear', 'pcb')
     names = list(parts); rows = []
     for i, a in enumerate(names):

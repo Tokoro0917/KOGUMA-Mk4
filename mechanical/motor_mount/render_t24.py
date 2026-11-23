@@ -21,8 +21,8 @@ def tris(shape, tol=0.05):
 
 fig = plt.figure(figsize=(14, 6.5))
 for k, (elev, azim, title, skip) in enumerate((
-        (22, -125, '外側の前から(タイヤ・ホイール・71T を外す)', ('tire', 'wheel', 'spur71', 'pcb', 'battery', 'frame', 'sheet', 'fan_ring')),
-        (28, -50, '内側の後ろから(メイン基板・電池を外す)', ('pcb', 'battery', 'frame', 'sheet', 'fan_ring')))):
+        (22, -125, '外側の前から(タイヤ・ホイール・71T を外す)', ('tire', 'wheel', 'spur71', 'pcb', 'battery', 'frame', 'fan_ring')),
+        (28, -50, '内側の後ろから(メイン基板・電池を外す)', ('pcb', 'battery', 'frame', 'fan_ring')))):
     ax = fig.add_subplot(1, 2, k + 1, projection='3d')
     for name, s in parts.items():
         if name in skip:

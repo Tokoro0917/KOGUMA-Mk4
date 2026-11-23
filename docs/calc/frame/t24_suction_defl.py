@@ -1,5 +1,5 @@
-"""frame t24v9 の吸引によるたわみ(スカートの線がどれだけ床に近づくか)と、ターンでのねじれの見積もり(2026-11-23)。
-使い方(このディレクトリで): python3 t24_suction_defl.py → 数字と docs/img/frame/t24v9_suction_defl.png
+"""frame t24v10(0.8mm、窓を埋めた)の吸引によるたわみ(スカートの線がどれだけ床に近づくか)と、ターンでのねじれの見積もり(2026-11-23)。
+使い方(このディレクトリで): python3 t24_suction_defl.py → 数字と docs/img/frame/t24v10_suction_defl.png
 - 今: フレームはマウントのねじ(4か所 × 左右)だけで持つ
 - ファンの輪を貼る: ファンの台の輪(中心 (14.2, 0)、半径 16.5〜17.5)の下をフレームに貼り、台が動かないとみる
 吸引の力はフレームの吸引する面に均一の圧力。たわみは吸引の力に比例する"""
@@ -16,7 +16,7 @@ SUCTION_N = 5.9                 # 吸引 600g
 SKIRT_X, SKIRT_Y = 40.0, 21.3   # スカートの線(吸引する面の半分)
 
 t24.set_suction('w2')
-P = dict(json.load(open('results/t24v9_params.json')))
+P = dict(json.load(open('results/t24v10_params.json')))
 P.pop('base', None)
 g = dz.build(**P)
 ring = Point(14.2, 0).buffer(17.5, 64).difference(Point(14.2, 0).buffer(16.5, 64))
@@ -56,8 +56,8 @@ for ax, (name, extra) in zip(axes, (('今(マウントのねじだけ)', []), ('
     ax.set_aspect('equal')
     ax.set_title(f'{name}')
 fig.colorbar(tc, ax=axes, label='下がる量 [1/1000 mm](吸引 600g)')
-fig.suptitle('frame t24v9 吸引によるたわみ(赤: 固定する所、白の点線: スカートの線)')
-fig.savefig('../../img/frame/t24v9_suction_defl.png', dpi=100, bbox_inches='tight')
+fig.suptitle('frame t24v10 吸引によるたわみ(赤: 固定する所、白の点線: スカートの線)')
+fig.savefig('../../img/frame/t24v10_suction_defl.png', dpi=100, bbox_inches='tight')
 
 # ターン: 横の加速度で外側のタイヤに荷重が移る(機体全体が傾く。フレームはねじれない)
 m_kg, h_mm, track_mm = 0.05992, 13.78, 58.1     # 機体の重さ、重心の高さ、左右のタイヤの接地点の間

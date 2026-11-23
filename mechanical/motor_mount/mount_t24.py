@@ -3,22 +3,23 @@
 座標 [mm]: x 前(+)、y 左(+)、z 上(床 = 0)。車軸 (0, y, 12.0)。右側なので外側が -y。
 部品の並び(外側から、main より 3.5mm 内): タイヤ -33.3〜-24.8、71T -24.8〜-22.8、LF-630 外 -23.2〜-21.2、内 -21.0〜-19.0、
 磁石 -20.2〜-19.2、MT6835 -18.7〜-17.5、エンコーダ基板 -17.5〜-16.9。メイン基板の下面 z 13.6。
-使い方: python3 mount_t24.py → motor_mount_R_t24v5.step/.stl、motor_mount_L_t24v5.step/.stl(v1 は P_V1)"""
+使い方: python3 mount_t24.py → motor_mount_R_t24v6.step/.stl、motor_mount_L_t24v6.step/.stl(v1 は P_V1)"""
 import math
 import cadquery as cq
 import mount as mm
 
-FRAME_TOP = 3.0
+FRAME_TOP = 2.8              # フレームの上面。2026-11-23(t24v6): フレームを 0.8mm(下の面 z 2.0 のまま)にしたので 3.0 → 2.8。マウントの下の端を 0.2mm 伸ばす(車軸・モーター・基板の高さは同じ)
 PCB_BOTTOM = 13.6
 AXLE_Z = 12.0
 CD = 0.15 * (71 + 13)          # 軸間 12.6mm
 WALL = 0.9                     # モーターの筒の壁(main v8 と同じ)
-# モーターの中心の高さ: 筒の下の壁がフレームの上面(3.0)に載り、筒の上がメイン基板の下面から 0.25mm 下になる所
+# モーターの中心の高さ: 筒の下の壁がフレームの上面(t24v5 までの 3.0)に載り、筒の上がメイン基板の下面から 0.25mm 下になる所
 MOTOR_Z = 8.2                  # 筒 z 3.05〜13.35、モーター z 3.9〜12.5
 MOTOR_ANGLE = -math.degrees(math.asin((AXLE_Z - MOTOR_Z) / CD))   # 水平から 17.55° 下
 
 P = dict(mm.P)
 P.update(
+    frame_top=FRAME_TOP,
     axle=(0.0, AXLE_Z), cd=CD, motor_angle=MOTOR_ANGLE,
     motor_face=-21.5, outer_face=-22.1, brg_seat_out=-22.6, brg_seat_in=-19.6,   # main + 3.5
     inner_face=-16.5,
@@ -57,7 +58,7 @@ def windows(P, wall=0.8, strut=0.9, r_round=0.4, min_area=2.0):
     y0, y1 = P['outer_face'] - 0.1, P['inner_face'] + 0.1
     return [([(round(x, 3), round(z, 3)) for x, z in list(g.exterior.coords)[:-1]], y0, y1) for g in geoms if g.area >= min_area]
 
-VER = 't24v5'      # 2026-11-23(t24v5): 後ろのねじも (-21, ±18.4) にそろえた。t24v4: ねじを (6.8, ±18.4)・(-21, ±17.7) へ、柱を半径 2.0 に。t24v3: ねじを (6.8, ±18.9)・(-21, ±18.9) へ、柱を半径 2.4 に(t24v2 は (8, ±19.5)・(-21, ±19.5)、半径 2.6)
+VER = 't24v6'      # 2026-11-23(t24v6): フレームが 0.8mm になり上面が z 2.8 に下がったので、下の端を 0.2mm 伸ばした。t24v5: 後ろのねじも (-21, ±18.4) にそろえた。t24v4: ねじを (6.8, ±18.4)・(-21, ±17.7) へ、柱を半径 2.0 に。t24v3: ねじを (6.8, ±18.9)・(-21, ±18.9) へ、柱を半径 2.4 に(t24v2 は (8, ±19.5)・(-21, ±19.5)、半径 2.6)
 P_V1 = dict(P)
 # v2(2026-11-21): モーターの穴と軸受の穴の間・車軸の下を、y 方向に抜ける窓で肉抜きする(壁 0.8mm 以上)。
 #   軸受の受けからモーターの穴へ・フレームへの柱(幅 1.8mm)は残す

@@ -11,18 +11,18 @@ sys.argv = ['x', os.path.join(HERE, 'mk4_vehicle_t24.step')]
 exec(src[:src.index('\n', src.index('walk(l, TopLoc_Location(), name(l))'))])     # parts = {番号: 形}
 # (番号, ファイルの名前, 印刷する部品か, 確かめる外形 (xmin, xmax, ymin, ymax))
 PARTS = [
-    ('1', '01_frame_t24v9', False, (-50.0, 50.0, -35.0, 35.0)),             # フレーム(カーボン 1mm)。注文は MK4FRAMET24V9_T1.dxf
-    ('33', '02_pc_sheet_t24v9', False, (-40.0, 40.0, -21.3, 21.3)),         # 塩ビのシート 0.2mm。注文は MK4PCT24V9_T02.dxf
-    ('34', '03_motor_mount_R_t24v5', True, (-23.0, 16.5, -22.6, -15.3)),    # モーターマウント 右(Temp Resin)
-    ('35', '04_motor_mount_L_t24v5', True, (-23.0, 16.5, 15.3, 22.6)),      # モーターマウント 左
-    ('5', '05_fan_mount_t24v2', True, (-3.3, 31.7, -22.8, 22.8)),           # ファンの台(Temp Resin)。継ぎ目 (14, ±20.3)。t24v2: 吸引する面が広がり、輪の下はシートの上(z 3.2)
-    ('36', '06_wheel_R_t24v1', True, (-10.0, 10.0, -33.3, -23.2)),          # ホイール 右(Black Resin)
-    ('37', '07_wheel_L_t24v1', True, (-10.0, 10.0, 23.2, 33.3)),            # ホイール 左
-    ('11', '08_sensor_holder_v5', True, (16.4, 21.2, 26.9, 33.3)),          # 壁センサのホルダ(Black Resin、4個。これは FL の位置)
-    ('9', '09_main_pcb_t24v6', False, (-30.0, 45.7, -34.1, 34.1)),          # メイン基板(外形だけ。配線のあとで JLCPCB)
-    ('48', '10_encoder_board_R_t24', False, (-3.0, 3.0, -17.5, -16.9)),     # エンコーダ基板 右
+    # 2026-11-23(frame t24v10): 塩ビのシートがなくなったので、番号を詰めた(t24v9 までは 02 が塩ビのシート)
+    ('1', '01_frame_t24v10', False, (-50.0, 50.0, -35.0, 35.0)),            # フレーム(カーボン 0.8mm、吸引する面を埋めた、z 2.0〜2.8)。注文は MK4FRAMET24V10_T08.dxf
+    ('33', '02_motor_mount_R_t24v6', True, (-23.0, 16.5, -22.6, -15.3)),    # モーターマウント 右(Temp Resin)。t24v6: 下の端を 0.2mm 伸ばした(z 2.8 から)
+    ('34', '03_motor_mount_L_t24v6', True, (-23.0, 16.5, 15.3, 22.6)),      # モーターマウント 左
+    ('5', '04_fan_mount_t24v3', True, (-3.3, 31.7, -22.8, 22.8)),           # ファンの台(Temp Resin)。継ぎ目 (14, ±20.3)。t24v3: 輪の下をフレームの上(z 2.8)まで伸ばした(t24v2 はシートの上 z 3.2)
+    ('35', '05_wheel_R_t24v1', True, (-10.0, 10.0, -33.3, -23.2)),          # ホイール 右(Black Resin)
+    ('36', '06_wheel_L_t24v1', True, (-10.0, 10.0, 23.2, 33.3)),            # ホイール 左
+    ('11', '07_sensor_holder_v5', True, (16.4, 21.2, 26.9, 33.3)),          # 壁センサのホルダ(Black Resin、4個。これは FL の位置)。下の端 z 3.3 とフレーム(z 2.8)の間 0.5mm に緩衝材
+    ('9', '08_main_pcb_t24v6', False, (-30.0, 45.7, -34.1, 34.1)),          # メイン基板(外形だけ。配線のあとで JLCPCB)
+    ('47', '09_encoder_board_R_t24', False, (-3.0, 3.0, -17.5, -16.9)),     # エンコーダ基板 右
 ]
-REF = ['2', '3', '4', '6', '7', '8', '10'] + [str(i) for i in range(12, 33) if i not in (14, 17, 20)] + ['14', '17', '20', '49'] + [str(i) for i in range(38, 48)] + [str(i) for i in range(50, 60)]
+REF = ['2', '3', '4', '6', '7', '8', '10'] + [str(i) for i in range(12, 33) if i not in (14, 17, 20)] + ['14', '17', '20', '48'] + [str(i) for i in range(37, 47)] + [str(i) for i in range(49, 59)]
 
 def check(s, bb0):
     bb = s.BoundingBox()
@@ -41,5 +41,5 @@ if __name__ == '__main__':
         print(f'{fn}: 体積 {s.Volume():.0f} mm³、x {bb.xmin:.2f}〜{bb.xmax:.2f}、y {bb.ymin:.2f}〜{bb.ymax:.2f}、z {bb.zmin:.2f}〜{bb.zmax:.2f}')
     # 買う部品・ほかの部品(モーター・タイヤ・71T・ピニオン・軸受・ピン・磁石・ねじ・電池・ファンのモーター・羽根・センサ・滑り板・スカート)を1つに
     ref = cq.Compound.makeCompound([parts[k] for k in REF if k in parts])
-    cq.exporters.export(ref, os.path.join(OUT, '11_purchased_and_other_parts.step'))
-    print('11_purchased_and_other_parts: 部品', len([k for k in REF if k in parts]))
+    cq.exporters.export(ref, os.path.join(OUT, '10_purchased_and_other_parts.step'))
+    print('10_purchased_and_other_parts: 部品', len([k for k in REF if k in parts]))
