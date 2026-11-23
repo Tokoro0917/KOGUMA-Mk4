@@ -1,3 +1,4 @@
 __pycache__/
 *.pyc
 docs/calc/frame/results/pocket_*.npy
+*.kicad_prl

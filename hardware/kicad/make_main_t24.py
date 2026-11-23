@@ -31,7 +31,7 @@ sys.path.insert(0, 'mechanical/vehicle'); sys.path.insert(0, 'docs/calc/frame')
 import pcb_t24, pcb_shape as ps
 o = ps.outline()
 rings = [list(r.coords) for g in getattr(o, 'geoms', [o]) for r in [g.exterior] + list(g.interiors)]
-print(json.dumps(dict(rings=rings, SENS=ps.SENS, LEDS=ps.LEDS, SCREWS=ps.SCREWS,
+print(json.dumps(dict(rings=rings, SENS=ps.SENS, LEDS=ps.LEDS, LED_FRONT=ps.LED_FRONT, SCREWS=ps.SCREWS,
                       pads={k: dict(emit=ps.pads(k, 'emit'), recv=ps.pads(k, 'recv')) for k in ps.SENS})))
 '''
 import json
@@ -39,6 +39,7 @@ _g = json.loads(subprocess.run(['python3', '-c', GEOM], cwd=REPO, capture_output
 class ps:
     SENS = {k: (tuple(v[0]), v[1]) for k, v in _g['SENS'].items()}
     LEDS = [tuple(p) for p in _g['LEDS']]
+    LED_FRONT = tuple(_g['LED_FRONT'])
     SCREWS = [tuple(p) for p in _g['SCREWS']]
     @staticmethod
     def pads(nm, part):
@@ -55,16 +56,15 @@ def ensure_project():
         d = os.path.join(DST, fn.replace('KOGUMA-Mk4.', NAME + '.') if fn.startswith('KOGUMA-Mk4.') else fn)
         t = open(os.path.join(SRC, fn)).read()
         t = t.replace('(project "KOGUMA-Mk4"', f'(project "{NAME}"')          # 記号の番号はプロジェクトの名前ごとに持っている
-        if fn == 'ui.kicad_sch':      # UI の LED: 機構の並び(pcb_shape.LEDS、ToraNeko.Mk3 と同じ、1.9mm おき)は 0402 で決めてあるので 0402 にする(main の回路図は 0603)
-            n = t.count('"LED_SMD:LED_0603_1608Metric"')
-            t = t.replace('"LED_SMD:LED_0603_1608Metric"', '"LED_SMD:LED_0402_1005Metric"')
-            print(f'  ui: LED の 0603 → 0402 を {n} 個')
+        # UI の LED は回路図のまま 1608(2026-11-23、ユーザーの決定)。1.9mm おきの並び(pcb_shape.LEDS)に、長い方を x(前後)に向けて置く
         if fn == 'sensor.kicad_sch':
-            assert t.count('"KOGUMA-Mk4:ENC_Base_Slot"') == 2
-            t = t.replace('"KOGUMA-Mk4:ENC_Base_Slot"', '"KOGUMA-Mk4:ENC_Base_Edge_T24"')
-            t = t.replace('を小さな基板(5.3 × 12.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\\nエンコーダの基板はメイン基板の穴(ENC_Base_Slot)を通し、上の面でパッド7つをはんだ付けする(線は使わない)。',
+            assert t.count('"KOGUMA-Mk4:ENC_Base_Butt"') == 2      # main(タイヤ15mm)はエンコーダ基板 v2 を裏に突き当てる形(2026-11-02)
+            t = t.replace('"KOGUMA-Mk4:ENC_Base_Butt"', '"KOGUMA-Mk4:ENC_Base_Edge_T24"')
+            t = t.replace('を小さな基板(6.0 × 10.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\\nエンコーダの基板はメイン基板の裏に突き当て(2026-11-02、穴はなし)、裏のパッド(ENC_Base_Butt、エンコーダ基板の両側に7つずつ)と両面ではんだ付けする(線は使わない)。',
                           'を小さな基板(6.0 × 8.75mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder_t24)に載せる。\\nエンコーダの基板はメイン基板の切り欠きの縁に沿って立て、上の面のパッド7つ(ENC_Base_Edge_T24)にはんだ付けする(線は使わない)。')
         open(d, 'w').write(t)
+    # 細かいピッチの IC(U4・U74・U75・U76)のパッドの間だけ 0.14mm まで許す設計ルール(main と同じ)
+    shutil.copy(os.path.join(SRC, 'KOGUMA-Mk4.kicad_dru'), os.path.join(DST, NAME + '.kicad_dru'))
     open(os.path.join(DST, 'fp-lib-table'), 'w').write(
         '(fp_lib_table\n\t(version 7)\n\t(lib (name "KOGUMA-Mk4")(type "KiCad")(uri "${KIPRJMOD}/../KOGUMA-Mk4/KOGUMA-Mk4.pretty")(options "")(descr "MK4 project footprints"))\n)\n')
     open(os.path.join(DST, 'sym-lib-table'), 'w').write(
@@ -184,9 +184,10 @@ def build():
         sh = pcbnew.PCB_SHAPE(b); sh.SetShape(pcbnew.SHAPE_T_SEGMENT); sh.SetLayer(pcbnew.Cmts_User); sh.SetWidth(MM(0.15))
         sh.SetStart(P(*a)); sh.SetEnd(P(*c_)); b.Add(sh)
     note(b, 'BATTERY (top): parts <= 1.2mm high only (battery on 1.5mm spacer)', OX - 15.5, OY - 13.5, 0.8)
-    # UI の LED(長い方を y に)
+    # UI の LED(1608。1.9mm おきなので長い方を x(前後)に向ける)と前の LED(D98、PB3)
     for ref, (x, y) in zip(UI_LEDS, ps.LEDS):
-        fps[ref].SetPosition(P(x, y)); fps[ref].SetOrientationDegrees(90.0); placed.add(ref)
+        fps[ref].SetPosition(P(x, y)); fps[ref].SetOrientationDegrees(0.0); placed.add(ref)
+    fps['D98'].SetPosition(P(*ps.LED_FRONT)); fps['D98'].SetOrientationDegrees(0.0); placed.add('D98')
     # ねじの穴(基板だけの部品)
     for i, (x, y) in enumerate(ps.SCREWS):
         h = load_fp('MountingHole:MountingHole_2.2mm_M2'); h.SetReference(f'H{i + 1}'); h.SetValue('M2')
@@ -211,7 +212,7 @@ def build():
                 x = x0; y += 6
         y += 10
     note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v3 (mechanical/pcb/pcb_outline_t24v3.dxf), 0.6mm. '
-            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (order tentative), H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
+            'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, order tentative), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')
     b.Save(path)

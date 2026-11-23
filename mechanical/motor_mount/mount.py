@@ -80,7 +80,13 @@ P_V9 = dict(P, bore_clear=0.0, brg_clear=0.0)
 #   基板の後ろの端の受けを x -2.8 → -3.1 にした(v10 は 5.3mm 幅の基板のままで、6.0mm 幅の基板と x -3.0〜-2.8 で重なっていた)
 P.update(enc_slot=(-21.0, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-3.1))
 P_V10 = dict(P, enc_slot=(-21.1, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-2.8))
-VER = 'v11'
+# v12(2026-11-02): エンコーダ基板をメイン基板に**表と裏の両面**ではんだ付けするため、マウントの面の上の端に逃げを切る。
+#   チップの面のパッド(上の辺から 0.2〜0.9mm、z 12.7〜13.4)とメイン基板の裏のパッド(基板の面から外へ 0.3〜1.1mm)の間に
+#   はんだのフィレットができる所: x -3.1〜3.1、y -22.2〜-21.0(面から外へ 1.2mm)、z 12.6 から上。
+#   面に当たる所は z 11.3〜12.6 の帯と下の z 3.0〜3.8 が残る。モーターの穴の上の端は z 12.5 なので、逃げとはつながらない
+P_V11 = dict(P)
+P.update(enc_relief=dict(x0=-3.1, x1=3.1, depth=1.2, z0=12.6))
+VER = 'v12'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -154,6 +160,9 @@ def build(P=P):
         body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], P['enc_slot'][0], pz0, ef['pz1']))
         # 基板の面より内側は、基板の外形の所をすべて開ける(裏の壁をなくす)
         body = body.cut(box(ax + ef['x0'], ax + ef['wx1'], P['enc_slot'][0], P['inner_face'] + 1.0, ft - 0.01, 20.0))   # 前は x wx1 で止め、基板の前の端を受ける
+        er = P.get('enc_relief')
+        if er:   # v12: チップの面のはんだのフィレットの逃げ(面の上の端)
+            body = body.cut(box(ax + er['x0'], ax + er['x1'], P['enc_slot'][0] - er['depth'], P['enc_slot'][0] + 0.01, er['z0'], 20.0))
     else:
         # ポケットは基板の溝の手前まで(基板の裏は壁で受ける)。前側は開ける(薄い壁を残さない)
         body = body.cut(box(ax - px, ax + px + 1.0, P['brg_seat_in'], P['enc_slot'][0], pz0, pz1))
