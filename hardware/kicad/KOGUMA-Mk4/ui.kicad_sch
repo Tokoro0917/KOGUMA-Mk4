@@ -7882,5 +7882,103 @@
 		)
 		(uuid "e2b66414-ab1b-461a-8ab0-72dc75d7caee")
 	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 205.74 274.32 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "1df5cb92-bb4a-4335-a18c-706f505dd002")
+		(property "Reference" "TP4"
+			(at 208.28 271.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BOOT0"
+			(at 208.28 269.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.0mm"
+			(at 205.74 274.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 205.74 274.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 205.74 274.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c5fc1a1b-3650-4ddc-9e38-36045b6f9665")
+		)
+		(instances
+			(project "KOGUMA-Mk4"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/32046ff6-4e68-55a0-bbfc-edd3169419ef"
+					(reference "TP4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(global_label "BOOT0"
+		(shape input)
+		(at 205.74 274.32 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "aa7b3bee-e52f-4a4c-8053-309f59b9a88d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 205.74 274.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(text "TP4: BOOT0 のテストパッド(2026-11-23)。ふだんは何もつながない(R50 10kΩ で L)。\n電源の設定ミスなどで MCU が応答しなくなったら: TP4 を 3.3V(J7 の1番など)につないだまま電源を入れ、\nSTLINK でつないで消す(ST の書き込み用のプログラムが動き、自分のプログラムは動かない)"
+		(exclude_from_sim no)
+		(at 198.12 264.16 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "8fb48f1d-5a19-45f1-82c6-bc729afa5563")
+	)
 	(embedded_fonts no)
 )
