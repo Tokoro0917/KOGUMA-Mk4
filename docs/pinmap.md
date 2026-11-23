@@ -91,6 +91,6 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 ## 気をつけること
 
 - **PA15(JTDI)とPB4(NJTRST)とPB3(JTDO)**は、リセット直後はJTAGの機能になっている。CubeMXでデバッグを「Serial Wire」にすれば、GPIOとして使える
-- **BOOT0**(63番)は専用ピン。10kΩ程度でGNDに落とす。HY0020 の P0.05 からも動かせる(2026-11-23)
+- **BOOT0**(63番)は専用ピン。10kΩ程度でGNDに落とす。HY0020 にはつながない(2026-11-23。AN2606: H72x の書き込み用のプログラムの USART1 は PA9・PA10 だけで、この機体の UART(PB6・PB7)では使えない)
 - **NRST**(12番)は専用ピン。SWDの端子にも出す。HY0020 の P0.07 からも動かせる(2026-11-23)
 - **電源のピン**: VFQFPN68はSMPS専用(VSSSMPS・VLXSMPS・VDDSMPS・VFBSMPS、VCAP × 3、VDDA・VSSA、VBAT)。部品は仕様書の「MCUの電源」

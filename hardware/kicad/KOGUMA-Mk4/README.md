@@ -70,7 +70,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 | グループ | 中身(IC のピン) |
 |---|---|
-| U4 MCU | 抵抗: R50(BOOT0)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R23・R33(モーターの電流の RC の 100Ω)・R24・R25・R34・R35(CM の終端)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54 10µF(VFBSMPS 7)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C33(それぞれの ADC のピン) |
+| U4 MCU | 抵抗: R50(BOOT0)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R23・R33(モーターの電流の RC の 100Ω)・R24・R25・R34・R35(CM の終端)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54・C65 10µF(VFBSMPS 7、2個目は AN5419)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C33(それぞれの ADC のピン) |
 | U1 DC-DC | C6 100nF・C5 10µF(VIN)、C7・C8 22µF(VOUT)、R3(FB)、**NT1(C7 の PGND のパッドのとなり)** |
 | U2・U3 MP6551 | C21・C31 100nF と C22・C32 10µF(VIN 2番)、R21・R31(SR) |
 | U74・U75 受光アンプ | C83・C84 100nF と C78・C79 10µF(V+ 8番)、帰還の 820k・0.5pF(出力と − 入力の間に、辺に沿って)。U74 に PD_BIAS(C80・R78・R79) |

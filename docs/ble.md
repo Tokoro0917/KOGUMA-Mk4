@@ -98,7 +98,6 @@ turn90.entry_acc=0.7
 | `@link up`・`@link down` | nRF → STM32 | PC とつながった・切れた |
 | `@quiet on`・`@quiet off` | STM32 → nRF | 電波を止める・戻す |
 | `@reset` | PC → nRF | STM32 の NRST を 10ms L にする(STM32 には届けない) |
-| `@boot` | PC → nRF | BOOT0 を H にしてから NRST(ST の書き込み用のプログラムに入る。使えるかは要確認) |
 | `@name <名前>` | PC → nRF | アドバタイズの名前を変えて保存 |
 
 ### 4.4 流れの制御(送る速さの調整)
@@ -127,13 +126,13 @@ PC: ログからターンの出口の位置・角度のずれを計算 → 次�
 - **自分のブートローダ** を内蔵 Flash の先頭(セクタ 0、128KB)に置く。プログラムはセクタ 1 から(`docs/spec.md` の「内蔵Flashの使い方」の、プログラムの 512KB の中)
 - 流れ: `fw begin <長さ> <crc>` → STM32 はブートローダに入り直す → `fw <位置> <base64>`(1行 192 バイト分)を 4KB ごとに `#OK fw <位置>` で返す → `fw end` で CRC を確かめ、合っていればプログラムへ飛ぶ。合わなければ書き直しを待つ(古いプログラムは消したあとなので、ブートローダに残る)
 - どうしても動かなくなったら: PC から `@reset`(ブートローダは毎回、起動直後に 0.5 秒だけ UART を見て、`fw begin` が来れば書き込みに入る)。それでもだめなら J7(SWD)で書く
-- ST の中にある書き込み用のプログラム(BOOT0 = H)が USART1 の PB6・PB7 で使えるかは、AN2606 で確かめる。使えれば `@boot` で、ブートローダがない状態からでも書ける
+- ST の中にある書き込み用のプログラム(BOOT0 = H)は使わない。AN2606(2026-11-23 確認): H72x の書き込み用のプログラムの USART1 は PA9・PA10 だけで、PB6・PB7 は使えない(PB6・PB7 は I2C1 になる)。そのため HY0020 は BOOT0 につながない(誤って H にすると MCU が止まって見えるため)。ブートローダそのものを書き直すときは J7(SWD)
 
 ## 7. 作るもの
 
 | ソフト | 中身 | もと |
 |---|---|---|
-| nRF52832(HY0020) | NUS の UART の橋渡し、`@` の行、XON・XOFF、NRST・BOOT0 | Nordic nRF5 SDK または nRF Connect SDK の見本(peripheral_uart / ble_app_uart)。最初の書き込みは TP2・TP3(SWD) |
+| nRF52832(HY0020) | NUS の UART の橋渡し、`@` の行、XON・XOFF、NRST | Nordic nRF5 SDK または nRF Connect SDK の見本(peripheral_uart / ble_app_uart)。最初の書き込みは TP2・TP3(SWD) |
 | STM32(走るプログラム) | コマンド、状態、Flash への保存、ログ・迷路の送信 | MK3 のコマンドとログの形 |
 | STM32(ブートローダ) | 6章 | 新しく作る |
 | PC | MK3 のビューアに **「BLE でつなぐ」**(Web Bluetooth で NUS)を足す。ターンの調整は Python(bleak)で別に作るか、ビューアに足す | `KOGUMA.MkIIl/tools/viewer.html`(Web Serial) |
