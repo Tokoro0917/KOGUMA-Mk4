@@ -4228,7 +4228,7 @@
 				)
 			)
 		)
-		(property "Value" "5m 1% 1206"
+		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
 			(at 0 1.83 180)
 			(layer "F.Fab")
 			(uuid "4310fb4f-da57-4059-9d4d-6fe863bdb73b")
@@ -20541,7 +20541,7 @@
 				)
 			)
 		)
-		(property "Value" "5m 1% 1206"
+		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
 			(at 0 1.83 180)
 			(layer "F.Fab")
 			(uuid "130ab86e-65e4-40a7-b560-05676eef121c")
@@ -26942,7 +26942,7 @@
 			(uuid "85180711-4914-4439-b9dd-667daf634519")
 		)
 		(fp_text user "HOLDER"
-			(at -2.020002 3.5 187)
+			(at -2.020003 3.5 187)
 			(layer "B.Fab")
 			(uuid "77e6e35c-4719-4702-a1ce-0df5f464865b")
 			(effects
