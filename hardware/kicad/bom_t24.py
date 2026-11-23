@@ -80,7 +80,7 @@ def main():
         else:
             base = v.split(' (')[0] if v.split(' (')[0] in FIXED else v
             mpn, lcsc, h, memo = (FIXED.get(v) or FIXED.get(base) or ''), '', None, ''
-            h = {'AO4407A': 1.75, 'T521V476M025ATE040 (47u 25V)': 2.0}.get(v, h)
+            h = {'AO4407A': 1.75, 'T521V476M025ATE040 (47u 25V)': 2.0, 'PMR18EZPFU5L00 (5m 1%)': 0.57}.get(v, h)
             if r_is_pad(refs):
                 mpn, memo = '(基板のパッド。部品なし)', {'J1': '電池の線 BT2.0 のケーブルをはんだ付け', 'J2': 'モーターの線(裏)', 'J3': 'モーターの線(裏)', 'J4': 'ファンの線',
                                                      'J5': 'エンコーダ基板をはんだ付け', 'J6': 'エンコーダ基板をはんだ付け', 'NT1': 'PGND と GND の1点', 'TP1': '', 'TP2': '', 'TP3': ''}.get(refs[0], '')
