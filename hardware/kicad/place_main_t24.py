@@ -42,12 +42,11 @@ FIXED = {
     'SW1': (36.0, 5.0, [90], 'T', 8, 'SW1'),
     # デバッグの端子(高い)は後ろの右の羽
     'J7': (-25.4, -11.0, [0, 90], 'T', 4, False),
-    # 電池の 47µF(高さ 2.0mm)は裏の後ろ(モーターの後ろ、x < -17.2)
+    # 電池の 47µF(高さ 2.0mm)と電源スイッチの MOSFET(1.75mm)は裏の後ろ(モーターの後ろ、x < -17.2)。Q1 は電池の線 J1 のそば
+    'Q1': (-21.0, 5.0, [90, 270], 'B', 6, False),
     'C4': (-21.0, -5.0, [90, 270], 'B', 6, False),
     # MCU のグループ(約 25 × 25mm)は電池の下の真ん中
     'U4': (-4.5, 0.0, None, 'T', 8, False),
-    # 電源スイッチの MOSFET のグループ(47µF の C4・22µF の C2・C3 は高い)は電池の後ろ
-    'Q1': (-21.0, -4.0, None, 'T', 8, False),
     # モータードライバは線のパッドの近く
     'U2': (-8.0, 16.5, None, 'T', 8, False), 'U3': (-8.0, -16.5, None, 'T', 8, False),
     # IMU は回転の中心(車軸の真ん中)の近く
@@ -58,6 +57,8 @@ FIXED = {
     'Q40': (14.2, 13.0, None, 'T', 8, False),
     # 壁センサの受光のアンプ: U74 は FL と R(左の前)、U75 は FR と L(右の前)
     'U74': (30.0, 17.5, None, 'T', 6, False), 'U75': (30.0, -17.5, None, 'T', 6, False),
+    # BLE モジュール HY0020(U5)は電池の下に置かない(アンテナがシールドの上の面)。縁の近くで、モーター・ファンの線から離す → 前の右
+    'U5': (33.0, -8.0, None, 'T', 8, False),
     # ブザーは前の真ん中(音の穴は前)
     'BZ1': (27.0, 0.0, [0], 'T', 8, False),
     # スイッチ SW2 は後ろの右
@@ -65,7 +66,7 @@ FIXED = {
 }
 EDGE_PARTS = {'SW1'}
 WHEELS = unary_union([box(-12.5, 22.0, 12.5, 40.0), box(-12.5, -40.0, 12.5, -22.0)])     # タイヤ・71T(つまみを向けない)
-ORDER = ['J2', 'J3', 'J1', 'SW1', 'J7', 'C4', 'U4', 'Q1', 'U2', 'U3', 'U76', 'U1', 'Q40', 'U74', 'U75', 'BZ1', 'SW2']
+ORDER = ['J2', 'J3', 'J1', 'SW1', 'J7', 'Q1', 'C4', 'U4', 'U2', 'U3', 'U76', 'U1', 'Q40', 'U74', 'U75', 'U5', 'BZ1', 'SW2']
 BATTERY = box(-16.25, -16.0, 6.25, 16.0)
 H_MAX_BAT = 1.2
 # 部品の高さ(最大、mm)。フットプリントの名前の一部で引く
@@ -74,7 +75,7 @@ HEIGHT = [('C_0603', 0.9), ('R_0603', 0.55), ('L_0603', 0.95), ('C_0805', 1.25),
           ('LXDC55', 1.0), ('DFE201610', 1.0), ('CSTNE', 1.0), ('D_SMF', 1.08), ('SOD-123F', 1.08), ('SOD-323', 1.1), ('LED_0402', 0.5),
           ('LED_0603', 0.8), ('TestPoint', 0.1), ('SolderWire', 1.0), ('PinHeader', 6.0), ('SSSS8', 1.4), ('TVAF06', 2.0),
           ('SMT-0540', 2.0), ('NetTie', 0.05)]
-THIN = {'C22': 0.95, 'C32': 0.95}      # モータードライバの VBAT の 10µF 25V(0805)は厚さ 0.85mm の品(村田 GRM219 系など)にして、ドライバのすぐ横(電池の下)に置く
+THIN = {'C22': 0.95, 'C32': 0.95, 'U5': 9.9}      # U5(BLE、高さ 1.05mm)はアンテナの上に電池が来ないよう、電池の下に置かない(高さの決まりで止める)。モータードライバの VBAT の 10µF 25V(0805)は厚さ 0.85mm の品(村田 GRM219 系など)にして、ドライバのすぐ横(電池の下)に置く
 def height(fp, ref=None):
     if ref in THIN:
         return THIN[ref]
@@ -230,8 +231,14 @@ def plan():
     for r in F:
         if r not in onboard and r not in unit_of:
             u = Unit(r, [r], F, r); units.append(u); unit_of[r] = u
-    for ref in FIXED:       # グループの中の部品を手で置くなら、グループから外す
+    for ref in FIXED:       # グループの中の部品を手で置くなら、グループから外す。裏に置くグループ(Q1)はばらす(グループは上の面だけ)
         u = unit_of.get(ref)
+        if u is not None and u.group and u.anchor == ref and FIXED[ref][3] == 'B':
+            units.remove(u)
+            for r in u.refs:
+                v = Unit(r, [r], F, r); units.append(v); unit_of[r] = v
+            print('ばらしたグループ(裏に置くため):', u.name)
+            continue
         if u is not None and u.group and u.anchor != ref:
             units.remove(u)
             g2 = Unit(u.name, [r for r in u.refs if r != ref], F, u.anchor); units.append(g2)

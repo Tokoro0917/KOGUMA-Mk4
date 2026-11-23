@@ -218,6 +218,7 @@ swpin = [p.GetNumber() for p in FP[sw].Pads() if p.GetNetname() == 'SW'][0]
 GROUPS.append(cluster(f'{sw} スイッチ', sw, [('C90', sw, swpin), ('R98', sw, swpin)]))
 GROUPS.append(cluster('FB2 +3V3A のフィルタ', 'FB2', [('R80', 'FB2', '2'), ('C85', 'R80', '2')]))
 GROUPS.append(cluster('D2 電源の LED', 'D2', [('R6', 'D2', '2')]))
+GROUPS.append(cluster('U5 BLE モジュール', 'U5', [('C92', 'U5', 'D1'), ('R100', 'U5', 'H1')]))   # 2026-11-23: VDD のパスコン、送信の 1kΩ
 
 # ---------------- LED の抵抗(基板の上、位置が決まっている LED のそば)----------------
 sys.path.insert(0, os.path.join(HERE, '../../../mechanical/vehicle'))
