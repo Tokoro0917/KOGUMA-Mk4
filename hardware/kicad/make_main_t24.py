@@ -220,6 +220,7 @@ def build():
     for c in comps:
         fp = load_fp(c['fp'])
         fp.SetReference(c['ref']); fp.SetValue(c['value'])
+        fp.Reference().SetVisible(False)      # シルクに部品の番号を出さない(2026-11-23、ユーザー。JLC が載せるので要らない。極性の印と外形の線は残す)
         fp.SetAttributes(fp.GetAttributes() & ~pcbnew.FP_EXCLUDE_FROM_BOM)   # 回路図ではどれも部品表に入れる(ライブラリの設定を消す)
         fp.SetPath(pcbnew.KIID_PATH(c['path'])); fp.SetSheetname(c['sheet']); fp.SetSheetfile(c['sheet'].strip('/') + '.kicad_sch' if c['sheet'] != '/' else NAME + '.kicad_sch')
         b.Add(fp)
@@ -265,7 +266,7 @@ def build():
     fps['D98'].SetPosition(P(*ps.LED_FRONT)); fps['D98'].SetOrientationDegrees(0.0); placed.add('D98')
     # ねじの穴(基板だけの部品)
     for i, (x, y) in enumerate(ps.SCREWS):
-        h = load_fp('MountingHole:MountingHole_2.2mm_M2'); h.SetReference(f'H{i + 1}'); h.SetValue('M2')
+        h = load_fp('MountingHole:MountingHole_2.2mm_M2'); h.SetReference(f'H{i + 1}'); h.SetValue('M2'); h.Reference().SetVisible(False)
         h.SetAttributes(h.GetAttributes() | pcbnew.FP_BOARD_ONLY | pcbnew.FP_EXCLUDE_FROM_BOM | pcbnew.FP_EXCLUDE_FROM_POS_FILES)
         h.SetPosition(P(x, y)); b.Add(h)
     # ほかの部品: 基板の右に、シートごとに並べる
