@@ -8493,5 +8493,160 @@
 			)
 		)
 	)
+	(symbol
+		(lib_id "Device:C")
+		(at 208.28 151.13 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f44b0ffb-d807-4977-84d0-41a339e56324")
+		(property "Reference" "C65"
+			(at 210.82 149.86 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10u"
+			(at 210.82 152.4 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+			(at 208.28 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 208.28 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 208.28 151.13 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c7485b9a-588b-418c-a8a9-b780b1d1cb5b")
+		)
+		(pin "2"
+			(uuid "4a407139-b5a5-4406-9841-11e9d690a4e7")
+		)
+		(instances
+			(project "KOGUMA-Mk4_t24"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "C65")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(label "VCORE"
+		(at 208.28 147.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "43aada7c-4520-49bb-a6e9-b6c470dd7e90")
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 208.28 154.94 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "36c5713c-a14d-4cca-a320-34e413f343a6")
+		(property "Reference" "#PWR390"
+			(at 208.28 157.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 208.28 158.75 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 208.28 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 208.28 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 208.28 154.94 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "3f283e71-d389-4106-8d8b-fb8d4eb3ca6c")
+		)
+		(instances
+			(project "KOGUMA-Mk4_t24"
+				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/573ce600-c2c8-500c-8fb5-a8b0ffd3807f"
+					(reference "#PWR390")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(text "C65(2026-11-23): AN5419 の表2「VFBSMPS に 10µF × 2(ESR 5mΩ)をインダクタのそば」に合わせて C54 に足す。\nC53(VLXSMPS 220pF)は AN5419 では LQFP・BGA だけ(VFQFPN68 は要らない)。付けても害はない"
+		(exclude_from_sim no)
+		(at 203.2 140.97 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5edc94ec-302e-401c-8eb9-4f82497c7f55")
+	)
 	(embedded_fonts no)
 )

@@ -6989,27 +6989,6 @@
 			)
 		)
 	)
-	(global_label "BOOT0"
-		(shape bidirectional)
-		(at 62.23 228.6 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "130887f8-9b9d-4870-915c-baa0fa1033ba")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 62.23 228.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
 	(label "BLE_SWDIO"
 		(at 62.23 264.16 0)
 		(effects
@@ -7527,7 +7506,7 @@
 		)
 		(uuid "393700a5-f3b9-4b13-a417-a5d3daf98e55")
 	)
-	(text "BLE モジュール HY0020(U5、2026-11-23): ログ・書き込み・パラメータ・ターンの自動調整を無線で(PC と BLE)。\nMCU の USART1(PB6・PB7)とつなぐ。P0.06 の送信は R100 1kΩ を通す(有線の USB シリアルをつなぐと、そちらが勝つ)。P0.07 で NRST、P0.05 で BOOT0 を動かす(MCU のピンは増えない)。\nDC/DC を使う(DCC と DEC4 をつなぐ、データシートの図5-2)。RFIO と ANT は最短でつなぐ。TP2・TP3 は nRF52832 の書き込み(SWD)。\n置き場所: アンテナはシールドの上の面なので、電池の下に置かない。基板の縁の近く、モーター・ファンの線から離す"
+	(text "BLE モジュール HY0020(U5、2026-11-23): ログ・書き込み・パラメータ・ターンの自動調整を無線で(PC と BLE)。\nMCU の USART1(PB6・PB7)とつなぐ。P0.06 の送信は R100 1kΩ を通す(有線の USB シリアルをつなぐと、そちらが勝つ)。P0.07 で NRST を動かす(MCU のピンは増えない)。BOOT0 にはつながない(2026-11-23、AN2606: H72x の書き込み用のプログラムの USART1 は PA9・PA10 だけで、PB6・PB7 では使えない。誤って H にすると MCU が止まって見えるため)。\nDC/DC を使う(DCC と DEC4 をつなぐ、データシートの図5-2)。RFIO と ANT は最短でつなぐ。TP2・TP3 は nRF52832 の書き込み(SWD)。\n置き場所: アンテナはシールドの上の面なので、電池の下に置かない。基板の縁の近く、モーター・ファンの線から離す"
 		(exclude_from_sim no)
 		(at 19.05 213.35999999999999 0)
 		(effects
@@ -7537,6 +7516,10 @@
 			(justify left bottom)
 		)
 		(uuid "14e276e4-8c7f-4c90-811d-cda565504607")
+	)
+	(no_connect
+		(at 62.23 228.6)
+		(uuid "9f690958-a767-4172-a158-6353afbce6c1")
 	)
 	(embedded_fonts no)
 )
