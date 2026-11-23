@@ -57,7 +57,7 @@ FIXED = {'STM32H725RGVx': 'STM32H725RGV6(または RGV3)', 'MP6551GQB': 'MPS MP6
          'SMF13A': 'Littelfuse SMF13A', 'MBR230LSFT1G': 'onsemi MBR230LSFT1G', 'BLM18PG221SN1D': 'Murata BLM18PG221SN1D',
          '2.2u DFE201610E-2R2M': 'Murata DFE201610E-2R2M=P2', 'CSTNE10M0G52Z000R0': 'Murata CSTNE10M0G52Z000R0',
          'T521V476M025ATE040 (47u 25V)': 'KEMET T521V476M025ATE040', 'PMR18EZPFU5L00 (5m 1%)': 'ROHM PMR18EZPFU5L00',
-         'SSSS810701': 'Alps Alpine SSSS810701', 'OPV332': 'TT Electronics (Optek) OPV332', 'SFH 229 FA': 'ams OSRAM SFH 229 FA(生産終了 2025-11-28)', 'TVAF06-A020B-R': 'Jianfu TVAF06-A020B-R', 'SMT-0540-S-R': 'PUI Audio SMT-0540-S-R'}
+         'SSSS810701': 'Alps Alpine SSSS810701', 'OPV332': 'TT Electronics (Optek) OPV332', 'SFH 229 FA': 'ams OSRAM SFH 229 FA(2025-11-28 生産終了。**予備を含めて在庫を確保**)', 'TVAF06-A020B-R': 'Jianfu TVAF06-A020B-R', 'SMT-0540-S-R': 'PUI Audio SMT-0540-S-R'}
 NOT_SMT = ('J1', 'J2', 'J3', 'J4', 'J5', 'J6', 'J7', 'NT1', 'TP', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77')
 
 def r_is_pad(refs):
@@ -84,7 +84,7 @@ def main():
                 mpn, memo = '(基板のパッド。部品なし)', {'J1': '電池の線 BT2.0 のケーブルをはんだ付け', 'J2': 'モーターの線(裏)', 'J3': 'モーターの線(裏)', 'J4': 'ファンの線',
                                                      'J5': 'エンコーダ基板をはんだ付け', 'J6': 'エンコーダ基板をはんだ付け', 'NT1': 'PGND と GND の1点', 'TP1': '', 'TP2': '', 'TP3': ''}.get(refs[0], '')
             if refs == ['J7']:
-                mpn, h, memo = '1.27mm 2 × 3 のピンヘッダ(縦、穴)。品番は未定', 6.0, '高さ約 5mm。電池の外'
+                mpn, h, memo = '1.27mm 2 × 3 のピンヘッダ(縦、穴)。**手持ち**(2026-11-23)', 6.0, '高さ約 5mm。電池の外。JLC の BOM には入れない'
             if v.startswith('APTD1608'):
                 mpn, h, memo = 'Kingbright APTD1608LSECK/J4-PF', 0.95, '1番がカソード'
             if not mpn:

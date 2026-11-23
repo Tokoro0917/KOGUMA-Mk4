@@ -55,14 +55,14 @@
 	(pad "1" thru_hole rect
 		(at -7.04 1.27)
 		(size 1.6 1.6)
-		(drill 0.9)
+		(drill 1.0)
 		(layers "*.Cu" "*.Mask")
 		(uuid "560891d6-ce8d-449e-929a-eeec4b094f04")
 	)
 	(pad "2" thru_hole circle
 		(at -7.04 -1.27)
 		(size 1.6 1.6)
-		(drill 0.9)
+		(drill 1.0)
 		(layers "*.Cu" "*.Mask")
 		(uuid "5cceb2fa-4adc-4e52-8c1f-ecd4a15b321b")
 	)
