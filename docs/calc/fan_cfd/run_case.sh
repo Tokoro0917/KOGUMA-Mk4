@@ -6,7 +6,10 @@ set -e
 cd "$1"
 export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 export WM_PROJECT_DIR=/usr/share/openfoam   # Ubuntu の openfoam パッケージの etc の場所
-if [ -n "$2" ]; then foamDictionary -entry endTime -set "$2" system/controlDict > /dev/null; fi
+if [ -n "$2" ]; then
+  foamDictionary -entry endTime -set "$2" system/controlDict > /dev/null
+  foamDictionary -entry writeInterval -set "$(( $2 / 3 ))" system/controlDict > /dev/null   # 終わりの回数で必ず書き出すように、3 等分
+fi
 blockMesh > log.blockMesh 2>&1
 surfaceFeatureExtract > log.surfaceFeatureExtract 2>&1
 decomposePar -force > log.decomposePar0 2>&1
