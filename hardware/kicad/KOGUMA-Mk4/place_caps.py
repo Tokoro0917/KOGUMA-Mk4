@@ -239,8 +239,8 @@ keep = [sbox(bat[0] - 1.3, bat[2] + 0.3, bat[1] + 1.3, bat[2] + 1.3), sbox(bat[0
 keep += [Point(x, y).buffer(2.6) for (x, y) in ps.SCREWS] + [sbox(x - 2.6, min(y, 0) and y or bat[2], x + 2.6, max(y, 0) and y or -bat[2]) for (x, y) in ps.SCREWS]
 keep = unary_union(keep) if not T24 else Point(0, 0).buffer(0)   # t24 は電池のホルダなし
 if T24:
-    # 後ろの真ん中(モードの LED と電池の間)は、決定のスイッチ SW2 の場所にあけておく(2026-11-24、ユーザー: スイッチを後ろへ)。LED の抵抗を置かない
-    keep = sbox(-21.2, -3.4, -16.0, 3.4)
+    # 後ろの真ん中(V 字の切り欠きの先の縁)は、電源スイッチ SW1 の場所にあけておく(2026-11-24、ユーザー: 電源スイッチを後ろへ)。LED の抵抗を置かない
+    keep = sbox(-25.8, -4.0, -21.1, 4.0)
 def on_board_ok(b):
     """KiCad の箱(mm)が基板の外形の 0.3mm 内側にあり、電池のホルダに重ならない"""
     poly = sbox(b[0] - OX, OY - b[3], b[2] - OX, OY - b[1])
