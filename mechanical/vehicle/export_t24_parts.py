@@ -45,6 +45,28 @@ if __name__ == '__main__':
     check(parts['45'], (-14.26, -9.76, -24.4, -22.4))
     cq.exporters.export(parts['45'], os.path.join(OUT, '11_pinion_13T_R.step'))
     print('10_motor_R_NFP-D8620・11_pinion_13T_R')
+    # 2026-11-24: エンコーダ基板 右に部品を付ける(ユーザー「IC もつけて」)。KiCad の 3D モデルが入っていないので、寸法から作る
+    #   MT6835(TSSOP-16、MT6835 Rev1.3 の 13 章): 本体 D 5.0 × E1 4.4 × 厚さ 1.1mm(浮き 0.1mm、全体 A 1.2mm まで)、足 16 本(ピッチ 0.65、幅 0.25、
+    #   足の先から先 E 6.4mm、足の厚さ 0.15、先の平らな所 L 0.6)。ピンの列を上下(z)に向け、中心は (x 0, z 12.0)、チップの面(F、y -17.5 から外)
+    #   C1(0402、1.0 × 0.5 × 0.5mm): 裏の面(B、y -16.9 から内)、KiCad の (98.725, 105.5) = 機体の (x -1.275, z 11.4)
+    enc = [parts['47']]
+    check(parts['47'], (-3.0, 3.0, -17.5, -16.9))
+    YF, ZC = -17.5, 12.0
+    enc.append(cq.Solid.makeBox(5.0, 1.1, 4.4, cq.Vector(-2.5, YF - 1.2, ZC - 2.2)))                 # 本体(y -18.7〜-17.6)
+    for k in range(8):
+        x = -2.275 + 0.65 * k - 0.125
+        for sz in (1, -1):
+            z_body = ZC + sz * 2.2
+            z_tip = ZC + sz * 3.2
+            z0, z1 = sorted((z_body, z_body + sz * 0.4))
+            enc.append(cq.Solid.makeBox(0.25, 0.15, z1 - z0, cq.Vector(x, YF - 0.65, z0)))          # 本体から出る所
+            z0, z1 = sorted((z_body + sz * 0.4, z_tip))
+            enc.append(cq.Solid.makeBox(0.25, 0.15, z1 - z0, cq.Vector(x, YF - 0.15, z0)))          # 基板に付く所
+            z0, z1 = sorted((z_body + sz * 0.35, z_body + sz * 0.45))
+            enc.append(cq.Solid.makeBox(0.25, 0.5, z1 - z0, cq.Vector(x, YF - 0.65, z0)))           # 曲がる所
+    enc.append(cq.Solid.makeBox(1.0, 0.5, 0.5, cq.Vector(-1.775, -16.9, 11.15)))                      # C1(裏)
+    cq.exporters.export(cq.Compound.makeCompound(enc), os.path.join(OUT, '08_encoder_board_R_t24.step'))
+    print('08_encoder_board_R_t24(MT6835・C1 付き)')
     # 2026-11-24: タイヤ 右(MK3 と同じミニッツのタイヤ。外径 24mm・内径 20mm・幅 8.5mm の輪で簡単に描いた形)
     check(parts['37'], (-12.0, 12.0, -33.3, -24.8))
     cq.exporters.export(parts['37'], os.path.join(OUT, '12_tire_R.step'))
