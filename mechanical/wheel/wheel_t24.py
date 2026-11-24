@@ -1,4 +1,4 @@
-"""タイヤ24mm 用のホイール(t24v2、2026-11-24。t24v1 は 2026-11-21)。右側、左は y を反転。CadQuery で作る。
+"""タイヤ24mm 用のホイール(t24v3、2026-11-24: 窓なし・円板 1.2mm・面取りなし。t24v2 は窓 6つ・1.0mm、t24v1 は 2026-11-21)。右側、左は y を反転。CadQuery で作る。
 座標は機体と同じ(原点は車軸の真下の床、+x 前、+y 左、z 上、mm)。車軸 (0, y, 12.0)。
 タイヤ(MK3 と同じ 24mm、内径・幅はミニッツのナローから推定 φ20 × 8.5mm)を y -33.3〜-24.8 に受ける。
 71T(厚さ 2mm、y -24.8〜-22.8)はホイールの内側の面に接着する。車軸は **3×8 の平行ピン(y -28.2〜-20.2)** を内側から 5mm 圧入する。
@@ -11,21 +11,22 @@ import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import cq_arcs     # 丸い所を本当の円弧にする(2026-11-24)
 
-VER = 't24v2'
+VER = 't24v3'
 PIN_Y = (-28.2, -20.2)      # 平行ピン 3×8 の両端(機体のモデル・確かめるスクリプトが使う)
 AX = (0.0, 12.0)            # 車軸 (x, z)
 W = dict(
     od=20.0,                # ホイールの外径 = タイヤの内径(推定。実物で測る)
     y_out=-33.3, y_in=-24.8,   # タイヤを受ける幅 8.5mm(推定)
     rim=0.8,                # 外の輪の厚さ(JLC のすすめる最小)
-    web=1.0, web_y=-24.8,   # 円板(内側の面、71T を貼る面)の厚さ
+    web=1.2, web_y=-24.8,   # 円板(内側の面、71T を貼る面)の厚さ。t24v3: 1.0 → 1.2mm(docs/calc/t24_wheel_fem.py で安全率 3.8 / 2.4)
+    win_fix=True,
     hub_r=2.5,              # ピンを囲むハブ
     hub_y0=-29.2,           # ハブの外の端(ピンの穴の底 1.0mm)。t24v1 は -27.2
     boss_r=3.8, boss_y1=-23.4,   # 71T の穴(φ8 として)の中に入る段: 71T の芯を出す。外の軸受(-23.2)から 0.2mm
     spacer_r=1.9, spacer_y1=-23.2,   # 外の軸受の内輪に当たる段(内輪だけに当たり、外輪とつばには触れない)
     pin_r=1.5, pin_y0=-28.2, pin_clear=-0.05,   # 平行ピンの穴(圧入。φ2.95、深さ 5mm)。t24v1 は -26.2(深さ 3mm)
-    holes=6, hole_r0=3.6, hole_r1=8.6, spoke_w=1.4,   # 円板の肉抜き(扇形の窓 6つ、スポーク 1.4mm)
-    chamfer=0.3,
+    holes=0, hole_r0=3.6, hole_r1=8.6, spoke_w=1.4,   # t24v3(2026-11-24): 窓なし(t24v2 までは扇形の窓 6つ、スポーク 1.4mm。ターンの横の力で安全率 0.7 だった)
+    chamfer=0.0,            # t24v3: ピンの穴の入口の面取りをやめる(マウントと同じ。t24v2 までは 0.3)
 )
 
 def ycyl(r, y0, y1, x=AX[0], z=AX[1]):
@@ -62,7 +63,8 @@ def build(W=W):
     pr = W['pin_r'] + W['pin_clear'] / 2
     body = body.cut(ycyl(pr, W['pin_y0'], W['spacer_y1'] + 0.1))                                     # ピンの穴(内側から、止まり穴)
     c = W['chamfer']
-    body = body.cut(cq.Workplane().add(cq.Solid.makeCone(pr + c, pr, c, cq.Vector(AX[0], W['spacer_y1'], AX[1]), cq.Vector(0, -1, 0))))
+    if c > 0:
+        body = body.cut(cq.Workplane().add(cq.Solid.makeCone(pr + c, pr, c, cq.Vector(AX[0], W['spacer_y1'], AX[1]), cq.Vector(0, -1, 0))))
     return body
 
 if __name__ == '__main__':
