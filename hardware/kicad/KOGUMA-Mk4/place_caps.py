@@ -13,11 +13,15 @@
 - 抵抗(2026-11-06): プルアップ・プルダウン・分圧・RC の抵抗は、つながる MCU のピンのそばに(ADC の分圧と RC は ADC のピンのすぐそば)。
   LED の抵抗は、位置が決まっている LED のそばに基板の上で置く(基板の外形の内側、電池のホルダの載る所を避ける)
 使い方(このフォルダで): python3 place_caps.py  (gen_pcb.py で作った、部品を置く前の基板に対して使う)
+          python3 place_caps.py t24  (タイヤ24mm の基板 ../KOGUMA-Mk4_t24。../make_main_t24.py のあとに使う)
+t24 では電池のホルダはない(電池は 1.5mm のスペーサーで浮かせ、電池の下は高さ 1.2mm までの部品だけ)。
+エンコーダのパッド J5・J6 は上の面(ENC_Base_Edge_T24)なので、C86・C87 はそのパッドのそばに置く
 """
 import os, sys, math
 import pcbnew
 HERE = os.path.dirname(os.path.abspath(__file__))
-PCB = os.path.join(HERE, 'KOGUMA-Mk4.kicad_pcb')
+T24 = 't24' in sys.argv[1:]                              # python3 place_caps.py t24 → タイヤ24mm の基板(../KOGUMA-Mk4_t24、2026-11-23)
+PCB = os.path.join(HERE, '../KOGUMA-Mk4_t24/KOGUMA-Mk4_t24.kicad_pcb') if T24 else os.path.join(HERE, 'KOGUMA-Mk4.kicad_pcb')
 mm, MM = pcbnew.FromMM, pcbnew.ToMM
 board = pcbnew.LoadBoard(PCB)
 FP = {f.GetReference(): f for f in board.GetFootprints()}
@@ -221,20 +225,11 @@ GROUPS.append(cluster('U5 BLE モジュール', 'U5', [('C92', 'U5', 'D1'), ('D9
 for u, rs, c in (('U6', 'R22', 'C24'), ('U7', 'R32', 'C34')):
     GROUPS.append(cluster(f'{u} INA241A3(モーターの電流)', u, [(c, u, '6'), (rs, u, '8', dict(mode='tangent', pin2='1', normal=(0, -1)))]))   # シャントは IC の上(1 番と 8 番の並ぶ辺)
 
-# ---------------- エンコーダ基板のパスコン(基板の上、J5・J6 の 3.3V のパッドの内側)----------------
-# J5・J6 のパッドは裏(エンコーダ基板の内側と外側に2列)。内側の列の 3.3V(1番)と GND(7番)の真上に、横向きに置き、
-# それぞれのパッドの上からビアで裏へ。機体の |y| 18.6(電池のホルダの壁 |y| 16.3〜17.3 から 0.57mm 離れる)
-for c, j in (('C86', 'J5'), ('C87', 'J6')):
-    p1 = min((p for p in FP[j].Pads() if p.GetNumber() == '1'), key=lambda p: abs(xy(p)[1] - OY))   # 内側の列
-    p7 = min((p for p in FP[j].Pads() if p.GetNumber() == '7'), key=lambda p: abs(xy(p)[1] - OY))
-    (x1, y1), (x7, _) = xy(p1), xy(p7)
-    yc = OY - 18.6 if y1 < OY else OY + 18.6
-    f = FP[c]; f.SetPosition(pcbnew.VECTOR2I(mm((x1 + x7) / 2), mm(yc)))
-    face(c, '1', (1 if x1 > x7 else -1, 0))              # 3.3V のパッドを 1番の側に
-    f.SetPosition(pcbnew.VECTOR2I(mm((x1 + x7) / 2), mm(yc)))
-
 # ---------------- LED の抵抗(基板の上、位置が決まっている LED のそば)----------------
 sys.path.insert(0, os.path.join(HERE, '../../../mechanical/vehicle'))
+if T24:
+    sys.path.insert(0, os.path.join(HERE, '../../../docs/calc/frame'))
+    import pcb_t24                                       # pcb_shape を t24 の値に書き換える
 import pcb_shape as ps
 from shapely.geometry import Point, box as sbox
 from shapely.ops import unary_union
@@ -242,29 +237,18 @@ outline = ps.outline()                                   # 機体の座標の基
 bat = ps.BAT                                             # 電池のホルダの壁と耳(mechanical/battery_holder): 基板の上に載る
 keep = [sbox(bat[0] - 1.3, bat[2] + 0.3, bat[1] + 1.3, bat[2] + 1.3), sbox(bat[0] - 1.3, -bat[2] - 1.3, bat[1] + 1.3, -bat[2] - 0.3)]
 keep += [Point(x, y).buffer(2.6) for (x, y) in ps.SCREWS] + [sbox(x - 2.6, min(y, 0) and y or bat[2], x + 2.6, max(y, 0) and y or -bat[2]) for (x, y) in ps.SCREWS]
-keep = unary_union(keep)
+keep = unary_union(keep) if not T24 else Point(0, 0).buffer(0)   # t24 は電池のホルダなし
+if T24:
+    # 後ろの真ん中(モードの LED と電池の間)は、決定のスイッチ SW2 の場所にあけておく(2026-11-24、ユーザー: スイッチを後ろへ)。LED の抵抗を置かない
+    keep = sbox(-21.2, -3.4, -16.0, 3.4)
 def on_board_ok(b):
     """KiCad の箱(mm)が基板の外形の 0.3mm 内側にあり、電池のホルダに重ならない"""
     poly = sbox(b[0] - OX, OY - b[3], b[2] - OX, OY - b[1])
     return outline.buffer(-0.3).contains(poly) and not poly.intersects(keep)
 onboard = {r: box(r) for r, f in FP.items() if OX - 40 < MM(f.GetPosition().x) < OX + 50 and r not in ('C86', 'C87')}
-onboard.update({c: box(c) for c in ('C86', 'C87')})
-_try = try_place
-def try_place(ref, x, y, placed):
-    b = _try(ref, x, y, placed)
-    return b if (b and (ref not in LED_R or on_board_ok(b))) else None
-LED_R = {}
-for f in FP.values():
-    r = f.GetReference()
-    if r.startswith('R9') and r not in ('R97', 'R98'):
-        led = [q.GetParentFootprint().GetReference() for p in f.Pads() for q in board.GetPads()
-               if q.GetNetCode() == p.GetNetCode() and q.GetParentFootprint().GetReference().startswith('D9')]
-        if led:
-            LED_R[r] = led[0]
-for r, led in sorted(LED_R.items()):
-    apin = [p.GetNumber() for p in FP[led].Pads() if p.GetNetCode() in {q.GetNetCode() for q in FP[r].Pads()}][0]
-    # LED は縁の近くにあるので、まわりのすべての向きから探す(抵抗のパッドと LED のパッドの距離が最小の所)
-    lx, ly = xy(pad(led, apin)); mine = [p.GetNumber() for p in FP[r].Pads() if p.GetNetCode() == pad(led, apin).GetNetCode()][0]
+def place_near(r, anchor, apin):
+    """基板の上で、r の同じネットのパッドが anchor のパッドにいちばん近くなる所(4つの向き、まわり ±7mm)。外形の 0.3mm 内側"""
+    lx, ly = xy(pad(anchor, apin)); mine = [p.GetNumber() for p in FP[r].Pads() if p.GetNetCode() == pad(anchor, apin).GetNetCode()][0]
     best = None
     for ang in (0, 90, 180, 270):
         FP[r].SetOrientationDegrees(ang)
@@ -282,8 +266,45 @@ for r, led in sorted(LED_R.items()):
     d, ang, x, y, b = best
     FP[r].SetOrientationDegrees(ang); FP[r].SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
     onboard[r] = b
+    return d
+# ---------------- エンコーダ基板のパスコン(基板の上、J5・J6 の 3.3V のパッドの内側)----------------
+# J5・J6 のパッドは裏(エンコーダ基板の内側と外側に2列)。内側の列の 3.3V(1番)と GND(7番)の真上に、横向きに置き、
+# それぞれのパッドの上からビアで裏へ。機体の |y| 18.6(電池のホルダの壁 |y| 16.3〜17.3 から 0.57mm 離れる)
+for c, j in ((() if T24 else (('C86', 'J5'), ('C87', 'J6')))):
+    p1 = min((p for p in FP[j].Pads() if p.GetNumber() == '1'), key=lambda p: abs(xy(p)[1] - OY))   # 内側の列
+    p7 = min((p for p in FP[j].Pads() if p.GetNumber() == '7'), key=lambda p: abs(xy(p)[1] - OY))
+    (x1, y1), (x7, _) = xy(p1), xy(p7)
+    yc = OY - 18.6 if y1 < OY else OY + 18.6
+    f = FP[c]; f.SetPosition(pcbnew.VECTOR2I(mm((x1 + x7) / 2), mm(yc)))
+    face(c, '1', (1 if x1 > x7 else -1, 0))              # 3.3V のパッドを 1番の側に
+    f.SetPosition(pcbnew.VECTOR2I(mm((x1 + x7) / 2), mm(yc)))
+
+if T24:   # エンコーダのパッドは上の面: 3.3V(1番)のパッドのそばに、同じ面で
+    for c, j in (('C86', 'J5'), ('C87', 'J6')):
+        print(f'  {c} → {j} の 3.3V のパッドから {place_near(c, j, "1"):.1f}mm')
+onboard.update({c: box(c) for c in ('C86', 'C87')})
+_try = try_place
+def try_place(ref, x, y, placed):
+    b = _try(ref, x, y, placed)
+    return b if (b and (ref not in LED_R or on_board_ok(b))) else None
+LED_R = {}
+for f in FP.values():
+    r = f.GetReference()
+    if r.startswith('R9') and r not in ('R97', 'R98'):
+        led = [q.GetParentFootprint().GetReference() for p in f.Pads() for q in board.GetPads()
+               if q.GetNetCode() == p.GetNetCode() and q.GetParentFootprint().GetReference().startswith('D9')]
+        if led:
+            LED_R[r] = led[0]
+for r, led in sorted(LED_R.items()):
+    apin = [p.GetNumber() for p in FP[led].Pads() if p.GetNetCode() in {q.GetNetCode() for q in FP[r].Pads()}][0]
+    d = place_near(r, led, apin)                         # LED は縁の近くにあるので、まわりのすべての向きから探す
     print(f'  {r} → {led} のパッドから {d:.1f}mm')
     g = pcbnew.PCB_GROUP(board); g.SetName(f'{led} LED'); g.AddItem(FP[led]); g.AddItem(FP[r]); LED_GROUPS = globals().setdefault('LED_GROUPS', []); LED_GROUPS.append(g)
+
+if T24:   # make_main_t24.py が並べた所に書いたシートごとのメモ(未配置)は、並べ直すので消す
+    for d in list(board.Drawings()):
+        if d.GetClass() == 'PCB_TEXT' and d.GetText().endswith('(未配置)'):
+            board.Remove(d)
 
 # ---------------- グループにして、基板の外(前)に並べる ----------------
 for g in list(board.Groups()):
