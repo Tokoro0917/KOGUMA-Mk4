@@ -233,8 +233,8 @@ def build():
         fps[c['ref']] = fp
     add_outline(b)
     placed = set()
-    # エンコーダのパッド: 左 J5 は縁 (0, +16.7) で回転 0、右 J6 は (0, -16.7) で 180°
-    for ref, y, rot in (('J5', 16.7, 0.0), ('J6', -16.7, 180.0)):
+    # エンコーダのパッド: 左 J5 は縁 (0, +16.9) で回転 0、右 J6 は (0, -16.9) で 180°(2026-11-24: 16.7 → 16.9。切り欠きの縁をエンコーダ基板にぴったり付けた)
+    for ref, y, rot in (('J5', 16.9, 0.0), ('J6', -16.9, 180.0)):
         fps[ref].SetPosition(P(0.0, y)); fps[ref].SetOrientationDegrees(rot); placed.add(ref)
     # 壁センサのホルダ(裏)。ps.pads() と合う向きを探す
     for nm, (em, rc) in SENSORS.items():
@@ -289,7 +289,7 @@ def build():
             if x > x0 + 70:
                 x = x0; y += 6
         y += 10
-    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v7 (mechanical/pcb/pcb_outline_t24v7.dxf), 0.6mm. '
+    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v8 (mechanical/pcb/pcb_outline_t24v8.dxf), 0.6mm. '
             'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, same assignment as ToraNeko.Mk3), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')

@@ -44,7 +44,7 @@
    },
    {
     "group": "基板 + 部品",
-    "m": 6.13,
+    "m": 6.14,
     "iz": 45.2
    },
    {
@@ -231,6 +231,18 @@
    "overlap": 0.0
   },
   {
+   "a": "pcb",
+   "b": "enc_board_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "enc_board_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
    "a": "tire_R",
    "b": "spur71_R",
    "gap": 0.0,
@@ -252,18 +264,6 @@
    "a": "mount_L",
    "b": "enc_board_L",
    "gap": 0.1,
-   "overlap": 0.0
-  },
-  {
-   "a": "pcb",
-   "b": "enc_board_R",
-   "gap": 0.2,
-   "overlap": 0.0
-  },
-  {
-   "a": "pcb",
-   "b": "enc_board_L",
-   "gap": 0.2,
    "overlap": 0.0
   },
   {

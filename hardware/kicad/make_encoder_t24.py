@@ -65,12 +65,12 @@ def edge_pad_fp():
 
 def base_fp():
     """メイン基板の側: 切り欠きの縁(local Y = 0)の内側、上の面にパッド7つ。回転 0 = チップの面(縁の外)が画面の上 = 左のエンコーダ(J5)。右(J6)は 180°。
-    原点は縁の上の、エンコーダ基板の真ん中(機体の x 0)。エンコーダ基板の裏の面は縁から 0.2mm 外(local Y -0.2)"""
+    原点は縁の上の、エンコーダ基板の真ん中(機体の x 0)。エンコーダ基板の裏の面は縁にぴったり(local Y 0。2026-11-24 にすき間 0.2mm をやめた。ユーザー)"""
     fp = pcbnew.FOOTPRINT(None)
     fp.SetFPID(pcbnew.LIB_ID('KOGUMA-Mk4', 'ENC_Base_Edge_T24'))
     fp.SetLibDescription('KOGUMA MK4 main board for tire 24mm: solder pads on the TOP side along the cutout edge (local Y=0) for the encoder board '
-                         'standing 0.2mm outside the edge (back face at Y=-0.2, chip face at Y=-0.8). Pads 0.5x0.8 from Y=0.2 to 1.0, pitch 0.8. '
-                         'Rotation 0 = chip side toward the top of the screen (left encoder J5, edge at robot y +16.7); rotate 180deg for the right encoder J6 (y -16.7)')
+                         'standing right at the edge (back face at Y=0, chip face at Y=-0.6). Pads 0.5x0.8 from Y=0.2 to 1.0, pitch 0.8. '
+                         'Rotation 0 = chip side toward the top of the screen (left encoder J5, edge at robot y +16.9); rotate 180deg for the right encoder J6 (y -16.9)')
     fp.SetAttributes(pcbnew.FP_SMD)
     for n in ORDER:
         p = pcbnew.PAD(fp)
@@ -82,7 +82,7 @@ def base_fp():
         p.SetPosition(pcbnew.VECTOR2I(MM(round(-(PAD_X[n] - 100.0), 4)), MM(0.6)))   # 左のエンコーダ: チップの面から見た左右が、上から見ると逆
         fp.Add(p)
     # F.Fab: エンコーダ基板(0.6mm)と縁
-    for (a, b) in (((-3.0, -0.2), (3.0, -0.2)), ((-3.0, -0.8), (3.0, -0.8)), ((-3.0, -0.2), (-3.0, -0.8)), ((3.0, -0.2), (3.0, -0.8)), ((-4.5, 0.0), (4.5, 0.0))):
+    for (a, b) in (((-3.0, 0.0), (3.0, 0.0)), ((-3.0, -0.6), (3.0, -0.6)), ((-3.0, 0.0), (-3.0, -0.6)), ((3.0, 0.0), (3.0, -0.6)), ((-4.5, 0.0), (4.5, 0.0))):
         s = pcbnew.PCB_SHAPE(fp); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetLayer(pcbnew.F_Fab); s.SetWidth(MM(0.05))
         s.SetStart(pcbnew.VECTOR2I(MM(a[0]), MM(a[1]))); s.SetEnd(pcbnew.VECTOR2I(MM(b[0]), MM(b[1]))); fp.Add(s)
     return fp
