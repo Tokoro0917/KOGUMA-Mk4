@@ -1,7 +1,7 @@
-マウント t24v7: 体積 969 mm³(1.16 g)、モーターの中心 (-12.01, 8.20)
+マウント t24v8: 体積 979 mm³(1.18 g)、モーターの中心 (-12.01, 8.20)
 mount        - brg_out      すき間  0.000 mm  重なり   0.433 mm³ ぶつかる
 mount        - brg_in       すき間  0.000 mm  重なり   0.433 mm³ ぶつかる
-mount        - motor        すき間  0.000 mm  重なり   1.490 mm³ ぶつかる
+mount        - motor        すき間  0.000 mm  重なり   1.411 mm³ ぶつかる
 mount        - pcb          すき間  0.000 mm  重なり   0.000 mm³ 接している
 mount        - frame        すき間  0.000 mm  重なり   0.000 mm³ 接している
 mount        - screw_front  すき間  0.000 mm  重なり   0.000 mm³ 接している
@@ -21,22 +21,21 @@ magnet       - MT6835       すき間  0.500 mm  重なり   0.000 mm³
 spur71       - pcb          すき間  0.500 mm  重なり   0.000 mm³ 
 wheel        - pinion13     すき間  0.532 mm  重なり   0.000 mm³ 
 mount        - MT6835       すき間  0.600 mm  重なり   0.000 mm³ 
-motor_boss   - pinion13     すき間  0.600 mm  重なり   0.000 mm³ 
 tire         - pcb          すき間  0.602 mm  重なり   0.000 mm³ 
 mount        - battery      すき間  0.757 mm  重なり   0.000 mm³ 
 mount        - wheel        すき間  0.800 mm  重なり   0.000 mm³ 
+motor_boss   - pinion13     すき間  0.800 mm  重なり   0.000 mm³ 
 MT6835       - pcb          すき間  0.800 mm  重なり   0.000 mm³ 
 enc_board    - battery      すき間  0.900 mm  重なり   0.000 mm³ 
-motor        - pinion13     すき間  0.900 mm  重なり   0.000 mm³ 
 fan_ring     - screw_front  すき間  0.909 mm  重なり   0.000 mm³ 
 mount        - shaft        すき間  1.000 mm  重なり   0.000 mm³ 
 spur71       - shaft        すき間  1.050 mm  重なり   0.000 mm³ 
-spur71       - motor_boss   すき間  1.097 mm  重なり   0.000 mm³ 
+motor        - pinion13     すき間  1.100 mm  重なり   0.000 mm³ 
 motor        - pcb          すき間  1.100 mm  重なり   0.000 mm³ 
 motor        - frame        すき間  1.100 mm  重なり   0.000 mm³ 
 brg_in       - pcb          すき間  1.175 mm  重なり   0.000 mm³ 
 brg_out      - pcb          すき間  1.235 mm  重なり   0.000 mm³ 
-spur71       - motor        すき間  1.300 mm  重なり   0.000 mm³ 
+spur71       - motor_boss   すき間  1.282 mm  重なり   0.000 mm³ 
 mount        - magnet       すき間  1.448 mm  重なり   0.000 mm³ 
 mount        - pin          すき間  1.450 mm  重なり   0.000 mm³ 
 wheel        - pcb          すき間  1.471 mm  重なり   0.000 mm³ 
