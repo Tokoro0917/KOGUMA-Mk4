@@ -91,11 +91,7 @@ def main():
         return (np.abs(x[1] + 24.8) < 0.03) & (r > 4.0) & (r < 9.25)
     D_glue = basis.get_dofs(m.facets_satisfying(on_glue, boundaries_only=True)).all()
     from scipy.sparse.linalg import splu
-    lus = {}
-    for key, DD in (('pin', D), ('glue', D_glue)):
-        I = np.setdiff1d(np.arange(K.shape[0]), DD)
-        lus[key] = (I, splu(K[I][:, I].tocsc()))
-    unit = {}
+    loads = {}
     for name, d in (('縦', (0, 0, 1.0)), ('横', (0, 1.0, 0)), ('前後', (1.0, 0, 0))):
         @LinearForm
         def f(v, w, d=d):
@@ -104,10 +100,17 @@ def main():
         total = F[basis.nodal_dofs[{(0, 0, 1.0): 2, (0, 1.0, 0): 1, (1.0, 0, 0): 0}[d]]].sum() + \
             F[basis.edge_dofs[{(0, 0, 1.0): 2, (0, 1.0, 0): 1, (1.0, 0, 0): 0}[d]]].sum()
         F = F / total                                # 合計 1N にする
-        I, lu = lus['glue' if name == '前後' else 'pin']
-        x = np.zeros(K.shape[0])
-        x[I] = lu.solve(F[I])
-        unit[name] = x
+        loads[name] = F
+    # 固定のしかたごとに 1 回だけ分解し、解いたら捨てる(2 つを同時に持つとメモリが足りない)
+    unit = {}
+    for DD, names in ((D, ('縦', '横')), (D_glue, ('前後',))):
+        I = np.setdiff1d(np.arange(K.shape[0]), DD)
+        lu = splu(K[I][:, I].tocsc())
+        for name in names:
+            x = np.zeros(K.shape[0])
+            x[I] = lu.solve(loads[name][I])
+            unit[name] = x
+        del lu
     return m, basis, unit
 
 
