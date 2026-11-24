@@ -147,7 +147,7 @@ def analyse(case):
     if '@' in case:                       # 「フォルダ@くり返し」で、その回の結果を見る
         case, t = case.split('@')
     pts, faces, owner, neigh, patches = read_mesh(case)
-    ncell = owner.max() + 1
+    ncell = max(owner.max(), neigh.max()) + 1
     cf, sf = face_geometry(pts, faces)
     vol, cc = cell_geometry(cf, sf, owner, neigh, ncell)
     if t is None:

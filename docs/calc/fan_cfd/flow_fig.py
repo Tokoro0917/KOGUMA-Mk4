@@ -19,7 +19,7 @@ def slice_data(arg):
     if '@' in arg:
         case, t = arg.split('@')
     pts, faces, owner, neigh, patches = post.read_mesh(case)
-    ncell = owner.max() + 1
+    ncell = max(owner.max(), neigh.max()) + 1
     cf, sf = post.face_geometry(pts, faces)
     vol, cc = post.cell_geometry(cf, sf, owner, neigh, ncell)
     if t is None:
