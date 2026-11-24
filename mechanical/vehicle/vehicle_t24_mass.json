@@ -71,8 +71,8 @@
   "new_parts": {
    "mount_R": 1.199,
    "mount_L": 1.199,
-   "wheel_R": 0.999,
-   "wheel_L": 0.999,
+   "wheel_R": 0.998,
+   "wheel_L": 0.998,
    "tire_R": 1.41,
    "tire_L": 1.41,
    "spur71_R": 0.869,
