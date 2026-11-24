@@ -16,13 +16,12 @@ PARTS = [
     ('33', '02_motor_mount_R_t24v12', True, (-23.0, 16.5, -22.6, -15.3)),    # モーターマウント 右(Temp Resin)。t24v12: 穴の入口の面取りなし(t24v11 はモーターの穴だけ)。t24v10: 辺だけでつながっていた所を直した。t24v9: 角に半径 0.4mm のフィレット。t24v8: モーターの前の面の壁 0.8mm。t24v7: 薄い所を直した(t24v6: 下の端を 0.2mm 伸ばした、z 2.8 から)
     ('34', '03_motor_mount_L_t24v12', True, (-23.0, 16.5, 15.3, 22.6)),      # モーターマウント 左
     ('5', '04_fan_mount_t24v3', True, (-3.3, 31.7, -22.8, 22.8)),           # ファンの台(Temp Resin)。継ぎ目 (14, ±20.3)。t24v3: 輪の下をフレームの上(z 2.8)まで伸ばした(t24v2 はシートの上 z 3.2)
-    ('35', '05_wheel_R_t24v2', True, (-10.0, 10.0, -33.3, -23.2)),          # ホイール 右(Black Resin)。t24v2: 平行ピン 3×8 を 5mm 圧入
-    ('36', '06_wheel_L_t24v2', True, (-10.0, 10.0, 23.2, 33.3)),            # ホイール 左
-    ('11', '07_sensor_holder_v5', True, (16.4, 21.2, 26.9, 33.3)),          # 壁センサのホルダ(Black Resin、4個。これは FL の位置)。下の端 z 3.3 とフレーム(z 2.8)の間 0.5mm に緩衝材
-    ('9', '08_main_pcb_t24v6', False, (-30.0, 45.7, -34.1, 34.1)),          # メイン基板(外形だけ。配線のあとで JLCPCB)
-    ('47', '09_encoder_board_R_t24', False, (-3.0, 3.0, -17.5, -16.9)),     # エンコーダ基板 右
+    ('35', '05_wheel_t24v2', True, (-10.0, 10.0, -33.3, -23.2)),          # ホイール(Black Resin、左右で同じ形。左は 180° 回して付ける。2026-11-24 に確かめた)。t24v2: 平行ピン 3×8 を 5mm 圧入
+    ('11', '06_sensor_holder_v5', True, (16.4, 21.2, 26.9, 33.3)),          # 壁センサのホルダ(Black Resin、4個。これは FL の位置)。下の端 z 3.3 とフレーム(z 2.8)の間 0.5mm に緩衝材
+    ('9', '07_main_pcb_t24v6', False, (-30.0, 45.7, -34.1, 34.1)),          # メイン基板(外形だけ。配線のあとで JLCPCB)
+    ('47', '08_encoder_board_R_t24', False, (-3.0, 3.0, -17.5, -16.9)),     # エンコーダ基板 右
 ]
-REF = ['2', '3', '4', '6', '7', '8', '10'] + [str(i) for i in range(12, 33) if i not in (14, 17, 20)] + ['14', '17', '20', '48'] + [str(i) for i in range(37, 47)] + [str(i) for i in range(49, 59)]
+REF = ['2', '3', '4', '6', '7', '8', '10', '36'] + [str(i) for i in range(12, 33) if i not in (14, 17, 20)] + ['14', '17', '20', '48'] + [str(i) for i in range(37, 47)] + [str(i) for i in range(49, 59)]
 
 def check(s, bb0):
     bb = s.BoundingBox()
@@ -41,5 +40,5 @@ if __name__ == '__main__':
         print(f'{fn}: 体積 {s.Volume():.0f} mm³、x {bb.xmin:.2f}〜{bb.xmax:.2f}、y {bb.ymin:.2f}〜{bb.ymax:.2f}、z {bb.zmin:.2f}〜{bb.zmax:.2f}')
     # 買う部品・ほかの部品(モーター・タイヤ・71T・ピニオン・軸受・ピン・磁石・ねじ・電池・ファンのモーター・羽根・センサ・滑り板・スカート)を1つに
     ref = cq.Compound.makeCompound([parts[k] for k in REF if k in parts])
-    cq.exporters.export(ref, os.path.join(OUT, '10_purchased_and_other_parts.step'))
-    print('10_purchased_and_other_parts: 部品', len([k for k in REF if k in parts]))
+    cq.exporters.export(ref, os.path.join(OUT, '09_purchased_and_other_parts.step'))
+    print('09_purchased_and_other_parts: 部品', len([k for k in REF if k in parts]))

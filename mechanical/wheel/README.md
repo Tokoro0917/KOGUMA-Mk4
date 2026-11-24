@@ -29,7 +29,7 @@ ToraNeko.Mk3 のホイールを、そのまま MK4 の位置(右側、車軸 (0,
 
 ## タイヤ24mm 用 t24v1(2026-11-21、ブランチ `claude/trusting-dirac-1tdt54`)
 
-タイヤを MK3 と同じ 24mm にした機体のホイール(`docs/spec.md` の「方針の変更(2026-11-21)」)。`wheel_t24.py` で作る(`python3 mechanical/wheel/wheel_t24.py`)。STEP・STL は `wheel_R_t24v2.*`・`wheel_L_t24v2.*`(2026-11-24 の t24v2: 平行ピンを 3×8 にして 5mm 圧入。強さは `docs/calc/t24_wheel_strength.py`。t24v1 は `wheel_*_t24v1.*`)、絵は `wheel_t24v1.png`。車軸は (0, y, 12.0)。
+タイヤを MK3 と同じ 24mm にした機体のホイール(`docs/spec.md` の「方針の変更(2026-11-21)」)。`wheel_t24.py` で作る(`python3 mechanical/wheel/wheel_t24.py`)。STEP・STL は `wheel_R_t24v2.*`・`wheel_L_t24v2.*`(**左右は同じ形**: 左は右を 180° 回したものと一致する(2026-11-24 に確かめた)。注文は 1 種類 6 個)(2026-11-24 の t24v2: 平行ピンを 3×8 にして 5mm 圧入。強さは `docs/calc/t24_wheel_strength.py`。t24v1 は `wheel_*_t24v1.*`)、絵は `wheel_t24v1.png`。車軸は (0, y, 12.0)。
 
 ![ホイール t24v1](wheel_t24v1.png)
 

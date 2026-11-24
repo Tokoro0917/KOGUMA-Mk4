@@ -12,12 +12,11 @@ STEP の丸い所(穴・窓の角・外形の丸み)は本当の円弧で書い�
 | `02_motor_mount_R_t24v12.step` | モーターマウント 右 **t24v12**(1.20g。**t24v12 で穴の入口の面取りをすべてやめた**(KOGUMA.MK3・ToraNeko と同じ。角の丸み r 0.4 はそのまま)。t24v10 でエンコーダのくぼみの前の角の、辺だけでつながっていた所を埋めた。t24v9 で角に半径 0.4mm のフィレット。t24v8 でモーターの前の面を受ける壁を 0.6 → 0.8mm に(モーターを 0.2mm 内へ。ピニオンは軸の上で 0.2mm 外へ圧入)。t24v7 で薄い所を直した(`../motor_mount/mount_t24v7_thickness.png`)。t24v6 でフレームの上面 z 2.8 まで下の端を 0.2mm 伸ばした。ねじ (6.8, −18.4)・(−21, −18.4)、柱 半径 2.0) | JLC3DP、Temp Resin | 3 | `02_motor_mount_R_t24v12.stl`(= `../motor_mount/motor_mount_R_t24v12.stl`) |
 | `03_motor_mount_L_t24v12.step` | モーターマウント 左 | JLC3DP、Temp Resin | 3 | `03_motor_mount_L_t24v12.stl` |
 | `04_fan_mount_t24v3.step` | **ファンの台 t24v3**(1.65g、継ぎ目 (14, ±20.3)。輪の下をフレームの上 z 2.8 まで伸ばした。t24v2 は塩ビの上 z 3.2) | JLC3DP、Temp Resin | 3 | `04_fan_mount_t24v3.stl` |
-| `05_wheel_R_t24v2.step` | ホイール 右 **t24v2**(φ20 × 8.5mm、0.78g。**平行ピン 3×8 を 5mm 圧入**、t24v1 は 3×6 を 3mm) | JLC3DP、Black Resin | 3 | `05_wheel_R_t24v2.stl`。**タイヤの内径・幅と 71T の穴を測ってから** |
-| `06_wheel_L_t24v2.step` | ホイール 左 | JLC3DP、Black Resin | 3 | `06_wheel_L_t24v2.stl` |
-| `07_sensor_holder_v5.step` | 壁センサのホルダ v5(FL の位置)。下の端 z 3.3 とフレーム(z 2.8)の間は 0.5mm(緩衝材を 0.3 → 0.5mm に) | JLC3DP、Black Resin | 6(4 + 予備2) | `07_sensor_holder_v5.stl`(= `../sensor_holder/sensor_holder_v5.stl`) |
-| `08_main_pcb_t24v6.step` | メイン基板 t24v6(外形と厚さ 0.6mm だけ) | JLCPCB(配線のあと) | — | 確かめる用 |
-| `09_encoder_board_R_t24.step` | エンコーダ基板 右(6.0 × 8.75 × 0.6mm、左は y を反転) | JLCPCB(配線のあと) | — | 確かめる用 |
-| `10_purchased_and_other_parts.step` | 買う部品・ほか(モーター・タイヤ・71T・ピニオン・軸受・平行ピン・磁石・ねじ・電池・ファンのモーターと羽根・壁センサとほかの3つのホルダ・MT6835・滑り板・スカート) | — | — | ぶつかりを見る用 |
+| `05_wheel_t24v2.step` | ホイール **t24v2**(**左右で同じ形**。左は 180° 回して付ける。φ20 × 8.5mm、0.78g。**平行ピン 3×8 を 5mm 圧入**、t24v1 は 3×6 を 3mm) | JLC3DP、Black Resin | **6**(4 + 予備 2) | `05_wheel_t24v2.stl`。**タイヤの内径・幅と 71T の穴を測ってから** |
+| `06_sensor_holder_v5.step` | 壁センサのホルダ v5(FL の位置)。下の端 z 3.3 とフレーム(z 2.8)の間は 0.5mm(緩衝材を 0.3 → 0.5mm に) | JLC3DP、Black Resin | 6(4 + 予備2) | `06_sensor_holder_v5.stl`(= `../sensor_holder/sensor_holder_v5.stl`) |
+| `07_main_pcb_t24v6.step` | メイン基板 t24v6(外形と厚さ 0.6mm だけ) | JLCPCB(配線のあと) | — | 確かめる用 |
+| `08_encoder_board_R_t24.step` | エンコーダ基板 右(6.0 × 8.75 × 0.6mm、左は y を反転) | JLCPCB(配線のあと) | — | 確かめる用 |
+| `09_purchased_and_other_parts.step` | 買う部品・ほか(モーター・タイヤ・71T・ピニオン・軸受・平行ピン・磁石・ねじ・電池・ファンのモーターと羽根・壁センサとほかの3つのホルダ・MT6835・滑り板・スカート) | — | — | ぶつかりを見る用 |
 
 - ねじは M2 低頭 L5 × 10 本(フレームが 0.8mm になった分、マウントに 0.2mm 深く入る。マウント (6.8, ±18.4)・(−21, ±18.4) に、フレームの下から4本・基板の上から4本、ファンの台の継ぎ目 (14, ±20.3) に2本)
 - JLC3DP は M6 未満のねじ山を作らないので、M2 は届いてから自分でタップを立てる(下穴 φ1.6)
