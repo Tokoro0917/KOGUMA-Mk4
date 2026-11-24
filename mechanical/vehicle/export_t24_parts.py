@@ -45,6 +45,10 @@ if __name__ == '__main__':
     check(parts['45'], (-14.26, -9.76, -24.4, -22.4))
     cq.exporters.export(parts['45'], os.path.join(OUT, '11_pinion_13T_R.step'))
     print('10_motor_R_NFP-D8620・11_pinion_13T_R')
+    # 2026-11-24: タイヤ 右(MK3 と同じミニッツのタイヤ。外径 24mm・内径 20mm・幅 8.5mm の輪で簡単に描いた形)
+    check(parts['37'], (-12.0, 12.0, -33.3, -24.8))
+    cq.exporters.export(parts['37'], os.path.join(OUT, '12_tire_R.step'))
+    print('12_tire_R')
     # 買う部品・ほかの部品(モーター・タイヤ・71T・ピニオン・軸受・ピン・磁石・ねじ・電池・ファンのモーター・羽根・センサ・滑り板・スカート)を1つに
     ref = cq.Compound.makeCompound([parts[k] for k in REF if k in parts])
     cq.exporters.export(ref, os.path.join(OUT, '09_purchased_and_other_parts.step'))
