@@ -1,4 +1,4 @@
-"""ToraNeko.Mk3 のモーターマウント(v26)と MK4 のマウント(t24)を、同じ向き・同じ大きさで並べて描く(2026-11-24)。
+"""KOGUMA.MK3 のモーターマウント(v2)・ToraNeko.Mk3 のモーターマウント(v26)と MK4 のマウント(t24)を、同じ向き・同じ大きさで並べて描く(2026-11-24)。
 使い方: python3 tn_mount_compare.py → tn_mount_compare.png
 ToraNeko のマウントは tn_mount_extract.py が書いた tn_motor_mount_v26.step を、tn_parts.py と同じ変換(z 軸まわりに 90°)で
 MK4 の向き(x 前、y 左、z 上、右側は外が -y)にそろえる。位置は車軸の中心を原点にする"""
@@ -21,6 +21,14 @@ def load_tn():
     return s.translate(cq.Vector(-5.32, 0, -5.21))
 
 
+def load_mk3():
+    """KOGUMA.MK3 のマウント(mk3_motor_mount_v2.step)を MK4 の向きにし、車輪の軸(M3 のねじ、MK3 の (x, 0.94, 71.26))を原点に。
+    MK3 は +x が外(左の車輪)なので、z 軸まわりに -90° 回して外を -y にする"""
+    s = cq.importers.importStep('mk3_motor_mount_v2.step').val()
+    s = s.rotate(cq.Vector(0, 0, 0), cq.Vector(0, 0, 1), -90)       # (x, y) → (y, -x)
+    return s.translate(cq.Vector(-0.94, 0, -71.26))
+
+
 def load_mk4():
     s = mm.build(mt.P).val()
     ax, az = mt.P['axle']
@@ -41,7 +49,7 @@ def draw(ax, shape, elev, azim, title, color):
     ax.add_collection3d(pc)
     bb = shape.BoundingBox()
     c = np.array([(bb.xmin + bb.xmax) / 2, (bb.ymin + bb.ymax) / 2, (bb.zmin + bb.zmax) / 2])
-    r = 12.5
+    r = 14.0
     ax.set_xlim(c[0] - r, c[0] + r)
     ax.set_ylim(c[1] - r, c[1] + r)
     ax.set_zlim(c[2] - r, c[2] + r)
@@ -52,16 +60,19 @@ def draw(ax, shape, elev, azim, title, color):
 
 
 if __name__ == '__main__':
+    k3 = load_mk3()
     tn = load_tn()
     mk = load_mk4()
-    fig = plt.figure(figsize=(18, 11))
+    fig = plt.figure(figsize=(18, 16))
     views = ((25, -60, '外側の前から'), (25, 120, '内側の後ろから'), (20, 60, '内側の前から'))
     for i, (elev, azim, t) in enumerate(views):
-        ax = fig.add_subplot(2, 3, i + 1, projection='3d')
+        ax = fig.add_subplot(3, 3, i + 1, projection='3d')
+        draw(ax, k3, elev, azim, f'KOGUMA.MK3 v2(3.14g): {t}', '#8fbf8f')
+        ax = fig.add_subplot(3, 3, i + 4, projection='3d')
         draw(ax, tn, elev, azim, f'ToraNeko.Mk3 v26(0.45g): {t}', '#7fa7d9')
-        ax = fig.add_subplot(2, 3, i + 4, projection='3d')
+        ax = fig.add_subplot(3, 3, i + 7, projection='3d')
         draw(ax, mk, elev, azim, f'MK4 {mt.VER}(1.20g): {t}', '#f2a65a')
-    fig.suptitle('モーターマウントの比べ(同じ縮尺、車軸の中心をそろえた。上: ToraNeko.Mk3、下: MK4 タイヤ24mm)', fontsize=13)
-    fig.tight_layout()
+    fig.suptitle('モーターマウントの比べ(同じ縮尺、車軸の中心をそろえた。上: KOGUMA.MK3、中: ToraNeko.Mk3、下: MK4 タイヤ24mm)', fontsize=13)
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
     fig.savefig('tn_mount_compare.png', dpi=100)
     print('tn_mount_compare.png')
