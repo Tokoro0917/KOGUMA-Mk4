@@ -10,6 +10,8 @@ sys.path.insert(0, os.path.join(HERE, '../docs/calc/frame'))
 sys.path.insert(0, os.path.join(HERE, 'motor_mount'))
 import design as dz, ribparts as rp
 import mount as mm
+sys.path.insert(0, HERE)
+import cq_arcs
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'frame')   # 製作用のファイルは mechanical/frame に置く
 TAG = 'frame_v6_9'   # ファンの真下を半径16.5mmまでカーボンで埋めた(2026-10-20)
@@ -20,6 +22,12 @@ holes = [Point(c).buffer(dz.HOLE_D / 2, 32) for c in dz.holes()]
 plate = g['carbon'].difference(unary_union(slots + holes))
 
 def poly_solid(poly, z0, z1):
+    """2026-11-24: 丸い所を本当の円弧にする(cq_arcs.py)。円弧にできない形のときだけ折れ線で作る"""
+    try:
+        s = cq_arcs.poly_solid(poly, z0, z1)
+        return s if isinstance(s, cq.Compound) else cq.Compound.makeCompound([s])
+    except Exception:
+        pass
     out = []
     for p in getattr(poly, 'geoms', [poly]):
         wp = cq.Workplane().polyline(list(p.exterior.coords)[:-1]).close().extrude(z1 - z0)

@@ -7,6 +7,9 @@ t24v2(2026-11-24、ユーザー): ピンを 3×6 → 3×8 にし、ホイール�
 使い方(リポジトリの一番上で): python3 mechanical/wheel/wheel_t24.py"""
 import math
 import cadquery as cq
+import os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+import cq_arcs     # 丸い所を本当の円弧にする(2026-11-24)
 
 VER = 't24v2'
 PIN_Y = (-28.2, -20.2)      # 平行ピン 3×8 の両端(機体のモデル・確かめるスクリプトが使う)
@@ -34,8 +37,8 @@ def window(r0, r1, a0, a1, y0, y1):
     n = 16
     pts = [(r1 * math.cos(a0 + (a1 - a0) * k / n), r1 * math.sin(a0 + (a1 - a0) * k / n)) for k in range(n + 1)]
     pts += [(r0 * math.cos(a1 - (a1 - a0) * k / n), r0 * math.sin(a1 - (a1 - a0) * k / n)) for k in range(n + 1)]
-    lo, hi = min(y0, y1), max(y0, y1)
-    return cq.Workplane('XZ', origin=(AX[0], 0, AX[1])).polyline(pts).close().extrude(-(hi - lo)).translate((0, lo, 0))
+    # 2026-11-24: 円弧の所を本当の円弧にして作る(STEP がギザギザにならないように、cq_arcs.py)
+    return cq_arcs.prism_xz([(AX[0] + u, AX[1] + v) for u, v in pts], y0, y1)
 
 def build(W=W):
     R = W['od'] / 2

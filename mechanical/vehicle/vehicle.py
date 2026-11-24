@@ -20,6 +20,8 @@ from OCP.BRepGProp import BRepGProp
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '../../docs/calc/frame'))
 sys.path.insert(0, os.path.join(HERE, '../motor_mount'))
+sys.path.insert(0, os.path.join(HERE, '..'))
+import cq_arcs                 # 丸い所を本当の円弧にする(2026-11-24)
 import design as dz
 import mount as mm
 
@@ -69,6 +71,12 @@ def zcyl(r, z0, z1, x=0.0, y=0.0):
     return cq.Workplane().center(x, y).circle(r).extrude(z1 - z0).translate((0, 0, z0))
 
 def poly_solid(poly, z0, z1):
+    """shapely の多角形を z0〜z1 の板にする。2026-11-24: 丸い所を本当の円弧にする(STEP がギザギザにならないように、cq_arcs.py)。
+    円弧にできない形のときだけ、今までどおり折れ線で作る"""
+    try:
+        return cq_arcs.poly_solid(poly, z0, z1, min_area=0.5)
+    except Exception:
+        pass
     out = []
     for p in getattr(poly, 'geoms', [poly]):
         if p.area < 0.5:

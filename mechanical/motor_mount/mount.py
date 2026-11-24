@@ -3,6 +3,9 @@
 フレームの上面 z = 3.0。部品の並び(外側から): タイヤ -31.8〜-28.3、41T -28.3〜-26.3、
 LF-630 外 -26.7〜-24.7(つばが外)、LF-630 内 -24.5〜-22.5(つばが内)、磁石 -23.7〜-22.7、
 AS5047P -22.2〜-21.0、エンコーダ基板 -21.06〜-20.46(ToraNeko.Mk3 と同じ並び)。"""
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+import cq_arcs     # 丸い所を本当の円弧にする(2026-11-24)
 import math
 import cadquery as cq
 
@@ -204,7 +207,7 @@ def build(P=P):
             body = body.cut(cone_z(P['hole_d'] / 2, z0, 1, hx, hy)).cut(cone_z(P['hole_d'] / 2, z1, -1, hx, hy))
     for pts, y0, y1 in P.get('windows', ()):   # 肉抜きの窓(xz 面の多角形を y0〜y1 に抜く。mount_t24.py)
         lo, hi = min(y0, y1), max(y0, y1)
-        body = body.cut(cq.Workplane('XZ').polyline(pts).close().extrude(-(hi - lo)).translate((0, lo, 0)))
+        body = body.cut(cq_arcs.prism_xz(pts, lo, hi))      # 2026-11-24: 窓の角の丸みを本当の円弧に(STEP がギザギザにならないように)
     tc = P.get('top_cut')
     if tc:   # タイヤ24mm(mount_t24.py): メイン基板の下面 z より上を削る。ただしメイン基板の切り欠き(x ±tc['x']、y < tc['y'])の中は残す
         body = body.cut(box(-40, 40, -40, 0, tc['z'], 40).cut(box(-tc['x'], tc['x'], -40, tc['y'], tc['z'] - 1, 41)))
