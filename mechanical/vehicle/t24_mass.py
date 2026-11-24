@@ -41,6 +41,11 @@ _src = _src.replace(_old3, "Z_FB, Z_FT = 2.0, 2.8")
 _old4 = "Z_PC = 3.2 "
 assert _old4 in _src
 _src = _src.replace(_old4, "Z_PC = 2.8 ")
+# 2026-11-24(ファンの台 t24v4): ハブの底(モーターの前の面を受ける所)を 0.6 → 0.8mm に厚くする(ユーザー)。上の面(z 9.4)は同じで、下へ 0.2mm 伸ばす(z 8.6〜9.4)。
+# 腕(z 8.8〜10.8)は同じ。羽根の上(z 8.0)とのすき間は、ハブの所だけ 0.8 → 0.6mm
+_old6 = "Z_TOP1 = 9.4; Z_TOP0 = Z_ARM0             # モーターの前の面を受けるハブの底"
+assert _old6 in _src
+_src = _src.replace(_old6, "Z_TOP1 = 9.4; Z_TOP0 = Z_ARM0 - 0.2       # モーターの前の面を受けるハブの底(t24 のファンの台 t24v4: 厚さ 0.8mm)")
 _old5 = "add('pc_sheet', poly_solid(sheet, Z_FT, Z_PC), 'pc')"
 assert _old5 in _src
 _src = _src.replace(_old5, "pass   # 塩ビのシートなし(t24v10)")
