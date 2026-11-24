@@ -1,5 +1,5 @@
 """吸引ファンの流体の計算(make_case.py・run_case.sh)の結果から、機体の下の負圧・漏れる空気の量・羽根を回す力を出す(2026-11-24)。
-使い方: python3 docs/calc/fan_cfd/post.py <計算のフォルダ> [<計算のフォルダ> ...]
+使い方: python3 docs/calc/fan_cfd/post.py <計算のフォルダ>[@くり返しの回] [...](回を書かなければ最後の回)
 このパッケージの OpenFOAM は関数オブジェクト(forces など)が動かないので、書き出したメッシュと場(ASCII)を読んで自分で計算する:
   - 負圧: 機体の下の部屋(フレームの穴の下、半径 7.5mm、z −3.5〜1.5mm)のセルの体積平均の圧力
   - 流量: 入口(漏れの穴の外の大気)の面を通る流量 phi の合計
@@ -143,11 +143,15 @@ def latest_time(case):
 
 
 def analyse(case):
+    t = None
+    if '@' in case:                       # 「フォルダ@くり返し」で、その回の結果を見る
+        case, t = case.split('@')
     pts, faces, owner, neigh, patches = read_mesh(case)
     ncell = owner.max() + 1
     cf, sf = face_geometry(pts, faces)
     vol, cc = cell_geometry(cf, sf, owner, neigh, ncell)
-    t = latest_time(case)
+    if t is None:
+        t = latest_time(case)
     p, _ = read_field(case, t, 'p', ncell)
     U, _ = read_field(case, t, 'U', ncell)
     _, nut_b = read_field(case, t, 'nut', ncell)
