@@ -69,8 +69,8 @@
    }
   ],
   "new_parts": {
-   "mount_R": 1.194,
-   "mount_L": 1.194,
+   "mount_R": 1.195,
+   "mount_L": 1.195,
    "wheel_R": 0.784,
    "wheel_L": 0.784,
    "tire_R": 1.41,
@@ -162,13 +162,13 @@
    "a": "mount_R",
    "b": "motor_R",
    "gap": 0.0,
-   "overlap": 1.411
+   "overlap": 1.53
   },
   {
    "a": "mount_L",
    "b": "motor_L",
    "gap": 0.0,
-   "overlap": 1.411
+   "overlap": 1.53
   },
   {
    "a": "mount_R",

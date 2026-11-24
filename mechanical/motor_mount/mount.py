@@ -200,7 +200,8 @@ def build(P=P):
             return cq.Workplane().add(cq.Solid.makeCone(r + c, r, c, cq.Vector(x, y, z), cq.Vector(0, 0, sgn)))
         body = body.cut(cone_y(P['brg_od'] / 2, P['brg_seat_out'], 1, ax, az))          # 外の軸受(外から入れる)
         body = body.cut(cone_y(P['brg_od'] / 2, P['brg_seat_in'], -1, ax, az))          # 内の軸受(内から入れる)
-        body = body.cut(cone_y(P['motor_d'] / 2, P['cradle_end'], -1, mx, mz))          # モーター(内から入れる)
+        if P.get('chamfer_motor', True):   # 2026-11-24(t24 v11): t24 はモーターの穴の入口を面取りしない(ユーザー)
+            body = body.cut(cone_y(P['motor_d'] / 2, P['cradle_end'], -1, mx, mz))      # モーター(内から入れる)
         holes = [(P['screw_front'], ft, P['pcb_post'] if P.get('pcb_post_front') else P['ear_top']),
                  (P['screw_rear'], ft, P['pcb_post'] if P.get('pcb_post') else P['ear_top'])]
         if P.get('fan_joint'):
