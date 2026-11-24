@@ -305,13 +305,13 @@
   {
    "a": "pcb",
    "b": "tire_R",
-   "gap": 0.303,
+   "gap": 0.304,
    "overlap": 0.0
   },
   {
    "a": "pcb",
    "b": "tire_L",
-   "gap": 0.303,
+   "gap": 0.304,
    "overlap": 0.0
   },
   {

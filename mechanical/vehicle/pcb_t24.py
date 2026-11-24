@@ -15,11 +15,13 @@ import t24                     # design.py の定数をタイヤ24mm に(先に�
 sys.path.insert(0, HERE)
 import pcb_shape as ps
 
-ps.VER = 't24v8'     # 2026-11-24: 車軸のまわりの切り欠きの縁をエンコーダ基板にぴったり(|y| 16.7 → 16.9)。t24v7: ホルダのほぞの穴を 3.0 × 3.0mm の角のままに(ToraNeko.Mk3 と同じ)。t24v6(2026-11-23): マウントのねじを (6.8, ±18.4)・(-21, ±18.4) にそろえた(マウント t24v5)。t24v5: (-21, ±17.7)。t24v4: (6.8, ±18.9)・(-21, ±18.9)(frame t24v4、吸引する面 80 × 42.6mm)。t24v3(2026-11-22): 案1。B 案(v11 の広さ)に、後ろの V 字の切り欠き・羽と、角の丸み(v16 と同じ考え方)。t24v2 は B 案のまま(3,432mm²)、t24v1 は v16 の形(2,784mm²)
+ps.VER = 't24v9'     # 2026-11-24: エンコーダ基板の左右をはめ込む切り込み(幅 6.0mm)。t24v8: 車軸のまわりの切り欠きの縁をエンコーダ基板にぴったり(|y| 16.7 → 16.9)。t24v7: ホルダのほぞの穴を 3.0 × 3.0mm の角のままに(ToraNeko.Mk3 と同じ)。t24v6(2026-11-23): マウントのねじを (6.8, ±18.4)・(-21, ±18.4) にそろえた(マウント t24v5)。t24v5: (-21, ±17.7)。t24v4: (6.8, ±18.9)・(-21, ±18.9)(frame t24v4、吸引する面 80 × 42.6mm)。t24v3(2026-11-22): 案1。B 案(v11 の広さ)に、後ろの V 字の切り欠き・羽と、角の丸み(v16 と同じ考え方)。t24v2 は B 案のまま(3,432mm²)、t24v1 は v16 の形(2,784mm²)
 ps.WHEEL_CUT = (-12.2, 12.5, 22.3)           # x0, x1(実際は x1 - 0.3 まで), |y| y0。タイヤは基板の高さで x ±11.89 まで(2026-11-21 に ±12.5 から。前の壁センサの足の穴のため)
 ps.ENC = [(-3.0, 3.0, -16.9, -16.3), (-3.0, 3.0, 16.3, 16.9)]   # エンコーダ基板をはんだ付けするパッドの所(基板の上の面)。t24v8(2026-11-24): 0.2mm 外へ(エンコーダ基板とのすき間 0)
 ps.SLOT_CLR, ps.SLOT_R = 0.0, 0.0          # t24v7(2026-11-24): ホルダのほぞの穴を 3.0 × 3.0mm の角のまま・すき間なしに(ToraNeko.Mk3 と同じ。t24v6 までは 3.2 × 3.2mm・角 R0.5)
-AXLE_CUT = (4.5, 16.9)                       # 車軸のまわり: |x| ≤ 4.5 で |y| > 16.9(t24v8: エンコーダ基板の内の面にぴったり付ける。作る誤差は見込まない(ユーザー)。t24v7 までは 16.7 で、すき間 0.2mm)
+AXLE_CUT = (4.5, 17.5)                       # 車軸のまわり: |x| ≤ 4.5 で |y| > 17.5(t24v9: エンコーダ基板の外の面から外。t24v8 は 16.9、t24v7 までは 16.7)
+ENC_NOTCH = (3.0, 16.9, 17.5)                # t24v9(2026-11-24): エンコーダ基板をはめ込む切り込み: |x| ≤ 3.0(基板の幅 6.0mm と同じ)、|y| 16.9〜17.5(基板の厚さ)。
+                                             # 左右(|x| 3.0〜4.5)に残した基板が、エンコーダ基板の端を挟む(ユーザー)。作る誤差は見込まない
 CUT_R = 1.0
 _outline_main = ps.outline_v11      # t24v2(B 案): v11 の形(後ろの長方形・ポケットなし)。t24v1 は ps.outline(v16)
 
@@ -53,10 +55,13 @@ def outline():
     xa, ya = AXLE_CUT
     c = unary_union([box(x0, y0, x1 - 0.3, 60), box(x0, -60, x1 - 0.3, -y0), box(-xa, ya, xa, 60), box(-xa, -60, xa, -ya)]).buffer(-CUT_R).buffer(CUT_R)
     o = o.difference(c).difference(Point(ps.FAN).buffer(ps.HUB_HOLE, 64))
+    xn, yn0, yn1 = ENC_NOTCH
+    notch = unary_union([box(-xn, yn0, xn, yn1 + 0.01), box(-xn, -yn1 - 0.01, xn, -yn0)])     # 角は丸めない(はめ込むため)
+    fingers = unary_union([box(xn, yn0, xa, yn1), box(-xa, yn0, -xn, yn1), box(xn, -yn1, xa, -yn0), box(-xa, -yn1, -xn, -yn0)])   # 切り込みの左右の基板
     keep = unary_union([Point(p).buffer(3.1) for p in ps.SCREWS] + [box(-3.6, 15.6, 3.6, 16.9), box(-3.6, -16.9, 3.6, -15.6)]
                        + [ps.footprint(k, 1.0) for k in ps.SENS]).intersection(o)
     keep = keep.difference(box(-xa, ya, xa, 60)).difference(box(-xa, -60, xa, -ya))     # 柱のまわりを残しても、車軸の切り欠きには入れない(t24v4、前の柱が x 6.8 で切り欠きに近い)
-    o = o.buffer(-R_CUT, join_style=1).buffer(R_CUT, join_style=1).union(keep)
+    o = o.buffer(-R_CUT, join_style=1).buffer(R_CUT, join_style=1).union(keep).union(fingers).difference(notch)
     return o.buffer(-0.01).buffer(0.01).simplify(0.002)      # 近すぎる点をまとめる(DXF の円弧にするときに止まるため)
 ps.outline = outline
 
