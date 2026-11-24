@@ -38,6 +38,13 @@ if __name__ == '__main__':
             cq.exporters.export(s, os.path.join(OUT, fn + '.stl'), tolerance=0.01, angularTolerance=0.1)
         bb = s.BoundingBox()
         print(f'{fn}: 体積 {s.Volume():.0f} mm³、x {bb.xmin:.2f}〜{bb.xmax:.2f}、y {bb.ymin:.2f}〜{bb.ymax:.2f}、z {bb.zmin:.2f}〜{bb.zmax:.2f}')
+    # 2026-11-24: 走行用モーター 右(NFP-D8620、φ8.6 × 20mm の円柱 + 軸受の出っ張り + 軸 φ1.2)とピニオン 13T。買う部品の確かめる用(形は簡単にした円柱)
+    motor = [parts[k] for k in ('41', '43')]
+    check(motor[0], (-16.31, -7.71, -21.6, -1.3))
+    cq.exporters.export(cq.Compound.makeCompound(motor), os.path.join(OUT, '10_motor_R_NFP-D8620.step'))
+    check(parts['45'], (-14.26, -9.76, -24.4, -22.4))
+    cq.exporters.export(parts['45'], os.path.join(OUT, '11_pinion_13T_R.step'))
+    print('10_motor_R_NFP-D8620・11_pinion_13T_R')
     # 買う部品・ほかの部品(モーター・タイヤ・71T・ピニオン・軸受・ピン・磁石・ねじ・電池・ファンのモーター・羽根・センサ・滑り板・スカート)を1つに
     ref = cq.Compound.makeCompound([parts[k] for k in REF if k in parts])
     cq.exporters.export(ref, os.path.join(OUT, '09_purchased_and_other_parts.step'))
