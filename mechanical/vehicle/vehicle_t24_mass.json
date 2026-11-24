@@ -9,13 +9,13 @@
   "iz": 265.0
  },
  "t24": {
-  "mass": 60.24,
+  "mass": 60.25,
   "cg": [
    -0.15,
    -0.0,
    13.75
   ],
-  "iz": 295.3,
+  "iz": 295.4,
   "groups": [
    {
     "group": "フレーム・シート・スカート・滑り板",
@@ -24,8 +24,8 @@
    },
    {
     "group": "モーターマウント × 2",
-    "m": 2.39,
-    "iz": 12.1
+    "m": 2.4,
+    "iz": 12.2
    },
    {
     "group": "走行用モーター × 2",
@@ -69,8 +69,8 @@
    }
   ],
   "new_parts": {
-   "mount_R": 1.195,
-   "mount_L": 1.195,
+   "mount_R": 1.199,
+   "mount_L": 1.199,
    "wheel_R": 0.784,
    "wheel_L": 0.784,
    "tire_R": 1.41,
@@ -102,61 +102,61 @@
    "a": "screw_mountF_L",
    "b": "mount_L",
    "gap": 0.0,
-   "overlap": 4.528
+   "overlap": 4.75
   },
   {
    "a": "screw_mountR_L",
    "b": "mount_L",
    "gap": 0.0,
-   "overlap": 4.528
+   "overlap": 4.75
   },
   {
    "a": "screw_mountF_R",
    "b": "mount_R",
    "gap": 0.0,
-   "overlap": 4.528
+   "overlap": 4.75
   },
   {
    "a": "screw_mountR_R",
    "b": "mount_R",
    "gap": 0.0,
-   "overlap": 4.528
+   "overlap": 4.75
   },
   {
    "a": "screw_post_L",
    "b": "mount_L",
    "gap": 0.0,
-   "overlap": 3.623
+   "overlap": 3.845
   },
   {
    "a": "screw_fan_L",
    "b": "mount_L",
    "gap": 0.0,
-   "overlap": 3.623
+   "overlap": 3.845
   },
   {
    "a": "screw_post_R",
    "b": "mount_R",
    "gap": 0.0,
-   "overlap": 3.623
+   "overlap": 3.845
   },
   {
    "a": "screw_fan_R",
    "b": "mount_R",
    "gap": 0.0,
-   "overlap": 3.623
+   "overlap": 3.845
   },
   {
    "a": "screw_fanjoint_0",
    "b": "mount_L",
    "gap": 0.0,
-   "overlap": 3.171
+   "overlap": 3.393
   },
   {
    "a": "screw_fanjoint_1",
    "b": "mount_R",
    "gap": 0.0,
-   "overlap": 3.171
+   "overlap": 3.393
   },
   {
    "a": "mount_R",
@@ -174,25 +174,25 @@
    "a": "mount_R",
    "b": "brg_out_R",
    "gap": 0.0,
-   "overlap": 0.433
-  },
-  {
-   "a": "mount_R",
-   "b": "brg_in_R",
-   "gap": 0.0,
-   "overlap": 0.433
+   "overlap": 0.554
   },
   {
    "a": "mount_L",
    "b": "brg_out_L",
    "gap": 0.0,
-   "overlap": 0.433
+   "overlap": 0.554
+  },
+  {
+   "a": "mount_R",
+   "b": "brg_in_R",
+   "gap": 0.0,
+   "overlap": 0.55
   },
   {
    "a": "mount_L",
    "b": "brg_in_L",
    "gap": 0.0,
-   "overlap": 0.433
+   "overlap": 0.55
   },
   {
    "a": "frame",

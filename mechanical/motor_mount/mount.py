@@ -158,6 +158,8 @@ def build(P=P):
     if ef:   # v9: エンコーダ基板をマウントの面に当てて接着する(裏から支えない)
         # 面の縁を作る肉(くぼみの上・前): 内の軸受の壁から基板の面まで
         body = body.union(box(ax + ef.get('bx0', ef['x0']), ax + ef['x1'], P['brg_seat_in'] - 0.01, P['enc_slot'][0], ft, ef['ztop']))
+        # 2026-11-24: 上の箱を軸受の壁に 0.01mm 重ねるので、内の軸受の穴の奥に厚さ 0.01mm の膜が残る。穴の所を抜き直す(面取りがあるときは面取りで消えていた)
+        body = body.cut(ycyl(P['brg_od'] / 2, P['brg_seat_in'] - 0.011, P['brg_seat_in'] + 0.001, ax, az))
         body = body.cut(ycyl(P['motor_d'] / 2 + P.get('pad_relief', 0.0), P['brg_seat_in'] - 0.02, P['enc_slot'][0] + 0.02, mx, mz))   # 足した肉がモーターの穴を埋めないように
         # くぼみ(AS5047P・部品・内の軸受のつば): 上は z ef['pz1'] で閉じ、前は ef['px1'] まで
         body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], P['enc_slot'][0], pz0, ef['pz1']))
