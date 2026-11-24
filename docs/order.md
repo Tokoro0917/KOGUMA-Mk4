@@ -73,7 +73,7 @@ MJF の PA12(熱に強く黒く染められる)は、精度 ±0.3mm・すすめ�
 | ファンの台 v1 | `mechanical/fan_mount/fan_mount_v1.stl` | Temp Resin | 3 | 1.64g |
 | ホイール v1(右) | `mechanical/wheel/wheel_R_v1.stl` | Black Resin | 3 | 0.38g |
 | ホイール v1(左) | `mechanical/wheel/wheel_L_v1.stl` | Black Resin | 3 | 0.38g |
-| 壁センサのホルダ v5 | `mechanical/sensor_holder/sensor_holder_v5.stl` | Black Resin | 6(4 + 予備2) | 0.22g |
+| 壁センサのホルダ v6 | `mechanical/sensor_holder/sensor_holder_v6.stl` | Black Resin | 6(4 + 予備2) | 0.22g(2026-11-24: ほぞを角のまま 3.0 × 3.0mm に。基板の穴も同じ大きさで、ToraNeko.Mk3 と同じはめあい) |
 | 電池のホルダ v1(左) | `mechanical/battery_holder/battery_holder_L_v1.stl` | Black Resin | 2 | 0.23g |
 | 電池のホルダ v1(右) | `mechanical/battery_holder/battery_holder_R_v1.stl` | Black Resin | 2 | 0.23g |
 

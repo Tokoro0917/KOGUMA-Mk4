@@ -2,7 +2,9 @@
 
 発光(OPV332)と受光(SFH 229 FA)を入れて、**基板の裏(下)にさかさまに付ける**樹脂の部品。4個(FL・FR・L・R)。**ToraNeko.Mk3 のセンサホルダ v4 と同じ形**(`mechanical/exported/TORANEKO.Mk3_v36.step` の「センサホルダ v4」を CadQuery で読んで測った)。
 
-![センサのホルダ](sensor_holder_v5.png)
+![センサのホルダ](sensor_holder_v6.png)
+
+> **2026-11-24 v6**: ほぞ(3.0 × 3.0mm)の角の丸み r 0.4 をやめて角のままにした。基板のほぞの穴も 3.2 × 3.2mm・角 R0.5 から **3.0 × 3.0mm の角のまま・すき間なし**にした(`WallSensor_Holder_Emitter` のフットプリント、外形 t24v7)。ToraNeko.Mk3 の基板(KiCad)のほぞの穴が 3.0 × 3.0mm の角のままで、ホルダのほぞも同じ大きさだったため(ユーザー「はめあいの部分を Mk3 と同じに」)。基板の工場は角を刃物の丸み(半径 0.5mm くらい)で削るので、実際の穴の角は丸くなり、ほぞの角が当たってきつめにはまる
 
 図の z は基板の面からの距離(機体では下向き)。
 
@@ -43,7 +45,7 @@
 | ファイル | 中身 |
 |---|---|
 | `sensor_holder.py` | CadQuery のスクリプト。寸法は `P` |
-| `sensor_holder_v5.step`・`.stl` | 注文用(単位 mm) |
-| `sensor_holder_v5.png` | 図 |
+| `sensor_holder_v6.step`・`.stl` | 注文用(単位 mm)。v5 はほぞの角が r 0.4 |
+| `sensor_holder_v6.png` | 図 |
 
 作り直すには(このフォルダで): `python3 sensor_holder.py`

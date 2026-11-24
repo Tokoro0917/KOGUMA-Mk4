@@ -14,9 +14,10 @@ v4(2026-11-01): **足をやめ、ホルダの形のままそのまま下まで�
                フレームはこの下の端の真下 + 1mm を窓なしにする
 v5(2026-11-02): v4 のほぞを 0.4mm 前へ(後ろの面から 0.4mm)。メイン基板の DRC で、基板のほぞの穴が受光の足のパッド(φ1.6)に
                0.04mm 食い込んでいた(ブランチでは 2026-10-31 に v3 のほぞを動かして v4 と呼んでいた)。これで穴とパッドは 0.36mm 離れる。ほかは v4 と同じ
+v6(2026-11-24): ほぞの角を丸めず角のまま(3.0 × 3.0mm)。基板の穴も 3.0 × 3.0mm の角のままで、すき間なし(ToraNeko.Mk3 と同じはめあい。ユーザー)
 座標 [mm]: 原点は前の面(光が出る面)の真ん中で、基板に付ける面。+y が光の向き、x は幅、+z は基板から離れる向き
 (基板の裏に付けるので、機体では下向き)。ほぞは −z 側(基板の穴に入る)。
-使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v5.step / .stl / .png
+使い方(このフォルダで): python3 sensor_holder.py  → sensor_holder_v6.step / .stl / .png
 """
 import os, math
 import cadquery as cq
@@ -26,11 +27,11 @@ P = dict(
     hole_d=3.2,                     # 発光・受光を入れる穴(ToraNeko と同じ。φ3 の T-1 が入る)
     z_emit=7.6, z_recv=3.2,         # 穴の中心の基板の面からの距離。遠い方が発光、近い方が受光(ToraNeko と同じ並び。v1・ToraNeko は 8.1・3.5)
     r_front=0.0, r_top_front=0.0, r_top_side=0.0,   # 角の丸み: 前の縦の辺、前の端(基板から遠い所)の辺、端の横の辺。v4 はすべて角(v3 までは 1.6・1.6・1.0)
-    peg_w=3.0, peg_d=3.0, peg_back=0.4, peg_t=0.6, peg_r=0.4,   # ほぞ: 幅、奥行き、後ろの面からのずれ(v5 で 0 → 0.4)、長さ(基板の厚さ)、縦の角の丸み
+    peg_w=3.0, peg_d=3.0, peg_back=0.4, peg_t=0.6, peg_r=0.0,   # v6(2026-11-24): ほぞの角の丸み 0.4 → 0(角のまま。ToraNeko.Mk3 と同じ。基板の穴も 3.0 × 3.0 の角のまま)   # ほぞ: 幅、奥行き、後ろの面からのずれ(v5 で 0 → 0.4)、長さ(基板の厚さ)、縦の角の丸み
     foot_l=0.0, foot_t=1.0, foot_r=1.0,    # v3: 下の端から後ろへ出す足の長さ、厚さ、後ろの角の丸み(v4 はなし)
     base_d=0.0, base_z=5.0, base_r=0.5,    # (使わない。2026-11-01 の最初の v4 案: 基板から base_z より下を、後ろへ base_d 厚くする)
 )
-VER = 'v5'
+VER = 'v6'
 MOUNT = 'bottom'     # 基板の裏に付ける(2026-10-30)
 
 def holder(P=P):
@@ -59,7 +60,9 @@ def holder(P=P):
         body = body.union(foot)
     y1 = -d + P['peg_back']
     peg = (cq.Workplane('XY').box(P['peg_w'], P['peg_d'], P['peg_t'], centered=(True, False, False))
-           .translate((0, y1, -P['peg_t'])).edges('|Z').fillet(P['peg_r']))
+           .translate((0, y1, -P['peg_t'])))
+    if P['peg_r'] > 0:      # v6 からは角のまま(ToraNeko.Mk3 と同じ)
+        peg = peg.edges('|Z').fillet(P['peg_r'])
     return body.union(peg)
 
 def footprint_info(P=P):

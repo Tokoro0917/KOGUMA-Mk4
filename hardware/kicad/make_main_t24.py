@@ -289,7 +289,7 @@ def build():
             if x > x0 + 70:
                 x = x0; y += 6
         y += 10
-    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v6 (mechanical/pcb/pcb_outline_t24v6.dxf), 0.6mm. '
+    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v7 (mechanical/pcb/pcb_outline_t24v7.dxf), 0.6mm. '
             'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, same assignment as ToraNeko.Mk3), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')
