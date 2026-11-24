@@ -213,7 +213,91 @@ def build(P=P):
     tc = P.get('top_cut')
     if tc:   # タイヤ24mm(mount_t24.py): メイン基板の下面 z より上を削る。ただしメイン基板の切り欠き(x ±tc['x']、y < tc['y'])の中は残す
         body = body.cut(box(-40, 40, -40, 0, tc['z'], 40).cut(box(-tc['x'], tc['x'], -40, tc['y'], tc['z'] - 1, 41)))
+    if P.get('fillet'):
+        body = cq.Workplane().add(fillet_edges(body.val(), P))
     return body
+
+
+def fillet_candidates(solid, P):
+    """フィレットをかける角(直線の辺)の、真ん中の点の一覧。寸法が大事な所は除く:
+    フレーム・基板に当たる面(z = frame_top、z = 基板の下面)の辺、モーター・軸受の穴の中(当たり面と逃げ)の辺、
+    P['fillet_keep'] の箱(エンコーダ基板を貼る面とくぼみなど)の中の辺"""
+    mx, mz = motor_center(P)
+    ax, az = P['axle']
+    ft = P['frame_top']
+    z_top = P.get('pcb_post') or 99.0
+    out = []
+    for e in solid.Edges():
+        if e.geomType() != 'LINE':
+            continue
+        c = e.Center()
+        p0 = e.startPoint()
+        p1 = e.endPoint()
+        if abs(p0.z - ft) < 1e-3 and abs(p1.z - ft) < 1e-3:
+            continue            # フレームに当たる面の辺
+        if abs(p0.z - z_top) < 1e-3 and abs(p1.z - z_top) < 1e-3:
+            continue            # 基板に当たる面の辺
+        if math.hypot(c.x - mx, c.z - mz) < P['motor_d'] / 2 + 0.5:
+            continue            # モーターの穴の中
+        if math.hypot(c.x - ax, c.z - az) < P['brg_od'] / 2 + 0.5:
+            continue            # 軸受の穴の中
+        holes = [P['screw_front'], P['screw_rear']] + ([P['fan_joint']] if P.get('fan_joint') else [])
+        if any(math.hypot(c.x - hx, c.y - hy) < P['hole_d'] / 2 + 0.05 for hx, hy in holes):
+            continue            # ねじの下穴の中(穴の継ぎ目の線)
+        keep = False
+        for (x0, x1, y0, y1, z0, z1) in P.get('fillet_keep', ()):
+            if x0 <= c.x <= x1 and y0 <= c.y <= y1 and z0 <= c.z <= z1:
+                keep = True
+        if keep:
+            continue
+        out.append((c.x, c.y, c.z))
+    return out
+
+
+def fillet_edges(solid, P):
+    """角に半径 P['fillet'] のフィレットをかける(2026-11-24)。
+    まとめてかけて失敗したら、辺を1本ずつかける。1本ずつでも失敗する辺(短すぎる辺など)は半径を 1/2、1/4 にして試し、だめなら残す"""
+    from OCP.BRepFilletAPI import BRepFilletAPI_MakeFillet
+    r = P['fillet']
+    points = fillet_candidates(solid, P)
+
+    def find(shape, pt):
+        for e in shape.Edges():
+            c = e.Center()
+            if e.geomType() == 'LINE' and abs(c.x - pt[0]) < 1e-4 and abs(c.y - pt[1]) < 1e-4 and abs(c.z - pt[2]) < 1e-4:
+                return e
+        return None
+
+    def attempt(shape, edges, radius):
+        mk = BRepFilletAPI_MakeFillet(shape.wrapped)
+        for e in edges:
+            mk.Add(radius, e.wrapped)
+        try:
+            mk.Build()
+        except Exception:
+            return None
+        if not mk.IsDone():
+            return None
+        new = cq.Shape.cast(mk.Shape())
+        if not new.isValid() or abs(new.Volume() - shape.Volume()) > 0.05 * shape.Volume():
+            return None
+        return new
+
+    edges = [find(solid, p) for p in points]
+    whole = attempt(solid, [e for e in edges if e is not None], r)
+    if whole is not None:
+        return whole
+    shape = solid
+    for p in points:
+        e = find(shape, p)
+        if e is None:
+            continue        # 前のフィレットで消えた辺
+        for radius in (r, r / 2, r / 4):
+            new = attempt(shape, [e], radius)
+            if new is not None:
+                shape = new
+                break
+    return shape
 
 def wedge(R, y0, y1, x, z, a, hw):
     """(x, z) から角度 a ± hw の扇形(半径 R)を y 方向に伸ばした形"""
