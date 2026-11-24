@@ -1,6 +1,6 @@
 # タイヤ24mm の機体の注文する部品(Fusion で確かめる用、2026-11-23)
 
-ブランチ `claude/trusting-dirac-1tdt54`。`../vehicle/export_t24_parts.py` が機体のモデル `../vehicle/mk4_vehicle_t24.step`(59.91g、ぶつかりなし。2026-11-23 にフレームを 0.8mm・吸引する面を埋めた形 t24v10 にして作り直した)から1つずつ書き出す。
+ブランチ `claude/trusting-dirac-1tdt54`。`../vehicle/export_t24_parts.py` が機体のモデル `../vehicle/mk4_vehicle_t24.step`(60.19g、ぶつかりなし。2026-11-24 に平行ピンを 3×8 にした。2026-11-23 にフレームを 0.8mm・吸引する面を埋めた形 t24v10 にして作り直した)から1つずつ書き出す。
 
 **座標は機体と同じ**(原点は車軸の真ん中、+x が前、+y が左、z は床から上、単位 mm)。Fusion で全部を原点に挿入すると、組み上がった位置に並ぶ。印刷する部品は STL も(JLC3DP に出す用。向きは JLC3DP の画面で決める)。
 
@@ -10,8 +10,8 @@
 | `02_motor_mount_R_t24v6.step` | モーターマウント 右 **t24v6**(1.17g。フレームの上面 z 2.8 まで下の端を 0.2mm 伸ばした。ねじ (6.8, −18.4)・(−21, −18.4)、柱 半径 2.0) | JLC3DP、Temp Resin | 3 | `02_motor_mount_R_t24v6.stl`(= `../motor_mount/motor_mount_R_t24v6.stl`) |
 | `03_motor_mount_L_t24v6.step` | モーターマウント 左 | JLC3DP、Temp Resin | 3 | `03_motor_mount_L_t24v6.stl` |
 | `04_fan_mount_t24v3.step` | **ファンの台 t24v3**(1.65g、継ぎ目 (14, ±20.3)。輪の下をフレームの上 z 2.8 まで伸ばした。t24v2 は塩ビの上 z 3.2) | JLC3DP、Temp Resin | 3 | `04_fan_mount_t24v3.stl` |
-| `05_wheel_R_t24v1.step` | ホイール 右(φ20 × 8.5mm、0.75g) | JLC3DP、Black Resin | 3 | `05_wheel_R_t24v1.stl`。**タイヤの内径・幅と 71T の穴を測ってから** |
-| `06_wheel_L_t24v1.step` | ホイール 左 | JLC3DP、Black Resin | 3 | `06_wheel_L_t24v1.stl` |
+| `05_wheel_R_t24v2.step` | ホイール 右 **t24v2**(φ20 × 8.5mm、0.78g。**平行ピン 3×8 を 5mm 圧入**、t24v1 は 3×6 を 3mm) | JLC3DP、Black Resin | 3 | `05_wheel_R_t24v2.stl`。**タイヤの内径・幅と 71T の穴を測ってから** |
+| `06_wheel_L_t24v2.step` | ホイール 左 | JLC3DP、Black Resin | 3 | `06_wheel_L_t24v2.stl` |
 | `07_sensor_holder_v5.step` | 壁センサのホルダ v5(FL の位置)。下の端 z 3.3 とフレーム(z 2.8)の間は 0.5mm(緩衝材を 0.3 → 0.5mm に) | JLC3DP、Black Resin | 6(4 + 予備2) | `07_sensor_holder_v5.stl`(= `../sensor_holder/sensor_holder_v5.stl`) |
 | `08_main_pcb_t24v6.step` | メイン基板 t24v6(外形と厚さ 0.6mm だけ) | JLCPCB(配線のあと) | — | 確かめる用 |
 | `09_encoder_board_R_t24.step` | エンコーダ基板 右(6.0 × 8.75 × 0.6mm、左は y を反転) | JLCPCB(配線のあと) | — | 確かめる用 |
@@ -19,4 +19,5 @@
 
 - ねじは M2 低頭 L5 × 10 本(フレームが 0.8mm になった分、マウントに 0.2mm 深く入る。マウント (6.8, ±18.4)・(−21, ±18.4) に、フレームの下から4本・基板の上から4本、ファンの台の継ぎ目 (14, ±20.3) に2本)
 - JLC3DP は M6 未満のねじ山を作らないので、M2 は届いてから自分でタップを立てる(下穴 φ1.6)
+- 車軸の平行ピンは **3 × 8**(main・ToraNeko は 3 × 6)。ホイールに 5mm 圧入し、内の端(磁石を貼る所)の位置は同じ
 - 電池のホルダは使わない(電池の底を両面テープで基板に貼る)

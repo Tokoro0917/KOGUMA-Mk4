@@ -38,7 +38,6 @@ brg_in       - pcb          すき間  1.175 mm  重なり   0.000 mm³
 brg_out      - pcb          すき間  1.235 mm  重なり   0.000 mm³ 
 spur71       - motor        すき間  1.300 mm  重なり   0.000 mm³ 
 mount        - magnet       すき間  1.448 mm  重なり   0.000 mm³ 
-mount        - pin          すき間  1.448 mm  重なり   0.000 mm³ 
+mount        - pin          すき間  1.450 mm  重なり   0.000 mm³ 
 wheel        - pcb          すき間  1.471 mm  重なり   0.000 mm³ 
 brg_in       - enc_board    すき間  1.500 mm  重なり   0.000 mm³ 
-pin          - MT6835       すき間  1.500 mm  重なり   0.000 mm³ 

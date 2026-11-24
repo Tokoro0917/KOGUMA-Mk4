@@ -28,6 +28,7 @@ for s in cq.importers.importStep('tn_drive_mk4_right.step').val().Solids():
     elif abs((bb.xmax - bb.xmin) - 7.2) < 0.05: nm = 'brg_out' if bb.ymin < -26 else 'brg_in'
     else: continue
     parts[nm] = s.translate(cq.Vector(0, DY, DZ))
+parts['pin'] = ycyl(1.5, wt.PIN_Y[0], wt.PIN_Y[1], ax, az).val()     # 2026-11-24: 平行ピン 3×8(ホイール t24v2)
 parts['tire'] = ycyl(12.0, -33.3, -24.8, ax, az).cut(ycyl(10.0, -33.4, -24.7, ax, az)).val()
 parts['wheel'] = wt.build().val()                                 # mechanical/wheel/wheel_t24.py
 parts['spur71'] = ycyl(10.95, -24.8, -22.8, ax, az).cut(ycyl(4.0, -24.9, -22.7, ax, az)).val()   # 中の穴 φ8(外の軸受のつばが入る)
