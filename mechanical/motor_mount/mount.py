@@ -171,6 +171,8 @@ def build(P=P):
         body = body.cut(box(ax - px, ax + px + 1.0, P['brg_seat_in'], P['enc_slot'][0], pz0, pz1))
         sy0, sy1, sx = P['enc_slot']
         body = body.cut(box(ax - sx, ax + sx, sy0, sy1, ft - 0.01, 14.0))
+    for (fx0, fx1, fy0, fy1, fz0, fz1) in P.get('extra_fills', ()):   # 2026-11-24(t24v10): 辺だけでつながっていた所を埋める箱
+        body = body.union(box(fx0, fx1, fy0, fy1, fz0, fz1))
     # 外側の面より外に出た所を削る(41T・ピニオンとのすき間)
     body = body.cut(box(-40, 40, -40, y_out, 0, 30).cut(ycyl(P['seat_r'], P['brg_seat_out'], y_out, ax, az)))
     for (sx_, sy_) in (P['screw_front'], P['screw_rear']):
