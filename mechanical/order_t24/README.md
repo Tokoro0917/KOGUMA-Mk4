@@ -1,6 +1,6 @@
 # タイヤ24mm の機体の注文する部品(Fusion で確かめる用、2026-11-23)
 
-ブランチ `claude/trusting-dirac-1tdt54`。`../vehicle/export_t24_parts.py` が機体のモデル `../vehicle/mk4_vehicle_t24.step`(60.19g、ぶつかりなし。2026-11-24 に平行ピンを 3×8 にした。2026-11-23 にフレームを 0.8mm・吸引する面を埋めた形 t24v10 にして作り直した)から1つずつ書き出す。
+ブランチ `claude/trusting-dirac-1tdt54`。`../vehicle/export_t24_parts.py` が機体のモデル `../vehicle/mk4_vehicle_t24.step`(60.17g、ぶつかりなし。2026-11-24 に平行ピンを 3×8 にした。2026-11-23 にフレームを 0.8mm・吸引する面を埋めた形 t24v10 にして作り直した)から1つずつ書き出す。
 
 STEP の丸い所(穴・窓の角・外形の丸み)は本当の円弧で書いてある(2026-11-24 から。`../cq_arcs.py`。それまでは細かい折れ線でギザギザだった)。
 
@@ -9,8 +9,8 @@ STEP の丸い所(穴・窓の角・外形の丸み)は本当の円弧で書い�
 | ファイル | 部品 | 注文先・材料 | 数 | 注文に出すファイル |
 |---|---|---|---|---|
 | `01_frame_t24v10.step` | フレーム **t24v10**(**0.8mm、吸引する面 80 × 42.6mm の窓をカーボンで埋めた、塩ビなし**。z 2.0〜2.8。骨 1.6mm・前の辺 2.5mm、窓の角の丸み 1.5mm、ねじ (6.8, ±18.4)・(−21, ±18.4)、5.62g。2026-11-23) | カーボンラボ.jp、**カーボン 0.8mm** | 2(予備1) | `../frame/MK4FRAMET24V10_T08.dxf` |
-| `02_motor_mount_R_t24v6.step` | モーターマウント 右 **t24v6**(1.17g。フレームの上面 z 2.8 まで下の端を 0.2mm 伸ばした。ねじ (6.8, −18.4)・(−21, −18.4)、柱 半径 2.0) | JLC3DP、Temp Resin | 3 | `02_motor_mount_R_t24v6.stl`(= `../motor_mount/motor_mount_R_t24v6.stl`) |
-| `03_motor_mount_L_t24v6.step` | モーターマウント 左 | JLC3DP、Temp Resin | 3 | `03_motor_mount_L_t24v6.stl` |
+| `02_motor_mount_R_t24v7.step` | モーターマウント 右 **t24v7**(1.16g。t24v7 で薄い所を直した(`../motor_mount/mount_t24v7_thickness.png`)。t24v6 でフレームの上面 z 2.8 まで下の端を 0.2mm 伸ばした。ねじ (6.8, −18.4)・(−21, −18.4)、柱 半径 2.0) | JLC3DP、Temp Resin | 3 | `02_motor_mount_R_t24v7.stl`(= `../motor_mount/motor_mount_R_t24v7.stl`) |
+| `03_motor_mount_L_t24v7.step` | モーターマウント 左 | JLC3DP、Temp Resin | 3 | `03_motor_mount_L_t24v7.stl` |
 | `04_fan_mount_t24v3.step` | **ファンの台 t24v3**(1.65g、継ぎ目 (14, ±20.3)。輪の下をフレームの上 z 2.8 まで伸ばした。t24v2 は塩ビの上 z 3.2) | JLC3DP、Temp Resin | 3 | `04_fan_mount_t24v3.stl` |
 | `05_wheel_R_t24v2.step` | ホイール 右 **t24v2**(φ20 × 8.5mm、0.78g。**平行ピン 3×8 を 5mm 圧入**、t24v1 は 3×6 を 3mm) | JLC3DP、Black Resin | 3 | `05_wheel_R_t24v2.stl`。**タイヤの内径・幅と 71T の穴を測ってから** |
 | `06_wheel_L_t24v2.step` | ホイール 左 | JLC3DP、Black Resin | 3 | `06_wheel_L_t24v2.stl` |

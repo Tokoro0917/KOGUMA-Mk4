@@ -208,6 +208,8 @@ def build(P=P):
     for pts, y0, y1 in P.get('windows', ()):   # 肉抜きの窓(xz 面の多角形を y0〜y1 に抜く。mount_t24.py)
         lo, hi = min(y0, y1), max(y0, y1)
         body = body.cut(cq_arcs.prism_xz(pts, lo, hi))      # 2026-11-24: 窓の角の丸みを本当の円弧に(STEP がギザギザにならないように)
+    for (cx0, cx1, cy0, cy1, cz0, cz1) in P.get('extra_cuts', ()):   # 2026-11-24(t24v7): 残った薄いかけらを消す箱
+        body = body.cut(box(cx0, cx1, cy0, cy1, cz0, cz1))
     tc = P.get('top_cut')
     if tc:   # タイヤ24mm(mount_t24.py): メイン基板の下面 z より上を削る。ただしメイン基板の切り欠き(x ±tc['x']、y < tc['y'])の中は残す
         body = body.cut(box(-40, 40, -40, 0, tc['z'], 40).cut(box(-tc['x'], tc['x'], -40, tc['y'], tc['z'] - 1, 41)))
