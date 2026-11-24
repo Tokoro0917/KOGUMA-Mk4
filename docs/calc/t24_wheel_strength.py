@@ -29,20 +29,21 @@ def moment(n, f, cancel):
     return f * R_TIRE + n * a
 
 
-print('LF-630ZZ: C0r', C0R, 'N、Cr', CR, 'N')
-for suction in (600, 1000):
-    n, f = wheel_loads(suction)
-    print(f'\n吸引 {suction}g: 外のタイヤ 縦 {n:.1f}N、横 {f:.1f}N(滑る限界)')
-    for cancel in (True, False):
-        m = moment(n, f, cancel)
-        tag = '縦と横が打ち消し合う(ターン)' if cancel else '足し合わせ(悪い場合)'
-        for name, span in (('今(内の軸受にピン 0.8mm、間 1.6mm)', 1.6), ('ピンが内の軸受を通る(間 2.2mm)', 2.2)):
-            r_in = m / span
-            r_out = r_in + n
-            print(f'  {tag}、{name}: モーメント {m:.0f} N·mm → 外の軸受 {r_out:.0f}N、内 {r_in:.0f}N(C0r の {r_out / C0R:.2f} 倍)')
-    m = moment(n, f, False)
-    for depth in (3.0, 5.0):
-        p_edge = 6 * m / (3.0 * depth**2)       # ピンの穴の縁の面圧(長さ方向に直線で分布するとして)
-        print(f'  ホイールのピンの穴 深さ {depth:.0f}mm: 縁の面圧 {p_edge:.0f} MPa(足し合わせのモーメントで)')
-    sigma_pin = 32 * m / (math.pi * 3.0**3)
-    print(f'  平行ピン φ3 の曲げの応力 {sigma_pin:.0f} MPa(鋼の焼入れピンは 1,000MPa 以上)')
+if __name__ == '__main__':
+    print('LF-630ZZ: C0r', C0R, 'N、Cr', CR, 'N')
+    for suction in (600, 1000):
+        n, f = wheel_loads(suction)
+        print(f'\n吸引 {suction}g: 外のタイヤ 縦 {n:.1f}N、横 {f:.1f}N(滑る限界)')
+        for cancel in (True, False):
+            m = moment(n, f, cancel)
+            tag = '縦と横が打ち消し合う(ターン)' if cancel else '足し合わせ(悪い場合)'
+            for name, span in (('今(内の軸受にピン 0.8mm、間 1.6mm)', 1.6), ('ピンが内の軸受を通る(間 2.2mm)', 2.2)):
+                r_in = m / span
+                r_out = r_in + n
+                print(f'  {tag}、{name}: モーメント {m:.0f} N·mm → 外の軸受 {r_out:.0f}N、内 {r_in:.0f}N(C0r の {r_out / C0R:.2f} 倍)')
+        m = moment(n, f, False)
+        for depth in (3.0, 5.0):
+            p_edge = 6 * m / (3.0 * depth**2)       # ピンの穴の縁の面圧(長さ方向に直線で分布するとして)
+            print(f'  ホイールのピンの穴 深さ {depth:.0f}mm: 縁の面圧 {p_edge:.0f} MPa(足し合わせのモーメントで)')
+        sigma_pin = 32 * m / (math.pi * 3.0**3)
+        print(f'  平行ピン φ3 の曲げの応力 {sigma_pin:.0f} MPa(鋼の焼入れピンは 1,000MPa 以上)')
