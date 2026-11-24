@@ -1,6 +1,6 @@
 """タイヤ24mm のホイール(t24v2)の強さとたわみを、立体の FEM で調べる(2026-11-24、ユーザー「ホイールの強度は本当に大丈夫? 吸引によるたわみもある」)。
 使い方(gmsh と scikit-fem のある Python で。リポジトリの一番上から):
-    python docs/calc/t24_wheel_fem.py  → 数字と docs/img/tire24/wheel_fem.png
+    python docs/calc/t24_wheel_fem.py [STEP] [名前]  → 数字と docs/img/tire24/wheel_fem_<名前>.png
 やり方:
   - 形は mechanical/order_t24/05_wheel_t24v2.step(機体の座標。車軸は (0, y, 12.0)、右の車輪、外が -y)
   - gmsh で四面体に分け、scikit-fem の 2 次の要素で線形の弾性を解く
@@ -8,7 +8,8 @@
   - 固定: 平行ピンを圧入する穴の面と穴の底(ピンは硬いとみる)
   - 力: タイヤが床から受ける力を、外の輪の外の面の下 ±30° に均一に広げる(タイヤのゴムが力を広げるとみる)。
     縦(上向き)、横(内向き = +y)、前後(+x)の 1N ずつで解き、足し合わせる
-  - 71T はホイールの内の面に接着するので、実際は円板がもっと硬い(ここでは入れない = 厳しめ)"""
+  - 前後の力(加速・減速)は 71T がギアで受けるので、71T を貼る面を固定して解く。縦・横の力はピンで受ける。
+    71T は円板に貼るので実際は円板がもっと硬い(縦・横では入れない = 厳しめ)"""
 import os
 import sys
 import numpy as np
@@ -23,7 +24,8 @@ import matplotlib.pyplot as plt
 
 plt.rcParams['font.family'] = 'IPAGothic'
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../..')
-STEP = os.path.join(ROOT, 'mechanical/order_t24/05_wheel_t24v2.step')
+STEP = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'mechanical/order_t24/05_wheel_t24v2.step')
+TAG = sys.argv[2] if len(sys.argv) > 2 else 't24v2'
 E_MPA, NU = 2650.0, 0.38
 STRENGTH_MPA = 41.0
 AZ = 12.0                      # 車軸の高さ
@@ -83,6 +85,16 @@ def main():
         return (np.abs(r - R_OUT) < 0.05) & (np.abs(ang) <= HALF_ANGLE + 1e-6) & (x[1] > Y_OUT - 0.01) & (x[1] < Y_IN + 0.01)
     load_facets = m.facets_satisfying(on_load, boundaries_only=True)
     fb = FacetBasis(m, e, facets=load_facets)
+    # 前後の力(加速・減速)は、ホイールに貼った 71T がギアで受けるので、71T を貼る面(y = -24.8、半径 4.0〜9.2)を固定して解く
+    def on_glue(x):
+        r = np.sqrt(x[0]**2 + (x[2] - AZ)**2)
+        return (np.abs(x[1] + 24.8) < 0.03) & (r > 4.0) & (r < 9.25)
+    D_glue = basis.get_dofs(m.facets_satisfying(on_glue, boundaries_only=True)).all()
+    from scipy.sparse.linalg import splu
+    lus = {}
+    for key, DD in (('pin', D), ('glue', D_glue)):
+        I = np.setdiff1d(np.arange(K.shape[0]), DD)
+        lus[key] = (I, splu(K[I][:, I].tocsc()))
     unit = {}
     for name, d in (('縦', (0, 0, 1.0)), ('横', (0, 1.0, 0)), ('前後', (1.0, 0, 0))):
         @LinearForm
@@ -92,7 +104,10 @@ def main():
         total = F[basis.nodal_dofs[{(0, 0, 1.0): 2, (0, 1.0, 0): 1, (1.0, 0, 0): 0}[d]]].sum() + \
             F[basis.edge_dofs[{(0, 0, 1.0): 2, (0, 1.0, 0): 1, (1.0, 0, 0): 0}[d]]].sum()
         F = F / total                                # 合計 1N にする
-        unit[name] = solve(*condense(K, F, D=D))
+        I, lu = lus['glue' if name == '前後' else 'pin']
+        x = np.zeros(K.shape[0])
+        x[I] = lu.solve(F[I])
+        unit[name] = x
     return m, basis, unit
 
 
@@ -147,5 +162,5 @@ if __name__ == '__main__':
         ax.set_xlabel(['x', 'y', 'z'][i] + ' [mm]')
         ax.set_ylabel('z [mm]')
     fig.colorbar(sc, ax=axes, label='ミーゼス応力 [MPa]')
-    fig.suptitle(f'ホイール t24v2 の応力({name}: 縦 {n:.1f}N・横 {f:.1f}N。Black Resin の引っ張り強さ 41〜58MPa)')
-    fig.savefig(os.path.join(ROOT, 'docs/img/tire24/wheel_fem.png'), dpi=100, bbox_inches='tight')
+    fig.suptitle(f'ホイール {TAG} の応力({name}: 縦 {n:.1f}N・横 {f:.1f}N。Black Resin の引っ張り強さ 41〜58MPa)')
+    fig.savefig(os.path.join(ROOT, f'docs/img/tire24/wheel_fem_{TAG}.png'), dpi=100, bbox_inches='tight')

@@ -44,6 +44,9 @@ def build(W=W):
     R = W['od'] / 2
     body = ycyl(R, W['y_out'], W['y_in']).cut(ycyl(R - W['rim'], W['y_out'] - 1, W['y_in'] + 1))   # 外の輪
     body = body.union(ycyl(R - W['rim'] + 0.01, W['web_y'] - W['web'], W['web_y']))                  # 円板
+    if W.get('web2'):    # 2026-11-24: 外の面にも円板(厚さ web2)を付け、外の輪を両端で支える(箱の形にする)
+        body = body.union(ycyl(R - W['rim'] + 0.01, W['y_out'], W['y_out'] + W['web2']))
+        body = body.union(ycyl(W['hub_r'], W['y_out'], W['web_y']))
     body = body.union(ycyl(W['hub_r'], W['hub_y0'], W['web_y']))                                      # ハブ
     body = body.union(ycyl(W['boss_r'], W['web_y'], W['boss_y1']))                                   # 71T の芯出しの段
     body = body.union(ycyl(W['spacer_r'], W['boss_y1'], W['spacer_y1']))                             # 軸受の内輪に当たる段
@@ -52,7 +55,10 @@ def build(W=W):
     for k in range(n):
         c = 2 * math.pi * k / n + math.pi / n
         half = math.pi / n - (W['spoke_w'] / 2) / W['hole_r0']
-        body = body.cut(window(W['hole_r0'], W['hole_r1'], c - half, c + half, W['web_y'] - W['web'] - 0.1, W['web_y'] + 0.1))
+        # 2026-11-24: t24v2 までは窓を円板の面から 0.1mm 先(71T の芯出しの段の根元)まで抜いていて、段に切り欠きができていた(t24_wheel_fem.py で
+        # 応力が集まる所)。win_fix が True なら、窓は円板の厚さの中だけ抜く
+        y_hi = W['web_y'] if W.get('win_fix') else W['web_y'] + 0.1
+        body = body.cut(window(W['hole_r0'], W['hole_r1'], c - half, c + half, W['web_y'] - W['web'] - 0.1, y_hi))
     pr = W['pin_r'] + W['pin_clear'] / 2
     body = body.cut(ycyl(pr, W['pin_y0'], W['spacer_y1'] + 0.1))                                     # ピンの穴(内側から、止まり穴)
     c = W['chamfer']
