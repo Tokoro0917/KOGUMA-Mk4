@@ -40,7 +40,7 @@ parts['motor_boss'] = ycyl(1.2, P['motor_face'] - 0.3, P['motor_face'], mx, mz).
 parts['shaft'] = ycyl(0.6, P['motor_face'] - 0.3, -24.4, mx, mz).val()
 parts['pinion13'] = ycyl(2.25, -22.4, -24.4, mx, mz).cut(ycyl(0.6, -22.3, -24.5, mx, mz)).val()
 screws = [P['screw_front'], P['screw_rear']]
-pcb = box(-30, 45, -34.6, 0, 13.6, 14.2).cut(box(-4.5, 4.5, -40, -16.9, 13, 15)).cut(box(-12.5, 12.5, -40, -22.3, 13, 15))
+pcb = box(-30, 45, -34.6, 0, 13.6, 14.2).cut(box(-4.5, 4.5, -40, -17.5, 13, 15)).cut(box(-3.0, 3.0, -17.5, -16.9, 13, 15)).cut(box(-12.5, 12.5, -40, -22.3, 13, 15))   # 外形 t24v9: エンコーダ基板をはめ込む切り込み(幅 6.0)
 frame = box(-50, 50, -35, 0, 2.0, mt.FRAME_TOP).cut(box(-9.5, 9.5, -40, -22.3, 1, 4))
 for sx, sy in screws:
     pcb = pcb.cut(zcyl(1.1, 13, 15, sx, sy)); frame = frame.cut(zcyl(1.1, 1, 4, sx, sy))

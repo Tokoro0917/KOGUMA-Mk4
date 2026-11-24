@@ -19,9 +19,9 @@ mount        - motor_boss   すき間  0.400 mm  重なり   0.000 mm³
 tire         - pinion13     すき間  0.400 mm  重なり   0.000 mm³ 
 tire         - shaft        すき間  0.400 mm  重なり   0.000 mm³ 
 spur71       - pcb          すき間  0.500 mm  重なり   0.000 mm³ 
+MT6835       - pcb          すき間  0.500 mm  重なり   0.000 mm³ 
 wheel        - pinion13     すき間  0.532 mm  重なり   0.000 mm³ 
 mount        - MT6835       すき間  0.600 mm  重なり   0.000 mm³ 
-MT6835       - pcb          すき間  0.600 mm  重なり   0.000 mm³ 
 tire         - pcb          すき間  0.602 mm  重なり   0.000 mm³ 
 mount        - battery      すき間  0.757 mm  重なり   0.000 mm³ 
 mount        - wheel        すき間  0.800 mm  重なり   0.000 mm³ 
