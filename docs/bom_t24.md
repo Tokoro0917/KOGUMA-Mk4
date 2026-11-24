@@ -125,7 +125,7 @@ IC など品番が決まっている部品の LCSC の番号は「部品の一�
 | R21 R31 | 2 | 上 | 0 | UNI-ROYAL 0402WGF0000TCE | C17168 | 0.4 | JLC Basic |
 | R22 R32 | 2 | 上 | PMR18EZPFU5L00 | ROHM PMR18EZPFU5L00 | C308575 | 0.57 | **LCSC の在庫 0** |
 | R23 R33 R41 | 3 | 上 | 100 | UNI-ROYAL 0402WGF1000TCE | C25076 | 0.4 | JLC Basic |
-| R43 | 1 | 上 | 0.1 1W | UNI-ROYAL 25121WF100LT4E (1W ±1%、厚膜) | C25466 | 0.65 | ファンの電流。温度係数 ±800ppm/°C(精度が要るなら金属板の品に) |
+| R43 | 1 | 上 | PMR18EZPFU10L0 | ROHM PMR18EZPFU10L0 |  | 0.57 | LCSC の番号・在庫は未確認(2026-11-24 に 0.1Ω 2512 から変えた。ファンのシャント R43) |
 | R44 R78 R90 R91 R92 R93 R94 R95 R96 R99 | 10 | 上 | 1k | UNI-ROYAL 0402WGF1001TCE | C11702 | 0.4 | JLC Basic |
 | R51 R80 | 2 | 上 | 2.2 | TA-I RMS04FT2R20 | C208851 | 0.4 |  |
 | R70 R71 R72 R73 | 4 | 上 | 20 1% | UNI-ROYAL 0402WGF200JTCE | C25089 | 0.4 |  |

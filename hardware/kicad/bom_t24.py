@@ -45,7 +45,6 @@ P = {
     ('47k 1%', 'R_0402_1005Metric'): ('UNI-ROYAL 0402WGF4702TCE', 'C25792', 0.40, 'JLC Basic'),
     ('100k', 'R_0402_1005Metric'): ('UNI-ROYAL 0402WGF1003TCE', 'C25741', 0.40, 'JLC Basic'),
     ('820k', 'R_0402_1005Metric'): ('UNI-ROYAL 0402WGF8203TCE', 'C67558', 0.40, ''),
-    ('0.1 1W', 'R_2512_6332Metric'): ('UNI-ROYAL 25121WF100LT4E (1W ±1%、厚膜)', 'C25466', 0.65, 'ファンの電流。温度係数 ±800ppm/°C(精度が要るなら金属板の品に)'),
     # ---- 半導体など ----
     ('2N7002', 'SOT-23'): ('CJ 2N7002', 'C8545', 1.20, 'JLC Basic'),
     ('BAT54WS', 'D_SOD-323'): ('Jingdao BAT54WS (30V 200mA)', 'C438012', 1.10, 'JSCJ(C2991936)・LGE(C402232)の BAT54WS は 100mA なので使わない'),
@@ -56,14 +55,14 @@ FIXED = {'STM32H725RGVx': 'STM32H725RGV6(または RGV3)', 'MP6551GQB': 'MPS MP6
          'LXDC55FAAA-203': 'Murata LXDC55FAAA-203', 'AO4407A': 'AOS AO4407A', 'IRLML6344': 'Infineon IRLML6344TRPBF',
          'SMF13A': 'Littelfuse SMF13A', 'MBR230LSFT1G': 'onsemi MBR230LSFT1G', 'BLM18PG221SN1D': 'Murata BLM18PG221SN1D',
          '2.2u DFE201610E-2R2M': 'Murata DFE201610E-2R2M=P2', 'CSTNE10M0G52Z000R0': 'Murata CSTNE10M0G52Z000R0',
-         'T521D107M025ATE040 (100u 25V)': 'KEMET T521D107M025ATE040', 'PMR18EZPFU5L00 (5m 1%)': 'ROHM PMR18EZPFU5L00',
+         'T521D107M025ATE040 (100u 25V)': 'KEMET T521D107M025ATE040', 'PMR18EZPFU5L00 (5m 1%)': 'ROHM PMR18EZPFU5L00', 'PMR18EZPFU10L0 (10m 1%)': 'ROHM PMR18EZPFU10L0',
          'SSSS810701': 'Alps Alpine SSSS810701', 'OPV332': 'TT Electronics (Optek) OPV332', 'SFH 229 FA': 'ams OSRAM SFH 229 FA(2025-11-28 生産終了。**予備を含めて在庫を確保**)', 'TVAF06-A020B-R': 'Jianfu TVAF06-A020B-R', 'SMT-0540-S-R': 'PUI Audio SMT-0540-S-R'}
 # IC など品番が決まっている部品の LCSC の番号と在庫(2026-11-23、LCSC・JLCPCB の製品ページで確かめた。在庫は LCSC の数で、JLC の組み立ての在庫とは別)
 LCSC = {'STM32H725RGVx': ('C5271073', 'RGV6。**LCSC の在庫 0**(RGV3 の C5271074 も 0)'), 'INA241A3': ('C6051860', '在庫 約6,470'),
         'OPA2354': ('C95502', 'OPA2354AIDGKR、在庫 約4,360'), 'LSM6DSR': ('C784817', 'LSM6DSRTR、在庫 約4,200'),
         'AO4407A': ('C16072', 'AOS のもの(UMW・MSKSEMI の同じ品番は別物)、在庫 約4,145'), 'IRLML6344': ('C53550', 'Infineon のもの、在庫 約39,800'),
         'SMF13A': ('C315998', '在庫 約3,835'), 'MBR230LSFT1G': ('C126673', '在庫 約22,400'), 'BLM18PG221SN1D': ('C80165', '在庫 約157,900'),
-        '2.2u DFE201610E-2R2M': ('C337891', '在庫 約3,910'), 'PMR18EZPFU5L00 (5m 1%)': ('C308575', '**LCSC の在庫 0**'),
+        '2.2u DFE201610E-2R2M': ('C337891', '在庫 約3,910'), 'PMR18EZPFU5L00 (5m 1%)': ('C308575', '**LCSC の在庫 0**'), 'PMR18EZPFU10L0 (10m 1%)': ('', 'LCSC の番号・在庫は未確認(2026-11-24 に 0.1Ω 2512 から変えた。ファンのシャント R43)'),
         'SSSS810701': ('C97433', '在庫 約340'), 'SMT-0540-S-R': ('C3812104', '**LCSC の在庫 0**'), 'APTD1608LSECK/J4-PF': ('C5879215', '在庫 約660'),
         'OPV332': ('C6622198', '**LCSC の在庫 0**'), 'SFH 229 FA': ('C3211054', '**LCSC の在庫 0**'),
         'MP6551GQB': ('', '**LCSC になし**(ほかの代理店で)'), 'NJU6080': ('', '**LCSC になし**(日清紡の品番は NJU6080F1)'),
@@ -97,7 +96,7 @@ def main():
                 if k in LCSC:
                     lcsc, memo = LCSC[k][0], LCSC[k][1]
                     break
-            h = {'AO4407A': 1.75, 'T521D107M025ATE040 (100u 25V)': 3.1, 'PMR18EZPFU5L00 (5m 1%)': 0.57, 'MBR230LSFT1G': 0.98, 'BLM18PG221SN1D': 0.95}.get(v, h)
+            h = {'AO4407A': 1.75, 'T521D107M025ATE040 (100u 25V)': 3.1, 'PMR18EZPFU5L00 (5m 1%)': 0.57, 'PMR18EZPFU10L0 (10m 1%)': 0.57, 'MBR230LSFT1G': 0.98, 'BLM18PG221SN1D': 0.95}.get(v, h)
             if r_is_pad(refs):
                 mpn, memo = '(基板のパッド。部品なし)', {'J1': '電池の線 BT2.0 のケーブルをはんだ付け', 'J2': 'モーターの線(裏)', 'J3': 'モーターの線(裏)', 'J4': 'ファンの線',
                                                      'J5': 'エンコーダ基板をはんだ付け', 'J6': 'エンコーダ基板をはんだ付け', 'NT1': 'PGND と GND の1点', 'TP1': '', 'TP2': '', 'TP3': ''}.get(refs[0], '')

@@ -4587,7 +4587,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1 1W"
+		(property "Value" "PMR18EZPFU10L0 (10m 1%)"
 			(at 248.92 99.06 0)
 			(effects
 				(font
@@ -4596,7 +4596,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_2512_6332Metric"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric"
 			(at 246.38 97.79 0)
 			(effects
 				(font
