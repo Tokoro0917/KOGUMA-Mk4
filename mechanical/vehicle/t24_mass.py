@@ -78,7 +78,8 @@ for r in rows_v:      # 平行ピン・軸受・磁石は main のものを動�
         if r['name'] == k + '_R':
             right[k] = (V['parts'][r['name']][0].translate(cq.Vector(0, 3.5, 4.5)), V['parts'][r['name']][1])
 import wheel_t24 as _wt
-right['pin'] = (ycyl(1.5, _wt.PIN_Y[0], _wt.PIN_Y[1], ax, az).val(), right['pin'][1])   # 2026-11-24: 平行ピン 3×8(ホイール t24v2。main は 3×6)
+right['pin'] = (ycyl(1.5, _wt.PIN_Y[0], _wt.PIN_Y[1], ax, az).val(), right['pin'][1])
+right['magnet'] = (ycyl(1.5, _wt.PIN_Y[1], _wt.PIN_Y[1] + 1.0, ax, az).val(), right['magnet'][1])   # 2026-11-24: 磁石はピンの端(面を内の軸受の面 y -19.0 にそろえる)   # 2026-11-24: 平行ピン 3×8(ホイール t24v2。main は 3×6)
 assert (dz.SX, dz.SY) == (40.0, 21.3), '吸引する面が 80 × 42.6mm でない'     # 2026-11-23(frame t24v4)
 new_parts = {}   # 2026-11-23(frame t24v10): 塩ビのシートはない(t24v9 まではマウントが載る所を切ったシートをここで足していた)
 for k, (s, m) in right.items():

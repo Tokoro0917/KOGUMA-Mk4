@@ -11,13 +11,13 @@ enc_board    - pcb          すき間  0.200 mm  重なり   0.000 mm³
 brg_out      - wheel        すき間  0.200 mm  重なり   0.000 mm³ 
 brg_in       - MT6835       すき間  0.300 mm  重なり   0.000 mm³ 
 mount        - pinion13     すき間  0.300 mm  重なり   0.000 mm³ 
+magnet       - MT6835       すき間  0.300 mm  重なり   0.000 mm³ 
 motor        - shaft        すき間  0.300 mm  重なり   0.000 mm³ 
 mount        - fan_ring     すき間  0.301 mm  重なり   0.000 mm³ 
 mount        - spur71       すき間  0.361 mm  重なり   0.000 mm³ 
 mount        - motor_boss   すき間  0.400 mm  重なり   0.000 mm³ 
 tire         - pinion13     すき間  0.400 mm  重なり   0.000 mm³ 
 tire         - shaft        すき間  0.400 mm  重なり   0.000 mm³ 
-magnet       - MT6835       すき間  0.500 mm  重なり   0.000 mm³ 
 spur71       - pcb          すき間  0.500 mm  重なり   0.000 mm³ 
 wheel        - pinion13     すき間  0.532 mm  重なり   0.000 mm³ 
 mount        - MT6835       すき間  0.600 mm  重なり   0.000 mm³ 
@@ -36,7 +36,8 @@ motor        - frame        すき間  1.100 mm  重なり   0.000 mm³
 brg_in       - pcb          すき間  1.175 mm  重なり   0.000 mm³ 
 brg_out      - pcb          すき間  1.235 mm  重なり   0.000 mm³ 
 spur71       - motor_boss   すき間  1.282 mm  重なり   0.000 mm³ 
+pin          - MT6835       すき間  1.300 mm  重なり   0.000 mm³ 
 wheel        - pcb          すき間  1.332 mm  重なり   0.000 mm³ 
-mount        - magnet       すき間  1.448 mm  重なり   0.000 mm³ 
 mount        - pin          すき間  1.450 mm  重なり   0.000 mm³ 
+mount        - magnet       すき間  1.450 mm  重なり   0.000 mm³ 
 brg_in       - enc_board    すき間  1.500 mm  重なり   0.000 mm³ 
