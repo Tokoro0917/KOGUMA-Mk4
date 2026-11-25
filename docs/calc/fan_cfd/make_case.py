@@ -13,6 +13,8 @@
     sweep=60   羽の曲がり [°](内の端から外の端まで、回る向きと逆へ回る角度。0 はまっすぐ)
     height=3.9 羽の高さ [mm](下の端は z 3.3 のまま。上の板・モーターもその分上がる)
     inner=5    羽の内の端の半径 [mm]
+    leak=0.15  スカートと床のすき間 [mm](漏れの穴の大きさを決める。0 は漏れなしの密閉)(2026-11-25、ユーザー
+               「吸引し始めるとスカートの中はほぼ密閉状態になる」→ すき間を小さくしたときの比べ)
 
 3 つの形(どれも羽根 φ32、曲がった羽 5 枚、羽の高さ z 3.3〜7.2、上の板 z 7.2〜8.0。違いは外の壁と出口だけ):
   A 今の MK4: 羽根に外の壁なし。止まった輪(ファンの台、内径 φ33 = 羽の先とのすき間 0.5mm)の中で回る。
@@ -43,7 +45,7 @@ OUT = sys.argv[2]
 COARSE = 'coarse' in sys.argv[3:]
 PARTS = 'parts' in sys.argv[3:]      # まわりの部品(マウント・タイヤ・ホルダなど)を入れる(2026-11-25)
 # 羽根の形の指定(書かなければ、3 つの形を比べたときの値)
-SHAPE = {'tip': 16.0, 'gap': 1.0, 'blades': 5, 'sweep': 60.0, 'height': 3.9, 'inner': 5.0}
+SHAPE = {'tip': 16.0, 'gap': 1.0, 'blades': 5, 'sweep': 60.0, 'height': 3.9, 'inner': 5.0, 'leak': 0.15}
 for arg in sys.argv[3:]:
     if '=' in arg:
         name, value = arg.split('=')
@@ -61,7 +63,7 @@ Z_BLADE0 = 3.3        # 羽の下の端(フレームとのすき間 0.5mm)
 Z_DISC0 = Z_BLADE0 + SHAPE['height']   # 上の板の下の面(羽の高さ 3.9 なら 7.2)
 Z_DISC1 = Z_DISC0 + 0.8               # 上の板の上の面(ファンの台の「羽根の上面 z 8.0」)
 R_HOLE = 7.5          # フレームの吸い込みの穴(φ15)
-R_LEAK = math.sqrt(204.0 * 0.15 / math.pi)    # 漏れの穴(半径 3.12mm)
+R_LEAK = math.sqrt(204.0 * SHAPE['leak'] / math.pi)    # 漏れの穴(すき間 0.15mm なら半径 3.12mm)
 RIM_T = 0.6           # B・C の回る外の壁の厚さ
 BLADE_T = 0.6         # 羽の厚さ
 R_BLADE0 = SHAPE['inner']   # 羽の内の端
@@ -138,7 +140,9 @@ def base():
     """フレームから下: 部屋(フレームの穴の下)と漏れの穴と入口の部屋を除いた、詰まった塊"""
     b = cq.Workplane('XY').box(2 * HALF + 2, 2 * HALF + 2, Z_FRAME - (Z_BOTTOM - 1), centered=(True, True, False)).translate((0, 0, Z_BOTTOM - 1))
     b = b.cut(cyl(R_HOLE, -4.0, Z_FRAME + 1))          # 部屋とフレームの穴
-    b = b.cut(cyl(R_LEAK, -4.6, -3.9))                   # 漏れの穴(厚さ 0.5mm の板の穴)
+    if R_LEAK > 0:
+        b = b.cut(cyl(R_LEAK, -4.6, -3.9))               # 漏れの穴(厚さ 0.5mm の板の穴)
+    # 漏れなし(leak=0)のときは穴を開けない。下の入口の部屋はつながらない別の空間になり、snappyHexMesh が捨てる
     b = b.cut(cyl(R_HOLE, Z_BOTTOM - 2, -4.5))           # 入口の部屋(大気)
     return b
 
