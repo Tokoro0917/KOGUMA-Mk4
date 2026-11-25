@@ -4121,7 +4121,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_Wire:SolderWire-0.25sqmm_1x02_P4.2mm_D0.65mm_OD1.7mm"
+		(property "Footprint" "KOGUMA-Mk4:MotorWire_SMD_1x02_P3.2mm"
 			(at 241.3 73.66 0)
 			(effects
 				(font
