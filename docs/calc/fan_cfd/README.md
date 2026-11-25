@@ -1,6 +1,6 @@
 # 吸引ファンの形の比べ(流体の計算、2026-11-24)
 
-xfa273 さんの X の投稿(DMM で印刷したファン)の形と、今の MK4 のファン、その組み合わせを、35,000rpm で比べた。
+xfa273 さんの X の投稿(DMM で印刷したファン)の形と、今の MK4 のファン、その組み合わせを、35,000rpm で比べた。報告の PDF: [日本語](fan_cfd_report_ja.pdf)・[English](fan_cfd_report_en.pdf)
 
 ![3つの形の断面](../../img/tire24/fan_cfd_shapes.png)
 
@@ -55,6 +55,12 @@ python3 docs/calc/fan_cfd/post.py <フォルダA> <フォルダB> <フォルダC
 # 図
 python3 docs/calc/fan_cfd/flow_fig.py docs/img/tire24/fan_cfd_flow.png <フォルダA> <フォルダB> <フォルダC>
 python3 docs/calc/fan_cfd/section_fig.py
+# 報告の PDF(日本語・英語)。先に英語の図も作る
+python3 docs/calc/fan_cfd/section_fig.py --en
+python3 docs/calc/fan_cfd/flow_fig.py docs/img/tire24/fan_cfd_flow_en.png <フォルダA> <フォルダB> <フォルダC>
+python3 docs/calc/fan_cfd/report_pdf.py
 ```
+
+報告の PDF: [日本語](fan_cfd_report_ja.pdf)・[English](fan_cfd_report_en.pdf)
 
 このパッケージは関数オブジェクト(forces など)が「sha1」のエラーで動かないので、`post.py` が書き出したメッシュと場を読んで、負圧・流量・トルクを自分で計算している。
