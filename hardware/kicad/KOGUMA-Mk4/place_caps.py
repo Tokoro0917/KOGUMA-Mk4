@@ -15,7 +15,7 @@
 使い方(このフォルダで): python3 place_caps.py  (gen_pcb.py で作った、部品を置く前の基板に対して使う)
           python3 place_caps.py t24  (タイヤ24mm の基板 ../KOGUMA-Mk4_t24。../make_main_t24.py のあとに使う)
 t24 では電池のホルダはない(電池は 1.5mm のスペーサーで浮かせ、電池の下は高さ 1.2mm までの部品だけ)。
-エンコーダのパッド J5・J6 は上の面(ENC_Base_Edge_T24)なので、C86・C87 はそのパッドのそばに置く
+エンコーダのパッド J5・J6(ENC_Base_Edge_T24)は上の面と裏の面の両方(2026-11-25)。C86・C87 は上の面の、そのパッドのそばに置く
 """
 import os, sys, math
 import pcbnew
@@ -279,7 +279,7 @@ for c, j in ((() if T24 else (('C86', 'J5'), ('C87', 'J6')))):
     face(c, '1', (1 if x1 > x7 else -1, 0))              # 3.3V のパッドを 1番の側に
     f.SetPosition(pcbnew.VECTOR2I(mm((x1 + x7) / 2), mm(yc)))
 
-if T24:   # エンコーダのパッドは上の面: 3.3V(1番)のパッドのそばに、同じ面で
+if T24:   # エンコーダのパッドは上と裏の両方(同じ位置): 上の面の 3.3V(1番)のパッドのそばに
     for c, j in (('C86', 'J5'), ('C87', 'J6')):
         print(f'  {c} → {j} の 3.3V のパッドから {place_near(c, j, "1"):.1f}mm')
 onboard.update({c: box(c) for c in ('C86', 'C87')})
