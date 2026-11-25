@@ -13,14 +13,12 @@ from matplotlib.patches import FancyBboxPatch, Rectangle
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ---- 計算の結果(35,000rpm、細かいメッシュ)----
-D_SUCTION = None      # D の吸引 [g](計算が終わったら書く)
-D_POWER = None        # D の羽根を回す電力 [W](同じ)
-if D_SUCTION is None:
-    raise SystemExit('D の結果がまだ書かれていない(post.py の出力を D_SUCTION・D_POWER に書く)')
+D_SUCTION = 394      # D の吸引 [g](2026-11-25、細かいメッシュ、くり返し 1,500 回)
+D_POWER = 5.64       # D の羽根を回す電力 [W]
 CASES = ['A', 'B', 'C', 'D']
 SUCTION_G = {'A': 277, 'B': 299, 'C': 323, 'D': D_SUCTION}     # 吸引 [g]
 POWER_W = {'A': 4.28, 'B': 5.21, 'C': 5.11, 'D': D_POWER}      # 羽根を回す電力 [W]
-BEST = 'C'                                                     # 一番よかった形
+BEST = 'D'                                                     # 一番よかった形(2026-11-25 に C → D)
 
 
 def power_same_suction(case):
@@ -45,7 +43,7 @@ TEXT = {
         'font': 'IPAPGothic',
         'dot': '・ ',
         'title': '吸引ファン 4つの形の比べ(流体の計算、35,000rpm)',
-        'answer': '一番よかったのは  C(組み合わせ)',
+        'answer': '一番よかったのは  D(壁なし)',
         'reason': '吸引が一番強く、同じ吸引なら電力が一番少ない',
         'names': {'A': 'A  今の MK4', 'B': 'B  xfa273 さんの形', 'C': 'C  組み合わせ', 'D': 'D  壁なし'},
         'desc': {'A': '羽根だけ回る + 止まった輪', 'B': '外の壁も一緒に回る', 'C': '外の壁も回る + 止まった輪',
@@ -58,9 +56,9 @@ TEXT = {
         'better1': '大きいほどよい',
         'better2': '小さいほどよい',
         'notes': [
-            'C は A より吸引が 17% 強い。同じ吸引にすれば、A より 5% 少ない電力で済む。',
-            'B は吸引は A より強いが電力が大きく増え、同じ吸引で比べると一番電力が多い(A の +9%)。',
-            '計算の値なので、印刷した羽根で吸引の力とファンの電流を測って確かめる。',
+            'D は A より吸引が 42% 強い。同じ吸引にすれば、A より 22% 少ない電力で済む(C より 18% 少ない)。',
+            '輪や回る外の壁は、羽根から出た空気の出口を狭くして、じゃまをしていた。',
+            'D は空気を横へ吹き出すので、計算にない部品(マウントなど)に当たると弱まる。印刷した羽根で測って確かめる。',
         ],
         'foot': 'くわしくは docs/calc/fan_cfd/README.md',
     },
@@ -68,7 +66,7 @@ TEXT = {
         'font': 'DejaVu Sans',
         'dot': '• ',
         'title': 'Suction fan: four geometries compared (CFD, 35,000 rpm)',
-        'answer': 'Best:  C (combined)',
+        'answer': 'Best:  D (no walls)',
         'reason': 'Strongest suction, and the lowest power for the same suction',
         'names': {'A': 'A  current MK4', 'B': 'B  xfa273 type', 'C': 'C  combined', 'D': 'D  no walls'},
         'desc': {'A': 'Impeller + fixed ring', 'B': 'Rotating shroud', 'C': 'Rotating shroud + fixed ring',
@@ -81,9 +79,9 @@ TEXT = {
         'better1': 'higher is better',
         'better2': 'lower is better',
         'notes': [
-            'C gives 17 % more suction than A. At the same suction it needs 5 % less power than A.',
-            'B is stronger than A, but needs the most power at the same suction (+9 % vs A).',
-            'These are CFD values: confirm by measuring suction force and fan current on printed impellers.',
+            'D gives 42 % more suction than A. At the same suction it needs 22 % less power than A (18 % less than C).',
+            'The ring and the rotating shroud narrow the outlet of the impeller and hold the air back.',
+            'D blows the air sideways, so parts not in the model (mounts etc.) may weaken it. Confirm on printed impellers.',
         ],
         'foot': 'Details: docs/calc/fan_cfd/README.md',
     },
@@ -213,7 +211,7 @@ def build(lang):
 
     # 4. ひとこと
     for i in range(len(t['notes'])):
-        fig.text(0.08, 0.195 - i * 0.03, t['dot'] + t['notes'][i], fontsize=10.5, wrap=True)
+        fig.text(0.08, 0.195 - i * 0.036, t['dot'] + t['notes'][i], fontsize=10, wrap=True)
     fig.text(0.08, 0.06, t['foot'], fontsize=9, color='#666666')
 
     out = os.path.join(HERE, f'fan_cfd_report_{lang}.pdf')
