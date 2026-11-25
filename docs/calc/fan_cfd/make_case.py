@@ -2,6 +2,10 @@
 「xfa273 さんのファンと今のと、組み合わせた形の 3 つを流体で比べて」)。
 使い方(リポジトリの一番上から): python3 docs/calc/fan_cfd/make_case.py <A|B|C|D> <計算のフォルダ> [coarse] [名前=値 ...]
   → 計算のフォルダに OpenFOAM の計算一式(形の STL と設定)を作る。走らせるのは run_case.sh
+  parts を付けると、まわりの部品を入れる(2026-11-25、ユーザー「逆流してくる空気があると思う」→ D の横へ吹き出す空気が部品に当たる影響を見る):
+    mechanical/order_t24/ の STEP(機体の座標)から、フレームの上と基板の下の間にある部品を取り、ファンの中心(14.2, 0)が原点になるようにずらす。
+    入れるもの: モーターマウント・モーター・タイヤ・ホイール・71T・壁センサのホルダ・ねじ・エンコーダ基板・ファンの台(輪を除いた腕・ハブ・継ぎ目)。
+    ファンの台の輪は、C では計算の輪(ring)と同じ所なので除き、D ではもともとない
   「名前=値」で羽根の形を変えられる(2026-11-25、ユーザー「C 案は採用。羽の形も検証したい」):
     tip=16     羽の先の半径 [mm](C 案を今の輪(外 半径 17.5)に収めるときは 15 = φ30)
     gap=1.0    C の回る壁と止まった輪のすき間 [mm](φ30 のときは 0.9 で、輪が今と同じ半径 16.5〜17.5 になる)
@@ -37,6 +41,7 @@ from shapely.geometry import LineString
 CASE = sys.argv[1]
 OUT = sys.argv[2]
 COARSE = 'coarse' in sys.argv[3:]
+PARTS = 'parts' in sys.argv[3:]      # まわりの部品(マウント・タイヤ・ホルダなど)を入れる(2026-11-25)
 # 羽根の形の指定(書かなければ、3 つの形を比べたときの値)
 SHAPE = {'tip': 16.0, 'gap': 1.0, 'blades': 5, 'sweep': 60.0, 'height': 3.9, 'inner': 5.0}
 for arg in sys.argv[3:]:
@@ -147,10 +152,44 @@ def motor():
     return cyl(R_MOTOR, Z_MOTOR0, Z_TOP + 2)
 
 
-def write_stl(wp, name):
+FAN_X = 14.2          # 機体の座標でのファンの中心(mechanical/vehicle/pcb_shape.py の FAN)
+PARTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../../mechanical/order_t24')
+
+
+def parts():
+    """まわりの部品を1つの塊にする(機体の座標の STEP を読み、ファンの中心が原点になるようにずらして、計算の範囲で切り取る)"""
+    files = ['02_motor_mount_R_t24v12', '03_motor_mount_L_t24v12', '05_wheel_t24v7', '06_sensor_holder_v6',
+             '08_encoder_board_R_t24', '09_purchased_and_other_parts']
+    solids = []
+    for f in files:
+        for v in cq.importers.importStep(os.path.join(PARTS_DIR, f + '.step')).solids().vals():
+            bb = v.BoundingBox()
+            # 09 の中の、羽根・ファンのモーター・軸(ファンの軸の上にある物)は計算の側で持っているので除く
+            if abs((bb.xmin + bb.xmax) / 2 - FAN_X) < 1.0 and abs((bb.ymin + bb.ymax) / 2) < 1.0:
+                continue
+            solids.append(v)
+    # ファンの台: 輪(半径 16.3〜17.7、腕の上の端 z 10.8 まで)を除いて、腕・ハブ・継ぎ目だけ残す
+    mount = cq.importers.importStep(os.path.join(PARTS_DIR, '04_fan_mount_t24v4.step'))
+    ring_cut = cq.Workplane('XY').workplane(offset=0).center(FAN_X, 0).circle(17.7).circle(16.3).extrude(10.9)
+    mount = mount.cut(ring_cut)
+    solids = solids + mount.solids().vals()
+    # 計算の範囲(横 ±HALF、フレームの上の面の少し下 〜 基板の下の面の少し上)で切り取る。少し重ねて、すき間の細い所を作らない
+    clip = cq.Workplane('XY').box(2 * HALF - 0.2, 2 * HALF - 0.2, 13.75 - 2.7, centered=(True, True, False)).translate((FAN_X, 0, 2.7)).val()
+    pieces = []
+    for v in solids:
+        for piece in v.intersect(clip).Solids():
+            pieces.append(piece)
+    # 重なった部品を1つにまとめる(1つずつ union すると部品が消えることがあったので、まとめて fuse する)
+    body = pieces[0].fuse(*pieces[1:]).clean().fix()
+    body = cq.Workplane('XY').add(body)
+    return body.translate((-FAN_X, 0, 0))
+
+
+def write_stl(wp, name, tolerance_mm=0.002):
+    """STL に書き出す(tolerance_mm は面を三角に分ける細かさ。まわりの部品は 0.02mm で粗くして、ファイルを小さくする)"""
     shape = wp.val().scale(0.001)
     os.makedirs(os.path.join(OUT, 'constant/triSurface'), exist_ok=True)
-    cq.exporters.export(cq.Workplane().add(shape), os.path.join(OUT, 'constant/triSurface', name + '.stl'), tolerance=0.002 * 0.001, angularTolerance=0.1)
+    cq.exporters.export(cq.Workplane().add(shape), os.path.join(OUT, 'constant/triSurface', name + '.stl'), tolerance=tolerance_mm * 0.001, angularTolerance=0.1)
 
 
 def write(path, text):
@@ -177,6 +216,8 @@ def dicts():
     surfaces = ['impeller', 'base', 'pcb', 'motor']
     if RING:
         surfaces.append('ring')
+    if PARTS:
+        surfaces.append('parts')
     write('system/blockMeshDict', HEADER.format(cls='dictionary', obj='blockMeshDict') + f'''
 convertToMeters 0.001;
 vertices ( (-{HALF} -{HALF} {Z_BOTTOM}) ({HALF} -{HALF} {Z_BOTTOM}) ({HALF} {HALF} {Z_BOTTOM}) (-{HALF} {HALF} {Z_BOTTOM})
@@ -188,7 +229,7 @@ boundary (
 );
 ''')
     geo = ''.join(f'  {s}.stl {{ type triSurfaceMesh; name {s}; }}\n' for s in surfaces)
-    levels = {'impeller': lv_fine, 'ring': lv_fine, 'base': lv_mid, 'motor': lv_mid, 'pcb': 1}
+    levels = {'impeller': lv_fine, 'ring': lv_fine, 'base': lv_mid, 'motor': lv_mid, 'pcb': 1, 'parts': lv_mid}
     ref = ''.join(f'    {s} {{ level ({levels[s]} {levels[s]}); patchInfo {{ type wall; }} }}\n' for s in surfaces)
     feats = ''.join(f'    {{ file "{s}.eMesh"; level {levels[s]}; }}\n' for s in surfaces)
     write('system/snappyHexMeshDict', HEADER.format(cls='dictionary', obj='snappyHexMeshDict') + f'''
@@ -293,5 +334,7 @@ if __name__ == '__main__':
     write_stl(motor(), 'motor')
     if RING:
         write_stl(ring_solid(RING[0], RING[1], Z_FRAME - 0.1, Z_RING1), 'ring')
+    if PARTS:
+        write_stl(parts(), 'parts', 0.02)
     dicts()
     print(f'形 {CASE}: {OUT}(回る範囲 r ≤ {R_ZONE:.2f}mm、z {Z_ZONE0:.2f}〜{Z_ZONE1:.2f}mm、漏れの穴 半径 {R_LEAK:.2f}mm、{RPM:.0f}rpm = {OMEGA:.1f} rad/s)')
