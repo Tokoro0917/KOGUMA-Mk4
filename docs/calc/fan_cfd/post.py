@@ -161,7 +161,10 @@ def analyse(case):
     ch = (r < 7.0e-3) & (cc[:, 2] > -3.5e-3) & (cc[:, 2] < 1.5e-3)
     p_ch = RHO * (p[ch] * vol[ch]).sum() / vol[ch].sum()
     # 2. 流量(入口から入る量。phi は外向きが正)
-    q_in = -boundary_values(phi_b, 'inlet').sum()
+    # 漏れなし(密閉、make_case.py の leak=0)のときは入口がメッシュから消えるので、流量は 0
+    q_in = 0.0
+    if 'inlet' in patches:
+        q_in = -boundary_values(phi_b, 'inlet').sum()
     # 3. 羽根のトルク
     s0, n = patches['impeller']
     idx = np.arange(s0, s0 + n)
