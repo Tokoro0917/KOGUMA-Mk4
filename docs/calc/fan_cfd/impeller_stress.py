@@ -11,7 +11,10 @@
      まっすぐ(0°)の羽は遠心力が羽の面に沿うので、曲げはほぼ 0
      羽の外の端は回る外の壁につながっているので、外の端の近くは計算より小さい。内の方(r 10mm)を目安にする
   羽の曲がりは make_case.py と同じ対数らせん: 内の端から外の端までで sweep 回る → tanβ = sweep / ln(R_TIP / R_IN)
-材料は光造形の樹脂として 密度 1.2 g/cm³、ν 0.35。付け根の角が丸められていないと、角で力が 2〜3 倍に集まる"""
+材料は光造形の樹脂として 密度 1.2 g/cm³、ν 0.35。付け根の角が丸められていないと、角で力が 2〜3 倍に集まる
+あわせて、ファンのモーター(NFP-D8620、7.4V 版)にかける電圧と回転数の関係も出す(2026-11-25、ユーザー「吸引ファンのモーターは
+最短のときだけ定格を超えるのを許す」)。羽根のトルクは回転数の2乗に比例するとし、35,000rpm で 1.07 mN·m
+(C 案 φ30 の粗いメッシュ 0.995 mN·m を、φ32 での粗い → 細かいの差 +8% で直した仮の値。細かいメッシュの結果で置きかえる)"""
 import math
 
 RHO = 1200.0          # 樹脂の密度 [kg/m³]
@@ -23,6 +26,12 @@ R_DISC = 15.6e-3      # 上の板の外の半径
 R_BLADE = 10.0e-3     # 羽の曲げを見る位置
 HEIGHT = 3.9e-3       # 羽の高さ
 THICK = 0.6e-3        # 羽の厚さ
+# ファンのモーター NFP-D8620(docs/spec.md「モーター」)
+R_MOTOR_OHM = 1.0     # 巻線抵抗
+KT = 1.47e-3          # トルク定数 [N·m/A]
+KE = 1.51e-3          # 逆起電力定数 [V/(rad/s)]
+I_NOLOAD_A = 0.14     # 無負荷電流
+TORQUE_35K = 1.07e-3  # 羽根を 35,000rpm で回すトルク [N·m](仮)
 
 
 def omega(rpm):
@@ -51,9 +60,24 @@ def blade_stress_mpa(rpm, sweep_deg, height=HEIGHT, thick=THICK):
     return 3 * RHO * omega(rpm) ** 2 * R_BLADE * math.sin(beta) * height ** 2 / thick / 1e6
 
 
+def fan_rpm(volt):
+    """モーターに volt をかけたときの回転数。volt = R × 電流 + Ke × ω、電流 = 羽根のトルク / Kt + 無負荷電流 を ω について解く"""
+    a = TORQUE_35K / omega(35000) ** 2 / KT * R_MOTOR_OHM     # ω² の係数
+    b = KE                                                     # ω の係数
+    c = I_NOLOAD_A * R_MOTOR_OHM - volt
+    w = (-b + math.sqrt(b * b - 4 * a * c)) / (2 * a)          # 2次方程式の正の解
+    return w * 60 / (2 * math.pi)
+
+
+def fan_current_a(rpm):
+    """その回転数でモーターに流れる電流"""
+    torque = TORQUE_35K * (rpm / 35000) ** 2
+    return torque / KT + I_NOLOAD_A
+
+
 if __name__ == '__main__':
     print('回転数        外の壁   上の板の穴   羽(0° / 30° / 60° / 90°)の付け根の曲げ')
-    for rpm in (35000, 50000, 70000):
+    for rpm in (35000, 40000, 45000, 56000, 64000):
         blades = []
         for sweep in (0, 30, 60, 90):
             blades.append(f'{blade_stress_mpa(rpm, sweep):5.1f}')
@@ -64,3 +88,8 @@ if __name__ == '__main__':
     print()
     print(f'60° の羽、35,000rpm: 高さ 4.9mm → {blade_stress_mpa(35000, 60, height=4.9e-3):.1f}MPa、'
           f'厚さ 0.8mm → {blade_stress_mpa(35000, 60, thick=0.8e-3):.1f}MPa(基準 {blade_stress_mpa(35000, 60):.1f}MPa)')
+    print()
+    print('ファンのモーターの電圧と回転数(羽根 φ30 の C 案、トルクは仮の値)')
+    for volt in (7.4, 8.0, 8.5, 9.0, 12.6):
+        rpm = fan_rpm(volt)
+        print(f'  {volt:4.1f}V → {rpm:6.0f}rpm、モーターの電流 {fan_current_a(rpm):.2f}A、60° の羽の付け根 {blade_stress_mpa(rpm, 60):.1f}MPa')
