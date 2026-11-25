@@ -70,7 +70,8 @@ def ensure_project():
     # モーターの端子 (-12, ±1.5) から線を前へ出し、モーターとファンの囲いの間(裏 x -6.9〜-3.3)ではんだ付けする。上の面が空くので、MCU のグループを電池の下の真ん中に置ける
     write_motor_wire_fp()
     t = open(os.path.join(DST, 'motor.kicad_sch')).read()
-    for ref in ('J2', 'J3'):
+    # 2026-11-24: ファンの線のパッド J4 も裏の面の SMD のパッドに(ユーザー: ファンの線は裏側でいい)
+    for ref in ('J2', 'J3', 'J4'):
         i = t.index(f'(property "Reference" "{ref}"')
         j = t.index('"Connector_Wire:SolderWire-0.25sqmm_1x02_P4.2mm_D0.65mm_OD1.7mm"', i)
         t = t[:j] + '"KOGUMA-Mk4:MotorWire_SMD_1x02_P3.2mm"' + t[j + len('"Connector_Wire:SolderWire-0.25sqmm_1x02_P4.2mm_D0.65mm_OD1.7mm"'):]
