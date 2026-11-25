@@ -63,7 +63,7 @@ def ensure_project():
             assert t.count('"KOGUMA-Mk4:ENC_Base_Butt"') == 2      # main(タイヤ15mm)はエンコーダ基板 v2 を裏に突き当てる形(2026-11-02)
             t = t.replace('"KOGUMA-Mk4:ENC_Base_Butt"', '"KOGUMA-Mk4:ENC_Base_Edge_T24"')
             t = t.replace('を小さな基板(6.0 × 10.3mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder)に載せる。\\nエンコーダの基板はメイン基板の裏に突き当て(2026-11-02、穴はなし)、裏のパッド(ENC_Base_Butt、エンコーダ基板の両側に7つずつ)と両面ではんだ付けする(線は使わない)。',
-                          'を小さな基板(6.0 × 8.75mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder_t24)に載せる。\\nエンコーダの基板はメイン基板の切り欠きの縁に沿って立て、上の面のパッド7つ(ENC_Base_Edge_T24)にはんだ付けする(線は使わない)。')
+                          'を小さな基板(6.0 × 8.75mm、左右で同じ、hardware/kicad/KOGUMA-Mk4_Encoder_t24)に載せる。\\nエンコーダの基板はメイン基板の切り欠きの縁に沿って立て、パッド7つ(ENC_Base_Edge_T24、上の面と裏の面の両方。2026-11-25)の、上・裏のどちらか(または両方)にはんだ付けする(線は使わない)。')
         t = to_1005(t)
         open(d, 'w').write(t)
     # モーターの線のパッド J2・J3: 穴のパッド → 裏の面の SMD のパッド2つ(MotorWire_SMD_1x02_P3.2mm、2026-11-23)。

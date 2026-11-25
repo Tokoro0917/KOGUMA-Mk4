@@ -128,7 +128,8 @@ UNDER = unary_union([box(-17.2, -22.1, -6.9, 22.1),                             
                     + [ps.holder(k).buffer(0.3, join_style=2) for k in ps.SENS])
 # 両方の面でよける所
 BOTH = unary_union([Point(ps.FAN).buffer(ps.HUB_HOLE + 0.3, 64)] + [Point(p).buffer(2.6) for p in ps.SCREWS])
-TOP_ONLY = unary_union([box(x0 - 0.3, y0 - 0.3, x1 + 0.3, y1 + 0.3) for (x0, x1, y0, y1) in ps.ENC])
+# エンコーダ基板をはんだ付けするパッドの所。2026-11-25 からパッドは上の面と裏の面の両方にある(ユーザー: 表裏どちらでもはんだで固定できるように)ので、両方の面でよける
+ENC_PADS = unary_union([box(x0 - 0.3, y0 - 0.3, x1 + 0.3, y1 + 0.3) for (x0, x1, y0, y1) in ps.ENC])
 SIGNAL_W, GND_W, BOTTOM_COST = 1.0, 0.12, 2.5
 POWER = {'+3V3', '+3V3A', 'VBAT', '/電源/BAT+', 'PGND'}
 GNDS = {'GND', 'PGND'}
@@ -295,7 +296,9 @@ def plan():
         placed[r] = dict(side='B' if d['flip'] else 'T', poly=polys(d['cy']), pads=[dict(p, ref=r) for p in d['pads']], mech=True)
     result = {}
     def obstacles(side):
-        obs = [BOTH] + ([TOP_ONLY] if side == 'T' else [UNDER])
+        obs = [BOTH, ENC_PADS]
+        if side == 'B':
+            obs.append(UNDER)
         for r, q in placed.items():
             if q['poly'] is not None and q['side'] == side:
                 obs.append(q['poly'])
@@ -477,7 +480,7 @@ def plan():
             bad.append(f'{r} が電池の下(高さ {height(F[r]["fp"], r)}mm)')
         if q['side'] == 'B' and UNDER.intersection(q['poly']).area > 1e-4:
             bad.append(f'{r} が裏の機構に当たる')
-        if BOTH.intersection(q['poly']).area > 1e-4 or (q['side'] == 'T' and TOP_ONLY.intersection(q['poly']).area > 1e-4):
+        if BOTH.intersection(q['poly']).area > 1e-4 or ENC_PADS.intersection(q['poly']).area > 1e-4:
             bad.append(f'{r} がよける所に当たる')
     print('重なり・はみ出し:', bad if bad else 'なし')
     return F, G, board, placed, result
