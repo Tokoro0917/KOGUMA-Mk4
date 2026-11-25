@@ -31,12 +31,13 @@ sys.path.insert(0, 'mechanical/vehicle'); sys.path.insert(0, 'docs/calc/frame')
 import pcb_t24, pcb_shape as ps
 o = ps.outline()
 rings = [list(r.coords) for g in getattr(o, 'geoms', [o]) for r in [g.exterior] + list(g.interiors)]
-print(json.dumps(dict(rings=rings, SENS=ps.SENS, LEDS=ps.LEDS, LED_FRONT=ps.LED_FRONT, SCREWS=ps.SCREWS,
+print(json.dumps(dict(rings=rings, VER=ps.VER, SENS=ps.SENS, LEDS=ps.LEDS, LED_FRONT=ps.LED_FRONT, SCREWS=ps.SCREWS,
                       pads={k: dict(emit=ps.pads(k, 'emit'), recv=ps.pads(k, 'recv')) for k in ps.SENS})))
 '''
 import json
 _g = json.loads(subprocess.run(['python3', '-c', GEOM], cwd=REPO, capture_output=True, text=True, check=True).stdout.strip().splitlines()[-1])
 class ps:
+    VER = _g['VER']                 # 基板の外形の版(mechanical/vehicle/pcb_t24.py)
     SENS = {k: (tuple(v[0]), v[1]) for k, v in _g['SENS'].items()}
     LEDS = [tuple(p) for p in _g['LEDS']]
     LED_FRONT = tuple(_g['LED_FRONT'])
@@ -290,7 +291,7 @@ def build():
             if x > x0 + 70:
                 x = x0; y += 6
         y += 10
-    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline t24v9 (mechanical/pcb/pcb_outline_t24v9.dxf), 0.6mm. '
+    note(b, 'KOGUMA MK4 main board for tire 24mm (t24): outline ' + ps.VER + ' (mechanical/pcb/pcb_outline_' + ps.VER + '.dxf), 0.6mm. '
             'Fixed by mechanics: J5/J6 encoder pads, D70-D77 wall sensor holders (bottom), D90-D96 UI LEDs (1608, same assignment as ToraNeko.Mk3), D98 front LED, H1-H4 M2 posts. Others: not placed yet', OX - 50, OY - 42, 1.0)
     note(b, 'No footprint in the schematic yet (not on this board): ' + ', '.join(no_fp), OX - 50, OY - 39, 1.0)
     path = os.path.join(DST, NAME + '.kicad_pcb')
