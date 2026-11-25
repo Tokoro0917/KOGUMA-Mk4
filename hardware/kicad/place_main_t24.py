@@ -78,8 +78,15 @@ FIXED = {
     'Q40': (-24.0, 16.0, None, 'T', 7, False),
     # ファンの電源の 22µF の C42 は線のパッド J4 の1番(VBAT)の上(決めておかないと、ばらしたときに遠くへ流れる)
     'C42': (-25.5, 15.5, None, 'T', 3, False),
-    # 壁センサの受光のアンプ: U74 は FL と R(左の前)、U75 は FR と L(右の前)
-    'U74': (30.0, 17.5, None, 'T', 2, False), 'U75': (30.0, -17.5, None, 'T', 2, False),
+    # ファンのシャント R43 は Q40 の S(2番)のそば、ゲートの抵抗 R41 は Q40 の G(1番)のそば(2026-11-25、配置の見直し)。
+    # 決めておかないと、ばらしたときにマイコンのそばへ流れる(前はゲートの抵抗がマイコンのそばにあり、抵抗から Q40 まで 22mm の線になっていた。
+    # ゲートの抵抗は MOSFET のすぐそばに置き、線のリンギングを抑える。マイコンからの PWM の線は長くてよい)
+    'R43': (-26.0, 21.5, None, 'T', 2, False),
+    'R41': (-24.0, 19.5, None, 'T', 3, False),
+    # 壁センサの受光のアンプ: U74 は FL と R(左の前)、U75 は FR と L(右の前)。
+    # 2026-11-25(配置の見直し): 2つの受光(前と横)の真ん中へ寄せた。受光 → アンプの入力の線は雑音をいちばん拾いやすいので短く、そろえる
+    # (前は (30, ±17.5) で、前の受光から 18mm、横から 10mm)
+    'U74': (26.5, 21.5, None, 'T', 2, False), 'U75': (26.5, -21.5, None, 'T', 2, False),
     # BLE モジュール HY0020(U5)は**前の真ん中**(2026-11-24、ユーザー)。電池の下に置かない(アンテナがシールドの上の面)。縁の近くで、モーター・ファンの線から離す
     'U5': (31.0, 0.0, [90, 270], 'T', 4, False),
     # ブザーは BLE の後ろ(音の穴は前)。グループは入りきらないので、ばらして置く
@@ -97,12 +104,16 @@ FIXED = {
     'U72': (34.0, 24.5, None, 'T', 3, False),
     'U71': (34.0, -24.5, None, 'T', 3, False),
     'R98': (30.0, 11.0, None, 'T', 5, False),
+    # ブザーを鳴らす MOSFET Q90 とそのプルダウン R97 は、ブザーの − の端子(2番)のそば(2026-11-25、配置の見直し)。
+    # 前はマイコンのそばにあり、ブザーの電流が 27mm 基板を横切っていた。マイコンからの BUZZER の線のほうを長くする
+    'Q90': (11.0, -11.5, None, 'T', 3, False),
+    'R97': (9.0, -11.5, None, 'T', 3, False),
     'C90': (30.0, 13.0, None, 'T', 5, False),
 }
 EDGE_PARTS = {'SW1'}
 BOTTOM_OK = {'C4', 'Q1', 'J2', 'J3', 'J4'}     # 裏の面に置いてよい部品(手ではんだ付け)。ほかは上の面だけ
 WHEELS = unary_union([box(-12.5, 22.0, 12.5, 40.0), box(-12.5, -40.0, 12.5, -22.0)])     # タイヤ・71T(つまみを向けない)
-ORDER = ['J2', 'J3', 'J1', 'J4', 'SW1', 'SW2', 'R98', 'J7', 'TP4', 'U5', 'BZ1', 'U2', 'U3', 'U4', 'Q1', 'C4', 'C2', 'C3', 'D1', 'U6', 'U7', 'U1', 'Q40', 'C42', 'U76', 'U74', 'U75', 'U70', 'U73', 'U72', 'U71']
+ORDER = ['J2', 'J3', 'J1', 'J4', 'SW1', 'SW2', 'R98', 'J7', 'TP4', 'U5', 'BZ1', 'U2', 'U3', 'U6', 'U7', 'U4', 'Q1', 'C4', 'C2', 'C3', 'D1', 'U1', 'Q40', 'C42', 'U76', 'U74', 'U75', 'U70', 'U73', 'U72', 'U71', 'R43', 'R41', 'Q90', 'R97']
 BATTERY = box(-16.25, -16.0, 6.25, 16.0)
 H_MAX_BAT = 1.2
 # 部品の高さ(最大、mm)。フットプリントの名前の一部で引く
@@ -128,7 +139,8 @@ UNDER = unary_union([box(-17.2, -22.1, -6.9, 22.1),                             
                     + [ps.holder(k).buffer(0.3, join_style=2) for k in ps.SENS])
 # 両方の面でよける所
 BOTH = unary_union([Point(ps.FAN).buffer(ps.HUB_HOLE + 0.3, 64)] + [Point(p).buffer(2.6) for p in ps.SCREWS])
-TOP_ONLY = unary_union([box(x0 - 0.3, y0 - 0.3, x1 + 0.3, y1 + 0.3) for (x0, x1, y0, y1) in ps.ENC])
+# エンコーダ基板をはんだ付けするパッドの所。2026-11-25 からパッドは上の面と裏の面の両方にある(ユーザー: 表裏どちらでもはんだで固定できるように)ので、両方の面でよける
+ENC_PADS = unary_union([box(x0 - 0.3, y0 - 0.3, x1 + 0.3, y1 + 0.3) for (x0, x1, y0, y1) in ps.ENC])
 SIGNAL_W, GND_W, BOTTOM_COST = 1.0, 0.12, 2.5
 POWER = {'+3V3', '+3V3A', 'VBAT', '/電源/BAT+', 'PGND'}
 GNDS = {'GND', 'PGND'}
@@ -295,7 +307,9 @@ def plan():
         placed[r] = dict(side='B' if d['flip'] else 'T', poly=polys(d['cy']), pads=[dict(p, ref=r) for p in d['pads']], mech=True)
     result = {}
     def obstacles(side):
-        obs = [BOTH] + ([TOP_ONLY] if side == 'T' else [UNDER])
+        obs = [BOTH, ENC_PADS]
+        if side == 'B':
+            obs.append(UNDER)
         for r, q in placed.items():
             if q['poly'] is not None and q['side'] == side:
                 obs.append(q['poly'])
@@ -477,7 +491,7 @@ def plan():
             bad.append(f'{r} が電池の下(高さ {height(F[r]["fp"], r)}mm)')
         if q['side'] == 'B' and UNDER.intersection(q['poly']).area > 1e-4:
             bad.append(f'{r} が裏の機構に当たる')
-        if BOTH.intersection(q['poly']).area > 1e-4 or (q['side'] == 'T' and TOP_ONLY.intersection(q['poly']).area > 1e-4):
+        if BOTH.intersection(q['poly']).area > 1e-4 or ENC_PADS.intersection(q['poly']).area > 1e-4:
             bad.append(f'{r} がよける所に当たる')
     print('重なり・はみ出し:', bad if bad else 'なし')
     return F, G, board, placed, result

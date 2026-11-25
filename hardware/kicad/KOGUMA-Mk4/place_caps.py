@@ -15,7 +15,7 @@
 使い方(このフォルダで): python3 place_caps.py  (gen_pcb.py で作った、部品を置く前の基板に対して使う)
           python3 place_caps.py t24  (タイヤ24mm の基板 ../KOGUMA-Mk4_t24。../make_main_t24.py のあとに使う)
 t24 では電池のホルダはない(電池は 1.5mm のスペーサーで浮かせ、電池の下は高さ 1.2mm までの部品だけ)。
-エンコーダのパッド J5・J6 は上の面(ENC_Base_Edge_T24)なので、C86・C87 はそのパッドのそばに置く
+エンコーダのパッド J5・J6(ENC_Base_Edge_T24)は上の面と裏の面の両方(2026-11-25)。C86・C87 は上の面の、そのパッドのそばに置く
 """
 import os, sys, math
 import pcbnew
@@ -131,20 +131,23 @@ GROUPS = []
 # ---------------- MCU(U4) ----------------
 mcu = [
     # 置く順 = 優先の順(左の辺の 1〜17 番は混むので、ノイズに効くものから近くに置く)
-    ('Y1', 'U4', '10', dict(mode='tangent', pin2='11', my_pin='1')),   # 発振子(PH0・PH1)。線を最短に
-    ('C53', 'U4', '5'),                                   # VLXSMPS 220pF
+    # 2026-11-25(配置の見直し): SMPS の部品を発振子より先に置く。前は発振子 Y1 を先に置いたので、VDDSMPS の 10µF(C50)が 4mm 外へ押し出され、
+    # ピン → C50 の線が Y1 のパッドの 0.6mm 横を通っていた(SMPS のスイッチングの雑音が発振子にのる)。
+    # SMPS の大きな電流の輪(C50 → VDDSMPS → VLXSMPS → L1 → C54 → GND)を小さく、発振子はその外のピン 10・11 の前に
+    ('C50', 'U4', '6'),                                   # VDDSMPS 10µF(SMPS の入力。いちばん近くに)
     ('L1', 'U4', '5'),                                    # SMPS のインダクタ(VLXSMPS → VFBSMPS)
-    ('C50', 'U4', '6'),                                   # VDDSMPS 10µF
-    ('C54', 'U4', '7'),                                   # VFBSMPS 10µF
-    ('C65', 'U4', '7'),                                   # VFBSMPS 10µF の2つ目(2026-11-23、AN5419)
+    ('C54', 'L1', '1'),                                   # VFBSMPS 10µF: インダクタの出口(VCORE)のパッドのそば
+    ('C65', 'L1', '1'),                                   # VFBSMPS 10µF の2つ目(2026-11-23、AN5419)。C54 のとなり
+    ('C53', 'U4', '5'),                                   # VLXSMPS 220pF
+    ('Y1', 'U4', '10', dict(mode='tangent', pin2='11', my_pin='1')),   # 発振子(PH0・PH1)。線を最短に
     ('C57', 'U4', '9'),                                   # VDD 100nF(ピンのとなりの VSS へ GND のビア)
+    ('C63', 'U4', '12'),                                  # NRST(2026-11-25: 前は後ろのほうに置いたので 6mm 離れた)
     ('C52', 'U4', '16'),                                  # VDDA 100nF
     ('C58', 'U4', '22'), ('C59', 'U4', '35'), ('C60', 'U4', '51'), ('C61', 'U4', '68'),   # ほかの VDD
     ('C55', 'U4', '33'), ('C56', 'U4', '49'),            # VCAP 100nF × 2
     ('C51', 'U4', '16'),                                  # VDDA 4.7µF
     ('FB1', 'U4', '16'), ('R51', 'FB1', '2'),             # VDDA のフィルタ
     ('C64', 'U4', '1'),                                   # VBAT(VDD につなぐ。電流は小さい)
-    ('C63', 'U4', '12'),                                  # NRST
     ('C62', 'U4', '68'),                                  # VDD のまとめの 4.7µF
     ('R50', 'U4', '63'),                                  # BOOT0 のプルダウン(テストパッド TP4 はグループに入れない。TP1〜TP3 と同じ)
     ('R101', 'U4', '62'),                                 # UART_RX のプルアップ(2026-11-23)。有線(TP1)のダイオード D100 はグループに入れない(2026-11-24: t24 でファンの上の穴を広げたら MCU の右に出っぱって当たった。TP1 のそばに置けばよい)
@@ -178,7 +181,9 @@ for u, c100, c10, rsr in (('U2', 'C21', 'C22', 'R21'), ('U3', 'C31', 'C32', 'R31
 def tia(u, pairs, c100, c10, extra=()):
     items = [(c100, u, '8'), (c10, u, '8')]
     for (r, c, out, inn) in pairs:                       # 帰還: 出力と − 入力の間に、辺に沿って
-        items += [(r, u, out, dict(mode='tangent', pin2=inn)), (c, u, out, dict(mode='tangent', pin2=inn))]
+        # 2026-11-25(配置の見直し): C は R の外(2列目)ではなく、辺に沿って R のとなりに(wlat を小さく = 横へずれるほうを選ぶ)。
+        # 0.5pF の帰還なので、ピンまでの線を短く(前は 3mm)
+        items += [(r, u, out, dict(mode='tangent', pin2=inn)), (c, u, out, dict(mode='tangent', pin2=inn, wlat=0.3))]
     return items + list(extra)
 def tia_pairs(u):
     out = []
@@ -279,7 +284,7 @@ for c, j in ((() if T24 else (('C86', 'J5'), ('C87', 'J6')))):
     face(c, '1', (1 if x1 > x7 else -1, 0))              # 3.3V のパッドを 1番の側に
     f.SetPosition(pcbnew.VECTOR2I(mm((x1 + x7) / 2), mm(yc)))
 
-if T24:   # エンコーダのパッドは上の面: 3.3V(1番)のパッドのそばに、同じ面で
+if T24:   # エンコーダのパッドは上と裏の両方(同じ位置): 上の面の 3.3V(1番)のパッドのそばに
     for c, j in (('C86', 'J5'), ('C87', 'J6')):
         print(f'  {c} → {j} の 3.3V のパッドから {place_near(c, j, "1"):.1f}mm')
 onboard.update({c: box(c) for c in ('C86', 'C87')})

@@ -2,9 +2,13 @@
 KiCad 9 の pcbnew で動かす(Ubuntu 24.04 の KiCad は Python 3.12 向けなので /usr/bin/python3.12。3.13 では落ちる)。使い方(リポジトリの一番上で): /usr/bin/python3.12 hardware/kicad/make_encoder_t24.py
 main のエンコーダ基板(KOGUMA-Mk4_Encoder、回路は同じ: MT6835・C1・J1 のパッド7つ)をもとに、新しいディレクトリへ作る:
   - 基板 6.0 × 8.75 × 0.6mm。機体では z 8.15〜16.9(MT6835 の中心 = 車軸 z 12.0)。メイン基板(z 13.6〜14.2)の切り欠きの縁に沿って立て、上へ出す
-  - J1 のパッド7つは**裏の面(B、内側。メイン基板の側)**に、ピッチ 0.8mm、0.5 × 1.8mm、z 14.2〜16.0(メイン基板の上面から上)。
+  - J1 のパッド7つは**裏の面(B、内側。メイン基板の側)**に、ピッチ 0.8mm。**上の段(z 14.4〜16.0)と下の段(z 12.4〜13.4)の2段**。
+    2026-11-25(ユーザー: 表裏どちらでもはんだで固定できるように、同じ基板で): メイン基板の上の面の上に上の段、裏の面の下に下の段。
+    メイン基板の上の面のパッド・裏の面のパッドのどちらとも(両方とも)直角にはんだ付けできる。左右とも同じ基板。
+    **メイン基板が入る所(z 13.6〜14.2)と、その上下 0.2mm には銅を出さない**(ユーザー: 貫通させない。はんだがメイン基板の縁とのすき間に流れ込むと、
+    エンコーダ基板とメイン基板の距離が変わる)。上の段と下の段は、レジストでおおった細い線(0.2mm)でつなぐ(はんだはレジストの上に流れない)
     並び(チップの面から見て左から): CS・SCK・MOSI・MISO・CAL・GND・3V3。信号はチップの面(F)のピンから斜めに上へ出し、パッドの真上のビアで裏へ
-  - 3V3・GND は、チップの下の段のピン(9・11〜13)からビアで裏へ移り、C1(0402、裏)を通って右の縁に沿ってパッドへ
+  - 3V3・GND は、チップの下の段のピン(9・11〜13)からビアで裏へ移り、C1(0402、裏)を通って、3V3 は右の縁に沿って、GND はパッドの下の端の下を横に通ってパッドへ
   - メイン基板の側のフットプリント ENC_Base_Edge_T24(KOGUMA-Mk4.pretty)も作る
 座標は KiCad の基板の座標(y は下向き)。チップの面(F)から見て、+x が右、上の辺が y 100.0"""
 import os, shutil, math
@@ -20,7 +24,9 @@ MM = pcbnew.FromMM
 X0, X1 = 97.0, 103.0           # 基板の左右(6.0mm)
 CY = 104.9                     # MT6835 の中心
 TOP, BOT = CY - 4.9, CY + 3.85  # 上の辺 100.0、下の辺 108.75(z 16.9、8.15)
-PAD_Y0, PAD_Y1 = CY - 4.0, CY - 2.2     # 裏のパッド(z 16.0〜14.2)
+PAD_Y0, PAD_Y1 = CY - 4.0, CY - 2.4     # 裏のパッドの上の段(z 16.0〜14.4)。メイン基板の上の面(z 14.2)から 0.2mm あける
+LOW_Y0, LOW_Y1 = CY - 1.4, CY - 0.4     # 裏のパッドの下の段(z 13.4〜12.4、2026-11-25)。メイン基板の裏の面(z 13.6)から 0.2mm あける
+GND_Y = LOW_Y1 + 0.5           # GND の線が下の段のパッドの下の端の下を横に通る所(パッドと 0.35mm あける)
 VIA_Y = TOP + 0.55             # 信号のビア(縁から 0.25)
 PITCH = 0.8                    # 0.85 では外のビア(φ0.6)が基板の縁から 0.15mm になる
 ORDER = ['6', '5', '4', '3', '2', '7', '1']   # 左から: CS, SCK, MOSI, MISO, CAL, GND, 3V3(J1 のピン番号)
@@ -48,39 +54,49 @@ def edge_pad_fp():
     """エンコーダ基板の J1(裏のパッド7つ)"""
     fp = pcbnew.FOOTPRINT(None)
     fp.SetFPID(pcbnew.LIB_ID('KOGUMA-Mk4_Encoder', 'ENC_Edge_T24'))
-    fp.SetLibDescription('KOGUMA MK4 encoder board for tire 24mm (6.0x8.75x0.6): 7 pads on the BACK (B, toward the main board) along the top part, '
-                         'pitch 0.8, 0.5x1.8mm, 0.9-2.7mm from the top edge (the main board top face is at 2.7mm). '
+    fp.SetLibDescription('KOGUMA MK4 encoder board for tire 24mm (6.0x8.75x0.6): 7 pads x 2 rows on the BACK (B, toward the main board), '
+                         'pitch 0.8, upper row 0.5x1.6mm at 0.9-2.5mm and lower row 0.5x1.0mm at 3.5-4.5mm from the top edge '
+                         '(main board top face at 2.7mm, bottom face at 3.3mm; no copper between, so solder does not flow into the gap): '
+                         'can be soldered to the main board on its top face, its bottom face, or both. Same-numbered pads are joined by masked tracks. '
                          'Order seen from the chip side, left to right: 6 CS, 5 SCK, 4 MOSI, 3 MISO, 2 CAL, 7 GND, 1 3V3. Magnet axis at 4.9mm from the top edge')
     fp.SetAttributes(pcbnew.FP_SMD)
-    for n in ORDER:
-        p = pcbnew.PAD(fp)
-        p.SetNumber(n); p.SetShape(pcbnew.PAD_SHAPE_ROUNDRECT); p.SetRoundRectRadiusRatio(0.1)
-        p.SetAttribute(pcbnew.PAD_ATTRIB_SMD)
-        ls = pcbnew.LSET(); ls.AddLayer(pcbnew.B_Cu); ls.AddLayer(pcbnew.B_Mask); ls.AddLayer(pcbnew.B_Paste)
-        p.SetLayerSet(ls)
-        p.SetSize(pcbnew.VECTOR2I(MM(0.5), MM(PAD_Y1 - PAD_Y0)))
-        p.SetPosition(pcbnew.VECTOR2I(MM(round(PAD_X[n] - 100.0, 4)), MM((PAD_Y0 + PAD_Y1) / 2 - TOP)))
-        fp.Add(p)
+    # 上の段(メイン基板の上の面の上)、続けて下の段(メイン基板の裏の面の下)。同じ番号のパッドは同じピン
+    for y0, y1 in ((PAD_Y0, PAD_Y1), (LOW_Y0, LOW_Y1)):
+        for n in ORDER:
+            p = pcbnew.PAD(fp)
+            p.SetNumber(n); p.SetShape(pcbnew.PAD_SHAPE_ROUNDRECT); p.SetRoundRectRadiusRatio(0.1)
+            p.SetAttribute(pcbnew.PAD_ATTRIB_SMD)
+            ls = pcbnew.LSET(); ls.AddLayer(pcbnew.B_Cu); ls.AddLayer(pcbnew.B_Mask); ls.AddLayer(pcbnew.B_Paste)
+            p.SetLayerSet(ls)
+            p.SetSize(pcbnew.VECTOR2I(MM(0.5), MM(y1 - y0)))
+            p.SetPosition(pcbnew.VECTOR2I(MM(round(PAD_X[n] - 100.0, 4)), MM((y0 + y1) / 2 - TOP)))
+            fp.Add(p)
     return fp
 
 def base_fp():
-    """メイン基板の側: 切り欠きの縁(local Y = 0)の内側、上の面にパッド7つ。回転 0 = チップの面(縁の外)が画面の上 = 左のエンコーダ(J5)。右(J6)は 180°。
+    """メイン基板の側: 切り欠きの縁(local Y = 0)の内側、**上の面と裏の面の両方**にパッド7つずつ(2026-11-25、ユーザー: 表裏どちらでもはんだで固定できるように)。
+    上と裏の同じ番号のパッドは同じピン(KiCad では同じ番号のパッドは同じネットになる)。上と裏をつなぐビアは配線のときに置く。
+    回転 0 = チップの面(縁の外)が画面の上 = 左のエンコーダ(J5)。右(J6)は 180°。
     原点は縁の上の、エンコーダ基板の真ん中(機体の x 0)。エンコーダ基板の裏の面は縁にぴったり(local Y 0。2026-11-24 にすき間 0.2mm をやめた。ユーザー)"""
     fp = pcbnew.FOOTPRINT(None)
     fp.SetFPID(pcbnew.LIB_ID('KOGUMA-Mk4', 'ENC_Base_Edge_T24'))
-    fp.SetLibDescription('KOGUMA MK4 main board for tire 24mm: solder pads on the TOP side along the cutout edge (local Y=0) for the encoder board '
+    fp.SetLibDescription('KOGUMA MK4 main board for tire 24mm: solder pads on BOTH the top and the bottom side along the cutout edge (local Y=0) for the encoder board '
                          'standing right at the edge (back face at Y=0, chip face at Y=-0.6). Pads 0.5x0.8 from Y=0.2 to 1.0, pitch 0.8. '
                          'Rotation 0 = chip side toward the top of the screen (left encoder J5, edge at robot y +16.9); rotate 180deg for the right encoder J6 (y -16.9)')
     fp.SetAttributes(pcbnew.FP_SMD)
-    for n in ORDER:
-        p = pcbnew.PAD(fp)
-        p.SetNumber(n); p.SetShape(pcbnew.PAD_SHAPE_ROUNDRECT); p.SetRoundRectRadiusRatio(0.1)
-        p.SetAttribute(pcbnew.PAD_ATTRIB_SMD)
-        ls = pcbnew.LSET(); ls.AddLayer(pcbnew.F_Cu); ls.AddLayer(pcbnew.F_Mask); ls.AddLayer(pcbnew.F_Paste)
-        p.SetLayerSet(ls)
-        p.SetSize(pcbnew.VECTOR2I(MM(0.5), MM(0.8)))
-        p.SetPosition(pcbnew.VECTOR2I(MM(round(-(PAD_X[n] - 100.0), 4)), MM(0.6)))   # 左のエンコーダ: チップの面から見た左右が、上から見ると逆
-        fp.Add(p)
+    # 上の面(F)のパッド7つ、続けて裏の面(B)のパッド7つ。裏は上の真下(上から見て同じ位置)
+    for layers in ((pcbnew.F_Cu, pcbnew.F_Mask, pcbnew.F_Paste), (pcbnew.B_Cu, pcbnew.B_Mask, pcbnew.B_Paste)):
+        for n in ORDER:
+            p = pcbnew.PAD(fp)
+            p.SetNumber(n); p.SetShape(pcbnew.PAD_SHAPE_ROUNDRECT); p.SetRoundRectRadiusRatio(0.1)
+            p.SetAttribute(pcbnew.PAD_ATTRIB_SMD)
+            ls = pcbnew.LSET()
+            for layer in layers:
+                ls.AddLayer(layer)
+            p.SetLayerSet(ls)
+            p.SetSize(pcbnew.VECTOR2I(MM(0.5), MM(0.8)))
+            p.SetPosition(pcbnew.VECTOR2I(MM(round(-(PAD_X[n] - 100.0), 4)), MM(0.6)))   # 左のエンコーダ: チップの面から見た左右が、上から見ると逆
+            fp.Add(p)
     # F.Fab: エンコーダ基板(0.6mm)と縁
     for (a, b) in (((-3.0, 0.0), (3.0, 0.0)), ((-3.0, -0.6), (3.0, -0.6)), ((-3.0, 0.0), (-3.0, -0.6)), ((3.0, 0.0), (3.0, -0.6)), ((-4.5, 0.0), (4.5, 0.0))):
         s = pcbnew.PCB_SHAPE(fp); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetLayer(pcbnew.F_Fab); s.SetWidth(MM(0.05))
@@ -120,8 +136,8 @@ def build():
         s = pcbnew.PCB_SHAPE(b); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(MM(0.05))
         s.SetStart(pcbnew.VECTOR2I(MM(a[0]), MM(a[1]))); s.SetEnd(pcbnew.VECTOR2I(MM(c[0]), MM(c[1]))); b.Add(s)
     for txt, y in (('KOGUMA MK4 ENC t24 (MT6835)  6.0 x 8.75 x 0.6mm, 2 layers, tire 24mm / mount t24v2', TOP - 2.0),
-                   ('chip side = F (faces the magnet). J1 pads on B (toward the main board), soldered on the main board top face. C1 on B', TOP - 1.4),
-                   ('robot z: top edge 16.9, J1 pads 16.0-14.2, main board 14.2-13.6, chip center 12.0, bottom edge 8.15', TOP - 0.8)):
+                   ('chip side = F (faces the magnet). J1 pads on B (toward the main board), soldered on the main board top and/or bottom face. C1 on B', TOP - 1.4),
+                   ('robot z: top edge 16.9, J1 pads 16.0-14.4 and 13.4-12.4, main board 14.2-13.6 (no copper), chip center 12.0, bottom edge 8.15', TOP - 0.8)):
         t = pcbnew.PCB_TEXT(b); t.SetText(txt); t.SetLayer(pcbnew.Cmts_User); t.SetTextSize(pcbnew.VECTOR2I(MM(0.4), MM(0.4)))
         t.SetPosition(pcbnew.VECTOR2I(MM(100.0), MM(y))); b.Add(t)
     # J1 を新しいフットプリントに(ネットは古い J1 のパッドから写す)
@@ -148,6 +164,10 @@ def build():
         track(b, net, pcbnew.F_Cu, [(px, py_end + 0.1), (px, y_bend), (tx, y_bend - abs(dx)), (tx, VIA_Y)], 0.2)
         via(b, net, tx, VIA_Y)
         track(b, net, pcbnew.B_Cu, [(tx, VIA_Y), (tx, PAD_Y0 + 0.3)], 0.3)
+    # ---- 上の段と下の段のパッドをつなぐ(B、0.2mm)。線はレジストでおおわれるので、メイン基板の縁の所にはんだは流れない ----
+    for jn in ORDER:
+        net = [p for p in fps_j1_pads(b) if p.GetNumber() == jn][0].GetNet()
+        track(b, net, pcbnew.B_Cu, [(PAD_X[jn], PAD_Y1 - 0.2), (PAD_X[jn], LOW_Y0 + 0.2)], 0.2)
     # ---- 電源: 下の段のピン → ビア → C1(B)→ 右の縁に沿ってパッドへ ----
     n3, ng = nets['+3V3'], nets['GND']
     p9, p12 = upad['9'], upad['12']
@@ -162,13 +182,21 @@ def build():
     c3 = (c1p['1'].GetPosition().x / 1e6, c1p['1'].GetPosition().y / 1e6); cg = (c1p['2'].GetPosition().x / 1e6, c1p['2'].GetPosition().y / 1e6)
     x3, xg = PAD_X['1'], PAD_X['7']
     y_low = BOT - 0.55
-    track(b, n3, pcbnew.B_Cu, [v3, c3, (c3[0], y_low), (x3, y_low), (x3, PAD_Y1 - 0.3)], 0.3)
+    track(b, n3, pcbnew.B_Cu, [v3, c3, (c3[0], y_low), (x3, y_low), (x3, LOW_Y1 - 0.3)], 0.3)
     track(b, ng, pcbnew.B_Cu, [vg, cg], 0.3)
-    # GND: ビアから 45° で右上へ、x = GND のパッドに来たら真上へ
-    d = xg - vg[0]
-    track(b, ng, pcbnew.B_Cu, [vg, (xg, vg[1] - d), (xg, PAD_Y1 - 0.3)], 0.3)
+    # GND: ビアから 45° で右上へ、パッドの下の端より下(GND_Y)まで来たら横へ、x = GND のパッドに来たら真上へ。
+    # 下の段のパッドを足した(2026-11-25)ので、ほかのパッドの下の端をよけて横に通る
+    d = vg[1] - GND_Y
+    track(b, ng, pcbnew.B_Cu, [vg, (vg[0] + d, GND_Y), (xg, GND_Y), (xg, LOW_Y1 - 0.3)], 0.3)
     b.Save(path)
     return path
+
+def fps_j1_pads(b):
+    """基板の J1 のパッドの一覧"""
+    for f in b.GetFootprints():
+        if f.GetReference() == 'J1':
+            return list(f.Pads())
+    return []
 
 def top_blocks(text):
     """(kicad_pcb ...) のすぐ下の S 式を、文字列のまま順に返す"""
