@@ -1,7 +1,14 @@
 """吸引ファンの 3 つの形を、流体の計算(OpenFOAM v1912、simpleFoam + MRF)で比べるための計算の用意(2026-11-24、ユーザー
 「xfa273 さんのファンと今のと、組み合わせた形の 3 つを流体で比べて」)。
-使い方(リポジトリの一番上から): python3 docs/calc/fan_cfd/make_case.py <A|B|C> <計算のフォルダ> [coarse]
+使い方(リポジトリの一番上から): python3 docs/calc/fan_cfd/make_case.py <A|B|C> <計算のフォルダ> [coarse] [名前=値 ...]
   → 計算のフォルダに OpenFOAM の計算一式(形の STL と設定)を作る。走らせるのは run_case.sh
+  「名前=値」で羽根の形を変えられる(2026-11-25、ユーザー「C 案は採用。羽の形も検証したい」):
+    tip=16     羽の先の半径 [mm](C 案を今の輪(外 半径 17.5)に収めるときは 15 = φ30)
+    gap=1.0    C の回る壁と止まった輪のすき間 [mm](φ30 のときは 0.9 で、輪が今と同じ半径 16.5〜17.5 になる)
+    blades=5   羽の枚数
+    sweep=60   羽の曲がり [°](内の端から外の端まで、回る向きと逆へ回る角度。0 はまっすぐ)
+    height=3.9 羽の高さ [mm](下の端は z 3.3 のまま。上の板・モーターもその分上がる)
+    inner=5    羽の内の端の半径 [mm]
 
 3 つの形(どれも羽根 φ32、曲がった羽 5 枚、羽の高さ z 3.3〜7.2、上の板 z 7.2〜8.0。違いは外の壁と出口だけ):
   A 今の MK4: 羽根に外の壁なし。止まった輪(ファンの台、内径 φ33 = 羽の先とのすき間 0.5mm)の中で回る。
@@ -27,24 +34,33 @@ from shapely.geometry import LineString
 
 CASE = sys.argv[1]
 OUT = sys.argv[2]
-COARSE = len(sys.argv) > 3 and sys.argv[3] == 'coarse'
+COARSE = 'coarse' in sys.argv[3:]
+# 羽根の形の指定(書かなければ、3 つの形を比べたときの値)
+SHAPE = {'tip': 16.0, 'gap': 1.0, 'blades': 5, 'sweep': 60.0, 'height': 3.9, 'inner': 5.0}
+for arg in sys.argv[3:]:
+    if '=' in arg:
+        name, value = arg.split('=')
+        if name not in SHAPE:
+            raise SystemExit(f'{name} という指定はない({list(SHAPE)} のどれか)')
+        SHAPE[name] = float(value)
+N_BLADES = int(SHAPE['blades'])
 RPM = 35000.0
 OMEGA = RPM * 2 * math.pi / 60
 
 # 寸法 [mm]
-R_TIP = 16.0          # 羽の先(φ32)
+R_TIP = SHAPE['tip']  # 羽の先(φ32)
 Z_FRAME = 2.8         # フレームの上面
 Z_BLADE0 = 3.3        # 羽の下の端(フレームとのすき間 0.5mm)
-Z_DISC0 = 7.2         # 上の板の下の面
-Z_DISC1 = 8.0         # 上の板の上の面(ファンの台の「羽根の上面 z 8.0」)
+Z_DISC0 = Z_BLADE0 + SHAPE['height']   # 上の板の下の面(羽の高さ 3.9 なら 7.2)
+Z_DISC1 = Z_DISC0 + 0.8               # 上の板の上の面(ファンの台の「羽根の上面 z 8.0」)
 R_HOLE = 7.5          # フレームの吸い込みの穴(φ15)
 R_LEAK = math.sqrt(204.0 * 0.15 / math.pi)    # 漏れの穴(半径 3.12mm)
 RIM_T = 0.6           # B・C の回る外の壁の厚さ
 BLADE_T = 0.6         # 羽の厚さ
-R_BLADE0 = 5.0        # 羽の内の端
-SWEEP_DEG = 60.0      # 羽の曲がり(内の端から外の端まで回る角度)
+R_BLADE0 = SHAPE['inner']   # 羽の内の端
+SWEEP_DEG = SHAPE['sweep']  # 羽の曲がり(内の端から外の端まで回る角度)
 R_MOTOR = 5.35        # モーターのハブ(φ10.7)
-Z_MOTOR0 = 8.6
+Z_MOTOR0 = Z_DISC1 + 0.6    # 上の板の上 0.6mm から(羽の高さ 3.9 なら 8.6)
 HALF = 30.0           # 計算の範囲 x, y = ±30
 Z_TOP = 20.0
 Z_BOTTOM = -6.0       # 部屋の下(この面が大気からの入口)
@@ -59,12 +75,15 @@ elif CASE == 'B':
     R_ZONE = R_TIP + RIM_T + 0.5
 elif CASE == 'C':
     RIM = True
-    RING = (R_TIP + RIM_T + 1.0, R_TIP + RIM_T + 2.0)
-    R_ZONE = R_TIP + RIM_T + 0.5
+    RING = (R_TIP + RIM_T + SHAPE['gap'], R_TIP + RIM_T + SHAPE['gap'] + 1.0)
+    R_ZONE = R_TIP + RIM_T + SHAPE['gap'] / 2           # 回る範囲の半径(すき間の真ん中)
 else:
     raise SystemExit('A・B・C のどれか')
 Z_ZONE0 = Z_FRAME + 0.25
 Z_ZONE1 = Z_DISC1 + 0.3
+Z_RING1 = 10.0        # 止まった輪の上の端
+if Z_DISC1 + 2.0 > Z_RING1:
+    Z_RING1 = Z_DISC1 + 2.0   # 羽を高くしたときは、輪も上の板より 2mm 上まで
 
 
 def cyl(r, z0, z1):
@@ -77,12 +96,12 @@ def ring_solid(r0, r1, z0, z1):
 
 
 def blade(k):
-    """k 番目の羽(上から見た形を shapely で作り、z 方向に伸ばす)。中心線は r 5〜16 で、外ほど回る向きと逆へ曲がる"""
+    """k 番目の羽(上から見た形を shapely で作り、z 方向に伸ばす)。中心線は内の端から羽の先までで、外ほど回る向きと逆へ曲がる"""
     pts = []
     n = 40
     for i in range(n + 1):
         r = R_BLADE0 + (R_TIP + 0.3 - R_BLADE0) * i / n
-        th = math.radians(72.0 * k) - math.radians(SWEEP_DEG) * math.log(r / R_BLADE0) / math.log(R_TIP / R_BLADE0)
+        th = math.radians(360.0 / N_BLADES * k) - math.radians(SWEEP_DEG) * math.log(r / R_BLADE0) / math.log(R_TIP / R_BLADE0)
         pts.append((r * math.cos(th), r * math.sin(th)))
     poly = LineString(pts).buffer(BLADE_T / 2, cap_style=2)
     wp = cq.Workplane('XY').workplane(offset=Z_BLADE0).polyline(list(poly.exterior.coords)[:-1]).close()
@@ -95,7 +114,7 @@ def impeller():
     if RIM:
         r_disc = R_TIP + RIM_T
     body = cyl(r_disc, Z_DISC0, Z_DISC1).union(cyl(2.0, Z_BLADE0, Z_DISC0 + 0.1))
-    for k in range(5):
+    for k in range(N_BLADES):
         body = body.union(blade(k))
     if RIM:
         body = body.union(ring_solid(R_TIP, R_TIP + RIM_T, Z_BLADE0, Z_DISC1))
@@ -267,6 +286,6 @@ if __name__ == '__main__':
     write_stl(pcb(), 'pcb')
     write_stl(motor(), 'motor')
     if RING:
-        write_stl(ring_solid(RING[0], RING[1], Z_FRAME - 0.1, 10.0), 'ring')
+        write_stl(ring_solid(RING[0], RING[1], Z_FRAME - 0.1, Z_RING1), 'ring')
     dicts()
     print(f'形 {CASE}: {OUT}(回る範囲 r ≤ {R_ZONE:.2f}mm、z {Z_ZONE0:.2f}〜{Z_ZONE1:.2f}mm、漏れの穴 半径 {R_LEAK:.2f}mm、{RPM:.0f}rpm = {OMEGA:.1f} rad/s)')
