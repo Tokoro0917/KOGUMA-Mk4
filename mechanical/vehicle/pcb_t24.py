@@ -6,7 +6,7 @@
   - 車軸のまわり(軸受の受け・MT6835・エンコーダ基板が基板の上へ出る所)を x ±4.5、|y| > 16.7 で切り欠く。切り欠きの角は R1
   - エンコーダ基板は切り欠きの縁(|y| 16.9〜17.5)に沿って立て、基板の上の面ではんだ付けする。そのパッドの所(x ±3.0、|y| 16.1〜16.7)のまわりに縁を残す
 使い方(リポジトリの一番上で): python3 mechanical/vehicle/pcb_t24.py → mechanical/pcb/pcb_outline_t24v3.dxf・.png"""
-import os, sys, runpy
+import os, sys, runpy, math
 from shapely.geometry import box
 from shapely.ops import unary_union
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -15,25 +15,31 @@ import t24                     # design.py の定数をタイヤ24mm に(先に�
 sys.path.insert(0, HERE)
 import pcb_shape as ps
 
-ps.VER = 't24v11'    # 2026-11-25(t24v11): ファンの穴に沿った前の左右の肉抜きの穴(左右対称、下の LIGHT_HOLES)。2026-11-24(t24v10): ファンの上の穴を φ14 → φ20(下の HUB_HOLE)。t24v9 2026-11-24: エンコーダ基板の左右をはめ込む切り込み(幅 6.0mm)。t24v8: 車軸のまわりの切り欠きの縁をエンコーダ基板にぴったり(|y| 16.7 → 16.9)。t24v7: ホルダのほぞの穴を 3.0 × 3.0mm の角のままに(ToraNeko.Mk3 と同じ)。t24v6(2026-11-23): マウントのねじを (6.8, ±18.4)・(-21, ±18.4) にそろえた(マウント t24v5)。t24v5: (-21, ±17.7)。t24v4: (6.8, ±18.9)・(-21, ±18.9)(frame t24v4、吸引する面 80 × 42.6mm)。t24v3(2026-11-22): 案1。B 案(v11 の広さ)に、後ろの V 字の切り欠き・羽と、角の丸み(v16 と同じ考え方)。t24v2 は B 案のまま(3,432mm²)、t24v1 は v16 の形(2,784mm²)
+ps.VER = 't24v11'    # 2026-11-25(t24v11): ファンの穴に沿った前の左右の肉抜きの円弧の長穴(左右対称、下の light_slot)。2026-11-24(t24v10): ファンの上の穴を φ14 → φ20(下の HUB_HOLE)。t24v9 2026-11-24: エンコーダ基板の左右をはめ込む切り込み(幅 6.0mm)。t24v8: 車軸のまわりの切り欠きの縁をエンコーダ基板にぴったり(|y| 16.7 → 16.9)。t24v7: ホルダのほぞの穴を 3.0 × 3.0mm の角のままに(ToraNeko.Mk3 と同じ)。t24v6(2026-11-23): マウントのねじを (6.8, ±18.4)・(-21, ±18.4) にそろえた(マウント t24v5)。t24v5: (-21, ±17.7)。t24v4: (6.8, ±18.9)・(-21, ±18.9)(frame t24v4、吸引する面 80 × 42.6mm)。t24v3(2026-11-22): 案1。B 案(v11 の広さ)に、後ろの V 字の切り欠き・羽と、角の丸み(v16 と同じ考え方)。t24v2 は B 案のまま(3,432mm²)、t24v1 は v16 の形(2,784mm²)
 ps.WHEEL_CUT = (-12.2, 12.5, 22.3)           # x0, x1(実際は x1 - 0.3 まで), |y| y0。タイヤは基板の高さで x ±11.89 まで(2026-11-21 に ±12.5 から。前の壁センサの足の穴のため)
 ps.ENC = [(-3.0, 3.0, -16.9, -16.3), (-3.0, 3.0, 16.3, 16.9)]   # エンコーダ基板をはんだ付けするパッドの所(基板の上の面と裏の面。2026-11-25 から両方)。t24v8(2026-11-24): 0.2mm 外へ(エンコーダ基板とのすき間 0)
 ps.SLOT_CLR, ps.SLOT_R = 0.0, 0.0          # t24v7(2026-11-24): ホルダのほぞの穴を 3.0 × 3.0mm の角のまま・すき間なしに(ToraNeko.Mk3 と同じ。t24v6 までは 3.2 × 3.2mm・角 R0.5)
 # 2026-11-24(t24v10、ユーザー: ファンの上も肉抜きの対象): ファンの空気は羽の先と輪のすき間から上へ出て、基板の穴へ抜ける(docs/calc/fan_cfd は φ26 で計算)。
 # 基板はふたではないので、ハブの穴を半径 7 → 10(φ20)に広げる。φ22 以上はマイコンのパスコン(C62)・IMU などにかかる
 ps.HUB_HOLE = 10.0
-# 2026-11-25(t24v11、ユーザー: 前の右の空いた所を肉抜きして → ファンの穴に沿った形に(ユーザーのスケッチ)→ 左右対称に): ファンの穴の前の左右に、
-# 穴に沿った三日月のような穴を1つずつあける。左の穴の点を結んだ形を半径 LIGHT_ROUND で丸め、右はそれを左右に折り返した形(y → −y)。
-# 1つ約 79mm²、2つで約 0.18g。左右どちらの部品にも当たらない形にした(右の受光アンプ U75 のまわりの C79・C84 で決まる)。
-# 次を残した(hardware/kicad/KOGUMA-Mk4_t24/README.md の 2026-11-25):
-#   ・ファンの穴のふちとの間に 3mm(前の線がマイコンへ通る道。強さ)。前とマイコンの間を通る線は左右それぞれ 6本くらいと電源
-#   ・部品から 1mm 以上、基板の縁から 1.5mm 以上、壁センサのホルダから 2mm 以上
-# 前の部分は、壁センサのホルダを通してフレーム(カーボン)にも支えられている
-LIGHT_HOLE_LEFT = [(14.7, 14.2), (14.7, 15.6), (19.7, 14.8), (21.1, 14.2), (21.3, 13.4), (22.1, 12.9), (26.0, 12.9), (27.0, 14.0),
-                   (27.9, 13.9), (28.5, 11.1), (27.2, 8.7), (25.4, 8.7), (23.2, 11.0), (20.6, 12.7), (17.7, 13.8)]
-LIGHT_HOLE_RIGHT = [(x, -y) for (x, y) in LIGHT_HOLE_LEFT]      # 左右に折り返す
-LIGHT_HOLES = [LIGHT_HOLE_LEFT, LIGHT_HOLE_RIGHT]
-LIGHT_ROUND = 1.2
+# 2026-11-25(t24v11、ユーザー: 前の右の空いた所を肉抜きして → ファンの穴に沿った形に → 左右対称に → きれいに見えるように):
+# ファンの穴の前の左右に、ファンの穴と同じ中心の**円弧の長穴**(幅が一定で、両端が丸い)を1つずつ。左右対称。1つ約 90mm²、2つで約 0.2g。
+# 円弧の真ん中の線は、ファンの中心から半径 LIGHT_ARC_R、角度 LIGHT_ARC_DEG(機体の前 = 0°、左回り。右の穴は符号を反対に)、幅 2 × LIGHT_ARC_HALF_W。
+# 穴の内側のふちはファンの中心から 13mm(ファンの穴のふちとの間に 3mm を残す。前の線がマイコンへ通る道と強さ)、外側は 18mm。
+# 左右どちらでも、部品から 1mm 以上・基板の縁から 1.5mm 以上・壁センサのホルダから 2mm 以上はなれる一番大きい形を選んだ(hardware/kicad/KOGUMA-Mk4_t24/README.md の 2026-11-25)
+LIGHT_ARC_R = 15.5
+LIGHT_ARC_HALF_W = 2.5
+LIGHT_ARC_DEG = (42.0, 94.0)
+
+def light_slot(side):
+    """肉抜きの円弧の長穴。side = +1 で左、-1 で右"""
+    from shapely.geometry import LineString
+    a0, a1 = LIGHT_ARC_DEG
+    pts = []
+    for k in range(53):                                   # 円弧を 52 本の短い線で表す
+        a = math.radians(a0 + (a1 - a0) * k / 52)
+        pts.append((ps.FAN[0] + LIGHT_ARC_R * math.cos(a), ps.FAN[1] + side * LIGHT_ARC_R * math.sin(a)))
+    return LineString(pts).buffer(LIGHT_ARC_HALF_W, 32)   # 線を太らせると、両端が丸い長穴になる
 # 2026-11-24(ユーザー: 電源スイッチを後ろに置きたい): 後ろの V 字の先のモードの LED 3個を 3.5mm 前へ。あいた後ろの真ん中(V 字の切り欠きの先の縁)に
 # 電源スイッチ SW1 を置き、つまみを後ろへ出す。基板の外形(LED_APEX)は変えない。左右の角の LED 4個はそのまま
 ps.LEDS = [ps.LEDS[0], ps.LEDS[1], (ps.LEDS[2][0] + 3.5, ps.LEDS[2][1]), (ps.LEDS[3][0] + 3.5, ps.LEDS[3][1]), (ps.LEDS[4][0] + 3.5, ps.LEDS[4][1]), ps.LEDS[5], ps.LEDS[6]]
@@ -85,8 +91,8 @@ def outline():
                        + [ps.footprint(k, 1.0) for k in ps.SENS]).intersection(o)
     keep = keep.difference(box(-xa, ya, xa, 60)).difference(box(-xa, -60, xa, -ya))     # 柱のまわりを残しても、車軸の切り欠きには入れない(t24v4、前の柱が x 6.8 で切り欠きに近い)
     o = o.buffer(-R_CUT, join_style=1).buffer(R_CUT, join_style=1).union(keep).union(fingers).difference(notch)
-    for pts in LIGHT_HOLES:                                       # 前の左右の肉抜き(t24v11)
-        o = o.difference(Polygon(pts).buffer(LIGHT_ROUND, 32))
+    for side in (1, -1):                                          # 前の左右の肉抜き(t24v11)
+        o = o.difference(light_slot(side))
     return o.buffer(-0.01).buffer(0.01).simplify(0.002)      # 近すぎる点をまとめる(DXF の円弧にするときに止まるため)
 ps.outline = outline
 

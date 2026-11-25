@@ -6153,7 +6153,7 @@
 		(lib_id "KOGUMA-Mk4:OPA2354")
 		(at 251.46 149.86 0)
 		(mirror x)
-		(unit 1)
+		(unit 2)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -6204,20 +6204,20 @@
 				(hide yes)
 			)
 		)
-		(pin "3"
+		(pin "5"
 			(uuid "d36f02b9-8757-43e5-aeec-2c7d42865292")
 		)
-		(pin "2"
+		(pin "6"
 			(uuid "3bfa9ca8-24c0-4f0c-801c-71186f3b22a8")
 		)
-		(pin "1"
+		(pin "7"
 			(uuid "b9ca4b0a-6e04-4a5f-95b6-f2ced7d681f0")
 		)
 		(instances
 			(project "KOGUMA-Mk4_t24"
 				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/f53e1991-171b-5918-aa3d-1c389c2cc3a0"
 					(reference "U75")
-					(unit 1)
+					(unit 2)
 				)
 			)
 		)
@@ -6679,7 +6679,7 @@
 		(lib_id "KOGUMA-Mk4:OPA2354")
 		(at 345.44 149.86 0)
 		(mirror x)
-		(unit 2)
+		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -6730,20 +6730,20 @@
 				(hide yes)
 			)
 		)
-		(pin "5"
+		(pin "3"
 			(uuid "9f74b37c-03e9-472b-98d5-d8b22ab4042e")
 		)
-		(pin "6"
+		(pin "2"
 			(uuid "64a8ff4a-13de-4251-a3c0-9839fb321934")
 		)
-		(pin "7"
+		(pin "1"
 			(uuid "1ebb1979-7159-4206-8959-91e643951392")
 		)
 		(instances
 			(project "KOGUMA-Mk4_t24"
 				(path "/b4ecac63-bf9d-5a4c-873b-2154e676a044/f53e1991-171b-5918-aa3d-1c389c2cc3a0"
 					(reference "U75")
-					(unit 2)
+					(unit 1)
 				)
 			)
 		)
