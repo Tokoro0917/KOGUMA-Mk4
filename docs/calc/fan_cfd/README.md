@@ -55,9 +55,10 @@ python3 docs/calc/fan_cfd/post.py <フォルダA> <フォルダB> <フォルダC
 # 図
 python3 docs/calc/fan_cfd/flow_fig.py docs/img/tire24/fan_cfd_flow.png <フォルダA> <フォルダB> <フォルダC>
 python3 docs/calc/fan_cfd/section_fig.py
-# 報告の PDF(日本語・英語)。先に英語の図も作る
+# 英語の図
 python3 docs/calc/fan_cfd/section_fig.py --en
 python3 docs/calc/fan_cfd/flow_fig.py docs/img/tire24/fan_cfd_flow_en.png <フォルダA> <フォルダB> <フォルダC>
+# 報告の PDF(どれが良かったかだけの1枚。日本語・英語)
 python3 docs/calc/fan_cfd/report_pdf.py
 ```
 
