@@ -113,7 +113,7 @@ for ax, side, title in ((axs[0], 'T', '上の面(上から見た図。右が前�
     ax.grid(alpha=0.2); ax.set_xlabel('x [mm](前 →)'); ax.set_ylabel('y [mm](左 ↑)')
 from matplotlib.patches import Patch
 fig.legend([Patch(color=c, alpha=0.6) for c in (C_MCU, C_MOT, C_PWR, C_FAN, C_SEN, C_UI, '#ffbf00')], ['マイコン・センサの入力', 'モーター', '電源', 'ファン(吸引)', '壁センサ', '表示・通信', 'UI の LED'], loc='upper center', ncol=7, fontsize=11, bbox_to_anchor=(0.5, 0.97))
-fig.suptitle('KOGUMA-Mk4 t24 メイン基板の配置(部品の名前つき、2026-11-24)', fontsize=14)
+fig.suptitle('KOGUMA-Mk4 t24 メイン基板の配置(部品の名前つき)', fontsize=14)
 fig.tight_layout(rect=(0, 0, 1, 0.93))
 fig.savefig(out, dpi=110)
 print('ok')
