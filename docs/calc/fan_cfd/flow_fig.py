@@ -11,8 +11,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import post
 
 plt.rcParams['font.family'] = 'IPAGothic'
-NAMES = {'A': 'A 今', 'B': 'B xfa273 さん', 'C': 'C 組み合わせ'}
-NAMES_EN = {'A': 'A current', 'B': 'B xfa273 type', 'C': 'C combined'}
+NAMES = {'A': 'A 今', 'B': 'B xfa273 さん', 'C': 'C 組み合わせ', 'D': 'D 壁なし'}
+NAMES_EN = {'A': 'A current', 'B': 'B xfa273 type', 'C': 'C combined', 'D': 'D no walls'}
 
 
 def slice_data(arg):

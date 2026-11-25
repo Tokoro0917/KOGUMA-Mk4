@@ -1,4 +1,5 @@
-"""吸引ファンの3つの形(A・B・C)のうち、どれが良かったかを1枚の PDF にする(日本語版と英語版、2026-11-25)。
+"""吸引ファンの4つの形(A・B・C・D)のうち、どれが良かったかを1枚の PDF にする(日本語版と英語版、2026-11-25)。
+D(壁のない普通のファン)は 2026-11-25 にユーザー「壁がない普通のファンの場合も同じ条件で」で足した。
 使い方(リポジトリの一番上から): python3 docs/calc/fan_cfd/report_pdf.py
   → docs/calc/fan_cfd/fan_cfd_report_ja.pdf、fan_cfd_report_en.pdf
 A4 の大きさの matplotlib の図を、そのまま PDF で保存している。
@@ -12,8 +13,12 @@ from matplotlib.patches import FancyBboxPatch, Rectangle
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # ---- 計算の結果(35,000rpm、細かいメッシュ)----
-SUCTION_G = {'A': 277, 'B': 299, 'C': 323}     # 吸引 [g]
-POWER_W = {'A': 4.28, 'B': 5.21, 'C': 5.11}    # 羽根を回す電力 [W]
+D_SUCTION = 394      # D の吸引 [g](2026-11-25、細かいメッシュ、くり返し 1,500 回)
+D_POWER = 5.64       # D の羽根を回す電力 [W]
+CASES = ['A', 'B', 'C', 'D']
+SUCTION_G = {'A': 277, 'B': 299, 'C': 323, 'D': D_SUCTION}     # 吸引 [g]
+POWER_W = {'A': 4.28, 'B': 5.21, 'C': 5.11, 'D': D_POWER}      # 羽根を回す電力 [W]
+BEST = 'D'                                                     # 一番よかった形(2026-11-25 に C → D)
 
 
 def power_same_suction(case):
@@ -37,11 +42,12 @@ TEXT = {
     'ja': {
         'font': 'IPAPGothic',
         'dot': '・ ',
-        'title': '吸引ファン 3つの形の比べ(流体の計算、35,000rpm)',
-        'answer': '一番よかったのは  C(組み合わせ)',
+        'title': '吸引ファン 4つの形の比べ(流体の計算、35,000rpm)',
+        'answer': '一番よかったのは  D(壁なし)',
         'reason': '吸引が一番強く、同じ吸引なら電力が一番少ない',
-        'names': {'A': 'A  今の MK4', 'B': 'B  xfa273 さんの形', 'C': 'C  組み合わせ'},
-        'desc': {'A': '羽根だけ回る + 止まった輪', 'B': '外の壁も羽根と一緒に回る', 'C': '外の壁も回る + 止まった輪'},
+        'names': {'A': 'A  今の MK4', 'B': 'B  xfa273 さんの形', 'C': 'C  組み合わせ', 'D': 'D  壁なし'},
+        'desc': {'A': '羽根だけ回る + 止まった輪', 'B': '外の壁も一緒に回る', 'C': '外の壁も回る + 止まった輪',
+                 'D': '羽根だけ。輪も外の壁もない'},
         'legend': ['回る羽根', '止まった輪', 'フレーム', '基板', '空気'],
         'bar1': '吸引の強さ(同じ 35,000rpm)',
         'bar1_unit': 'g',
@@ -50,20 +56,21 @@ TEXT = {
         'better1': '大きいほどよい',
         'better2': '小さいほどよい',
         'notes': [
-            'C は A より吸引が 17% 強い。同じ吸引にすれば、A より 5% 少ない電力で済む。',
-            'B は吸引は A より強いが電力が大きく増え、同じ吸引で比べると一番電力が多い(A の +9%)。',
-            '計算の値なので、印刷した羽根で吸引の力とファンの電流を測って確かめる。',
+            'D は A より吸引が 42% 強い。同じ吸引にすれば、A より 22% 少ない電力で済む(C より 18% 少ない)。',
+            '輪や回る外の壁は、羽根から出た空気の出口を狭くして、じゃまをしていた。',
+            'D は空気を横へ吹き出すので、計算にない部品(マウントなど)に当たると弱まる。印刷した羽根で測って確かめる。',
         ],
         'foot': 'くわしくは docs/calc/fan_cfd/README.md',
     },
     'en': {
         'font': 'DejaVu Sans',
         'dot': '• ',
-        'title': 'Suction fan: three geometries compared (CFD, 35,000 rpm)',
-        'answer': 'Best:  C (combined)',
+        'title': 'Suction fan: four geometries compared (CFD, 35,000 rpm)',
+        'answer': 'Best:  D (no walls)',
         'reason': 'Strongest suction, and the lowest power for the same suction',
-        'names': {'A': 'A  current MK4', 'B': 'B  xfa273 type', 'C': 'C  combined'},
-        'desc': {'A': 'Impeller only + fixed ring', 'B': 'Shroud rotates with the blades', 'C': 'Rotating shroud + fixed ring'},
+        'names': {'A': 'A  current MK4', 'B': 'B  xfa273 type', 'C': 'C  combined', 'D': 'D  no walls'},
+        'desc': {'A': 'Impeller + fixed ring', 'B': 'Rotating shroud', 'C': 'Rotating shroud + fixed ring',
+                 'D': 'Impeller only, no ring'},
         'legend': ['impeller (rotating)', 'fixed ring', 'frame', 'PCB', 'air'],
         'bar1': 'Suction (same 35,000 rpm)',
         'bar1_unit': 'g',
@@ -72,9 +79,9 @@ TEXT = {
         'better1': 'higher is better',
         'better2': 'lower is better',
         'notes': [
-            'C gives 17 % more suction than A. At the same suction it needs 5 % less power than A.',
-            'B is stronger than A, but needs the most power at the same suction (+9 % vs A).',
-            'These are CFD values: confirm by measuring suction force and fan current on printed impellers.',
+            'D gives 42 % more suction than A. At the same suction it needs 22 % less power than A (18 % less than C).',
+            'The ring and the rotating shroud narrow the outlet of the impeller and hold the air back.',
+            'D blows the air sideways, so parts not in the model (mounts etc.) may weaken it. Confirm on printed impellers.',
         ],
         'foot': 'Details: docs/calc/fan_cfd/README.md',
     },
@@ -118,7 +125,10 @@ def draw_shape(ax, case):
         rect(ax, 0, 16.6, 7.2, 8.0, COLOR_ROTOR)        # 上の板
         rect(ax, 16, 16.6, 3.3, 8.0, COLOR_ROTOR)       # 回る外の壁
         rect(ax, 17.6, 18.6, 2.8, 10, COLOR_RING)       # 止まった輪
-        arrow(ax, [(0, -3), (0, 2.5), (10, 4.5), (15.5, 3.4), (17.1, 4.5), (17.1, 11), (23, 11.5)])
+        arrow(ax, [(0, -3), (0, 2.5), (10, 4.5), (17.1, 4.5), (17.1, 11), (23, 11.5)])
+    if case == 'D':
+        rect(ax, 0, 16, 7.2, 8.0, COLOR_ROTOR)          # 上の板(外の壁も輪もない)
+        arrow(ax, [(0, -3), (0, 2.5), (10, 5), (23.5, 5.5)])
     ax.set_xlim(-24, 24)
     ax.set_ylim(-4, 19)
     ax.set_aspect('equal')
@@ -127,18 +137,21 @@ def draw_shape(ax, case):
 
 def bar_chart(ax, values, title, unit, better, best_case, digits):
     """3つの形の棒グラフ。一番よいものだけ色を付ける"""
-    names = ['A', 'B', 'C']
+    names = CASES
     colors = []
     for case in names:
         if case == best_case:
             colors.append(COLOR_BEST)
         else:
             colors.append(COLOR_OTHER)
-    heights = [values['A'], values['B'], values['C']]
+    heights = []
+    for case in names:
+        heights.append(values[case])
     ax.bar(names, heights, color=colors, width=0.6)
     top = max(heights) * 1.25
-    for i in range(3):
-        ax.text(i, heights[i] + top * 0.02, f'{heights[i]:.{digits}f} {unit}', ha='center', fontsize=12)
+    for i in range(len(names)):
+        ax.text(i, heights[i] + top * 0.02, f'{heights[i]:.{digits}f}', ha='center', fontsize=11)
+    ax.set_ylabel(unit, fontsize=10, rotation=0, labelpad=12)
     ax.set_ylim(0, top)
     ax.set_title(title, fontsize=12, pad=18)
     ax.text(0.5, 1.01, f'({better})', transform=ax.transAxes, ha='center', fontsize=9, color='#555555')
@@ -162,19 +175,23 @@ def build(lang):
     fig.text(0.5, 0.893, t['answer'], ha='center', va='center', fontsize=24, color=COLOR_BEST)
     fig.text(0.5, 0.857, t['reason'], ha='center', va='center', fontsize=12)
 
-    # 2. 3つの形の断面
-    for k, case in enumerate('ABC'):
-        ax = fig.add_axes([0.03 + k * 0.32, 0.60, 0.30, 0.17])
+    # 2. 4つの形の断面(横に 4 つ並べる)
+    width = 0.235
+    for k in range(len(CASES)):
+        case = CASES[k]
+        left = 0.02 + k * 0.243
+        ax = fig.add_axes([left, 0.62, width, 0.14])
         draw_shape(ax, case)
         color = 'black'
-        if case == 'C':
+        if case == BEST:
             color = COLOR_BEST
-        fig.text(0.18 + k * 0.32, 0.80, t['names'][case], ha='center', fontsize=13, color=color)
-        fig.text(0.18 + k * 0.32, 0.782, t['desc'][case], ha='center', fontsize=9.5, color='#444444')
-    # C を枠で囲む
-    frame = FancyBboxPatch((0.675, 0.585), 0.31, 0.24, boxstyle='round,pad=0.003,rounding_size=0.01',
-                           transform=fig.transFigure, fc='none', ec=COLOR_BEST, lw=2)
-    fig.patches.append(frame)
+            # 一番よかった形を枠で囲む
+            frame = FancyBboxPatch((left - 0.003, 0.595), width + 0.006, 0.225,
+                                   boxstyle='round,pad=0.003,rounding_size=0.01',
+                                   transform=fig.transFigure, fc='none', ec=COLOR_BEST, lw=2)
+            fig.patches.append(frame)
+        fig.text(left + width / 2, 0.80, t['names'][case], ha='center', fontsize=11.5, color=color)
+        fig.text(left + width / 2, 0.782, t['desc'][case], ha='center', fontsize=8.5, color='#444444')
     # 色の説明
     legend_colors = [COLOR_ROTOR, COLOR_RING, COLOR_FRAME, COLOR_PCB, COLOR_AIR]
     legend_x = [0.08, 0.28, 0.46, 0.62, 0.78]      # 色の四角を置く横の位置(英語の長い言葉が重ならないように)
@@ -185,14 +202,16 @@ def build(lang):
 
     # 3. 棒グラフ
     ax1 = fig.add_axes([0.08, 0.27, 0.38, 0.23])
-    bar_chart(ax1, SUCTION_G, t['bar1'], t['bar1_unit'], t['better1'], 'C', 0)
-    power_same = {'A': power_same_suction('A'), 'B': power_same_suction('B'), 'C': power_same_suction('C')}
+    bar_chart(ax1, SUCTION_G, t['bar1'], t['bar1_unit'], t['better1'], BEST, 0)
+    power_same = {}
+    for case in CASES:
+        power_same[case] = power_same_suction(case)
     ax2 = fig.add_axes([0.56, 0.27, 0.38, 0.23])
-    bar_chart(ax2, power_same, t['bar2'], t['bar2_unit'], t['better2'], 'C', 2)
+    bar_chart(ax2, power_same, t['bar2'], t['bar2_unit'], t['better2'], BEST, 2)
 
     # 4. ひとこと
     for i in range(len(t['notes'])):
-        fig.text(0.08, 0.195 - i * 0.03, t['dot'] + t['notes'][i], fontsize=10.5, wrap=True)
+        fig.text(0.08, 0.195 - i * 0.036, t['dot'] + t['notes'][i], fontsize=10, wrap=True)
     fig.text(0.08, 0.06, t['foot'], fontsize=9, color='#666666')
 
     out = os.path.join(HERE, f'fan_cfd_report_{lang}.pdf')
