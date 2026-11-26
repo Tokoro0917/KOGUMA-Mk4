@@ -102,7 +102,7 @@ IC など品番が決まっている部品の LCSC の番号は「部品の一�
 | C86 C87 | 2 | 上 | 2.2u 10V | Samsung CL05A225MP5NNNC (10V X5R) | C107370 | 0.55 |  |
 | D1 | 1 | 上 | SMF13A | Littelfuse SMF13A | C315998 |  | 在庫 約3,835 |
 | D2 D90 D91 D92 D93 D94 D95 D96 D98 | 9 | 上 | APTD1608LSECK/J4-PF | Kingbright APTD1608LSECK/J4-PF | C5879215 | 0.95 | 1番がカソード。在庫 約660 |
-| D40 | 1 | 上 | MBR230LSFT1G | onsemi MBR230LSFT1G | C126673 | 0.98 | 在庫 約22,400 |
+| D40 | 1 | 裏 | MBR230LSFT1G | onsemi MBR230LSFT1G | C126673 | 0.98 | 在庫 約22,400 |
 | D70 D71 D72 D73 | 4 | 裏 | OPV332 | TT Electronics (Optek) OPV332 | C6622198 |  | **LCSC の在庫 0** |
 | D74 D75 D76 D77 | 4 | 裏 | SFH 229 FA | ams OSRAM SFH 229 FA(2025-11-28 生産終了。**予備を含めて在庫を確保**) | C3211054 |  | **LCSC の在庫 0** |
 | D97 D99 D100 D101 | 4 | 上 | BAT54WS | Jingdao BAT54WS (30V 200mA) | C438012 | 1.1 | JSCJ(C2991936)・LGE(C402232)の BAT54WS は 100mA なので使わない |
