@@ -14,6 +14,21 @@
 | (手持ち) | エンコーダの磁石 φ3 × 1mm | 頼まなくてよい |
 | (手持ち) | φ1.6 のドリル | 頼まなくてよい |
 
+**まだ頼むもの(2026-11-26 の時点)**
+
+| 頼むもの | ファイル・品番 | 材料・仕様 | 数 | 注文先 |
+|---|---|---|---|---|
+| モーターマウント 右 | `mechanical/order_t24/02_motor_mount_R_t24v12.stl` | JLC Temp Resin | 3 | JLC3DP |
+| モーターマウント 左 | `mechanical/order_t24/03_motor_mount_L_t24v12.stl` | JLC Temp Resin | 3 | JLC3DP |
+| ファンの台 | `mechanical/order_t24/04_fan_mount_t24v4.stl` | JLC Temp Resin | 3 | JLC3DP |
+| ホイール(左右で同じ形) | `mechanical/order_t24/05_wheel_t24v7.stl` | JLC Black Resin | 6 | JLC3DP |
+| 壁センサのホルダ | `mechanical/order_t24/06_sensor_holder_v6.stl` | JLC Black Resin | 6 | JLC3DP |
+| 吸引ファンの羽根 | `mechanical/impeller/impeller_t24v6.stl` | 高精細プラスチック(ProJet 2500)。高精細アクリルは弱くて使えない | 2〜3 | DMM.make |
+| 寸法を確かめるホイール | 京商 MZH131W-N2 | — | 1 | — |
+| 滑り板・スカートのフィルム・電池 | 品番は未定 | — | — | — |
+
+JLC3DP の備考(英語): 「Please do not fill the 1.6mm holes. We will tap M2 threads ourselves.」「Please do not sand or remove the thin contact ribs inside the holes.」「The motor and bearing holes are intentionally 0.1mm undersized for press fit.」
+
 > **2026-11-21 タイヤ24mm の機体(ブランチ `claude/trusting-dirac-1tdt54`)で変わるもの**(`docs/spec.md` の「方針の変更(2026-11-21)」)。下の一覧は main(タイヤ15mm)のまま。タイヤ24mm で頼むときは、次のものを入れ替える:
 >
 > | 項目 | main | タイヤ24mm |
