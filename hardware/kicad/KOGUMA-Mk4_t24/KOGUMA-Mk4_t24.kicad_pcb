@@ -954,7 +954,7 @@
 				)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 0 2.4 90)
 			(layer "F.Fab")
 			(uuid "b0729eeb-d128-48d6-a212-d8126ed551b1")
@@ -11071,7 +11071,7 @@
 				)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 0 2.4 270)
 			(layer "F.Fab")
 			(uuid "0cf6a626-e132-4f02-a2d4-5553ecb14306")
@@ -11404,7 +11404,7 @@
 				)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 0 2.4 270)
 			(layer "F.Fab")
 			(uuid "c7a426e5-889e-435b-9787-bf09d73f85e9")
@@ -15358,7 +15358,7 @@
 				)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 0 2.4 0)
 			(layer "F.Fab")
 			(uuid "39d79e99-fda5-41ea-aa87-757f2dd24fe8")
@@ -28806,7 +28806,7 @@
 			(uuid "98c779e6-e775-4a9c-be0b-043fd613d813")
 		)
 		(fp_text user "HOLDER"
-			(at -2.020002 3.5 187)
+			(at -2.020003 3.5 187)
 			(layer "B.Fab")
 			(uuid "c1f5d865-a570-4e47-b9d5-846ade198292")
 			(effects

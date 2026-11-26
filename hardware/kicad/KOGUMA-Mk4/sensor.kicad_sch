@@ -11,7 +11,7 @@
 		(company "KOGUMA MK4")
 	)
 	(lib_symbols
-			(symbol "KOGUMA-Mk4:NJU6080"
+			(symbol "KOGUMA-Mk4:NJW4615A"
 			(pin_names
 				(offset 1.016)
 			)
@@ -27,7 +27,7 @@
 					(justify left bottom)
 				)
 			)
-			(property "Value" "NJU6080"
+			(property "Value" "NJW4615A"
 				(at 0 -6.35 0)
 				(effects
 					(font
@@ -44,7 +44,7 @@
 					(hide yes)
 				)
 			)
-			(property "Datasheet" "https://www.nisshinbo-microdevices.co.jp/"
+			(property "Datasheet" "https://www.nisshinbo-microdevices.co.jp/en/pdf/datasheet/NJW4615A_E.pdf"
 				(at 0 0 0)
 				(effects
 					(font
@@ -53,7 +53,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "NJRC NJU6080 constant current LED driver, VDD 2.5-5.5V, I = 0.2V / Rs"
+			(property "Description" "Nisshinbo NJW4615A constant current LED driver, VDD 2.5-35V, I = 0.2V / Rs (pin compatible with NJU6080: 1 PWM, 2 GND, 3 RS, 4 LED, 5 EN, 6 VDD)"
 				(at 0 0 0)
 				(effects
 					(font
@@ -62,7 +62,7 @@
 					(hide yes)
 				)
 			)
-			(symbol "NJU6080_0_1"
+			(symbol "NJW4615A_0_1"
 				(rectangle
 					(start -7.62 5.08)
 					(end 7.62 -5.08)
@@ -75,7 +75,7 @@
 					)
 				)
 			)
-			(symbol "NJU6080_1_1"
+			(symbol "NJW4615A_1_1"
 				(pin input line
 					(at -12.7 2.54 0)
 					(length 5.08)
@@ -2294,7 +2294,7 @@
 		)
 	)
 	(symbol
-		(lib_id "KOGUMA-Mk4:NJU6080")
+		(lib_id "KOGUMA-Mk4:NJW4615A")
 		(at 50.8 71.12 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -2311,7 +2311,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 50.8 64.77 0)
 			(effects
 				(font
@@ -2995,7 +2995,7 @@
 		(uuid "1ba7d61e-fef7-4edc-9d4b-76199a879174")
 	)
 	(symbol
-		(lib_id "KOGUMA-Mk4:NJU6080")
+		(lib_id "KOGUMA-Mk4:NJW4615A")
 		(at 137.16 71.12 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3012,7 +3012,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 137.16 64.77 0)
 			(effects
 				(font
@@ -3696,7 +3696,7 @@
 		(uuid "17aad974-c812-4df0-9e97-4f453f7c4c7d")
 	)
 	(symbol
-		(lib_id "KOGUMA-Mk4:NJU6080")
+		(lib_id "KOGUMA-Mk4:NJW4615A")
 		(at 223.52 71.12 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -3713,7 +3713,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 223.52 64.77 0)
 			(effects
 				(font
@@ -4397,7 +4397,7 @@
 		(uuid "b4c766f5-23f9-4693-b254-62f6cf058470")
 	)
 	(symbol
-		(lib_id "KOGUMA-Mk4:NJU6080")
+		(lib_id "KOGUMA-Mk4:NJW4615A")
 		(at 309.88 71.12 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4414,7 +4414,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "NJU6080"
+		(property "Value" "NJW4615A"
 			(at 309.88 64.77 0)
 			(effects
 				(font
@@ -10283,7 +10283,7 @@
 		)
 		(uuid "6fb26f4d-cea4-4861-87d0-c7283d35b016")
 	)
-	(text "壁センサの発光: OPV332 を1個ずつ NJU6080(SOT-23-6、VDD 2.5〜5.5V)で 10mA(I = 0.2V / 20Ω)。電源は 3.3V(MK3 は 5V で2個直列)。\nMK3 と同じく対角の2個ずつ点ける: WALL_LED_FL_R が FL と R、WALL_LED_L_FR が L と FR(MK3 の WallLED_12 / WallLED_34)。"
+	(text "壁センサの発光: OPV332 を1個ずつ NJW4615A(SOT-23-6、VDD 2.5〜35V)で 10mA(I = 0.2V / 20Ω)。2026-11-26 に NJU6080 から(在庫がない。ピンも抵抗の決め方も同じ。点くまで 3µs だが、点けてから読むまで 50µs あるので足りる)。電源は 3.3V(MK3 は 5V で2個直列)。\nMK3 と同じく対角の2個ずつ点ける: WALL_LED_FL_R が FL と R、WALL_LED_L_FR が L と FR(MK3 の WallLED_12 / WallLED_34)。"
 		(exclude_from_sim no)
 		(at 25.4 31.75 0)
 		(effects
