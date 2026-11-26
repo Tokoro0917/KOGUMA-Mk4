@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VER = 't24v5'
+VER = 't24v6'
 
 
 def load_stl(path):
@@ -47,7 +47,7 @@ for i in range(2):
     ax.view_init(elev=elev, azim=azim)
     ax.set_axis_off()
     ax.set_title(title, fontsize=13)
-fig.suptitle(f'吸引ファンの羽根 {VER}(C 案 φ30・9 枚・まっすぐ・羽をハブまで・上の板 1.2mm・軸の穴 φ1.18)', fontsize=14)
+fig.suptitle(f'吸引ファンの羽根 {VER}(C 案 φ30・9 枚・まっすぐ・羽をハブまで・軸の穴 φ1.18)', fontsize=14)
 fig.subplots_adjust(left=0, right=1, top=0.9, bottom=0.02, wspace=0)
 out = os.path.join(HERE, f'impeller_{VER}.png')
 fig.savefig(out, dpi=130)
@@ -60,7 +60,7 @@ BORE_R = 1.18 / 2
 GLUE_R = 2.4 / 2
 GLUE_Z = 4.6
 Z_BOTTOM = 3.3
-Z_DISC0 = 6.8
+Z_DISC0 = 7.2
 Z_DISC1 = 8.0
 SHAFT_R = 0.6
 SHAFT_TIP_Z = 4.3       # 軸の先(モーターの前の面 z 9.4 から 5.1mm)
