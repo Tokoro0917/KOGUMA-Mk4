@@ -1,8 +1,8 @@
-"""MK4のピンの割り当て(docs/pinmap.md)が、STM32H725RG(VFQFPN68)で本当に使えるかを確かめる
+"""MK4のピンの割り当て(docs/pinmap.md)が、STM32H562RG(VFQFPN68)で本当に使えるかを確かめる(2026-11-26 に STM32H725RG から替えた)
 
 STの公開しているピン定義(STM32CubeMXと同じデータ)を使う:
   git clone --depth 1 https://github.com/STMicroelectronics/STM32_open_pin_data
-  python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
+  python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 
 確かめること:
   - ピンがこのパッケージにあるか
@@ -33,7 +33,7 @@ ASSIGN = [
     ('PB15', 'SPI2_MOSI', 'ENC_MOSI',  'エンコーダ MOSI'),
     ('PC6',  'GPIO_Output', 'ENC_L_CS', '左エンコーダ チップセレクト'),
     ('PC7',  'GPIO_Output', 'ENC_R_CS', '右エンコーダ チップセレクト'),
-    ('PC15-OSC32_OUT', 'GPIO_Output', 'ENC_CAL', 'エンコーダの校正(MT6835 の CAL_EN、左右共通。2026-10-29)'),
+    ('PC15-OSC32_OUT(OSC32_OUT)', 'GPIO_Output', 'ENC_CAL', 'エンコーダの校正(MT6835 の CAL_EN、左右共通。2026-10-29)'),
     # 壁センサ(MK3と同じ回路)
     ('PC0',  'ADC1_INP10', 'WALL_FL',  '壁センサ 左前'),
     ('PC1',  'ADC1_INP11', 'WALL_L',   '壁センサ 左'),
@@ -51,14 +51,14 @@ ASSIGN = [
     ('PC11', 'SPI3_MISO', 'IMU_MISO',  'IMU MISO'),
     ('PC12', 'SPI3_MOSI', 'IMU_MOSI',  'IMU MOSI'),
     ('PA15(JTDI)', 'GPIO_Output', 'IMU_CS',  'IMU チップセレクト'),
-    ('PD2',  'GPIO_EXTI2', 'IMU_INT', 'IMU の INT1(データ準備完了の割り込み、EXTI2。2026-10-31)'),
+    ('PB3(JTDO/TRACESWO)', 'GPIO_EXTI3', 'IMU_INT', 'IMU の INT1(データ準備完了の割り込み、EXTI3。2026-11-26 に PD2 から。H562 には PD2 がないので、SPI3 の隣のピンにした)'),
     # 通信・デバッグ
     ('PB6',  'USART1_TX', 'UART_TX',   'PCへ(USBシリアル変換)'),
     ('PB7',  'USART1_RX', 'UART_RX',   'PCから'),
     ('PA13(JTMS/SWDIO)', 'DEBUG_JTMS-SWDIO', 'SWDIO', '書き込み・デバッグ'),
     ('PA14(JTCK/SWCLK)', 'DEBUG_JTCK-SWCLK', 'SWCLK', '書き込み・デバッグ'),
     # 表示・入力
-    ('PB3(JTDO/TRACESWO)', 'GPIO_Output', 'LED_FRONT', '前の LED(D98。2026-10-31)'),
+    ('PE0',  'GPIO_Output', 'LED_FRONT', '前の LED(D98。2026-10-31。2026-11-26 に PB3 から PE0 へ。PB3 を IMU_INT にしたため)'),
     ('PA0',  'GPIO_Output', 'LED_MODE0', 'モード ビット0'),
     ('PA1',  'GPIO_Output', 'LED_MODE1', 'モード ビット1'),
     ('PA2',  'GPIO_Output', 'LED_MODE2', 'モード ビット2'),
@@ -66,10 +66,10 @@ ASSIGN = [
     ('PB10', 'GPIO_Output', 'LED_NUM1',  'ナンバー ビット1'),
     ('PB12', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
     ('PB13', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
-    ('PC14-OSC32_IN', 'GPIO_Input', 'SW', 'スイッチ'),
+    ('PC14-OSC32_IN(OSC32_IN)', 'GPIO_Input', 'SW', 'スイッチ'),
     # 発振子(HSE)10MHz、CSTNE10M0G52A000R0(2026-10-29。MK3 と同じ仕様。2026-11-26 に Z から A へ。それまでは付けず HSI)
-    ('PH0-OSC_IN', 'RCC_OSC_IN',  'OSC_IN',  '発振子(HSE)'),
-    ('PH1-OSC_OUT', 'RCC_OSC_OUT', 'OSC_OUT', '発振子(HSE)'),
+    ('PH0-OSC_IN(PH0)', 'RCC_OSC_IN',  'OSC_IN',  '発振子(HSE)'),
+    ('PH1-OSC_OUT(PH1)', 'RCC_OSC_OUT', 'OSC_OUT', '発振子(HSE)'),
 ]
 
 # タイマのエンコーダモードで読むエンコーダ(A相, B相)の組。磁気式(SPI)にしたので今はない

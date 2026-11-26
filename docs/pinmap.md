@@ -1,6 +1,6 @@
-# STM32H725RG ピンの割り当て(MK4)
+# STM32H562RG ピンの割り当て(MK4)
 
-2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。2026-10-29に発振子(HSE、10MHz、MK3 と同じ CSTNE10M0G52Z000R0)を付けることにして PH0・PH1 を使う。同日にエンコーダを MT6835 に変え、校正の CAL_EN を PC15 から出す。2026-10-31 に PD2 を IMU の INT1(データ準備完了の割り込み)に、PB3 を前の LED にする。これで46本すべて使う。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。
+2026-10-12作成、同日モータードライバをMP6551に変え、ファンの電流を追加、水晶をなくして更新。2026-10-17にエンコーダを磁気式(AS5047P、SPI2)に変えて更新。2026-10-29に発振子(HSE、10MHz、MK3 と同じ CSTNE10M0G52Z000R0)を付けることにして PH0・PH1 を使う。同日にエンコーダを MT6835 に変え、校正の CAL_EN を PC15 から出す。2026-10-31 に PD2 を IMU の INT1(データ準備完了の割り込み)に、PB3 を前の LED にする。これで46本すべて使う。パッケージはVFQFPN68(8×8mm)、使えるIOは46本。**2026-11-26 に MCU を STM32H725RG から STM32H562RG(同じ VFQFPN68、IO 53本)に替えた**(H725 はどこにも在庫がないため。`docs/spec.md` の「MCU」)。ピンの機能の名前は同じなので割り当てはそのまま移し、ピンの番号を H562 に直した。H562 には PD2 がないので、IMU の INT1 を PB3 へ、前の LED を PB3 から PE0 へ移した。
 
 ## 確かめ方
 
@@ -8,14 +8,14 @@ STが公開しているピン定義(STM32CubeMXと同じデータ、[STM32_open_
 
 ```sh
 git clone --depth 1 https://github.com/STMicroelectronics/STM32_open_pin_data
-python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
+python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 ```
 
 - ピンがVFQFPN68にあるか
 - そのピンに、割り当てた機能(タイマのチャンネル、ADCの入力、SPI、USARTなど)があるか
 - 同じピン、同じタイマのチャンネル、同じADCの入力を2回使っていないか
 
-**結果: OK**。使う46本、残り0本(2026-10-31)。
+**結果: OK**。使う46本、残り7本(2026-11-26、STM32H562RGVx)。
 
 確かめていないこと(CubeMXで.iocを作るときに確かめる): クロックの設定、DMAの割り当て、ADCを2つ同時に動かす設定、タイマの周波数。
 
@@ -23,56 +23,56 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 
 | ピン番号 | ピン | 機能 | ネット名 | 用途 |
 |---|---|---|---|---|
-| 2 | PC14-OSC32_IN | GPIO_Input | SW | スイッチ |
-| 3 | PC15-OSC32_OUT | GPIO_Output | ENC_CAL | エンコーダの校正(MT6835 の CAL_EN、左右共通) |
-| 10 | PH0-OSC_IN | RCC_OSC_IN | OSC_IN | 発振子(HSE、10MHz) |
-| 11 | PH1-OSC_OUT | RCC_OSC_OUT | OSC_OUT | 発振子(HSE、10MHz) |
-| 13 | PC0 | ADC1_INP10 | WALL_FL | 壁センサ 左前 |
-| 14 | PC1 | ADC1_INP11 | WALL_L | 壁センサ 左 |
-| 17 | PA0 | GPIO_Output | LED_MODE0 | モード ビット0 |
-| 18 | PA1 | GPIO_Output | LED_MODE1 | モード ビット1 |
-| 19 | PA2 | GPIO_Output | LED_MODE2 | モード ビット2 |
-| 20 | PA3 | GPIO_Output | LED_NUM0 | ナンバー ビット0 |
-| 23 | PA4 | ADC2_INP18 | MOT_R_I | 右モーターの電流(INA241A3 の出力、2026-11-23。それまでは MP6551 の CM1) |
-| 24 | PA5 | ADC2_INP19 | MOT_R_CMS | 右の MP6551 の CM1 + CM2(下の FET の電流の和 ≒ 電池から出る電流、2026-11-23) |
-| 25 | PA6 | ADC1_INP3 | WALL_R | 壁センサ 右 |
-| 26 | PA7 | ADC1_INP7 | WALL_FR | 壁センサ 右前 |
-| 27 | PC4 | ADC2_INP4 | MOT_L_I | 左モーターの電流(INA241A3 の出力、2026-11-23。それまでは MP6551 の CM1) |
-| 28 | PC5 | ADC2_INP8 | MOT_L_CMS | 左の MP6551 の CM1 + CM2(下の FET の電流の和 ≒ 電池から出る電流、2026-11-23) |
-| 29 | PB0 | ADC1_INP9 | FAN_ISENSE | 吸引ファンの電流(シャント抵抗の電圧をRCで平均) |
-| 30 | PB1 | ADC2_INP5 | BATT | 電池の電圧(分圧) |
-| 31 | PB2 | GPIO_Output | MOT_EN | ドライバ2個のEN1・EN2(共通。Lでスリープ) |
-| 32 | PB10 | GPIO_Output | LED_NUM1 | ナンバー ビット1 |
-| 36 | PB12 | GPIO_Output | LED_NUM2 | ナンバー ビット2 |
-| 37 | PB13 | GPIO_Output | LED_NUM3 | ナンバー ビット3 |
-| 38 | PB14 | SPI2_MISO | ENC_MISO | エンコーダ MISO |
-| 39 | PB15 | SPI2_MOSI | ENC_MOSI | エンコーダ MOSI |
+| 3 | PC14-OSC32_IN | GPIO_Input | SW | スイッチ |
+| 4 | PC15-OSC32_OUT | GPIO_Output | ENC_CAL | エンコーダの校正(MT6835 の CAL_EN、左右共通) |
+| 5 | PH0-OSC_IN | RCC_OSC_IN | OSC_IN | 発振子(HSE、10MHz) |
+| 6 | PH1-OSC_OUT | RCC_OSC_OUT | OSC_OUT | 発振子(HSE、10MHz) |
+| 8 | PC0 | ADC1_INP10 | WALL_FL | 壁センサ 左前 |
+| 9 | PC1 | ADC1_INP11 | WALL_L | 壁センサ 左 |
+| 14 | PA0 | GPIO_Output | LED_MODE0 | モード ビット0 |
+| 15 | PA1 | GPIO_Output | LED_MODE1 | モード ビット1 |
+| 16 | PA2 | GPIO_Output | LED_MODE2 | モード ビット2 |
+| 17 | PA3 | GPIO_Output | LED_NUM0 | ナンバー ビット0 |
+| 20 | PA4 | ADC2_INP18 | MOT_R_I | 右モーターの電流(INA241A3 の出力、2026-11-23。それまでは MP6551 の CM1) |
+| 21 | PA5 | ADC2_INP19 | MOT_R_CMS | 右の MP6551 の CM1 + CM2(下の FET の電流の和 ≒ 電池から出る電流、2026-11-23) |
+| 22 | PA6 | ADC1_INP3 | WALL_R | 壁センサ 右 |
+| 23 | PA7 | ADC1_INP7 | WALL_FR | 壁センサ 右前 |
+| 24 | PC4 | ADC2_INP4 | MOT_L_I | 左モーターの電流(INA241A3 の出力、2026-11-23。それまでは MP6551 の CM1) |
+| 25 | PC5 | ADC2_INP8 | MOT_L_CMS | 左の MP6551 の CM1 + CM2(下の FET の電流の和 ≒ 電池から出る電流、2026-11-23) |
+| 26 | PB0 | ADC1_INP9 | FAN_ISENSE | 吸引ファンの電流(シャント抵抗の電圧をRCで平均) |
+| 27 | PB1 | ADC2_INP5 | BATT | 電池の電圧(分圧) |
+| 28 | PB2 | GPIO_Output | MOT_EN | ドライバ2個のEN1・EN2(共通。Lでスリープ) |
+| 29 | PB10 | GPIO_Output | LED_NUM1 | ナンバー ビット1 |
+| 34 | PB12 | GPIO_Output | LED_NUM2 | ナンバー ビット2 |
+| 35 | PB13 | GPIO_Output | LED_NUM3 | ナンバー ビット3 |
+| 36 | PB14 | SPI2_MISO | ENC_MISO | エンコーダ MISO |
+| 37 | PB15 | SPI2_MOSI | ENC_MOSI | エンコーダ MOSI |
 | 40 | PC6 | GPIO_Output | ENC_L_CS | 左エンコーダ チップセレクト |
 | 41 | PC7 | GPIO_Output | ENC_R_CS | 右エンコーダ チップセレクト |
-| 42 | PC9 | GPIO_Input | MOT_nFAULT | ドライバ2個のnFAULT(オープンドレインを共通に) |
-| 43 | PA8 | TIM1_CH1 | MOT_L_IN1 | 左モーター IN1(PWM) |
-| 44 | PA9 | TIM1_CH2 | MOT_L_IN2 | 左モーター IN2(PWM) |
-| 45 | PA10 | TIM1_CH3 | MOT_R_IN1 | 右モーター IN1(PWM) |
-| 46 | PA11 | TIM1_CH4 | MOT_R_IN2 | 右モーター IN2(PWM) |
-| 47 | PA12 | SPI2_SCK | ENC_SCK | エンコーダ SPIクロック |
-| 48 | PA13(JTMS/SWDIO) | DEBUG_JTMS-SWDIO | SWDIO | 書き込み・デバッグ |
+| 43 | PC9 | GPIO_Input | MOT_nFAULT | ドライバ2個のnFAULT(オープンドレインを共通に) |
+| 44 | PA8 | TIM1_CH1 | MOT_L_IN1 | 左モーター IN1(PWM) |
+| 45 | PA9 | TIM1_CH2 | MOT_L_IN2 | 左モーター IN2(PWM) |
+| 46 | PA10 | TIM1_CH3 | MOT_R_IN1 | 右モーター IN1(PWM) |
+| 47 | PA11 | TIM1_CH4 | MOT_R_IN2 | 右モーター IN2(PWM) |
+| 48 | PA12 | SPI2_SCK | ENC_SCK | エンコーダ SPIクロック |
+| 49 | PA13(JTMS/SWDIO) | DEBUG_JTMS-SWDIO | SWDIO | 書き込み・デバッグ |
 | 52 | PA14(JTCK/SWCLK) | DEBUG_JTCK-SWCLK | SWCLK | 書き込み・デバッグ |
 | 53 | PA15(JTDI) | GPIO_Output | IMU_CS | IMU チップセレクト |
 | 54 | PC10 | SPI3_SCK | IMU_SCK | IMU SPIクロック |
 | 55 | PC11 | SPI3_MISO | IMU_MISO | IMU MISO |
 | 56 | PC12 | SPI3_MOSI | IMU_MOSI | IMU MOSI |
-| 57 | PD2 | GPIO_EXTI2 | IMU_INT | IMU の INT1(データ準備完了の割り込み。2026-10-31) |
-| 58 | PB3(JTDO/TRACESWO) | GPIO_Output | LED_FRONT | 前の LED(D98。前の円弧の切り欠きの真ん中。2026-10-31) |
-| 59 | PB4(NJTRST) | GPIO_Output | WALL_LED_FL_R | 壁センサの発光 FL と R(NJU6080 2個のPWM端子。MK3 の WallLED_12) |
-| 60 | PB5 | GPIO_Output | WALL_LED_L_FR | 壁センサの発光 L と FR(NJU6080 2個のPWM端子。MK3 の WallLED_34) |
-| 61 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換)と BLE モジュール HY0020 の受信(P0.08、2026-11-23) |
-| 62 | PB7 | USART1_RX | UART_RX | PCから(TP1、D100)と HY0020 の送信(P0.06、D99)。R101 4.7kΩ で引き上げ、ダイオードで L に引くだけ(ワイヤード AND、両方つないだままでよい。`docs/ble.md` の9章)。HY0020 の P0.04 も見る |
-| 64 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
-| 65 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
+| 57 | PB3(JTDO/TRACESWO) | GPIO_EXTI3 | IMU_INT | IMU の INT1(データ準備完了の割り込み。2026-11-26 に PD2 から。H562 には PD2 がない) |
+| 58 | PB4(NJTRST) | GPIO_Output | WALL_LED_FL_R | 壁センサの発光 FL と R(NJU6080 2個のPWM端子。MK3 の WallLED_12) |
+| 59 | PB5 | GPIO_Output | WALL_LED_L_FR | 壁センサの発光 L と FR(NJU6080 2個のPWM端子。MK3 の WallLED_34) |
+| 60 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換)と BLE モジュール HY0020 の受信(P0.08、2026-11-23) |
+| 61 | PB7 | USART1_RX | UART_RX | PCから(TP1、D100)と HY0020 の送信(P0.06、D99)。R101 4.7kΩ で引き上げ、ダイオードで L に引くだけ(ワイヤード AND、両方つないだままでよい。`docs/ble.md` の9章)。HY0020 の P0.04 も見る |
+| 63 | PB8 | TIM16_CH1 | FAN_PWM | 吸引ファン(PWM) |
+| 64 | PB9 | TIM17_CH1 | BUZZER | ブザー(PWM) |
+| 65 | PE0 | GPIO_Output | LED_FRONT | 前の LED(D98。前の円弧の切り欠きの真ん中。2026-10-31)。2026-11-26 に PB3 から |
 
 ## 残りのピン
 
-なし(2026-10-31 に PD2 を IMU の INT1、PB3 を前の LED にして、46本すべて使う)。**SWO は使わない**: ログは今までどおり UART(J7 の STLINK-V3MODS の仮想COMポート)で出す。MK3 のビューア(`tools/viewer.html`)が USB シリアルで読むため。ピンが足りなくなったら、LED 8個をシフトレジスタ(3本)にすれば5本空く
+**7本**(2026-11-26、H562 にして増えた): PC13(2番)、PC2(10番。ADC1・2 の INP12)、PC3(11番。ADC の INP13)、PB11(30番)、PD11(38番)、PD12(39番)、PC8(42番)。回路図では × にしてある。ソフトで出力の L にしておく(浮かせない)。H725 のとき(2026-10-31〜11-26)は46本すべて使っていた。**SWO は使わない**: ログは今までどおり UART(J7 の STLINK-V3MODS の仮想COMポート)で出す。MK3 のビューア(`tools/viewer.html`)が USB シリアルで読むため。ピンが足りなくなったら、LED 8個をシフトレジスタ(3本)にすれば5本空く
 
 ## 割り当ての考え方
 
@@ -82,15 +82,15 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - **エンコーダ**: MT6835 × 2をSPI2(SCK PA12、MISO PB14、MOSI PB15)で読み、CSは左PC6・右PC7(GPIO)。バスはIMU(SPI3)と分けたまま(2026-10-17にAS5047P(モード1)で分けた。MT6835はIMUと同じモード3だが、配線の都合で分けておく)
 - **エンコーダの校正**: PC15(ENC_CAL)で左右の CAL_EN を一緒に H にする(2026-10-29)。PC15 は電流を流せない(3mAまで、2MHzまで)ピンだが、CAL_EN は入力(中に 250kΩ のプルダウン)なので問題ない。リセット中はハイインピーダンスになり、プルダウンで L に保たれる
 - **吸引ファン・ブザー**: TIM16・TIM17
-- **IMU**: SPI3(PC10・PC11・PC12)、CSはPA15(GPIO)。**INT1 は PD2(EXTI2)**(2026-10-31): 新しい値ができたら割り込みで知らせる(データ準備完了)。同じ値を2回読んだり、古い値を使ったりしないため。使わないときはソフトで無視すればよい。EXTI の2番を使う入力はほかにない(スイッチ PC14 は14番、nFAULT PC9 は9番)。INT2 はつながない
+- **IMU**: SPI3(PC10・PC11・PC12)、CSはPA15(GPIO)。**INT1 は PB3(EXTI3)**(2026-10-31 に PD2 で決め、2026-11-26 に H562 にしたので PB3 へ。SPI3 の PC10〜PC12 のすぐ隣のピン): 新しい値ができたら割り込みで知らせる(データ準備完了)。同じ値を2回読んだり、古い値を使ったりしないため。使わないときはソフトで無視すればよい。EXTI の2番を使う入力はほかにない(スイッチ PC14 は14番、nFAULT PC9 は9番)。INT2 はつながない
 - **UART**: USART1(PB6・PB7)。PA9・PA10はモーターのPWMに、PB14・PB15はエンコーダのSPI2に使うので、USART1の3つ目の組にした
-- **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13、前の LED は PB3(2026-10-31)
+- **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13、前の LED は PE0(2026-10-31 に PB3、2026-11-26 に PE0 へ)
 - **スイッチ**: PC14(OSC32_IN)。入力なので、流せる電流が小さくても問題ない
-- **発振子(HSE)**: 10MHz のセラミック発振子(CSTNE10M0G52A000R0。MK3 の CSTNE10M0G52Z000R0 と同じ仕様で、2026-11-26 に在庫のある品に替えた)を PH0・PH1 に付ける(2026-10-29)。PLL で 550MHz にする(例: 10MHz ÷ 5 × 275 ÷ 1)。2026-10-12 には付けず HSI にしていた
+- **発振子(HSE)**: 10MHz のセラミック発振子(CSTNE10M0G52A000R0。MK3 の CSTNE10M0G52Z000R0 と同じ仕様で、2026-11-26 に在庫のある品に替えた)を PH0・PH1 に付ける(2026-10-29)。PLL で 240MHz にする(例: 10MHz ÷ 1 × 48 ÷ 2。2026-11-26: H562 の上限は 250MHz だが、TIM1 の 80kHz・20kHz がちょうど割り切れる 240MHz にする。H725 のときは 550MHz の予定だった)。2026-10-12 には付けず HSI にしていた
 
 ## 気をつけること
 
-- **PA15(JTDI)とPB4(NJTRST)とPB3(JTDO)**は、リセット直後はJTAGの機能になっている。CubeMXでデバッグを「Serial Wire」にすれば、GPIOとして使える
-- **BOOT0**(63番)は専用ピン。10kΩ程度でGNDに落とす。**テストパッド TP4 を付ける**(2026-11-23。電源の設定ミスなどで応答しなくなったとき、TP4 を 3.3V につないだまま電源を入れると、自分のプログラムが動かず STLINK でつないで消せる)。HY0020 にはつながない(2026-11-23。AN2606: H72x の書き込み用のプログラムの USART1 は PA9・PA10 だけで、この機体の UART(PB6・PB7)では使えない)
-- **NRST**(12番)は専用ピン。SWDの端子にも出す。HY0020 の P0.07 からも動かせる(2026-11-23)
-- **電源のピン**: VFQFPN68はSMPS専用(VSSSMPS・VLXSMPS・VDDSMPS・VFBSMPS、VCAP × 3、VDDA・VSSA、VBAT)。部品は仕様書の「MCUの電源」
+- **PA15(JTDI)とPB4(NJTRST)とPB3(JTDO)**は、リセット直後はJTAGの機能になっている(H562 も同じ)。CubeMXでデバッグを「Serial Wire」にすれば、GPIOとして使える
+- **BOOT0**(62番。H725 では 63番)は専用ピン。10kΩ程度でGNDに落とす。**テストパッド TP4 を付ける**(2026-11-23。電源の設定ミスなどで応答しなくなったとき、TP4 を 3.3V につないだまま電源を入れると、自分のプログラムが動かず STLINK でつないで消せる)。HY0020 にはつながない(2026-11-23。AN2606: H72x の書き込み用のプログラムの USART1 は PA9・PA10 だけで、この機体の UART(PB6・PB7)では使えない。**H562 も同じ**: USART1 は PA9・PA10、USART2 は PA2・PA3、USART3 は PD8・PD9 だけ(AN2606 Rev 71 の表137)。どれもこの機体では別の用途に使っている)
+- **NRST**(7番。H725 では 12番)は専用ピン。SWDの端子にも出す。HY0020 の P0.07 からも動かせる(2026-11-23)
+- **電源のピン**: H562 の VFQFPN68 は **LDO だけ**(SMPS はない。VCAP × 2 に 2.2µF ずつ、VDD × 4、VDDA・VSSA、VBAT、VSS は裏の大きいパッドにもつながる)。2026-11-26 までの H725 は SMPS 専用(VSSSMPS・VLXSMPS・VDDSMPS・VFBSMPS、VCAP × 3)だった。部品は仕様書の「MCUの電源」

@@ -112,14 +112,12 @@ JLC の組み立てで**そのまま使えない**部品だけ。ほかは上の
 | C9 | 1 | 上 | 10n | Samsung CL05B103KB5NNNC (50V X7R) | C15195 | 0.55 | JLC Basic |
 | C10 | 1 | 上 | 22n 50V | FH 0402B223K500NT (50V X7R) | C1532 | 0.55 | JLC Basic |
 | C23 C33 | 2 | 上 | 1n C0G | FH 0402CG102J500NT (50V C0G ±5%) | C53547 | 0.55 |  |
-| C24 C34 C52 C55 C56 C57 C58 C59 C60 C61 C63 C64 C70 C71 C72 C73 C81 C82 C83 C84 C90 C92 | 22 | 上 | 100n | Samsung CL05B104KO5NNNC (16V X7R) | C1525 | 0.55 | JLC Basic |
+| C24 C34 C52 C57 C58 C59 C60 C63 C64 C70 C71 C72 C73 C81 C82 C83 C84 C90 C92 | 19 | 上 | 100n | Samsung CL05B104KO5NNNC (16V X7R) | C1525 | 0.55 | JLC Basic |
 | C40 | 1 | 上 | 1u | Samsung CL05A105KA5NQNC (25V X5R) | C52923 | 0.55 | JLC Basic |
-| C50 C91 C78 C79 C80 C85 | 6 | 上 | 10u 10V | Samsung CL10A106KP8NNNC (10V X5R) | C19702 | 0.9 | 厚さ 0.80±0.10。JLC Basic |
 | C51 C62 | 2 | 上 | 4.7u 10V | Samsung CL10A475KP8NNNC (10V X5R) | C1705 | 0.9 | 厚さ 0.80±0.10 |
-| C53 | 1 | 上 | 220p | FH 0402CG221J500NT (50V C0G ±5%) | C39122 | 0.55 |  |
-| C54 C65 | 2 | 上 | 10u | Samsung CL05A106MQ5NUNC (6.3V X5R) | C15525 | 0.7 | VCORE(約1.2V)だけ。厚さ 0.50±0.20。JLC Basic |
+| C54 C65 C86 C87 | 4 | 上 | 2.2u 10V | Samsung CL05A225MP5NNNC (10V X5R) | C107370 | 0.55 |  |
 | C74 C75 C76 C77 | 4 | 上 | 0.5p C0G | Murata GJM1555C1HR50BB01D (50V C0G ±0.1pF) | C76911 | 0.55 | 受光アンプの帰還。±0.05pF なら GJM1555C1HR50WB01D(C76912) |
-| C86 C87 | 2 | 上 | 2.2u 10V | Samsung CL05A225MP5NNNC (10V X5R) | C107370 | 0.55 |  |
+| C78 C79 C80 C85 C91 | 5 | 上 | 10u | Samsung CL10A106KP8NNNC (10V X5R) | C19702 | 0.9 | 厚さ 0.80±0.10。JLC Basic |
 | D1 | 1 | 上 | SMF13A | Littelfuse SMF13A | C315998 |  | 在庫 約3,835 |
 | D2 D90 D91 D92 D93 D94 D95 D96 D98 | 9 | 上 | APTD1608LSECK/J4-PF | Kingbright APTD1608LSECK/J4-PF | C5879215 | 0.95 | 1番がカソード。在庫 約660 |
 | D40 | 1 | 裏 | MBR230LSFT1G | onsemi MBR230LSFT1G | C126673 | 0.98 | 在庫 約22,400 |
@@ -131,7 +129,6 @@ JLC の組み立てで**そのまま使えない**部品だけ。ほかは上の
 | J2 J3 J4 | 3 | 裏 | MOTOR_L | (基板のパッド。部品なし) |  |  | モーターの線(裏) |
 | J5 J6 | 2 | 上 | ENC_L | (基板のパッド。部品なし) |  |  | エンコーダ基板をはんだ付け |
 | J7 | 1 | 上 | DEBUG | 1.27mm 2 × 3 のピンヘッダ(縦、穴)。**手持ち**(2026-11-23) |  | 6.0 | 高さ約 5mm。電池の外。JLC の BOM には入れない |
-| L1 | 1 | 上 | 2.2u DFE201610E-2R2M | Murata DFE201610E-2R2M=P2 | C337891 |  | 在庫 約3,910 |
 | NT1 | 1 | 上 | NetTie_2 | (基板のパッド。部品なし) |  |  | PGND と GND の1点 |
 | Q1 | 1 | 裏 | AO4407A | AOS AO4407A | C16072 | 1.75 | AOS のもの(UMW・MSKSEMI の同じ品番は別物)、在庫 約4,145 |
 | Q40 | 1 | 上 | IRLML6344 | Infineon IRLML6344TRPBF | C53550 |  | Infineon のもの、在庫 約39,800 |
@@ -155,7 +152,7 @@ JLC の組み立てで**そのまま使えない**部品だけ。ほかは上の
 | TP1 TP2 TP3 TP4 | 4 | 上 | UART_RX | (基板のパッド。部品なし) |  |  |  |
 | U1 | 1 | 上 | LXDC55FAAA-203 | Murata LXDC55FAAA-203 |  |  | **LCSC になし。生産終了の情報あり(未確認)。自分ではんだ付け**(2026-11-26、ユーザー。JLC の BOM・CPL には入れない) |
 | U2 U3 | 2 | 上 | MP6551GQB | MPS MP6551GQB |  |  | **LCSC になし**(ほかの代理店で) |
-| U4 | 1 | 上 | STM32H725RGVx | STM32H725RGV6(または RGV3) | C5271073 |  | RGV6。**LCSC の在庫 0**(RGV3 の C5271074 も 0) |
+| U4 | 1 | 上 | STM32H562RGVx | ST STM32H562RGV6 | C24262461 |  | 2026-11-26 に STM32H725RGV6(どこも在庫 0)から替えた。JLC の倉庫に 9・LCSC に 5(2026-11-26)。**事前購入で確保する** |
 | U5 | 1 | 上 | HY0020 | FDK HY0020 |  |  | **LCSC になし**(DigiKey・Arrow) |
 | U6 U7 | 2 | 上 | INA241A3 | TI INA241A3IDDFR(SOT-23-8) | C6051860 |  | 在庫 約6,470 |
 | U70 U71 U72 U73 | 4 | 上 | NJW4615A | Nisshinbo NJW4615AF1-TE1 | C3193134 |  | LCSC は在庫 0・Mouser に約 2,300(2026-11-26)。NJU6080 と同じピン・同じ抵抗(在庫がない NJU6080 から 2026-11-26 に替えた) |
