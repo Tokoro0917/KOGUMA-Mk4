@@ -39,5 +39,6 @@
 
 - 回路図・基板は `hardware/kicad/`。変えたら ERC(エラー 0)と、DRC の回路図との食い違い 0 を確かめる
 - `hardware/kicad/KOGUMA-Mk4/gen_pcb.py` は `KOGUMA-Mk4.kicad_pro` を上書きする。走らせたあとは `git checkout -- KOGUMA-Mk4.kicad_pro` で戻してから `place_caps.py` を走らせる
-- タイヤ24mm 用の基板(ブランチ `claude/trusting-dirac-1tdt54`、`hardware/kicad/KOGUMA-Mk4_t24/`)は、回路図を変えたら次の順で作り直す(リポジトリの一番上で): `/usr/bin/python3.12 hardware/kicad/make_main_t24.py` → `(cd hardware/kicad/KOGUMA-Mk4 && /usr/bin/python3.12 place_caps.py t24)` → `/usr/bin/python3.12 hardware/kicad/place_main_t24.py` → `/usr/bin/python3.12 hardware/kicad/route_power_t24.py`(電池の電圧の配線) → `/usr/bin/python3.12 hardware/kicad/bom_t24.py`
+- タイヤ24mm 用の基板(ブランチ `claude/trusting-dirac-1tdt54`、`hardware/kicad/KOGUMA-Mk4_t24/`)は、回路図を変えたら次の順で作り直す(リポジトリの一番上で): `/usr/bin/python3.12 hardware/kicad/make_main_t24.py` → `(cd hardware/kicad/KOGUMA-Mk4 && /usr/bin/python3.12 place_caps.py t24)` → `/usr/bin/python3.12 hardware/kicad/place_main_t24.py` → `/usr/bin/python3.12 hardware/kicad/bom_t24.py`
+- **t24 の基板の配線は作者が KiCad で全部やる**(2026-11-26)。配線を始めたら、配置のスクリプト(`make_main_t24.py` → `place_caps.py t24` → `place_main_t24.py`)は走らせない(基板を最初から作り直すので、手の配線が消える)。基板を直すときは、今の `.kicad_pcb` を直接直す。部品の位置を変えるときは先に作者に聞く
 - 部品を選ぶ・寸法を決めるときは、データシートで確かめ、PDF を `docs/reference/datasheets/` に保存して `docs/reference/README.md` に足す

@@ -1,5 +1,5 @@
 """タイヤ24mm のメイン基板(KOGUMA-Mk4_t24)の、電池の電圧の部分(BAT+・VBAT・PGND)を配線する(2026-11-25、ユーザー: 全部の配線はしない。電池の電圧の部分を引いて)。
-place_main_t24.py で部品を置いたあとに走らせる(CLAUDE.md の作り直す順)。使い方(リポジトリの一番上で):
+2026-11-26: 作者が配線を全部やることになったので、作り直す順には入れていない(参考に残す)。使うなら place_main_t24.py のあとに走らせる。使い方(リポジトリの一番上で):
     /usr/bin/python3.12 hardware/kicad/route_power_t24.py            → 保存してある配線(KOGUMA-Mk4_t24/power_route.ses)を入れる
     /usr/bin/python3.12 hardware/kicad/route_power_t24.py reroute    → 自動配線をやり直してから入れる(部品の位置を変えたとき)
 
