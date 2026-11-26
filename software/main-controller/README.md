@@ -20,7 +20,7 @@ KOGUMA MK4 メイン基板(STM32H725RGV6)のファームウェアです。**Tora
 | 書き込み・デバッグ | STLINK-V3MODS(J7) | 無線の書き込みはステップ13 |
 | 電源 | **Direct SMPS**(CubeMX で必ず設定) | LDO のまま書き込むと応答しなくなる |
 | クロック | HSE 10MHz → 400MHz(VOS1)から | 動いてから 520MHz に上げる |
-| 時刻の元 | TIM1(モーターの PWM 40kHz、センターアラインド) | 20kHz で ADC1・ADC2 を起動 → 電流の制御、1kHz で制御(`docs/software.md` の4章) |
+| 時刻の元 | TIM1(モーターの PWM 80kHz、センターアラインド) | 20kHz で ADC1・ADC2 を起動 → 電流の制御、4kHz で制御(`docs/software.md` の4章) |
 | UART | USART1(PB6・PB7)、送る・受ける | 有線(TP1)と BLE を同じ 1 本で |
 
 ## 実装の進め方
