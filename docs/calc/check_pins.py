@@ -67,7 +67,7 @@ ASSIGN = [
     ('PB12', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
     ('PB13', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
     ('PC14-OSC32_IN', 'GPIO_Input', 'SW', 'スイッチ'),
-    # 発振子(HSE)10MHz、CSTNE10M0G52Z000R0(2026-10-29。MK3 と同じ。それまでは付けず HSI)
+    # 発振子(HSE)10MHz、CSTNE10M0G52A000R0(2026-10-29。MK3 と同じ仕様。2026-11-26 に Z から A へ。それまでは付けず HSI)
     ('PH0-OSC_IN', 'RCC_OSC_IN',  'OSC_IN',  '発振子(HSE)'),
     ('PH1-OSC_OUT', 'RCC_OSC_OUT', 'OSC_OUT', '発振子(HSE)'),
 ]

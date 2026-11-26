@@ -54,7 +54,7 @@ FIXED = {'STM32H725RGVx': 'STM32H725RGV6(または RGV3)', 'MP6551GQB': 'MPS MP6
          'OPA2354': 'TI OPA2354(VSSOP-8)', 'LSM6DSR': 'ST LSM6DSR', 'NJU6080': 'NJR NJU6080', 'NJW4615A': 'Nisshinbo NJW4615AF1-TE1', 'HY0020': 'FDK HY0020',
          'LXDC55FAAA-203': 'Murata LXDC55FAAA-203', 'AO4407A': 'AOS AO4407A', 'IRLML6344': 'Infineon IRLML6344TRPBF',
          'SMF13A': 'Littelfuse SMF13A', 'MBR230LSFT1G': 'onsemi MBR230LSFT1G', 'BLM18PG221SN1D': 'Murata BLM18PG221SN1D',
-         '2.2u DFE201610E-2R2M': 'Murata DFE201610E-2R2M=P2', 'CSTNE10M0G52Z000R0': 'Murata CSTNE10M0G52Z000R0',
+         '2.2u DFE201610E-2R2M': 'Murata DFE201610E-2R2M=P2', 'CSTNE10M0G52A000R0': 'Murata CSTNE10M0G52A000R0',
          'T521D107M025ATE040 (100u 25V)': 'KEMET T521D107M025ATE040', 'PMR18EZPFU5L00 (5m 1%)': 'ROHM PMR18EZPFU5L00', 'PMR18EZPFU10L0 (10m 1%)': 'ROHM PMR18EZPFU10L0',
          'SSSS810701': 'Alps Alpine SSSS810701', 'OPV332': 'TT Electronics (Optek) OPV332', 'SFH 229 FA': 'ams OSRAM SFH 229 FA(2025-11-28 生産終了。**予備を含めて在庫を確保**)', 'TVAF06-A020B-R': 'Jianfu TVAF06-A020B-R', 'SMT-0540-S-R': 'PUI Audio SMT-0540-S-R'}
 # IC など品番が決まっている部品の LCSC の番号と在庫(2026-11-23、LCSC・JLCPCB の製品ページで確かめた。在庫は LCSC の数で、JLC の組み立ての在庫とは別)
@@ -66,7 +66,7 @@ LCSC = {'STM32H725RGVx': ('C5271073', 'RGV6。**LCSC の在庫 0**(RGV3 の C527
         'SSSS810701': ('C97433', '在庫 約340'), 'SMT-0540-S-R': ('C3812104', '**LCSC の在庫 0**'), 'APTD1608LSECK/J4-PF': ('C5879215', '在庫 約660'),
         'OPV332': ('C6622198', '**LCSC の在庫 0**'), 'SFH 229 FA': ('C3211054', '**LCSC の在庫 0**'),
         'MP6551GQB': ('', '**LCSC になし**(ほかの代理店で)'), 'NJU6080': ('', '**LCSC になし**(日清紡の品番は NJU6080F1)'), 'NJW4615A': ('C3193134', 'LCSC は在庫 0・Mouser に約 2,300(2026-11-26)。NJU6080 と同じピン・同じ抵抗(在庫がない NJU6080 から 2026-11-26 に替えた)'),
-        'LXDC55FAAA-203': ('', '**LCSC になし。生産終了の情報あり(未確認)**'), 'CSTNE10M0G52Z000R0': ('', '**LCSC になし**(仕様の違う CSTNE10M0G520000R0 C907958 などはある)'),
+        'LXDC55FAAA-203': ('', '**LCSC になし。生産終了の情報あり(未確認)**'), 'CSTNE10M0G52A000R0': ('C907976', '在庫 約2,500。2026-11-26 に CSTNE10M0G52Z000R0(LCSC になし)から替えた。仕様は同じで車載用'),
         'T521D107M025ATE040 (100u 25V)': ('', '在庫は未確認(47µF の T521V は LCSC になし)。裏の面に手ではんだ付け'), 'TVAF06-A020B-R': ('', '**LCSC になし**(同じ系列の別の品番だけ)'),
         'HY0020': ('', '**LCSC になし**(DigiKey・Arrow)')}
 NOT_SMT = ('J1', 'J2', 'J3', 'J4', 'J5', 'J6', 'J7', 'NT1', 'TP', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77')

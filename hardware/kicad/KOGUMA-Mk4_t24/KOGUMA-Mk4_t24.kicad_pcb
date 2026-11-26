@@ -16895,7 +16895,7 @@
 				)
 			)
 		)
-		(property "Value" "CSTNE10M0G52Z000R0"
+		(property "Value" "CSTNE10M0G52A000R0"
 			(at 0 2 270)
 			(layer "F.Fab")
 			(uuid "b9822aad-c6a5-4527-8c76-e13466320b4f")
