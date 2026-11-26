@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VER = 't24v2'
+VER = 't24v3'
 
 
 def load_stl(path):
@@ -47,7 +47,7 @@ for i in range(2):
     ax.view_init(elev=elev, azim=azim)
     ax.set_axis_off()
     ax.set_title(title, fontsize=13)
-fig.suptitle(f'吸引ファンの羽根 {VER}(C 案 φ30・外の壁 φ31.2・9 枚・まっすぐ・軸の穴 φ1.18・下に接着剤のくぼみ φ2.4)', fontsize=14)
+fig.suptitle(f'吸引ファンの羽根 {VER}(C 案 φ30・外の壁 φ31.2・9 枚・まっすぐ・軸の穴 φ1.18・下に接着剤のくぼみ・ハブを軸の根元の 0.2mm 手前まで)', fontsize=14)
 fig.subplots_adjust(left=0, right=1, top=0.9, bottom=0.02, wspace=0)
 out = os.path.join(HERE, f'impeller_{VER}.png')
 fig.savefig(out, dpi=130)
@@ -66,6 +66,8 @@ SHAFT_R = 0.6
 SHAFT_TIP_Z = 4.3       # 軸の先(モーターの前の面 z 9.4 から 5.1mm)
 MOTOR_FACE_Z = 9.4
 HUB_BOTTOM_Z = 8.6      # ファンの台のハブの底
+TOP_HUB_R = 1.2         # 上へ伸ばしたハブ(t24v3)
+TOP_HUB_Z = 8.9
 
 fig2, ax = plt.subplots(figsize=(7, 6))
 resin = '#9cc3ee'
@@ -74,6 +76,7 @@ for side in (1, -1):
     ax.add_patch(plt.Rectangle((side * BORE_R, Z_DISC0), side * (4.0 - BORE_R), Z_DISC1 - Z_DISC0, color=resin))
     # ハブ(軸の穴より上: 穴のまわり。くぼみの所: くぼみのまわり)
     ax.add_patch(plt.Rectangle((side * BORE_R, GLUE_Z), side * (HUB_R - BORE_R), Z_DISC0 - GLUE_Z, color=resin))
+    ax.add_patch(plt.Rectangle((side * BORE_R, Z_DISC1), side * (TOP_HUB_R - BORE_R), TOP_HUB_Z - Z_DISC1, color=resin))
     ax.add_patch(plt.Rectangle((side * GLUE_R, Z_BOTTOM), side * (HUB_R - GLUE_R), GLUE_Z - Z_BOTTOM, color=resin))
 # 軸(灰色)と、接着剤がたまる所(黄色)
 ax.add_patch(plt.Rectangle((-GLUE_R, Z_BOTTOM + 0.2), 2 * GLUE_R, GLUE_Z - Z_BOTTOM - 0.2, color='#f5d76e', alpha=0.8))
@@ -85,16 +88,18 @@ ax.add_patch(plt.Rectangle((1.5, HUB_BOTTOM_Z), 3.0, MOTOR_FACE_Z - HUB_BOTTOM_Z
 ax.add_patch(plt.Rectangle((-1.5, HUB_BOTTOM_Z), -3.0, MOTOR_FACE_Z - HUB_BOTTOM_Z, color='#d0d0d0'))
 ax.text(2.3, 7.6, '上の板', fontsize=10, va='center')
 ax.text(2.3, 5.6, 'ハブ(半径 2.0)', fontsize=10, va='center')
-ax.text(-4.3, 10.2, 'モーター', fontsize=10, color='white', va='center')
+ax.text(1.0, 10.2, 'モーター', fontsize=10, color='white', va='center')
 ax.text(2.0, 9.0, 'ファンの台の\nハブの底', fontsize=9, va='center')
-ax.annotate('軸 φ1.2(φ1.18 の穴に圧入\nかかる長さ 3.4mm)', xy=(0.3, 6.5), xytext=(-6.8, 6.3), fontsize=10,
+ax.annotate('軸 φ1.2(φ1.18 の穴に圧入\nかかる長さ 4.3mm)', xy=(0.3, 6.5), xytext=(-6.8, 6.3), fontsize=10,
             arrowprops=dict(arrowstyle='->', color='#333333'))
 ax.annotate('接着剤のくぼみ φ2.4\n(下から瞬間接着剤を入れる)', xy=(0.0, 3.9), xytext=(-6.8, 2.2), fontsize=10,
+            arrowprops=dict(arrowstyle='->', color='#333333'))
+ax.annotate('伸ばしたハブ(軸受の出っ張りとの間 0.2mm)', xy=(-1.0, 8.6), xytext=(-6.8, 11.3), fontsize=10,
             arrowprops=dict(arrowstyle='->', color='#333333'))
 ax.annotate('軸の先 z 4.3', xy=(0.6, 4.3), xytext=(2.3, 4.0), fontsize=10,
             arrowprops=dict(arrowstyle='->', color='#333333'))
 ax.set_xlim(-7, 5)
-ax.set_ylim(1.5, 11)
+ax.set_ylim(1.5, 11.8)
 ax.set_aspect('equal')
 ax.set_xlabel('中心からの距離 [mm]')
 ax.set_ylabel('z(床から)[mm]')
