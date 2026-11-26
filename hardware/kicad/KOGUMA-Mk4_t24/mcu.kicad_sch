@@ -3350,29 +3350,344 @@
 		(at 124.46 76.2)
 		(uuid "db44fe00-26ab-40b1-be84-687c117e8259")
 	)
-	(no_connect
-		(at 124.46 81.28)
-		(uuid "d6278d42-6681-4ad4-b4cd-d822ef22415b")
-	)
-	(no_connect
-		(at 124.46 134.62)
-		(uuid "0d3174e8-5a35-4e59-8888-394212514d0f")
-	)
+	
+	
 	(no_connect
 		(at 124.46 139.7)
 		(uuid "0303b68a-5310-4646-baf9-4c67a36fb6c0")
 	)
-	(no_connect
-		(at 124.46 142.24)
-		(uuid "58801dd5-e7da-4d3a-9a97-f0852fc79648")
+	
+	
+	
+	(wire
+		(pts
+			(xy 180.34 73.66) (xy 185.42 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cf3eef78-5b82-44bd-902a-cbf0db6a75a5")
+	)
+	(global_label "MOT_R_CMS"
+		(shape input)
+		(at 185.42 73.66 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "8a3b9ab0-215a-46c8-bce0-5002bf284304")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 180.34 78.74) (xy 185.42 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eb6355ea-c668-4a32-8986-4131f0afd6d3")
+	)
+	(global_label "IMU_SCK"
+		(shape output)
+		(at 185.42 78.74 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ab8e749e-57dc-4567-a483-65bd1226fb9a")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 180.34 81.28) (xy 185.42 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eb8a5025-a7ae-4430-a8c4-50c83cd81163")
+	)
+	(global_label "IMU_MISO"
+		(shape input)
+		(at 185.42 81.28 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e9a91261-e692-495d-8d6a-65855a823bdb")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 180.34 83.82) (xy 185.42 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9d1c01ad-0df4-4665-9ae4-acfc3fd3cff2")
+	)
+	(global_label "IMU_MOSI"
+		(shape output)
+		(at 185.42 83.82 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "ff66b930-c84f-4b22-abe6-8ee4c20627e8")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 83.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 180.34 134.62) (xy 185.42 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e0ea8524-8367-45a7-98a5-83f5f94c75d0")
+	)
+	(global_label "IMU_CS"
+		(shape output)
+		(at 185.42 134.62 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b126ba55-26c6-45c8-b6b9-00bd4fdced95")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 142.24) (xy 119.38 142.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8d34a745-9810-4374-81af-eeb32b754e1f")
+	)
+	(global_label "IMU_INT"
+		(shape input)
+		(at 119.38 142.24 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2cfb4a5a-308b-43e0-a943-006a01f9f35d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 142.24 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 81.28) (xy 119.38 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7bc9c9f2-1df6-41bf-82fa-0afa5792f360")
+	)
+	(global_label "WALL_R"
+		(shape input)
+		(at 119.38 81.28 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "36edd5ec-32f9-4426-9691-2a685655bb45")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 134.62) (xy 119.38 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82078fd6-9fca-4d4e-89d4-179afda4f7bd")
+	)
+	(global_label "WALL_FR"
+		(shape input)
+		(at 119.38 134.62 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "a21ca817-c542-408e-a42d-98870696b8ca")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 134.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 144.78) (xy 119.38 144.78)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e9c6c3ba-2bc6-427a-b492-cddefee82f73")
+	)
+	(global_label "LED_NUM1"
+		(shape output)
+		(at 119.38 144.78 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "95d63a3c-9d55-4e46-afd4-d0d23c548f04")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 144.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 147.32) (xy 119.38 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6a015fd2-8a95-4957-8b92-84dd30f44739")
+	)
+	(global_label "LED_NUM0"
+		(shape output)
+		(at 119.38 147.32 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fe51c037-1a75-45af-b001-1c89064d0b65")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 	)
 	(no_connect
-		(at 124.46 144.78)
-		(uuid "5b5bf005-31f7-44e2-b729-fdafa9bac24a")
+		(at 180.34 104.14)
+		(uuid "e1c49fe3-ceba-4633-817e-7e8f792d29f4")
 	)
 	(no_connect
-		(at 124.46 147.32)
-		(uuid "848eda9d-3052-404a-b9bb-528414c3e458")
+		(at 124.46 116.84)
+		(uuid "21e0a47d-13ac-48f0-ae86-697aa645bffa")
+	)
+	(no_connect
+		(at 124.46 119.38)
+		(uuid "6e964e86-721b-4fcf-9f93-ceeca302e87b")
+	)
+	(no_connect
+		(at 124.46 121.92)
+		(uuid "a2db4697-abe1-4655-bed9-d4298036950c")
+	)
+	(no_connect
+		(at 124.46 93.98)
+		(uuid "588780ca-1650-42aa-9501-2440ef290ae5")
 	)
 	(wire
 		(pts
@@ -3560,37 +3875,8 @@
 			)
 		)
 	)
-	(wire
-		(pts
-			(xy 180.34 73.66) (xy 185.42 73.66)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a7ebab10-2eac-4366-b929-806906dc4c88")
-	)
-	(global_label "LED_NUM0"
-		(shape output)
-		(at 185.42 73.66 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "614f269a-0831-4b39-b8e3-68ba7b0d23ff")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 73.66 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
+	
+	
 	(wire
 		(pts
 			(xy 180.34 76.2) (xy 185.42 76.2)
@@ -3622,68 +3908,10 @@
 			)
 		)
 	)
-	(wire
-		(pts
-			(xy 180.34 81.28) (xy 185.42 81.28)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "5f6161f9-cb09-448c-a26f-ef46f5859514")
-	)
-	(global_label "WALL_R"
-		(shape input)
-		(at 185.42 81.28 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c6626def-0da7-4967-be9e-df154e05cc3e")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 81.28 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 180.34 83.82) (xy 185.42 83.82)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d73bc0c9-a5c6-4fa5-a40f-a0e5a3c76708")
-	)
-	(global_label "WALL_FR"
-		(shape input)
-		(at 185.42 83.82 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "dc5c3b17-21bb-433c-b7c7-c64900778faf")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 83.82 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
+	
+	
+	
+	
 	(wire
 		(pts
 			(xy 119.38 104.14) (xy 124.46 104.14)
@@ -3808,37 +4036,8 @@
 			)
 		)
 	)
-	(wire
-		(pts
-			(xy 180.34 134.62) (xy 185.42 134.62)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ee7851ac-7e93-4e65-96a5-1fd246ddab63")
-	)
-	(global_label "LED_NUM1"
-		(shape output)
-		(at 185.42 134.62 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "2072e887-8537-4cc9-bd4f-e5a345c4b05a")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 134.62 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
+	
+	
 	(wire
 		(pts
 			(xy 180.34 137.16) (xy 185.42 137.16)
@@ -4273,130 +4472,14 @@
 			)
 		)
 	)
-	(wire
-		(pts
-			(xy 180.34 104.14) (xy 185.42 104.14)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "43dca5bc-6f3d-4d59-ab6a-f0b55a1ac0cd")
-	)
-	(global_label "IMU_CS"
-		(shape output)
-		(at 185.42 104.14 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "d7bb7664-6d78-4868-86b4-a9755cb882bd")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 104.14 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 119.38 116.84) (xy 124.46 116.84)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c479a6d2-9dae-43e4-b2af-44e0845bf195")
-	)
-	(global_label "IMU_SCK"
-		(shape output)
-		(at 119.38 116.84 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "863b2701-1b3f-4e6a-87c8-6f292d3e98c7")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 119.38 116.84 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 119.38 119.38) (xy 124.46 119.38)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "bf139cde-090a-4778-a3ef-80bd7ca7f8b7")
-	)
-	(global_label "IMU_MISO"
-		(shape input)
-		(at 119.38 119.38 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "41c3204c-b4d4-420d-a3ab-b3ce3eeca1c9")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 119.38 119.38 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 119.38 121.92) (xy 124.46 121.92)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3358e1f3-3362-40b0-b788-60695ea3f8fa")
-	)
-	(global_label "IMU_MOSI"
-		(shape output)
-		(at 119.38 121.92 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "aadaf5ee-8681-4b82-801a-b825968f23e9")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 119.38 121.92 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
+	
+	
+	
+	
+	
+	
+	
+	
 	(wire
 		(pts
 			(xy 180.34 119.38) (xy 185.42 119.38)
@@ -4655,37 +4738,8 @@
 		)
 		(uuid "28fc5e73-f9f5-4f98-abf8-ae7bac4a59cb")
 	)
-	(wire
-		(pts
-			(xy 119.38 93.98) (xy 124.46 93.98)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b6b0508b-dd4c-40ef-aa1d-8b5ac4968c62")
-	)
-	(global_label "IMU_INT"
-		(shape input)
-		(at 119.38 93.98 180)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "2db278b7-aa31-4a26-ae5a-3411eb34c8ca")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 119.38 93.98 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
+	
+	
 	(wire
 		(pts
 			(xy 180.34 116.84) (xy 185.42 116.84)
@@ -7346,7 +7400,7 @@
 		)
 		(uuid "482a5eee-9c01-487c-a2d6-6ce1f29b5dc4")
 	)
-	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15 はエンコーダの校正(ENC_CAL)。PB3 は IMU の INT1(IMU_INT)、PE0 は前の LED(LED_FRONT)(2026-11-26。H562 には PD2 がないので、IMU_INT を SPI3 の隣の PB3 へ)。PB3 は JTDO なので、CubeMX でデバッグを Serial Wire にして GPIO で使う。\n使わないピン(PC13・PC2・PC3・PC8・PB11・PD11・PD12)は × にした。ソフトで出力の L にしておく。PH0・PH1 は水晶(HSE)。"
+	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15 はエンコーダの校正(ENC_CAL)。IMU は SPI1(PA5・PA6・PA7)、CS は PB10、INT1 は PB11(2026-11-27。IMU のほうを向いた辺のピンにして、線が MCU を回り込まないように)。PE0 は前の LED(LED_FRONT)。\n壁センサ R・FR は PC2・PC3、MOT_R_CMS は PA3、LED_NUM0・1 は PD12・PD11(2026-11-27)。使わないピン(PC13・PC8・PC10〜12・PA15・PB3)は × にした。ソフトで出力の L にしておく。PH0・PH1 は水晶(HSE)。"
 		(exclude_from_sim no)
 		(at 25.4 25.4 0)
 		(effects
@@ -7532,37 +7586,8 @@
 			)
 		)
 	)
-	(wire
-		(pts
-			(xy 180.34 78.74) (xy 185.42 78.74)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b0385e8e-91ca-4115-97ae-66b3cfcb578f")
-	)
-	(global_label "MOT_R_CMS"
-		(shape input)
-		(at 185.42 78.74 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0a1673a2-9e88-460b-bd40-8d20987495f7")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 78.74 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
+	
+	
 	(symbol
 		(lib_id "Device:C")
 		(at 208.28 151.13 0)

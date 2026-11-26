@@ -32,7 +32,7 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 | 項目 | 設定 | 備考 |
 |---|---|---|
-| Debug | **Serial Wire** | これを設定しないと PA15・PB3・PB4(JTAG と兼用のピン)が IMU_CS・IMU_INT・WALL_LED_FL_R に使えない |
+| Debug | **Serial Wire** | これを設定しないと PB4(JTAG と兼用のピン)が WALL_LED_FL_R に使えない(PA15・PB3 は 2026-11-27 から使わない) |
 | Timebase Source | SysTick | |
 
 ### RCC・PWR
@@ -58,8 +58,8 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 | PA0 | GPIO_Output | Low | なし | Low | `LED_MODE0` | モードの 1 |
 | PA1 | GPIO_Output | Low | なし | Low | `LED_MODE1` | モードの 2 |
 | PA2 | GPIO_Output | Low | なし | Low | `LED_MODE2` | モードの 4 |
-| PA3 | GPIO_Output | Low | なし | Low | `LED_NUM0` | No. の 1 |
-| PB10 | GPIO_Output | Low | なし | Low | `LED_NUM1` | No. の 2 |
+| PD12 | GPIO_Output | Low | なし | Low | `LED_NUM0` | No. の 1(2026-11-27 に PA3 から) |
+| PD11 | GPIO_Output | Low | なし | Low | `LED_NUM1` | No. の 2(2026-11-27 に PB10 から) |
 | PB12 | GPIO_Output | Low | なし | Low | `LED_NUM2` | No. の 4 |
 | PB13 | GPIO_Output | Low | なし | Low | `LED_NUM3` | No. の 8 |
 | PE0 | GPIO_Output | Low | なし | Low | `LED_FRONT` | 前の LED(2026-11-26 に PB3 から) |
@@ -68,12 +68,12 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 | PB2 | GPIO_Output | **Low** | なし | Low | `MOT_EN` | モータードライバのスリープ。L で始める(モーターは止まったまま) |
 | PC6 | GPIO_Output | **High** | なし | High | `ENC_L_CS` | エンコーダの CS は High(選ばない)で始める |
 | PC7 | GPIO_Output | **High** | なし | High | `ENC_R_CS` | 同上 |
-| PA15 | GPIO_Output | **High** | なし | High | `IMU_CS` | 同上 |
+| PB10 | GPIO_Output | **High** | なし | High | `IMU_CS` | 同上(2026-11-27 に PA15 から) |
 | PC15 | GPIO_Output | Low | なし | **Low**(PC13〜15 は 2MHz 以下) | `ENC_CAL` | エンコーダの校正(ふだんは L) |
 | PC14 | GPIO_Input | - | なし(外付けの 10k で引き上げ。押すと L) | - | `SW` | スイッチ SW2 |
 | PC9 | GPIO_Input | - | なし(外付けの R40 10k で引き上げ) | - | `MOT_nFAULT` | L で異常 |
-| PB3 | GPIO_EXTI3 | - | なし | - | `IMU_INT` | **External Interrupt Mode with Rising edge**。LSM6DSR の INT1(データの準備ができた)。2026-11-26 に PD2 から(H562 に PD2 はない) |
-| PC13・PC2・PC3・PC8・PB11・PD11・PD12 | GPIO_Output | Low | なし | Low | - | 使わないピン(回路図では ×)。浮かせないように出力の L にする |
+| PB11 | GPIO_EXTI11 | - | なし | - | `IMU_INT` | **External Interrupt Mode with Rising edge**。LSM6DSR の INT1(データの準備ができた)。2026-11-26 に PD2 から PB3、2026-11-27 に PB11 へ(IMU のほうを向いた辺) |
+| PC13・PC8・PA15・PC10・PC11・PC12・PB3 | GPIO_Output | Low | なし | Low | - | 使わないピン(回路図では ×)。浮かせないように出力の L にする |
 
 - CS は High で始める。Low で始めると、電源を入れた直後に IMU・エンコーダが選ばれた状態になる(ToraNeko と同じ)
 - 壁センサの発光と MOT_EN は Low で始める(消灯・モーターは止まったまま)
@@ -95,7 +95,7 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 | APB1・APB2・APB3 Prescaler | **/1 → 240MHz**(タイマーも 240MHz) | APB1 /2・APB2 /1 |
 | ADC・DAC Clock Mux | **HCLK(240MHz)** | - |
 | ADC の Clock Prescaler(ADC の画面) | **/4 → 60MHz**(上限 75MHz) | - |
-| SPI1,2,3 Clock Mux | **PLL1Q(120MHz)** | - |
+| SPI1,2,3 Clock Mux | **PLL1Q(120MHz)**(SPI1 は IMU、SPI2 はエンコーダ) | - |
 | USART1 Clock Mux | PCLK2(240MHz) | - |
 
 **タイマーのクロックは全部 240MHz にそろう**ので、分周の計算が簡単になる(ToraNeko は 100MHz)。Flash の待ちの回数(LATENCY)は CubeMX が決める(240MHz で 5 回)。
@@ -132,13 +132,13 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 |---|---|---|---|---|---|
 | ADC1 | 1 | IN10 | PC0 | WALL_FL | 12.5 cycles |
 | ADC1 | 2 | IN11 | PC1 | WALL_L | 12.5 cycles |
-| ADC1 | 3 | IN3 | PA6 | WALL_R | 12.5 cycles |
-| ADC1 | 4 | IN7 | PA7 | WALL_FR | 12.5 cycles |
+| ADC1 | 3 | IN12 | PC2 | WALL_R | 12.5 cycles |
+| ADC1 | 4 | IN13 | PC3 | WALL_FR | 12.5 cycles |
 | ADC1 | 5 | IN9 | PB0 | FAN_ISENSE | 12.5 cycles |
 | ADC2 | 1 | IN4 | PC4 | MOT_L_I | 12.5 cycles |
 | ADC2 | 2 | IN18 | PA4 | MOT_R_I | 12.5 cycles |
 | ADC2 | 3 | IN8 | PC5 | MOT_L_CMS | 12.5 cycles |
-| ADC2 | 4 | IN19 | PA5 | MOT_R_CMS | 12.5 cycles |
+| ADC2 | 4 | IN15 | PA3 | MOT_R_CMS | 12.5 cycles |
 | ADC2 | 5 | IN5 | PB1 | BATT | **47.5 cycles**(分圧の 47k・10k を C9 10nF で受けているので長めに) |
 
 - 1 本の変換は 12.5 + 12.5 = 25 クロック(60MHz で約 0.4µs)。5 本で約 2〜3µs
@@ -148,16 +148,16 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 ## 6. SPI
 
-| 項目 | SPI2(エンコーダ MT6835 × 2) | SPI3(IMU LSM6DSR) | ToraNeko |
+| 項目 | SPI2(エンコーダ MT6835 × 2) | **SPI1**(IMU LSM6DSR。2026-11-27 に SPI3 から) | ToraNeko |
 |---|---|---|---|
-| ピン | PA12 SCK / PB14 MISO / PB15 MOSI(CubeMX の初めのピンから付け替える) | PC10 SCK / PC11 MISO / PC12 MOSI | |
+| ピン | PA12 SCK / PB14 MISO / PB15 MOSI(CubeMX の初めのピンから付け替える) | PA5 SCK / PA6 MISO / PA7 MOSI | |
 | Mode | Full-Duplex Master | Full-Duplex Master | 同じ |
 | Hardware NSS | Disable(CS は GPIO) | Disable | 同じ |
 | Data Size | 8 bit | 8 bit | 同じ |
 | First Bit | MSB | MSB | 同じ |
 | CPOL / CPHA | **High / 2 Edge(モード3)**(MT6835 のデータシート 7.6) | High / 2 Edge(モード3) | IMU は同じ。エンコーダは AS5047P でモード1 だった |
 | Prescaler | **/8 → 15 MHz**(MT6835 は 16.6MHz まで) | **/16 → 7.5 MHz**(LSM6DSR は 10MHz まで) | 6.25MHz |
-| DMA | RX GPDMA1 Channel 2、TX Channel 3(Byte) | RX GPDMA1 Channel 4、TX Channel 5(Byte) | なし |
+| DMA | RX GPDMA1 Channel 2、TX Channel 3(Byte) | RX GPDMA1 Channel 4、TX Channel 5(Byte)(SPI1 の要求) | なし |
 
 - MT6835 は CS を下げてから最初のクロックまで 100ns 以上あける(データシートの TL)。角度は「バースト読み出し」(命令 1010、番地 0x003 から 0x006 まで続けて読む)で、CS を下げた瞬間の角度が読める
 - エンコーダ・IMU の DMA の割り込みも、HAL を通さずレジスタを直接書く(CPU を軽くするため)
@@ -182,7 +182,7 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 | 割り込み | 優先度 | 用途 |
 |---|---|---|
 | GPDMA1 Channel 1(ADC2) | **0** | 20kHz の処理(電流の制御、壁センサの組の切り替え) |
-| GPDMA1 Channel 2(SPI2 RX)、Channel 4(SPI3 RX)、EXTI3(IMU_INT) | 1 | エンコーダ・IMU の読み取り |
+| GPDMA1 Channel 2(SPI2 RX)、Channel 4(SPI1 RX)、EXTI11(IMU_INT) | 1 | エンコーダ・IMU の読み取り |
 | TIM6 | 2 | 4kHz の処理 |
 | GPDMA2 Channel 0・1(USART1)、USART1 | 5 | 通信 |
 | SysTick | CubeMX の初めの値 | `HAL_Delay` 用。割り込みの中では `HAL_Delay` を使わない |

@@ -10316,7 +10316,7 @@
 		)
 		(uuid "14ffdf67-b91f-43dd-b114-d04e4c2ee18f")
 	)
-	(text "IMU: LSM6DSR を SPI(SPI3、モード3)で。SDX・SCX は GND。INT1 は MCU の PD2(IMU_INT、データ準備完了の割り込み。2026-10-31)。INT2 はつながない。"
+	(text "IMU: LSM6DSR を SPI(SPI1、モード3。2026-11-27 に SPI3 から)で。SDX・SCX は GND。INT1 は MCU の PB11(IMU_INT、データ準備完了の割り込み。2026-10-31 に PD2、2026-11-27 に PB11)。INT2 はつながない。"
 		(exclude_from_sim no)
 		(at 25.4 210.82 0)
 		(effects
