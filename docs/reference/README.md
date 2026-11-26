@@ -13,7 +13,8 @@
 | `MP6551_MPS.pdf` | MPS MP6551(モータードライバ、Rev.1.0) |
 | `STM32H725_DS13311.pdf` | ST STM32H725xE/G(MCU、DS13311) |
 | `LXDC55FAAA_Murata.pdf` | 村田 LXDC55FAAA-203(3.3V の DC-DC) |
-| `CSTNE10M0G52Z000R0_Murata.pdf` | 村田 CSTNE10M0G52Z000R0(発振子、JGC42-8974A) |
+| `CSTNE10M0G52Z000R0_Murata.pdf` | 村田 CSTNE10M0G52Z000R0(発振子、JGC42-8974A。推奨ランドはこれを見る) |
+| `CSTNE10M0G52A000R0_Murata.pdf` | 村田 CSTNE10M0G52A000R0(発振子、LCSC C907976 の資料。車載用、仕様は Z と同じ: 10.000MHz、±0.50%、−40〜125°C、温度で ±0.20%、経年 ±0.10%、40Ω 以下、10pF、3.2 × 1.3mm)。2026-11-26 に Y1 をこれに替えた |
 | `MT6835_Rev1.3.pdf` | MagnTek MT6835(エンコーダ) |
 | `NJU6080.pdf` | 日清紡 NJU6080(壁センサの発光の定電流ドライバ。在庫がないので 2026-11-26 に NJW4615A へ替えた) |
 | `NJW4615A_Nisshinbo.pdf` | 日清紡 NJW4615A(壁センサの発光の定電流ドライバ。NJU6080 と同じピン、VDD 2.5〜35V、±1.2%、PWM で点くまで 3µs。2026-11-26) |
@@ -30,11 +31,13 @@
 | `SFH229FA_ams-OSRAM.pdf` | ams OSRAM SFH 229 FA(壁センサの受光、Version 1.6)。**2025-11-28 に生産終了**。ユーザーから(2026-11-23) |
 | `APTD1608LSECK-J4-PF_Kingbright.pdf` | Kingbright APTD1608LSECK/J4-PF(LED、1608、高さ 0.95mm、1番がカソード)。ユーザーから(2026-11-23) |
 | `SMT-0540-S-R_PUI.pdf` | PUI Audio SMT-0540-S-R(ブザー、推奨ランド)。ユーザーから(2026-11-23) |
-| `TVAF06-A020B-R_Jianfu.pdf` | Jianfu TVAF06-A020B-R(タクトスイッチ、仕様書 2011101401)。ユーザーから(2026-11-23) |
+| `TVAF06-A020B-R_Jianfu.pdf` | Jianfu TVAF06-A020B-R(タクトスイッチ、仕様書 2011101401)。ユーザーから(2026-11-23)。2026-11-26 に TS-1088-AR02016 へ替えた |
+| `TS-1088-AR_XUNPU.pdf` | XUNPU TS-1088-AR シリーズ(タクトスイッチ SW2 の TS-1088-AR02016、LCSC C720477)。3.0 × 3.9mm(つめを入れて 5.0)、高さ 2.0mm、160gf、DC 12V 50mA、位置決めの足なし。推奨ランド 2.00 × 1.05mm を外 5.50・内 3.40mm。2026-11-26 |
 | `SSSS8_Alps.pdf` | Alps Alpine SSSS8 シリーズ(電源スイッチ SSSS810701 は図番 3。定格 0.3A 5V DC)。ユーザーから(2026-11-23) |
 | `GRM219R61E106KA12_Murata.pdf` | 村田 GRM219R61E106KA12(10µF 25V 0805、厚さ 0.85±0.1mm)。ユーザーから(2026-11-23) |
 | `AO4407A_AOS.pdf` | AOS AO4407A(電源スイッチの MOSFET Q1、Rev 11.1。SOA で電源を入れた瞬間を確かめた)。ユーザーから(2026-11-23) |
 | `T52x_KEMET_T2076.pdf` | KEMET T52x(ポリマータンタル、T521V476M025ATE040 は V ケース 1.9±0.1mm、ESR 40mΩ)。ユーザーから(2026-11-23) |
-| `PMR18_ROHM_ja.pdf` | ROHM PMR18EZP(モーターの電流のシャント 5mΩ、1W は端子 80°C まで、厚さ 0.42±0.15mm)。ユーザーから(2026-11-23) |
+| `PMR18_ROHM_ja.pdf` | ROHM PMR18EZP(モーターの電流のシャント 5mΩ、1W は端子 80°C まで、厚さ 0.42±0.15mm)。ユーザーから(2026-11-23)。5mΩ は 2026-11-26 に RLM12 へ替えた(10mΩ のファンの R43 はこのまま) |
+| `RLM12_TA-I.pdf` | TA-I RLM12 シリーズ(TRLM-120S032E。モーターの電流のシャント R22・R32 の RLM12FTCMR005、LCSC C316225)。金属板、1W、±50ppm/°C、−55〜170°C、AEC-Q200、3.2 × 1.6 × 0.6±0.2mm。2026-11-26 |
 | `MBR230LSFT1_onsemi.pdf` | onsemi MBR230LSFT1G(ファンの還流ダイオード D40、推奨パッド)。ユーザーから(2026-11-23) |
 | `BLM18PG_Murata_ENFA0003.pdf` | 村田 BLM18 シリーズ(フェライトビーズ FB1・FB2、BLM18PG221SN1D)。ユーザーから(2026-11-23) |

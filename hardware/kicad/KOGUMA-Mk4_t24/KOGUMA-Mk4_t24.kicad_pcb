@@ -13160,7 +13160,7 @@
 				)
 			)
 		)
-		(property "Value" "TVAF06-A020B-R"
+		(property "Value" "TS-1088-AR02016"
 			(at 0 3.8 270)
 			(layer "F.Fab")
 			(uuid "d8da6b22-62e4-4823-8926-0d846c2c1ae4")
@@ -13905,7 +13905,7 @@
 				)
 			)
 		)
-		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
+		(property "Value" "RLM12FTCMR005 (5m 1%)"
 			(at 0 1.83 90)
 			(layer "F.Fab")
 			(uuid "0c26badd-8bc8-4cd1-be88-12781bc8d8ac")
@@ -16895,7 +16895,7 @@
 				)
 			)
 		)
-		(property "Value" "CSTNE10M0G52Z000R0"
+		(property "Value" "CSTNE10M0G52A000R0"
 			(at 0 2 270)
 			(layer "F.Fab")
 			(uuid "b9822aad-c6a5-4527-8c76-e13466320b4f")
@@ -23797,7 +23797,7 @@
 				)
 			)
 		)
-		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
+		(property "Value" "RLM12FTCMR005 (5m 1%)"
 			(at 0 1.83 90)
 			(layer "F.Fab")
 			(uuid "3e0747a8-c986-4936-ade6-f723f4f8aba8")

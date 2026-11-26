@@ -8116,7 +8116,7 @@
 				)
 			)
 		)
-		(property "Value" "CSTNE10M0G52Z000R0"
+		(property "Value" "CSTNE10M0G52A000R0"
 			(at 43.18 55.88 0)
 			(effects
 				(font
@@ -8254,7 +8254,7 @@
 			)
 		)
 	)
-	(text "HSE: 村田のセラミック発振子 CSTNE10M0G52Z000R0(10MHz、MK3 と同じ)。負荷容量 10pF が中に入っているので外付けのコンデンサは要らない。\n精度 ±0.5%(出荷時)+ ±0.2%(温度)。Y1 は PH0・PH1 のすぐそばに置く。"
+	(text "HSE: 村田のセラミック発振子 CSTNE10M0G52A000R0(10MHz。MK3 の CSTNE10M0G52Z000R0 と同じ仕様の車載用。LCSC に在庫があるので 2026-11-26 に替えた)。負荷容量 10pF が中に入っているので外付けのコンデンサは要らない。\n精度 ±0.5%(出荷時)+ ±0.2%(温度)。Y1 は PH0・PH1 のすぐそばに置く。"
 		(exclude_from_sim no)
 		(at 25.4 48.26 0)
 		(effects
