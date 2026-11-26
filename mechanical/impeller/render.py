@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VER = 't24v3'
+VER = 't24v4'
 
 
 def load_stl(path):
@@ -47,7 +47,7 @@ for i in range(2):
     ax.view_init(elev=elev, azim=azim)
     ax.set_axis_off()
     ax.set_title(title, fontsize=13)
-fig.suptitle(f'吸引ファンの羽根 {VER}(C 案 φ30・外の壁 φ31.2・9 枚・まっすぐ・軸の穴 φ1.18・下に接着剤のくぼみ・ハブを軸の根元の 0.2mm 手前まで)', fontsize=14)
+fig.suptitle(f'吸引ファンの羽根 {VER}(C 案 φ30・外の壁 φ31.2・9 枚・まっすぐ・軸の穴 φ1.18・下に接着剤のくぼみ・ハブを軸の根元の 0.2mm 手前まで・角に丸み)', fontsize=14)
 fig.subplots_adjust(left=0, right=1, top=0.9, bottom=0.02, wspace=0)
 out = os.path.join(HERE, f'impeller_{VER}.png')
 fig.savefig(out, dpi=130)
@@ -55,7 +55,7 @@ print(out)
 
 
 # ハブのまわりの断面(羽根の中心を通る縦の面で切った図)。寸法は impeller_t24.py の値を書き写したもの
-HUB_R = 2.0
+HUB_R = 2.5
 BORE_R = 1.18 / 2
 GLUE_R = 2.4 / 2
 GLUE_Z = 4.6
@@ -87,7 +87,7 @@ ax.add_patch(plt.Rectangle((-1.2, MOTOR_FACE_Z - 0.3), 2.4, 0.3, color='#555555'
 ax.add_patch(plt.Rectangle((1.5, HUB_BOTTOM_Z), 3.0, MOTOR_FACE_Z - HUB_BOTTOM_Z, color='#d0d0d0'))
 ax.add_patch(plt.Rectangle((-1.5, HUB_BOTTOM_Z), -3.0, MOTOR_FACE_Z - HUB_BOTTOM_Z, color='#d0d0d0'))
 ax.text(2.3, 7.6, '上の板', fontsize=10, va='center')
-ax.text(2.3, 5.6, 'ハブ(半径 2.0)', fontsize=10, va='center')
+ax.text(2.3, 5.6, 'ハブ(半径 2.5)', fontsize=10, va='center')
 ax.text(1.0, 10.2, 'モーター', fontsize=10, color='white', va='center')
 ax.text(2.0, 9.0, 'ファンの台の\nハブの底', fontsize=9, va='center')
 ax.annotate('軸 φ1.2(φ1.18 の穴に圧入\nかかる長さ 4.3mm)', xy=(0.3, 6.5), xytext=(-6.8, 6.3), fontsize=10,

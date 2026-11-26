@@ -1,4 +1,5 @@
 """タイヤ24mm の機体の吸引ファンの羽根(C 案、φ30・9 枚・まっすぐ、2026-11-26、ユーザー「ファンはどうする」→「軸は 1.18 くらいにしておいて」)。
+t24v4(2026-11-26、ユーザー「割れにくいようにして」): 角に丸みを足し、ハブを太くした(下の「割れにくくするための形」)。
 t24v3(2026-11-26、ユーザー「トラ猫みたいにモータの軸根元にファンが当たるようにしたい」): ハブを上の板の上へ z 8.9 まで伸ばした(下の「軸の根元まで伸ばしたハブ」)。
 t24v2(2026-11-26、ユーザー「ファンの軸を通したところにくぼみを作り接着剤が入れられるようにして」): ハブの下に接着剤を入れるくぼみ。
 t24v1: 軸の穴 φ1.18 だけ。
@@ -30,11 +31,19 @@ CadQuery で作る。座標は機体と同じ(原点は車軸の真ん中の床�
   - 組むときは、羽根と軸受の出っ張りの間に 0.2mm の紙(名刺など)をはさみ、当たるまで押し込んでから紙を抜く。高さがいつも同じになる
   - ファンの台のハブの穴(半径 1.5、z 8.6〜9.4)との横のすき間は 0.3mm
   - 軸の穴のまわりの肉は 0.61mm(半径 1.2 − 穴の半径 0.59)
-軸がかかる長さ(圧入): z 4.6〜8.9 の 4.3mm(t24v2 は 3.4mm)"""
+軸がかかる長さ(圧入): z 4.6〜8.9 の 4.3mm(t24v2 は 3.4mm)
+割れにくくするための形(t24v4):
+  - 角に丸み R0.3 を足した: 外の壁と上の板の内の角、ハブと上の板の下の角、伸ばしたハブと上の板の上の角(力が角に集まって割れが始まらないように)。
+    羽の付け根(上の板・外の壁)の丸み R0.3 は t24v1 から
+  - ハブを 半径 2.0 → 2.5mm に太くした。接着剤のくぼみのまわりの壁 0.8 → 1.3mm、軸の穴のまわりの肉 1.41 → 1.91mm
+    (羽の内の端は 半径 5mm なので、空気の通り道は変わらない)
+  - 伸ばしたハブ(半径 1.2)は、ファンの台の穴(半径 1.5)とのすき間を 0.3mm 残したいので太くしない
+  - 圧入で割れるかは、穴の太さ(φ1.18)と材料の伸びで決まる(形をいくら太くしても、穴のふちの伸びは「しめしろ ÷ 穴の直径」でほぼ決まる)。
+    docs/order.md の羽根の所を見る"""
 import os
 import cadquery as cq
 
-VER = 't24v3'
+VER = 't24v4'
 FAN_X = 14.2           # ファンの中心(機体の座標)
 R_TIP = 15.0           # 羽の先(φ30)
 RIM_T = 0.6            # 回る外の壁の厚さ
@@ -44,7 +53,7 @@ BLADE_T = 0.6          # 羽の厚さ
 Z_BOTTOM = 3.3         # 羽・外の壁の下の端
 Z_DISC0 = 7.2          # 上の板の下の面
 Z_DISC1 = 8.0          # 上の板の上の面
-HUB_R = 2.0            # 軸を通すハブの半径(流体の計算と同じ)
+HUB_R = 2.5            # 軸を通すハブの半径(t24v4 で 2.0 から太くした。流体の計算は 2.0)
 BORE_D = 1.18          # 軸の穴(軸 φ1.2 を圧入)
 TOP_HUB_R = 1.2        # 上の板の上へ伸ばしたハブの半径(モーターの軸受の出っ張りと同じ)
 TOP_HUB_Z = 8.9        # 伸ばしたハブの上の端(軸受の出っ張り z 9.1 の 0.2mm 手前。ToraNeko は 0.19mm)
@@ -88,12 +97,31 @@ def is_blade_root(edge):
     return False
 
 
+def fillet_circle(body, radius, z, name):
+    """半径 radius・高さ z にある丸い辺(羽で切れて弧になっていてもよい)に、丸み FILLET_R を付ける"""
+    edges = []
+    for e in body.edges().vals():
+        if e.geomType() != 'CIRCLE':
+            continue
+        center = e.arcCenter()   # 円・弧の中心(羽根の軸の上にあるものだけ選ぶ)
+        p = e.startPoint()
+        r = (p.x ** 2 + p.y ** 2) ** 0.5
+        if abs(center.x) < 1e-3 and abs(center.y) < 1e-3 and abs(p.z - z) < 1e-3 and abs(r - radius) < 1e-3:
+            edges.append(e)
+    print(f'丸み R{FILLET_R}: {name}({len(edges)} 本の辺)')
+    return body.newObject(edges).fillet(FILLET_R)
+
+
 def impeller():
     """羽根 1 つ(上の板 + 外の壁 + 羽 9 枚 + ハブ、軸の穴あき)"""
     body = cyl(R_TIP + RIM_T, Z_DISC0, Z_DISC1)                                   # 上の板
     body = body.union(cyl(R_TIP + RIM_T, Z_BOTTOM, Z_DISC1).cut(cyl(R_TIP, Z_BOTTOM - 1, Z_DISC1)))   # 外の壁
     body = body.union(cyl(HUB_R, Z_BOTTOM, Z_DISC0 + 0.1))                         # ハブ
     body = body.union(cyl(TOP_HUB_R, Z_DISC1 - 0.1, TOP_HUB_Z))                    # 上の板の上へ伸ばしたハブ(軸の根元の近くまで)
+    # 丸い角に丸みを付ける(t24v4)。羽を付ける前に付ける(羽を付けたあとでは、羽の付け根の丸みとぶつかって作れない)
+    body = fillet_circle(body, R_TIP, Z_DISC0, '外の壁と上の板の内の角')
+    body = fillet_circle(body, HUB_R, Z_DISC0, 'ハブと上の板の下の角')
+    body = fillet_circle(body, TOP_HUB_R, Z_DISC1, '伸ばしたハブと上の板の上の角')
     for i in range(N_BLADES):
         body = body.union(blade(360.0 / N_BLADES * i))
     # 羽の付け根に丸みを付ける(角に力が集まって割れないように)
