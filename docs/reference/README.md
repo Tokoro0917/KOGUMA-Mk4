@@ -15,7 +15,8 @@
 | `LXDC55FAAA_Murata.pdf` | 村田 LXDC55FAAA-203(3.3V の DC-DC) |
 | `CSTNE10M0G52Z000R0_Murata.pdf` | 村田 CSTNE10M0G52Z000R0(発振子、JGC42-8974A) |
 | `MT6835_Rev1.3.pdf` | MagnTek MT6835(エンコーダ) |
-| `NJU6080.pdf` | 日清紡 NJU6080(壁センサの発光の定電流ドライバ) |
+| `NJU6080.pdf` | 日清紡 NJU6080(壁センサの発光の定電流ドライバ。在庫がないので 2026-11-26 に NJW4615A へ替えた) |
+| `NJW4615A_Nisshinbo.pdf` | 日清紡 NJW4615A(壁センサの発光の定電流ドライバ。NJU6080 と同じピン、VDD 2.5〜35V、±1.2%、PWM で点くまで 3µs。2026-11-26) |
 | `HY0020_FDK_Ver3.0.pdf` | FDK HY0020(BLE モジュール) |
 | `INA241A_TI_SBOSA30D.pdf` | TI INA241A(モーターの電流センスアンプ) |
 | `DFE201610E_Murata_JETE243A.pdf` | 村田 DFE201610E(SMPS のインダクタ L1、2.2µH)。ユーザーから(2026-11-23) |
