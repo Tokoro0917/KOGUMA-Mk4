@@ -193,18 +193,43 @@ def tris(shape, tol=0.08):
     v, t = shape.tessellate(tol, 0.4)
     v = np.array([(p.x, p.y, p.z) for p in v])
     return v[np.array(t)] if len(t) else np.zeros((0, 3, 3))
+from matplotlib.colors import to_rgba
 TT, CC = [], []
 for k, s in shapes.items():
     T = tris(s)
     if len(T):
-        TT.append(T); CC += [COLM.get(mats.get(k), '#cccccc')] * len(T)
+        alpha = 1.0
+        if k == 'pcb':
+            alpha = 0.35     # 2026-11-26: 基板を半分すかして、下の羽根・ファンの台を見えるようにする
+        TT.append(T); CC += [to_rgba(COLM.get(mats.get(k), '#cccccc'), alpha)] * len(T)
 TT = np.concatenate(TT)
-fig = plt.figure(figsize=(16, 12))
-for i, (el, az, ttl) in enumerate(((26, -130, '斜め前(右)から'), (32, 50, '斜め後ろ(左)から'), (0, -90, '右から(横)'), (90, -90, '上から'))):
-    ax = fig.add_subplot(2, 2, i + 1, projection='3d')
+fig = plt.figure(figsize=(16, 18))
+for i, (el, az, ttl) in enumerate(((26, -130, '斜め前(右)から(基板はすかして描く)'), (32, 50, '斜め後ろ(左)から'), (0, -90, '右から(横)'), (90, -90, '上から'))):
+    ax = fig.add_subplot(3, 2, i + 1, projection='3d')
     ax.add_collection3d(Poly3DCollection(TT, facecolors=CC, edgecolor='none'))
     ax.set_xlim(-52, 52); ax.set_ylim(-40, 40); ax.set_zlim(0, 35); ax.set_box_aspect((104, 80, 35), zoom=1.2 if el != 90 else 1.1)
     ax.view_init(el, az); ax.set_title(ttl, fontsize=11); ax.set_axis_off()
+# 2026-11-26: ファンの中心を通る前後の断面(y = 0 で切って、右から見る)。羽根・ファンの台・モーター・フレーム・基板の高さの関係を見る
+from matplotlib.patches import Polygon as MplPolygon
+ax = fig.add_subplot(3, 1, 3)
+slab = cq.Solid.makeBox(140, 0.02, 60, cq.Vector(-70, -0.01, -5))
+for k, s in shapes.items():
+    bb = s.BoundingBox()
+    if bb.ymin > 0.01 or bb.ymax < -0.01:
+        continue
+    sec = s.intersect(slab)
+    for f in sec.Faces():
+        if abs(f.normalAt().y) < 0.5:
+            continue
+        pts = []
+        for e in f.outerWire().Edges():
+            for t in np.linspace(0, 1, 8):
+                q = e.positionAt(t)
+                pts.append((q.x, q.z))
+        ax.add_patch(MplPolygon(pts, closed=True, fc=COLM.get(mats.get(k), '#cccccc'), ec='#333333', lw=0.2))
+ax.set_xlim(-52, 52); ax.set_ylim(0, 32); ax.set_aspect('equal')
+ax.set_xlabel('x [mm](前が +)'); ax.set_ylabel('z [mm](床から)')
+ax.set_title('ファンの中心を通る断面(y = 0、右から見る)。羽根(z 3.3〜8.9)・ファンの台・ファンのモーター・フレーム・基板', fontsize=11)
 fig.suptitle(f'タイヤ24mm の機体 t24: {M:.1f}g、重心 ({CG[0]:.2f}, {CG[1]:.2f}, {CG[2]:.2f}) mm、慣性モーメント {Izz:.0f} g·cm²', fontsize=12)
 fig.tight_layout(); fig.savefig(os.path.join(HERE, 'vehicle_t24.png'), dpi=100)
 print('絵', os.path.join(HERE, 'vehicle_t24.png'))
