@@ -1,0 +1,103 @@
+"""タイヤ24mm の機体の吸引ファンの羽根(C 案、φ30・9 枚・まっすぐ、t24v1、2026-11-26、ユーザー「ファンはどうする」→「軸は 1.18 くらいにしておいて」)。
+CadQuery で作る。座標は機体と同じ(原点は車軸の真ん中の床、+x 前、+y 左、z 上、mm)。ファンの中心は (14.2, 0)。
+使い方(リポジトリの一番上で): python3 mechanical/impeller/impeller_t24.py
+  → mechanical/impeller/impeller_t24v1.step・.stl(羽根の中心が原点。DMM などに出す用)
+     mechanical/order_t24/13_impeller_t24v1.step(機体の座標。Fusion で組み上がりを見る用)
+
+形は流体の計算(docs/calc/fan_cfd/)で決めた:
+  - C 案: 羽根と一緒に回る外の壁 + ファンの台の止まった輪(半径 16.5〜17.5、ファンの台 t24v4 のまま)
+  - φ30(羽の先 半径 15.0)、外の壁 0.6mm(半径 15.0〜15.6。輪とのすき間 0.9mm)
+  - 9 枚・まっすぐ(曲げ 0°)。スカートのすき間 0.05mm の計算で 5 枚・60° より 8% 少ない電力(粗いメッシュ)。
+    まっすぐの羽は、遠心力で付け根が曲げられない(docs/calc/fan_cfd/impeller_stress.py)
+  - 羽の厚さ 0.6mm、内の端 半径 5mm、高さ 3.9mm(z 3.3〜7.2)、上の板 0.8mm(z 7.2〜8.0)
+高さの決まり(機体のモデル mechanical/vehicle/vehicle.py と t24_mass.py):
+  - フレームの上の面 z 2.8 → 羽根の下の端 z 3.3(すき間 0.5mm)
+  - ファンの台のハブの底 z 8.6 → 羽根の上の面 z 8.0(すき間 0.6mm)
+  - モーターの前の面 z 9.4、軸 φ1.2 は前の面から 5.1mm(先は z 4.3)
+軸の穴: φ1.18(軸 φ1.2 を圧入、ユーザー)。下まで抜いておく(印刷のあと中の樹脂を洗い流せるように。軸を押し出すときにも使える)。
+軸がかかる長さは z 4.3〜8.0 の 3.7mm"""
+import os
+import cadquery as cq
+
+VER = 't24v1'
+FAN_X = 14.2           # ファンの中心(機体の座標)
+R_TIP = 15.0           # 羽の先(φ30)
+RIM_T = 0.6            # 回る外の壁の厚さ
+R_INNER = 5.0          # 羽の内の端
+N_BLADES = 9           # 羽の枚数
+BLADE_T = 0.6          # 羽の厚さ
+Z_BOTTOM = 3.3         # 羽・外の壁の下の端
+Z_DISC0 = 7.2          # 上の板の下の面
+Z_DISC1 = 8.0          # 上の板の上の面
+HUB_R = 2.0            # 軸を通すハブの半径(流体の計算と同じ)
+BORE_D = 1.18          # 軸の穴(軸 φ1.2 を圧入)
+FILLET_R = 0.3         # 羽の付け根の丸み(docs/spec.md の「ファンの羽根の強さ」の決まり: R0.3 以上)
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ORDER = os.path.join(HERE, '..', 'order_t24')
+
+
+def cyl(r, z0, z1):
+    """羽根の中心を原点にした、z0〜z1 の円柱"""
+    return cq.Workplane('XY').workplane(offset=z0).circle(r).extrude(z1 - z0)
+
+
+def blade(angle_deg):
+    """まっすぐな羽 1 枚(内の端から外の壁まで)。外の壁と上の板に少し食い込ませて、1 つの形につなげる"""
+    length = R_TIP + 0.3 - R_INNER
+    height = Z_DISC0 + 0.1 - Z_BOTTOM
+    b = cq.Workplane('XY').box(length, BLADE_T, height, centered=(False, True, False))
+    b = b.translate((R_INNER, 0, Z_BOTTOM))
+    return b.rotate((0, 0, 0), (0, 0, 1), angle_deg)
+
+
+def is_blade_root(edge):
+    """羽の付け根の辺か(羽と上の板の角: z が Z_DISC0 の横の線。羽と外の壁の角: 半径 R_TIP の縦の線)"""
+    p0 = edge.startPoint()
+    p1 = edge.endPoint()
+    # 上の板との角(羽の両側の 2 本)
+    if abs(p0.z - Z_DISC0) < 1e-3 and abs(p1.z - Z_DISC0) < 1e-3:
+        r0 = (p0.x ** 2 + p0.y ** 2) ** 0.5
+        r1 = (p1.x ** 2 + p1.y ** 2) ** 0.5
+        if min(r0, r1) > R_INNER - 0.1 and max(r0, r1) < R_TIP + 0.01 and abs(r1 - r0) > 1.0:
+            return True
+    # 外の壁との角(羽の両側の 2 本)
+    if abs(p0.x - p1.x) < 1e-6 and abs(p0.y - p1.y) < 1e-6:
+        r = (p0.x ** 2 + p0.y ** 2) ** 0.5
+        if abs(r - R_TIP) < 0.05:
+            return True
+    return False
+
+
+def impeller():
+    """羽根 1 つ(上の板 + 外の壁 + 羽 9 枚 + ハブ、軸の穴あき)"""
+    body = cyl(R_TIP + RIM_T, Z_DISC0, Z_DISC1)                                   # 上の板
+    body = body.union(cyl(R_TIP + RIM_T, Z_BOTTOM, Z_DISC1).cut(cyl(R_TIP, Z_BOTTOM - 1, Z_DISC1)))   # 外の壁
+    body = body.union(cyl(HUB_R, Z_BOTTOM, Z_DISC0 + 0.1))                         # ハブ
+    for i in range(N_BLADES):
+        body = body.union(blade(360.0 / N_BLADES * i))
+    # 羽の付け根に丸みを付ける(角に力が集まって割れないように)
+    roots = []
+    for e in body.edges().vals():
+        if is_blade_root(e):
+            roots.append(e)
+    print(f'丸みを付ける辺: {len(roots)} 本(羽 {N_BLADES} 枚 × 4 本 = {N_BLADES * 4} 本のはず)')
+    body = body.newObject(roots).fillet(FILLET_R)
+    body = body.cut(cyl(BORE_D / 2, Z_BOTTOM - 1, Z_DISC1 + 1))                   # 軸の穴(下まで抜く)
+    return body
+
+
+imp = impeller()
+solid = imp.val()
+assert solid.isValid(), '羽根の形が壊れた'
+volume = solid.Volume()
+print(f'羽根 {VER}: 体積 {volume:.1f} mm³、重さ {volume * 1.16 / 1000:.3f} g(樹脂 1.16 g/cm³)')
+bb = solid.BoundingBox()
+print(f'大きさ: x {bb.xmin:.2f}〜{bb.xmax:.2f}、y {bb.ymin:.2f}〜{bb.ymax:.2f}、z {bb.zmin:.2f}〜{bb.zmax:.2f}')
+
+# 羽根の中心が原点のもの(注文に出す用)
+cq.exporters.export(imp, os.path.join(HERE, f'impeller_{VER}.step'))
+cq.exporters.export(imp, os.path.join(HERE, f'impeller_{VER}.stl'), tolerance=0.005, angularTolerance=0.1)
+# 機体の座標に置いたもの(Fusion で組み上がりを見る用)
+cq.exporters.export(imp.translate((FAN_X, 0, 0)), os.path.join(ORDER, f'13_impeller_{VER}.step'))
+print('書き出した')
