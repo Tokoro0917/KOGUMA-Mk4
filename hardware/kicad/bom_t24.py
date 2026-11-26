@@ -66,9 +66,10 @@ LCSC = {'STM32H725RGVx': ('C5271073', 'RGV6。**LCSC の在庫 0**(RGV3 の C527
         'SSSS810701': ('C97433', '在庫 約340'), 'SMT-0540-S-R': ('C3812104', '**LCSC の在庫 0**'), 'APTD1608LSECK/J4-PF': ('C5879215', '在庫 約660'),
         'OPV332': ('C6622198', '**LCSC の在庫 0**'), 'SFH 229 FA': ('C3211054', '**LCSC の在庫 0**'),
         'MP6551GQB': ('', '**LCSC になし**(ほかの代理店で)'), 'NJU6080': ('', '**LCSC になし**(日清紡の品番は NJU6080F1)'), 'NJW4615A': ('C3193134', 'LCSC は在庫 0・Mouser に約 2,300(2026-11-26)。NJU6080 と同じピン・同じ抵抗(在庫がない NJU6080 から 2026-11-26 に替えた)'),
-        'LXDC55FAAA-203': ('', '**LCSC になし。生産終了の情報あり(未確認)**'), 'CSTNE10M0G52A000R0': ('C907976', '在庫 約2,500。2026-11-26 に CSTNE10M0G52Z000R0(LCSC になし)から替えた。仕様は同じで車載用'),
+        'LXDC55FAAA-203': ('', '**LCSC になし。生産終了の情報あり(未確認)。自分ではんだ付け**(2026-11-26、ユーザー。JLC の BOM・CPL には入れない)'), 'CSTNE10M0G52A000R0': ('C907976', '在庫 約2,500。2026-11-26 に CSTNE10M0G52Z000R0(LCSC になし)から替えた。仕様は同じで車載用'),
         'T521D107M025ATE040 (100u 25V)': ('', '在庫は未確認(47µF の T521V は LCSC になし)。裏の面に手ではんだ付け'), 'TS-1088-AR02016': ('C720477', 'JLC の Basic 部品、在庫 約450,000。2026-11-26 に TVAF06-A020B-R(LCSC になし)から替えた。ランドは同じ、位置決めの穴は使わない'),
         'HY0020': ('', '**LCSC になし**(DigiKey・Arrow)')}
+HAND_SOLDER = ['U1']   # 自分ではんだ付けする上の面の部品(名前がぴったり同じものだけ)。U1 は LXDC55(2026-11-26、ユーザー: LXDC55 は自分ではんだ付け)
 NOT_SMT = ('J1', 'J2', 'J3', 'J4', 'J5', 'J6', 'J7', 'NT1', 'TP', 'D70', 'D71', 'D72', 'D73', 'D74', 'D75', 'D76', 'D77')
 
 def r_is_pad(refs):
@@ -122,6 +123,8 @@ def main():
         for o in out:
             if all(r.startswith(NOT_SMT) for r in o['refs']) or o['side'] == 'B':     # 裏の部品(C4・Q1)は手ではんだ付け(JLC は上の面だけ)
                 continue
+            if all(r in HAND_SOLDER for r in o['refs']):
+                continue
             w.writerow([o['value'] if not o['mpn'] else o['mpn'].split(' (')[0], ','.join(o['refs']), o['fp'], o['lcsc']])
     md = ['| 部品 | 数 | 面 | 値 | 品番 | LCSC | 高さ[mm] | メモ |', '|---|---|---|---|---|---|---|---|']
     for o in out:
@@ -147,6 +150,8 @@ def cpl():
         for r in rows:
             ref = r['Ref']
             if ref.startswith(NOT_SMT) or ref.startswith('H') or r['Side'] != 'top':     # JLC は上の面だけ
+                continue
+            if ref in HAND_SOLDER:
                 continue
             w.writerow([ref, r['PosX'] + 'mm', r['PosY'] + 'mm', 'Top' if r['Side'] == 'top' else 'Bottom', r['Rot']])
             n += 1
