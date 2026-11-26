@@ -221,15 +221,14 @@ for k, s in shapes.items():
     for f in sec.Faces():
         if abs(f.normalAt().y) < 0.5:
             continue
-        pts = []
-        for e in f.outerWire().Edges():
-            for t in np.linspace(0, 1, 8):
-                q = e.positionAt(t)
-                pts.append((q.x, q.z))
-        ax.add_patch(MplPolygon(pts, closed=True, fc=COLM.get(mats.get(k), '#cccccc'), ec='#333333', lw=0.2))
+        # 切り口の面を三角に分けて描く(面のふちをたどると、辺の向きがそろわず形がゆがむため)
+        fv, ft = f.tessellate(0.01, 0.2)
+        for tri in ft:
+            pts = [(fv[n].x, fv[n].z) for n in tri]
+            ax.add_patch(MplPolygon(pts, closed=True, fc=COLM.get(mats.get(k), '#cccccc'), ec=COLM.get(mats.get(k), '#cccccc'), lw=0.3))
 ax.set_xlim(-52, 52); ax.set_ylim(0, 32); ax.set_aspect('equal')
 ax.set_xlabel('x [mm](前が +)'); ax.set_ylabel('z [mm](床から)')
 ax.set_title('ファンの中心を通る断面(y = 0、右から見る)。羽根(z 3.3〜8.9)・ファンの台・ファンのモーター・フレーム・基板', fontsize=11)
 fig.suptitle(f'タイヤ24mm の機体 t24: {M:.1f}g、重心 ({CG[0]:.2f}, {CG[1]:.2f}, {CG[2]:.2f}) mm、慣性モーメント {Izz:.0f} g·cm²', fontsize=12)
-fig.tight_layout(); fig.savefig(os.path.join(HERE, 'vehicle_t24.png'), dpi=100)
+fig.tight_layout(rect=(0, 0, 1, 0.97)); fig.savefig(os.path.join(HERE, 'vehicle_t24.png'), dpi=100)
 print('絵', os.path.join(HERE, 'vehicle_t24.png'))
