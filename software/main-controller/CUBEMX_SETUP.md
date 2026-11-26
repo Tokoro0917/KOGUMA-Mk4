@@ -34,7 +34,7 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 | 項目 | 設定 | 備考 |
 |---|---|---|
-| High Speed Clock (HSE) | **Crystal/Ceramic Resonator** | Y1 CSTNE10M0G52Z000R0(ToraNeko と同じ。負荷容量は中にある) |
+| High Speed Clock (HSE) | **Crystal/Ceramic Resonator** | Y1 CSTNE10M0G52A000R0(ToraNeko の CSTNE10M0G52Z000R0 と同じ仕様。負荷容量は中にある) |
 | Low Speed Clock (LSE) | Disable | |
 | **Power Parameters → Supply Source** | **PWR_DIRECT_SMPS_SUPPLY** | **いちばん大事**。VFQFPN68 は SMPS だけ。初めの値の LDO のまま書き込むと MCU が応答しなくなる(復旧のしかたは `docs/firmware_memory.md` の6章、TP4) |
 | Power Parameters → Power Regulator Voltage Scale | **Scale 1**(VOS1) | 400MHz まで。520MHz に上げるときに Scale 0 にする |

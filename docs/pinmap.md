@@ -86,7 +86,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H725RGVx.xml
 - **UART**: USART1(PB6・PB7)。PA9・PA10はモーターのPWMに、PB14・PB15はエンコーダのSPI2に使うので、USART1の3つ目の組にした
 - **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPA3・PB10・PB12・PB13、前の LED は PB3(2026-10-31)
 - **スイッチ**: PC14(OSC32_IN)。入力なので、流せる電流が小さくても問題ない
-- **発振子(HSE)**: 10MHz のセラミック発振子(CSTNE10M0G52Z000R0、MK3 と同じ)を PH0・PH1 に付ける(2026-10-29)。PLL で 550MHz にする(例: 10MHz ÷ 5 × 275 ÷ 1)。2026-10-12 には付けず HSI にしていた
+- **発振子(HSE)**: 10MHz のセラミック発振子(CSTNE10M0G52A000R0。MK3 の CSTNE10M0G52Z000R0 と同じ仕様で、2026-11-26 に在庫のある品に替えた)を PH0・PH1 に付ける(2026-10-29)。PLL で 550MHz にする(例: 10MHz ÷ 5 × 275 ÷ 1)。2026-10-12 には付けず HSI にしていた
 
 ## 気をつけること
 

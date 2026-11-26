@@ -490,7 +490,7 @@
 				)
 			)
 		)
-		(property "Value" "CSTNE10M0G52Z000R0"
+		(property "Value" "CSTNE10M0G52A000R0"
 			(at 0 2 90)
 			(layer "F.Fab")
 			(uuid "32dfcc83-3104-415c-b88e-437c651f46cd")
@@ -28478,7 +28478,7 @@
 			)
 		)
 		(fp_text user "HOLDER"
-			(at -2.020002 3.5 187)
+			(at -2.020003 3.5 187)
 			(layer "B.Fab")
 			(uuid "5ca18f7a-e50f-4d9d-9f76-991635fa9a59")
 			(effects
