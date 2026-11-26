@@ -1,4 +1,7 @@
-"""タイヤ24mm の機体の一次スカート(t24v1、2026-11-26、ユーザー「一次スカートを作ろうと」)。
+"""タイヤ24mm の機体の一次スカート(2026-11-26、ユーザー「一次スカートを作ろうと」)。
+t24v2(2026-11-26、ユーザー「それは吸着できない。ネジの内側に入れて」): 枠の横をマウントのねじの頭より内側に入れた。
+  t24v1 は吸引する面(80 × 42.6mm)のふちに沿い、ねじの頭(床から 0.9mm、枠より低い)が囲む面の中に入っていた。
+t24v1: 吸引する面のふちに沿った枠。
 吸引する面(フレームの下、80 × 42.6mm)のまわりを囲む平らな枠。自分の 3D プリンタ(FDM)で印刷し、両面テープでフレームの下に貼る。
 下に二次スカート(フィルム)を貼って床に近づける前提。
 考え方は KOGUMA.MK3 の「一次スカート」(底板の下に貼る四角い枠、外 23 × 49.6mm・内 15 × 41.6mm・厚さ 1mm)と、
@@ -10,11 +13,11 @@ ToraNeko.Mk3 のスカート枠(mechanical/skirt_slider/、両面テープの厚
 
 寸法の決め方(座標は機体と同じ。原点は車軸の真ん中の床、+x 前、+y 左、mm):
   - 高さ: 下の端を床から 1.0mm(ユーザー)。フレームの下の面は z 2.0 なので、両面テープ(厚さ TAPE_T)の分だけ低く作る(ToraNeko と同じ)
-  - 枠の内のふち: 吸引する面(x ±40、y ±21.3)から内へ W_IN
-  - 枠の外のふち: 吸引する面から外へ 1.0mm まで。ただしフレームのカーボンがある所だけ(窓の上には貼れない)
-  - マウントのねじの頭(鉄 低頭 M2、頭 φ3.8、(6.8, ±18.4)・(−21, ±18.4))のまわりは 0.3mm あけて欠く
+  - 枠の横(t24v2): マウントのねじの頭(鉄 低頭 M2、頭 φ3.8、(6.8, ±18.4)・(−21, ±18.4)、|y| 16.5〜20.3)の内側。
+    外のふち |y| 16.2(ねじの頭と 0.3mm)、内のふち |y| 16.2 − W
+  - 枠の前後: 外のふち x ±40(吸引する面のふち。そのすぐ外にフレームの窓がかかるので広げない)。内のふちは x ±(40 − W)
   - 前後の滑り板(カグスベール φ5、(±45, 0))のまわりは 0.5mm あける
-  - 機体が加減速で 0.64° 傾いて滑り板が床に着いても、枠の前後の端(x ±41)は床から 0.54mm 残る(床に当たらない)"""
+  - 機体が加減速で 0.64° 傾いて滑り板が床に着いても、枠の前後の端(x ±40)は床から 0.56mm 残る(床に当たらない)"""
 import os
 import cadquery as cq
 from shapely.geometry import box, Point, Polygon
@@ -23,14 +26,15 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-VER = 't24v1'
+VER = 't24v2'
 HERE = os.path.dirname(os.path.abspath(__file__))
 FRAME_STEP = os.path.join(HERE, '..', 'order_t24', '01_frame_t24v10.step')
 
 SUCTION_X = 40.0          # 吸引する面の半分(前後)
 SUCTION_Y = 21.3          # 吸引する面の半分(左右)
-W_IN = 1.6                # 枠の内のふちを、吸引する面から内へ(0.4mm のノズルで 4 周)
-W_OUT = 1.0               # 枠の外のふちを、吸引する面から外へ(フレームのカーボンがある所だけ)
+W = 2.0                   # 枠の幅(0.4mm のノズルで 5 周。両面テープを貼りやすい幅)
+X_OUT = 40.0              # 枠の前後の外のふち(吸引する面のふち x ±40。その外はフレームの窓がかかるので広げない)
+Y_OUT = 16.2              # 枠の横の外のふち(t24v2: ねじの頭 |y| 16.5 の 0.3mm 内)
 Z_FRAME_BOTTOM = 2.0      # フレームの下の面
 Z_BOTTOM = 1.0            # 枠の下の端(床から、ユーザー)
 TAPE_T = 0.15             # 両面テープの厚さ(パッケージの厚さに合わせて変える)
@@ -61,12 +65,11 @@ def frame_bottom_outline():
 
 def skirt_outline(carbon):
     """枠の形(上から見た形、shapely)"""
-    suction = box(-SUCTION_X, -SUCTION_Y, SUCTION_X, SUCTION_Y)
-    outer = suction.buffer(W_OUT, join_style=2).intersection(carbon)
-    inner = suction.buffer(-W_IN, join_style=2)
+    outer = box(-X_OUT, -Y_OUT, X_OUT, Y_OUT).intersection(carbon)
+    inner = box(-X_OUT + W, -Y_OUT + W, X_OUT - W, Y_OUT - W)
     ring = outer.difference(inner)
-    for x, y in SCREWS:
-        ring = ring.difference(Point(x, y).buffer(SCREW_HEAD_R + SCREW_CLEAR, 64))
+    for x, y in SCREWS:      # ねじの頭とは重ならないはず(t24v2 では枠の外)
+        assert ring.distance(Point(x, y).buffer(SCREW_HEAD_R, 64)) >= SCREW_CLEAR - 1e-6, 'ねじの頭に近すぎる'
     for x, y in SKIDS:
         ring = ring.difference(Point(x, y).buffer(SKID_R + SKID_CLEAR, 64))
     # 外の角を丸める(引っかかりにくく、印刷のはがれも減る)。小さな切れ端は捨てる
@@ -91,7 +94,7 @@ ring = skirt_outline(carbon)
 print(f'枠 {VER}: 面積 {ring.area:.0f} mm²、厚さ {THICK:.2f}mm、体積 {ring.area * THICK:.0f} mm³、'
       f'重さ {ring.area * THICK * 1.27 / 1000:.2f} g(PETG 1.27 g/cm³)、一番細い所 約 {min_width(ring):.1f}mm')
 inner_area = Polygon(ring.interiors[0]).area
-print(f'囲む面積 {inner_area:.0f} mm²(吸引する面 80 × 42.6 = 3,408mm²)')
+print(f'囲む面積 {inner_area:.0f} mm²(フレームの吸引する面 80 × 42.6 = 3,408mm²。t24v1 は 3,035mm²)')
 
 # 立体: 機体の座標(枠は z 1.0〜1.85。上にテープ 0.15mm)
 pts = list(ring.exterior.coords)[:-1]
@@ -129,7 +132,7 @@ def fill(geom, color, alpha, label=None):
 fill(carbon, '#4a463f', 0.35, 'フレーム(上から見た向き)')
 fill(ring, '#f28e2b', 0.95, f'一次スカート {VER}')
 sx, sy = box(-SUCTION_X, -SUCTION_Y, SUCTION_X, SUCTION_Y).exterior.xy
-ax.plot(sx, sy, color='#257de0', lw=1, ls='--', label='吸引する面(80 × 42.6mm)')
+ax.plot(sx, sy, color='#257de0', lw=1, ls='--', label='フレームの吸引する面(80 × 42.6mm、カーボンで埋めた所)')
 for k, (x, y) in enumerate(SCREWS):
     ax.add_patch(plt.Circle((x, y), SCREW_HEAD_R, color='#666666', label='マウントのねじの頭(低頭 M2)' if k == 0 else None))
 for k, (x, y) in enumerate(SKIDS):
