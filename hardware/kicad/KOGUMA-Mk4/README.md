@@ -11,8 +11,8 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 | `motor.kicad_sch` | モーター(MP6551 × 2、モーターの電流は 5mΩ のシャント + INA241A3(2026-11-23))と吸引ファン(IRLML6344、0.1Ω のシャント) |
 | `sensor.kicad_sch` | センサ(A3): 壁センサの発光 4ch(OPV332 + NJU6080)、受光 4ch(SFH 229 FA + OPA2354、820kΩ ∥ 0.5pF)、PD_BIAS、IMU(LSM6DSR)、エンコーダの基板(MT6835)とのつなぎ(J5・J6、メイン基板の穴とパッド7つ) |
 | `ui.kicad_sch` | 表示・入力・通信(A3): LED 7個と前の LED(D98、PB3)、ブザー、スイッチ、デバッグの端子(J7、ToraNeko.Mk3 の J6 と同じ並び)、UART_RX のテストパッド、**BLE モジュール HY0020(U5、2026-11-23)** |
-| `mcu.kicad_sch` | MCU(STM32H725RGVx)、SMPS(Direct SMPS)、発振子(10MHz、CSTNE10M0G52A000R0。2026-11-26 に Z から替えた)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
-| `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、OPA2354、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
+| `mcu.kicad_sch` | MCU(STM32H562RGVx。2026-11-26 に STM32H725RGVx から。LDO だけなので VCAP に 2.2µF × 2)、発振子(10MHz、CSTNE10M0G52A000R0。2026-11-26 に Z から替えた)、パスコン、BOOT0・NRST。ピンは `docs/pinmap.md` のネット名のグローバルラベルでほかのシートとつなぐ |
+| `KOGUMA-Mk4.kicad_sym` | このプロジェクト用の記号: STM32H562RGVx(2026-11-26。H725 の記号のピンの位置のまま、番号・名前を DS14258 に)、AO4407A、LXDC55FAAA-203、MP6551GQB、IRLML6344、NJU6080、OPA2354、LSM6DSR(標準の LSM6DS3 を写し、SDX を passive に)、STM32H725RGVx(標準の記号を写し、VLXSMPS を power_out、VCAP の49・66番を passive に直した)、片方向のTVS(D_TVS_Uni)、電源記号 VBAT |
 | `KOGUMA-Mk4.pretty/` | このプロジェクト用のフットプリント: LXDC55FAAA-203(村田のデータシートの「Reference Land Pattern」)、MPS_QFN-14_2.5x3mm(MP6551 のデータシートの「Recommended Land Pattern」)、Resonator_Murata_CSTNE-3Pin_3.2x1.3mm(村田の仕様書 JGC42-8974A の推奨ランド)、SW_Slide_SPDT_Alps_SSSS8(SW1、SSSS810701。Alps の製品ページの Land Dimensions)、SW_Push_Jianfu_TVAF06(SW2、TVAF06-A020B-R。仕様書の P.C.B LAND DIMENSION)、Buzzer_PUI_SMT-0540(BZ1、SMT-0540-S-R。データシートの Suggested Land Pattern。1 が +、2 が −、番号なしはダミーの足)、FDK_HY0020(U5、BLE モジュール。データシート Ver.3.0 の図2-1、2026-11-23)、L_Murata_DFE201610E(L1。村田の仕様書 JETE243A の推奨ランド 0.8 × 1.8、2026-11-23)。SSSS8・TVAF06・SMT-0540・HY0020・MPS_QFN-14・DFE201610E は `gen_footprints.py` で作る(2026-10-31、MPS と DFE は 2026-11-23 から)。ENC_Base_Butt(エンコーダの基板 v2 を突き当てる、裏の面のパッド7つ × 2列(エンコーダ基板の内側と外側。両面ではんだ付け)。穴はなし。左の J5 は回転 0°、右の J6 は 180°。`../KOGUMA-Mk4_Encoder/gen_encoder.py` で作る。2026-11-02 までは穴 NPTH 1.0 × 5.9mm の ENC_Base_Slot)、WallSensor_Holder_Emitter・WallSensor_Holder_Receiver(壁センサのホルダの発光・受光の足の穴。Emitter にホルダのほぞの穴(Edge.Cuts)を含む。原点はホルダの前の面の真ん中、光は +X。ホルダは基板の裏に付けるので、同じセンサの2つを**裏の面に**、同じ位置・同じ向きに置く。位置は `mechanical/vehicle/pcb_shape.py` の `SENS`) |
 | `KOGUMA-Mk4.kicad_pcb` | **メイン基板**(2026-10-31 に起こした。2層、0.6mm)。`gen_pcb.py` で回路図から作った: 外形は `mechanical/vehicle/pcb_shape.py` の v16、位置が決まっている部品(壁センサ・エンコーダの穴・LED 8個・マウントの柱の穴 H1〜H4)だけ置き、ほかは基板の右の外にシートごとに並べてある。**ここから手で配置・配線する**(`gen_pcb.py` を走らせ直すと上書きされる) |
 | `KOGUMA-Mk4.kicad_dru` | 細かいピッチの IC(U4・U74・U75・U76)のパッドの間だけ 0.14mm まで許す(ToraNeko.Mk3 と同じ考え方)。ほかはネットクラスの 0.2mm |
@@ -72,7 +72,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 
 | グループ | 中身(IC のピン) |
 |---|---|
-| U4 MCU | 抵抗: R50(BOOT0)、R101・D100(UART_RX のプルアップと有線のダイオード、PB7 62)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R23・R33(モーターの電流の RC の 100Ω)・R24・R25・R34・R35(CM の終端)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54・C65 10µF(VFBSMPS 7、2個目は AN5419)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C33(それぞれの ADC のピン) |
+| U4 MCU | 抵抗: R50(BOOT0)、R101・D100(UART_RX のプルアップと有線のダイオード、PB7 61。2026-11-26 に H562 の番号へ)、R40(nFAULT)、R81・R82(壁センサの発光のプルダウン)、R83・R84(エンコーダの CS)、R4・R5(電池の分圧)・R44(ファンの RC)・R23・R33(モーターの電流の RC の 100Ω)・R24・R25・R34・R35(CM の終端)を、それぞれの MCU のピンのそばに。コンデンサ: Y1 発振子(PH0・PH1、2.4mm)、C53 220pF(VLXSMPS 5)・L1、C50 10µF(VDDSMPS 6)、C54・C65 10µF(VFBSMPS 7、2個目は AN5419)、C57〜C61 100nF(VDD 9・22・35・51・68)、C55・C56 100nF(VCAP 33・49)、C52 100nF・C51 4.7µF・FB1・R51(VDDA 16)、C64(VBAT 1)、C63(NRST)、C62 4.7µF、ADC のフィルタ C9・C40・C23・C33(それぞれの ADC のピン) |
 | U1 DC-DC | C6 100nF・C5 10µF(VIN)、C7・C8 22µF(VOUT)、R3(FB)、**NT1(C7 の PGND のパッドのとなり)** |
 | U2・U3 MP6551 | C21・C31 100nF と C22・C32 10µF(VIN 2番)、R21・R31(SR) |
 | U74・U75 受光アンプ | C83・C84 100nF と C78・C79 10µF(V+ 8番)、帰還の 820k・0.5pF(出力と − 入力の間に、辺に沿って)。U74 に PD_BIAS(C80・R78・R79) |
@@ -168,7 +168,7 @@ KiCad 9.0 で開く(`KOGUMA-Mk4.kicad_pro`)。
 |---|---|---|
 | U2・U3 MP6551 | MPS_QFN-14_2.5x3mm | **直した**。横の長いパッドが内側に 0.15mm はみ出し、外側に 0.25mm 足りなかった(左右の列の間 0.2mm で、VIN(2)と GND(9)がはんだでつながるおそれ)。p.14 の推奨ランド(長さ 1.30、内側の端 ±0.25、外側 ±1.55、1 番は 1.20 で角を落とす、列の間 0.5)に。1 番の印を足した |
 | L1 DFE201610E | L_Murata_DFE201610E(新しく作った) | **直した**。KiCad の L_Murata_DFE201610P(0.55 × 1.6)は村田の推奨(0.8 × 1.8、外の端 2.4)より小さく、足のはんだの山ができない |
-| U4 STM32H725(VFQFPN68) | KiCad の QFN-68-1EP_8x8mm_P0.4mm_EP6.4x6.4mm | OK。EP 6.4、ピンの並び・EP の GND も合う。パッドは ST の図(0.65 × 0.25)より外に長い(0.925)が、ふつうの IPC の寸法で問題ない |
+| U4 STM32H725(VFQFPN68)。2026-11-26 に STM32H562 | KiCad の QFN-68-1EP_8x8mm_P0.4mm_EP6.4x6.4mm | OK。H562 も同じ(DS14258 の 6.3 章: B029、EP 6.4 × 6.4、ピッチ 0.4、足 0.20 × 0.50)。EP 6.4、ピンの並び・EP の GND も合う。パッドは ST の図(0.65 × 0.25)より外に長い(0.925)が、ふつうの IPC の寸法で問題ない |
 | U76 LSM6DSR | KiCad の LGA-14_3x2.5mm | OK。記号の 10・11 番の名前を NC → OCS_Aux・SDO_Aux に(つながりは同じ、つながない) |
 | Y1 CSTNE | Resonator_Murata_CSTNE | OK(推奨ランドと同じ。真ん中が GND) |
 | U1 LXDC55 | LXDC55FAAA-203 | OK(推奨ランドと同じ) |

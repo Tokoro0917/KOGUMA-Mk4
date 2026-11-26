@@ -23,7 +23,7 @@
 - **難しい仕組み**(割り込み、DMA、`volatile`、割り込み禁止、キャッシュ、MPU など)を使う箇所は、処理の流れをコメントで順に説明する
 - 新しい書き方や HAL の機能を初めて使ったときは、返答の中でもその説明を添える
 - 名前の付け方・層の決まり(`drv` → `ctrl`・`maze` → `sys`、HAL を呼ぶのは `drv/` と `sys/scheduler.c` だけ)は [docs/software.md](docs/software.md) の 2 章と 14 章
-- STM32H725 の RAM・キャッシュ・DMA は [docs/firmware_memory.md](docs/firmware_memory.md) の決まりを守る(DMA の配列は `DMA_BUF`、DMA を動かす前に `dma_check()`)
+- MCU は STM32H562RGV6(2026-11-26 に STM32H725 から替えた)。RAM・DMA は [docs/firmware_memory.md](docs/firmware_memory.md) の決まりを守る(DMA の配列は `DMA_BUF`、DMA を動かす前に `dma_check()`)
 
 ## 作業の進め方
 

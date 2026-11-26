@@ -14,7 +14,7 @@
 
 | | ToraNeko.Mk3 | MK4 |
 |---|---|---|
-| MCU | STM32F411(100MHz) | STM32H725(400MHz から。`docs/firmware_memory.md` の決まりが要る) |
+| MCU | STM32F411(100MHz) | **STM32H562(Cortex-M33、240MHz)**(2026-11-26 に STM32H725 から替えた。`docs/spec.md` の「MCU」。RAM・DMA の決まりは `docs/firmware_memory.md`) |
 | モーターの制御 | 速度・角度の制御 → モーターの**電圧** | 速度・角度の制御 → **電流の目標 → 電流の制御(20kHz、INA241A3)** → duty |
 | 制御の周期 | 2kHz(TIM11) | 電流 20kHz・エンコーダ 10kHz・制御 4kHz(壁センサの1巡と同じ。TIM1 を元にする。4章) |
 | 壁センサの順番 | TIM3 で ADC を起動し、DMA の終わりで次の LED へ(1 周期で 4 回) | TIM1 で ADC1 を起動し、20kHz の割り込みで順番を進める(車輪・ファンの PWM と同じ位置で読む) |
@@ -78,7 +78,7 @@ software/
 | drv | `fan.c` | 吸引ファン(TIM16。TIM1 と同じ周期) | タイマー |
 | drv | `buzzer.c`(新) | ブザー(TIM17) | 新しい(KOGUMA にはある) |
 | drv | `uart.c` | 送る(DMA)と受ける(DMA のリングバッファ)、XON・XOFF | 受けるのを足す |
-| drv | `flash_memory.c` | 内蔵 Flash の消す・書く・読む | H725 の書き方(32 バイト単位) |
+| drv | `flash_memory.c` | 内蔵 Flash の消す・書く・読む | H562 の書き方(8KB のセクタ、16 バイト単位) |
 | drv | `dma_buf.h`(新) | DMA の配列の置き場所と確かめ(`docs/firmware_memory.md`) | 新しい |
 | ctrl | `current_ctrl.c`(新) | 電流の制御(20kHz)、電流の守り | 新しい |
 | ctrl | `odometry.c` | 車輪の速さ、走った距離、加速度と合わせた速度の推定 | 加速度との相補フィルタを足す |
@@ -107,10 +107,11 @@ sys(explore / mode / cmd / ...)
 
 | 項目 | 設定 | 理由 |
 |---|---|---|
-| 電源 | **Direct SMPS**(CubeMX の初めの値の LDO にしない) | VFQFPN68 は SMPS だけ。LDO のまま書くと応答しなくなる(復旧は TP4、`docs/firmware_memory.md`) |
-| クロック | HSE 10MHz(Y1、ToraNeko と同じ発振子)→ PLL。**最初は 400MHz(VOS1)**、動いてから 520MHz(VOS0)に上げる | ほかの問題と切り分けるため、余裕のある設定から |
-| キャッシュ | 命令のキャッシュは最初から ON。データのキャッシュは最初 OFF、動いてから ON | `docs/firmware_memory.md` の決まりを守れば、ON にしても壊れない |
-| RAM | ふつうの変数・スタックは DTCM、DMA の配列は SRAM1・2(`DMA_BUF`)、ログは AXI SRAM | |
+| 電源 | **LDO**(CubeMX の初めの値のまま)、電圧のスケールは VOS0 | H562 の VFQFPN68 は LDO だけ。200MHz を超えるので VOS0 |
+| クロック | HSE 10MHz(Y1、ToraNeko と同じ発振子)→ PLL で **240MHz** | 上限は 250MHz。TIM1 の 80kHz・20kHz がちょうど割り切れる |
+| キャッシュ | 命令のキャッシュ(ICACHE 8KB)は ON。データのキャッシュは内蔵の RAM にはない | H725 のような DMA とキャッシュの食い違いは起きない |
+| RAM | ふつうの変数・スタックは SRAM1、DMA の配列は SRAM2 の先頭(`DMA_BUF`)、ログは SRAM3 | どこも待ちなし。`docs/firmware_memory.md` |
+| 割り込みの書き方 | **20kHz の処理(ADC2 の DMA の終わり)と、エンコーダ・IMU の SPI の DMA の割り込みは、HAL を通さずレジスタを直接書く**。`ctrl/` と電流・エンコーダのコードは Debug でも -O2 | H562 は H725 より遅い(約 3 分の 1)。HAL のままだと CPU が約 47%、直接書けば約 21%(`docs/calc/cpu_est/README.md`) |
 | 時間を測る | TIM5(32 ビット)を 1MHz でフリーラン(ToraNeko と同じ)。細かく測るときは DWT のカウンタ | 割り込みの処理時間を常に見る |
 | ms の待ち | SysTick(`HAL_GetTick()`、ToraNeko と同じ) | |
 | ウォッチドッグ | IWDG 約 50ms。4kHz の処理で、20kHz・10kHz の処理が動いているのを確かめてからクリア | 割り込みが止まったらリセットして止まる |
@@ -122,8 +123,8 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 ### 4.1 TIM1
 
-- モーターの PWM(CH1〜CH4 = 左右の IN1・IN2)。**センターアラインド**。PWM の周波数は **80kHz**(2026-11-26 決定。コアレスモーターの電流の上下を小さくするため。`docs/spec.md` の「モーターの PWM の周波数」。前は 40kHz から始めて 40〜80kHz で決める予定だった、`docs/control.md`)。400MHz のときタイマーのクロックは 200MHz で、ARR 2500(設定は `software/main-controller/CUBEMX_SETUP.md`)
-- 繰り返しのカウンタで **4 周期に 1 回(20kHz)** ADC2 を起動する(400MHz のときタイマーのクロックは 200MHz で ARR 1250、Repetition Counter 7)
+- モーターの PWM(CH1〜CH4 = 左右の IN1・IN2)。**センターアラインド**。PWM の周波数は **80kHz**(2026-11-26 決定。コアレスモーターの電流の上下を小さくするため。`docs/spec.md` の「モーターの PWM の周波数」。前は 40kHz から始めて 40〜80kHz で決める予定だった、`docs/control.md`)。タイマーのクロックは 240MHz で、ARR 1500 のセンターアラインド(設定は `software/main-controller/CUBEMX_SETUP.md`)
+- 繰り返しのカウンタで **4 周期に 1 回(20kHz)** ADC2 を起動する(タイマーのクロックは 240MHz で ARR 1500、Repetition Counter 7)
 - 吸引ファンの TIM16 は、TIM1 と**同じ周期にして同時にスタート**する(同じクロックなのでずれない)。壁センサを読む位置が、車輪とファンの PWM のいつも同じ所になる
 
 ### 4.2 ADC2(モーターの電流と電池、20kHz)
@@ -152,7 +153,7 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 4. duty を TIM1 に書く
 5. 壁センサ: ADC1 の値(いま点いている組)を受け取り、順番を進めて、次の組の発光を点ける・消す
 6. 偶数回目に、エンコーダの読み取り(SPI2 の DMA)を始める(10kHz)
-7. 5 回に 1 回、壁センサの順番 2(L・FR)を読んだあとに **4kHz の処理**を起こす(2026-11-26 に 1kHz から。`docs/control.md` の4章。TIM6 の割り込みの番号を借りて `NVIC_SetPendingIRQ(TIM6_DAC_IRQn)`。TIM6 自体は動かさない)
+7. 5 回に 1 回、壁センサの順番 2(L・FR)を読んだあとに **4kHz の処理**を起こす(2026-11-26 に 1kHz から。`docs/control.md` の4章。TIM6 の割り込みの番号を借りて `NVIC_SetPendingIRQ(TIM6_IRQn)`(H5 の名前)。TIM6 自体は動かさない)
 8. 処理時間を記録する(ToraNeko の scheduler と同じく、いちばん長かった値と間隔)
 
 ### 4.5 そのほか
@@ -165,7 +166,7 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 | 3 | UART の DMA、SysTick | | 短い |
 | なし | メインのループ(`app_loop()`): モード、走る手順、迷路の計算、コマンド、保存、出力 | | |
 
-合わせて CPU の 2〜3 割(4kHz の処理が 8〜20%、20kHz の処理が 6〜10%)。割り込みを使う所は、ToraNeko の決まりどおり、処理の流れをコメントで順に説明する。
+合わせて CPU の 2〜3 割(2026-11-26 に H562 の 240〜250MHz で計算し直した。`docs/calc/cpu_est/README.md`: 20kHz の処理 7%、エンコーダ 7%、IMU 1%、4kHz の処理 5%、合わせて約 21%。上の表の「目安の時間」は H725 のときの見積もり)。割り込みを使う所は、ToraNeko の決まりどおり、処理の流れをコメントで順に説明する。
 
 ## 5. 制御
 
@@ -257,7 +258,7 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 - `sys/log.c`(記録)と `sys/output.c`(出力)。形は ToraNeko・KOGUMA と同じ(`#BEGIN 種類 …` と `#END 種類`、走行ログは 1 行目が列の名前の CSV)なので、**ビューアで読める**
 - MK4 で足す列: **左右の電流の目標と測った値、左右の duty、電池の電圧、左右の車輪の速度、推定の速度と加速度**、CMS(電池の電流の目安)、エンコーダ・IMU のエラーの数、割り込みのいちばん長い時間
-- 置き場所は AXI SRAM の 256KB(ToraNeko より大きい)。電流の制御を合わせるときだけ、20kHz で電流と duty を短く取るモードも持つ
+- 置き場所は SRAM3 の 256KB(H725 のときは AXI SRAM)(ToraNeko より大きい)。電流の制御を合わせるときだけ、20kHz で電流と duty を短く取るモードも持つ
 - 走り終わったら Flash に書き、つながっていれば送る(`docs/ble.md` の3章)
 
 ## 10. 通信
@@ -290,7 +291,7 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 | # | 中身 | 作るファイル | 確かめること |
 |---|---|---|---|
-| 0 | 空のプロジェクト(CubeMX → CMake、電源 Direct SMPS、クロック 400MHz、MPU) | `.ioc`、`Core/`、`App/app.c`、`CMakeLists.txt` | CI でビルドが通る。**TP4 の復旧を一度試す** |
+| 0 | 空のプロジェクト(CubeMX → CMake、STM32H562、電源 LDO・VOS0、クロック 240MHz) | `.ioc`、`Core/`、`App/app.c`、`CMakeLists.txt` | CI でビルドが通る。**TP4 の復旧を一度試す** |
 | 1 | LED・ブザーとシリアル(printf) | `drv/led.c`、`drv/buzzer.c`、`drv/uart.c`、`drv/timebase.c` | LED の順送り、1 秒ごとの出力 |
 | 2 | 時刻の元(TIM1)と 20kHz・4kHz の処理 | `sys/scheduler.c`、`drv/motor.c`(duty 0 のまま) | 周期と処理時間(ToraNeko の tick・period・busy と同じ出力) |
 | 3 | エンコーダ(MT6835) | `drv/encoder.c` | 手で回した角度、CRC のエラーがない |
