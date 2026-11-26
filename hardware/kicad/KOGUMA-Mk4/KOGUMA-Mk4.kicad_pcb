@@ -7788,7 +7788,7 @@
 				)
 			)
 		)
-		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
+		(property "Value" "RLM12FTCMR005 (5m 1%)"
 			(at 0 1.83 180)
 			(layer "F.Fab")
 			(uuid "971ddd77-de10-4337-83e7-8e761e33acfd")
@@ -11503,7 +11503,7 @@
 				)
 			)
 		)
-		(property "Value" "PMR18EZPFU5L00 (5m 1%)"
+		(property "Value" "RLM12FTCMR005 (5m 1%)"
 			(at 0 1.83 180)
 			(layer "F.Fab")
 			(uuid "31ba7612-ffd6-4974-b110-6fd26623bb8c")
@@ -17973,7 +17973,7 @@
 				)
 			)
 		)
-		(property "Value" "TVAF06-A020B-R"
+		(property "Value" "TS-1088-AR02016"
 			(at 0 3.8 0)
 			(layer "F.Fab")
 			(uuid "a77f77ab-a936-4888-95ff-12dc9310d357")
