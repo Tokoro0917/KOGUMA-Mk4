@@ -105,10 +105,10 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 | 用途 | タイマー | モード | PSC | ARR(Period) | 周波数 | 備考 |
 |---|---|---|---|---|---|---|
-| モーターの PWM | **TIM1** CH1〜CH4 | PWM Generation CH1〜CH4、Counter Mode **Center Aligned mode 1** | 0 | **2500** | **40 kHz** | センターアラインドは 0 → 2500 → 0 で 1 周期(2 × 2500 / 200MHz = 25µs)。**Repetition Counter = 3**(山と谷で 1 つずつ数えるので、4 つで PWM 2 周期 = 20kHz に 1 回)。**Trigger Event Selection(TRGO)= Update Event**(ADC1・ADC2 を起動)。CH の Pulse は 0 で始める |
-| 吸引ファンの PWM | **TIM16** CH1(PB8) | PWM Generation CH1 | 0 | **5000-1** | **40 kHz** | TIM1 と同じ周期(25µs)。TIM16 はほかのタイマーに合わせる仕組みがないので、TIM1 と同時にスタートさせる(同じクロックなのでずれない) |
+| モーターの PWM | **TIM1** CH1〜CH4 | PWM Generation CH1〜CH4、Counter Mode **Center Aligned mode 1** | 0 | **1250** | **80 kHz** | センターアラインドは 0 → 1250 → 0 で 1 周期(2 × 1250 / 200MHz = 12.5µs)。**Repetition Counter = 7**(山と谷で 1 つずつ数えるので、8 つで PWM 4 周期 = 20kHz に 1 回)。2026-11-26 に 40kHz(ARR 2500、Repetition Counter 3)から(`docs/spec.md` の「モーターの PWM の周波数」)。**Trigger Event Selection(TRGO)= Update Event**(ADC1・ADC2 を起動)。CH の Pulse は 0 で始める |
+| 吸引ファンの PWM | **TIM16** CH1(PB8) | PWM Generation CH1 | 0 | **2500-1** | **80 kHz** | TIM1 と同じ周期(12.5µs)。TIM16 はほかのタイマーに合わせる仕組みがないので、TIM1 と同時にスタートさせる(同じクロックなのでずれない) |
 | ブザー | **TIM17** CH1(PB9) | PWM Generation CH1 | 200-1(1MHz) | 音の高さで変える(例: 2kHz なら 500-1) | | KOGUMA と同じく PWM で鳴らす |
-| 1kHz の処理を起こす | **TIM6**(割り込みの番号だけ使う) | Activated | - | - | - | TIM6 自体は動かさない。20kHz の処理から `NVIC_SetPendingIRQ(TIM6_DAC_IRQn)` で 1kHz の処理を起こす(`docs/software.md` の4章)。NVIC で `TIM6_DAC_IRQn` を有効にする |
+| 4kHz の処理を起こす | **TIM6**(割り込みの番号だけ使う) | Activated | - | - | - | TIM6 自体は動かさない。20kHz の処理から 5 回に 1 回 `NVIC_SetPendingIRQ(TIM6_DAC_IRQn)` で 4kHz の処理を起こす(2026-11-26 に 1kHz から。`docs/software.md` の4章)。NVIC で `TIM6_DAC_IRQn` を有効にする |
 | 処理時間を測る・µs の待ち | **TIM5** | Activated(内部クロック) | 200-1 | 0xFFFFFFFF | 1 MHz で数える | 32 ビットのフリーラン(ToraNeko と同じ) |
 
 ## 5. ADC

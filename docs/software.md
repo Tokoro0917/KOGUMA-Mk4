@@ -16,7 +16,7 @@
 |---|---|---|
 | MCU | STM32F411(100MHz) | STM32H725(400MHz から。`docs/firmware_memory.md` の決まりが要る) |
 | モーターの制御 | 速度・角度の制御 → モーターの**電圧** | 速度・角度の制御 → **電流の目標 → 電流の制御(20kHz、INA241A3)** → duty |
-| 制御の周期 | 2kHz(TIM11) | 電流 20kHz・エンコーダ 10kHz・制御 1kHz(TIM1 を元にする。4章) |
+| 制御の周期 | 2kHz(TIM11) | 電流 20kHz・エンコーダ 10kHz・制御 4kHz(壁センサの1巡と同じ。TIM1 を元にする。4章) |
 | 壁センサの順番 | TIM3 で ADC を起動し、DMA の終わりで次の LED へ(1 周期で 4 回) | TIM1 で ADC1 を起動し、20kHz の割り込みで順番を進める(車輪・ファンの PWM と同じ位置で読む) |
 | エンコーダ | AS5047P(14 ビット) | MT6835(21 ビット、CRC あり) |
 | ブザー | なし(合図は LED だけ) | **あり**(LED と一緒に音も出す) |
@@ -70,7 +70,7 @@ software/
 
 | 層 | ファイル | 中身 | ToraNeko との違い |
 |---|---|---|---|
-| drv | `motor.c` | TIM1 の duty、MOT_EN、nFAULT | TIM1(センターアラインド、40kHz から) |
+| drv | `motor.c` | TIM1 の duty、MOT_EN、nFAULT | TIM1(センターアラインド、80kHz) |
 | drv | `current.c`(新) | ADC2(INA241A3 の電流 2 本・CMS 2 本・電池)を TIM1 で起動し、DMA で受ける | 新しい |
 | drv | `wall.c` | 壁センサの発光と ADC1 | 順番を 20kHz の割り込みで進める(4章) |
 | drv | `encoder.c` | MT6835 × 2(SPI2 + DMA、CRC) | AS5047P から変える |
@@ -85,7 +85,7 @@ software/
 | ctrl | `control.c` | 速度・角度の制御 → **左右の電流の目標** | 出口を電圧から電流に |
 | ctrl | `trajectory.c`・`run.c`・`wall_ctrl.c`・`wall_dist.c` | ToraNeko と同じ | 速さ・寸法の値 |
 | maze | `maze_map.c`・`search.c`・`dijkstra.c`・`path.c` | ToraNeko と同じ | なし |
-| sys | `scheduler.c` | 20kHz・10kHz・1kHz の処理を呼び、処理時間と間隔を記録 | 周期の作り方(4章) |
+| sys | `scheduler.c` | 20kHz・10kHz・4kHz の処理を呼び、処理時間と間隔を記録 | 周期の作り方(4章) |
 | sys | `mode.c`・`ui.c`・`goal.c`・`explore.c`・`shortest.c`・`adjust.c`・`turn_test.c`・`log.c`・`output.c`・`failsafe.c`・`flash.c` | ToraNeko と同じ | ブザー、吸引の探索、保存の場所 |
 | sys | `cmd.c`(新) | コマンド(`status`・`get`・`set`・`save`・`run`・`stop`、`docs/ble.md` の4章) | 新しい |
 | sys | `params.c`(新) | コマンドで変えられる値の表と、Flash への保存(8.3) | 新しい |
@@ -113,7 +113,7 @@ sys(explore / mode / cmd / ...)
 | RAM | ふつうの変数・スタックは DTCM、DMA の配列は SRAM1・2(`DMA_BUF`)、ログは AXI SRAM | |
 | 時間を測る | TIM5(32 ビット)を 1MHz でフリーラン(ToraNeko と同じ)。細かく測るときは DWT のカウンタ | 割り込みの処理時間を常に見る |
 | ms の待ち | SysTick(`HAL_GetTick()`、ToraNeko と同じ) | |
-| ウォッチドッグ | IWDG 約 50ms。1kHz の処理で、20kHz・10kHz の処理が動いているのを確かめてからクリア | 割り込みが止まったらリセットして止まる |
+| ウォッチドッグ | IWDG 約 50ms。4kHz の処理で、20kHz・10kHz の処理が動いているのを確かめてからクリア | 割り込みが止まったらリセットして止まる |
 | 数 | `float`(単精度)。定数は `0.5f`。`-Wdouble-promotion` を付ける | |
 
 ## 4. 時刻の作り方(MK4 で新しく作る所)
@@ -122,8 +122,8 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 ### 4.1 TIM1
 
-- モーターの PWM(CH1〜CH4 = 左右の IN1・IN2)。**センターアラインド**。PWM の周波数は **40kHz から**(モーターのインダクタンスを測ってから 40〜80kHz で決める、`docs/control.md`)。400MHz のときタイマーのクロックは 200MHz で、ARR 2500(設定は `software/main-controller/CUBEMX_SETUP.md`)
-- 繰り返しのカウンタで **2 周期に 1 回(20kHz)** ADC2 を起動する
+- モーターの PWM(CH1〜CH4 = 左右の IN1・IN2)。**センターアラインド**。PWM の周波数は **80kHz**(2026-11-26 決定。コアレスモーターの電流の上下を小さくするため。`docs/spec.md` の「モーターの PWM の周波数」。前は 40kHz から始めて 40〜80kHz で決める予定だった、`docs/control.md`)。400MHz のときタイマーのクロックは 200MHz で、ARR 2500(設定は `software/main-controller/CUBEMX_SETUP.md`)
+- 繰り返しのカウンタで **4 周期に 1 回(20kHz)** ADC2 を起動する(400MHz のときタイマーのクロックは 200MHz で ARR 1250、Repetition Counter 7)
 - 吸引ファンの TIM16 は、TIM1 と**同じ周期にして同時にスタート**する(同じクロックなのでずれない)。壁センサを読む位置が、車輪とファンの PWM のいつも同じ所になる
 
 ### 4.2 ADC2(モーターの電流と電池、20kHz)
@@ -152,7 +152,7 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 4. duty を TIM1 に書く
 5. 壁センサ: ADC1 の値(いま点いている組)を受け取り、順番を進めて、次の組の発光を点ける・消す
 6. 偶数回目に、エンコーダの読み取り(SPI2 の DMA)を始める(10kHz)
-7. 20 回に 1 回、1kHz の処理を起こす(TIM6 の割り込みの番号を借りて `NVIC_SetPendingIRQ(TIM6_DAC_IRQn)`。TIM6 自体は動かさない)
+7. 5 回に 1 回、壁センサの順番 2(L・FR)を読んだあとに **4kHz の処理**を起こす(2026-11-26 に 1kHz から。`docs/control.md` の4章。TIM6 の割り込みの番号を借りて `NVIC_SetPendingIRQ(TIM6_DAC_IRQn)`。TIM6 自体は動かさない)
 8. 処理時間を記録する(ToraNeko の scheduler と同じく、いちばん長かった値と間隔)
 
 ### 4.5 そのほか
@@ -161,11 +161,11 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 |---|---|---|---|
 | 0(高) | 20kHz の処理(ADC2 の DMA の終わり) | 50µs | 3〜5µs |
 | 1 | エンコーダ(SPI2 の DMA の終わり → 速度の推定)、IMU(INT1 → SPI3 の DMA) | 100µs・150µs | 1〜2µs |
-| 2 | 1kHz の処理: 軌道 → 位置・向き → 速度・角度 → 電流の目標、壁制御、フェイルセーフ、ログ | 1ms | 20〜50µs |
+| 2 | 4kHz の処理: 軌道 → 位置・向き → 速度・角度 → 電流の目標、壁制御、フェイルセーフ、ログ(ふだんは 4 回に 1 回 = 1kHz に間引いて残す。ターンの調整などのときだけ 4kHz で残す) | 250µs | 20〜50µs |
 | 3 | UART の DMA、SysTick | | 短い |
 | なし | メインのループ(`app_loop()`): モード、走る手順、迷路の計算、コマンド、保存、出力 | | |
 
-合わせて CPU の 1〜2 割。割り込みを使う所は、ToraNeko の決まりどおり、処理の流れをコメントで順に説明する。
+合わせて CPU の 2〜3 割(4kHz の処理が 8〜20%、20kHz の処理が 6〜10%)。割り込みを使う所は、ToraNeko の決まりどおり、処理の流れをコメントで順に説明する。
 
 ## 5. 制御
 
@@ -221,12 +221,12 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 | 条件 | 見る所 | すること |
 |---|---|---|
-| ぶつかった・滑った(目標と推定のずれが大きい) | 1kHz | 止める(ToraNeko・KOGUMA と同じ) |
+| ぶつかった・滑った(目標と推定のずれが大きい) | 4kHz | 止める(ToraNeko・KOGUMA と同じ) |
 | モーターの電流が 5A を 1ms 超えた | 20kHz | すぐ duty 0・EN を L |
-| nFAULT が L(MP6551 の過電流・過熱) | 1kHz | 止める |
-| 電池が少ない | 電源を入れたとき(ToraNeko と同じ)と、1kHz(止まっているときの値か時間の平均) | 電源を入れたときなら何もできない(外側の LED の点滅)。走っていれば止める |
-| 20kHz・10kHz の処理が止まった | 1kHz | 止める。1kHz も止まれば IWDG がリセット |
-| エンコーダ・IMU の読み取りの失敗が続いた | 1kHz | 止める |
+| nFAULT が L(MP6551 の過電流・過熱) | 4kHz | 止める |
+| 電池が少ない | 電源を入れたとき(ToraNeko と同じ)と、4kHz(止まっているときの値か時間の平均) | 電源を入れたときなら何もできない(外側の LED の点滅)。走っていれば止める |
+| 20kHz・10kHz の処理が止まった | 4kHz | 止める。4kHz の処理も止まれば IWDG がリセット |
+| エンコーダ・IMU の読み取りの失敗が続いた | 4kHz | 止める |
 | 回生で電池の電圧が上がった(13.5V 超) | 20kHz | 回生の電流の制限を強める |
 
 止まった理由はログと `#STATUS` に残す。
@@ -292,7 +292,7 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 |---|---|---|---|
 | 0 | 空のプロジェクト(CubeMX → CMake、電源 Direct SMPS、クロック 400MHz、MPU) | `.ioc`、`Core/`、`App/app.c`、`CMakeLists.txt` | CI でビルドが通る。**TP4 の復旧を一度試す** |
 | 1 | LED・ブザーとシリアル(printf) | `drv/led.c`、`drv/buzzer.c`、`drv/uart.c`、`drv/timebase.c` | LED の順送り、1 秒ごとの出力 |
-| 2 | 時刻の元(TIM1)と 20kHz・1kHz の処理 | `sys/scheduler.c`、`drv/motor.c`(duty 0 のまま) | 周期と処理時間(ToraNeko の tick・period・busy と同じ出力) |
+| 2 | 時刻の元(TIM1)と 20kHz・4kHz の処理 | `sys/scheduler.c`、`drv/motor.c`(duty 0 のまま) | 周期と処理時間(ToraNeko の tick・period・busy と同じ出力) |
 | 3 | エンコーダ(MT6835) | `drv/encoder.c` | 手で回した角度、CRC のエラーがない |
 | 4 | IMU(LSM6DSR) | `drv/imu.c` | 静止のノイズ、回したときの符号 |
 | 5 | モーターの PWM と電流の読み取り(車輪を浮かせる) | `drv/motor.c`、`drv/current.c` | 回る向き、0A の値、電流の向きと大きさ |
@@ -332,8 +332,6 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 ## 15. まだ決めていないこと
 
-- PWM の周波数(40〜80kHz。インダクタンスを測ってから)
-- 速度・角度の制御を 1kHz から上げるか(2〜5kHz)
 - ブザーの音の割り当て
 - 吸引ありの探索の No.(KOGUMA のモード0 の吸引探索から何を持ってくるか)
 - ログの列の最終形と、1 回の走行で取る長さ

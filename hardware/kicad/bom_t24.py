@@ -51,7 +51,7 @@ P = {
 }
 # 品番がもう決まっている部品(docs/bom.md)。LCSC の番号はまだ確かめていない
 FIXED = {'STM32H725RGVx': 'STM32H725RGV6(または RGV3)', 'MP6551GQB': 'MPS MP6551GQB', 'INA241A3': 'TI INA241A3IDDFR(SOT-23-8)',
-         'OPA2354': 'TI OPA2354(VSSOP-8)', 'LSM6DSR': 'ST LSM6DSR', 'NJU6080': 'NJR NJU6080', 'HY0020': 'FDK HY0020',
+         'OPA2354': 'TI OPA2354(VSSOP-8)', 'LSM6DSR': 'ST LSM6DSR', 'NJU6080': 'NJR NJU6080', 'NJW4615A': 'Nisshinbo NJW4615AF1-TE1', 'HY0020': 'FDK HY0020',
          'LXDC55FAAA-203': 'Murata LXDC55FAAA-203', 'AO4407A': 'AOS AO4407A', 'IRLML6344': 'Infineon IRLML6344TRPBF',
          'SMF13A': 'Littelfuse SMF13A', 'MBR230LSFT1G': 'onsemi MBR230LSFT1G', 'BLM18PG221SN1D': 'Murata BLM18PG221SN1D',
          '2.2u DFE201610E-2R2M': 'Murata DFE201610E-2R2M=P2', 'CSTNE10M0G52Z000R0': 'Murata CSTNE10M0G52Z000R0',
@@ -65,7 +65,7 @@ LCSC = {'STM32H725RGVx': ('C5271073', 'RGV6。**LCSC の在庫 0**(RGV3 の C527
         '2.2u DFE201610E-2R2M': ('C337891', '在庫 約3,910'), 'PMR18EZPFU5L00 (5m 1%)': ('C308575', '**LCSC の在庫 0**'), 'PMR18EZPFU10L0 (10m 1%)': ('', 'LCSC の番号・在庫は未確認(2026-11-24 に 0.1Ω 2512 から変えた。ファンのシャント R43)'),
         'SSSS810701': ('C97433', '在庫 約340'), 'SMT-0540-S-R': ('C3812104', '**LCSC の在庫 0**'), 'APTD1608LSECK/J4-PF': ('C5879215', '在庫 約660'),
         'OPV332': ('C6622198', '**LCSC の在庫 0**'), 'SFH 229 FA': ('C3211054', '**LCSC の在庫 0**'),
-        'MP6551GQB': ('', '**LCSC になし**(ほかの代理店で)'), 'NJU6080': ('', '**LCSC になし**(日清紡の品番は NJU6080F1)'),
+        'MP6551GQB': ('', '**LCSC になし**(ほかの代理店で)'), 'NJU6080': ('', '**LCSC になし**(日清紡の品番は NJU6080F1)'), 'NJW4615A': ('C3193134', 'LCSC は在庫 0・Mouser に約 2,300(2026-11-26)。NJU6080 と同じピン・同じ抵抗(在庫がない NJU6080 から 2026-11-26 に替えた)'),
         'LXDC55FAAA-203': ('', '**LCSC になし。生産終了の情報あり(未確認)**'), 'CSTNE10M0G52Z000R0': ('', '**LCSC になし**(仕様の違う CSTNE10M0G520000R0 C907958 などはある)'),
         'T521D107M025ATE040 (100u 25V)': ('', '在庫は未確認(47µF の T521V は LCSC になし)。裏の面に手ではんだ付け'), 'TVAF06-A020B-R': ('', '**LCSC になし**(同じ系列の別の品番だけ)'),
         'HY0020': ('', '**LCSC になし**(DigiKey・Arrow)')}
