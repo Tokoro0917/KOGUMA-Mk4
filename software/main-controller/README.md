@@ -1,6 +1,6 @@
 # main-controller
 
-KOGUMA MK4 メイン基板(STM32H725RGV6)のファームウェアです。**ToraNeko.Mk3 のファームウェア(`Tokoro0917/toraneko.mk3` の `software/main-controller/`)と同じ作り**にします(2026-11-23 決定)。ToraNeko の `App/` のコードを元にし、MK4 で違う所を直します。
+KOGUMA MK4 メイン基板(STM32H562RGV6。2026-11-26 に STM32H725RGV6 から替えた)のファームウェアです。**ToraNeko.Mk3 のファームウェア(`Tokoro0917/toraneko.mk3` の `software/main-controller/`)と同じ作り**にします(2026-11-23 決定)。ToraNeko の `App/` のコードを元にし、MK4 で違う所を直します。
 
 - [../../docs/software.md](../../docs/software.md): ソフトの設計(ToraNeko との違い、時刻の作り方、制御、保存、ログ、テスト、作る順)
 - [CUBEMX_SETUP.md](CUBEMX_SETUP.md): CubeMX(`.ioc`)の設定値(ステップ0)
@@ -18,8 +18,8 @@ KOGUMA MK4 メイン基板(STM32H725RGV6)のファームウェアです。**Tora
 | 開発環境 | STM32CubeMX(Toolchain = CMake)+ VS Code(STM32Cube for Visual Studio Code 拡張) | ToraNeko と同じ。CubeIDE は使わない |
 | ビルド | `KOGUMA-Mk4/` で `cmake --preset Debug && cmake --build --preset Debug` | 成果物は `build/Debug/KOGUMA-Mk4.elf` |
 | 書き込み・デバッグ | STLINK-V3MODS(J7) | 無線の書き込みはステップ13 |
-| 電源 | **Direct SMPS**(CubeMX で必ず設定) | LDO のまま書き込むと応答しなくなる |
-| クロック | HSE 10MHz → 400MHz(VOS1)から | 動いてから 520MHz に上げる |
+| 電源 | **LDO**(CubeMX の初めの値のまま)、VOS0 | H562 の VFQFPN68 は LDO だけ |
+| クロック | HSE 10MHz → 240MHz | 上限は 250MHz。TIM1 の 80kHz・20kHz が割り切れる |
 | 時刻の元 | TIM1(モーターの PWM 80kHz、センターアラインド) | 20kHz で ADC1・ADC2 を起動 → 電流の制御、4kHz で制御(`docs/software.md` の4章) |
 | UART | USART1(PB6・PB7)、送る・受ける | 有線(TP1)と BLE を同じ 1 本で |
 
@@ -29,7 +29,7 @@ KOGUMA MK4 メイン基板(STM32H725RGV6)のファームウェアです。**Tora
 
 | # | 内容 | 状態 |
 |---|---|---|
-| 0 | 空のプロジェクト(CubeMX → CMake、Direct SMPS、400MHz、MPU) | **CubeMX の設定値を書いた**(`CUBEMX_SETUP.md`)。CubeMX での作成はまだ(作者の PC で行う) |
+| 0 | 空のプロジェクト(CubeMX → CMake、STM32H562、LDO・VOS0、240MHz) | **CubeMX の設定値を書いた**(`CUBEMX_SETUP.md`)。CubeMX での作成はまだ(作者の PC で行う) |
 | 1 | LED・ブザーとシリアル | |
 | 2 | 時刻の元(TIM1)と 20kHz・1kHz の処理 | |
 | 3 | エンコーダ(MT6835) | |

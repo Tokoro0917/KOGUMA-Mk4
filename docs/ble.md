@@ -14,7 +14,7 @@ BLE モジュール **FDK HY0020**(nRF52832、回路は `hardware/kicad/KOGUMA-M
    ↑↓ BLE(Nordic UART Service = NUS。2M PHY、データ長の拡張)
  nRF52832(HY0020)… UART と BLE の橋渡しだけ。中身は見ない(@ で始まる行だけ自分で処理)
    ↑↓ UART 1Mbaud(STM32 の USART1、PB6・PB7)
- STM32H725 … 今までどおり UART に文字を書く・読むだけ
+ STM32H562 … 今までどおり UART に文字を書く・読むだけ
 ```
 
 - **STM32 から見ると、今までの UART と同じ**。無線か有線(J7・TP1 の USB シリアル)かを気にしない。同じ決まりで、有線のときもそのまま動く
