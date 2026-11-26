@@ -26,7 +26,7 @@ ASSIGN = [
     ('PC4',  'ADC2_INP4',  'MOT_L_I', '左モーターの電流(INA241A3 の出力、2026-11-23)'),
     ('PA4',  'ADC2_INP18', 'MOT_R_I', '右モーターの電流(INA241A3 の出力、2026-11-23)'),
     ('PC5',  'ADC2_INP8',  'MOT_L_CMS', '左の MP6551 の CM1 + CM2(電池から出る電流の目安、2026-11-23)'),
-    ('PA5',  'ADC2_INP19', 'MOT_R_CMS', '右の MP6551 の CM1 + CM2(電池から出る電流の目安、2026-11-23)'),
+    ('PA3',  'ADC2_INP15', 'MOT_R_CMS', '右の MP6551 の CM1 + CM2(電池から出る電流の目安、2026-11-23。2026-11-27 に PA5 から。PA5 を IMU の SPI1 にしたため)'),
     # エンコーダ(AS5047P × 2、SPI2。IMUのSPI3とはSPIのモードが違うのでバスを分ける)(2026-10-17)
     ('PA12', 'SPI2_SCK',  'ENC_SCK',   'エンコーダ SPIクロック'),
     ('PB14', 'SPI2_MISO', 'ENC_MISO',  'エンコーダ MISO'),
@@ -37,8 +37,8 @@ ASSIGN = [
     # 壁センサ(MK3と同じ回路)
     ('PC0',  'ADC1_INP10', 'WALL_FL',  '壁センサ 左前'),
     ('PC1',  'ADC1_INP11', 'WALL_L',   '壁センサ 左'),
-    ('PA6',  'ADC1_INP3',  'WALL_R',   '壁センサ 右'),
-    ('PA7',  'ADC1_INP7',  'WALL_FR',  '壁センサ 右前'),
+    ('PC2',  'ADC1_INP12', 'WALL_R',   '壁センサ 右(2026-11-27 に PA6 から。前を向いた辺のピン)'),
+    ('PC3',  'ADC1_INP13', 'WALL_FR',  '壁センサ 右前(2026-11-27 に PA7 から。前を向いた辺のピン)'),
     ('PB4(NJTRST)', 'GPIO_Output', 'WALL_LED_FL_R', '壁センサの発光 FL と R(MK3 の WallLED_12)'),
     ('PB5',  'GPIO_Output', 'WALL_LED_L_FR', '壁センサの発光 L と FR(MK3 の WallLED_34)'),
     # 電源・吸引・ブザー
@@ -47,11 +47,11 @@ ASSIGN = [
     ('PB0',  'ADC1_INP9', 'FAN_ISENSE', '吸引ファンの電流(シャント抵抗の電圧をRCで平均)'),
     ('PB9',  'TIM17_CH1', 'BUZZER',    'ブザー(PWM)'),
     # IMU(SPI3)
-    ('PC10', 'SPI3_SCK',  'IMU_SCK',   'IMU SPIクロック'),
-    ('PC11', 'SPI3_MISO', 'IMU_MISO',  'IMU MISO'),
-    ('PC12', 'SPI3_MOSI', 'IMU_MOSI',  'IMU MOSI'),
-    ('PA15(JTDI)', 'GPIO_Output', 'IMU_CS',  'IMU チップセレクト'),
-    ('PB3(JTDO/TRACESWO)', 'GPIO_EXTI3', 'IMU_INT', 'IMU の INT1(データ準備完了の割り込み、EXTI3。2026-11-26 に PD2 から。H562 には PD2 がないので、SPI3 の隣のピンにした)'),
+    ('PA5',  'SPI1_SCK',  'IMU_SCK',   'IMU SPIクロック(2026-11-27 に SPI3 の PC10 から SPI1 へ。IMU のほうを向いた辺のピンにして、線が MCU を回り込まないように)'),
+    ('PA6',  'SPI1_MISO', 'IMU_MISO',  'IMU MISO(2026-11-27 に PC11 から)'),
+    ('PA7',  'SPI1_MOSI', 'IMU_MOSI',  'IMU MOSI(2026-11-27 に PC12 から)'),
+    ('PB10', 'GPIO_Output', 'IMU_CS',  'IMU チップセレクト(2026-11-27 に PA15 から)'),
+    ('PB11', 'GPIO_EXTI11', 'IMU_INT', 'IMU の INT1(データ準備完了の割り込み、EXTI11。2026-11-26 に PD2 から PB3、2026-11-27 に SPI1 の近くの PB11 へ)'),
     # 通信・デバッグ
     ('PB6',  'USART1_TX', 'UART_TX',   'PCへ(USBシリアル変換)'),
     ('PB7',  'USART1_RX', 'UART_RX',   'PCから'),
@@ -62,8 +62,8 @@ ASSIGN = [
     ('PA0',  'GPIO_Output', 'LED_MODE0', 'モード ビット0'),
     ('PA1',  'GPIO_Output', 'LED_MODE1', 'モード ビット1'),
     ('PA2',  'GPIO_Output', 'LED_MODE2', 'モード ビット2'),
-    ('PA3',  'GPIO_Output', 'LED_NUM0',  'ナンバー ビット0'),
-    ('PB10', 'GPIO_Output', 'LED_NUM1',  'ナンバー ビット1'),
+    ('PD12', 'GPIO_Output', 'LED_NUM0',  'ナンバー ビット0(2026-11-27 に PA3 から。LED のある後ろを向いた辺のピン)'),
+    ('PD11', 'GPIO_Output', 'LED_NUM1',  'ナンバー ビット1(2026-11-27 に PB10 から)'),
     ('PB12', 'GPIO_Output', 'LED_NUM2',  'ナンバー ビット2'),
     ('PB13', 'GPIO_Output', 'LED_NUM3',  'ナンバー ビット3'),
     ('PC14-OSC32_IN(OSC32_IN)', 'GPIO_Input', 'SW', 'スイッチ'),

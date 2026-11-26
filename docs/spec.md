@@ -570,12 +570,12 @@ AO4407Aが速くONになると、配線のインダクタンスとVBATのセラ�
 
 **2026-11-26: STM32H562RGV6 に替えた**(ユーザー)。H725RGV6・RGV3 も、ピンが同じ H735RGV6・H725REV6 も、LCSC・DigiKey・TME・ST の直販・Mouser・Arrow のどこにも在庫がなく(DigiKey はメーカーの納期 52 週)、JLC に取り寄せてもらう仕組みもないため(`docs/bom_t24.md` の「在庫の確認」)。
 
-- **選んだ理由**: 同じ VFQFPN68(8 × 8mm、高さ 1.0mm)で、今使っている機能(TIM1 の CH1〜4、ADC1・ADC2 の同じ入力、SPI2・SPI3、USART1、TIM16・TIM17、HSE)が同じ名前のピンに全部ある。Flash 1MB・RAM 640KB。IO は 53 本(7 本余る)。LCSC C24262461(2026-11-26: JLC の倉庫 9、LCSC 5。2 台 + 予備で 4〜5 個を事前購入で確保する)
+- **選んだ理由**: 同じ VFQFPN68(8 × 8mm、高さ 1.0mm)で、今使っている機能(TIM1 の CH1〜4、ADC1・ADC2 の同じ入力、SPI2・SPI3(2026-11-27 に IMU は SPI1 へ)、USART1、TIM16・TIM17、HSE)が同じ名前のピンに全部ある。Flash 1MB・RAM 640KB。IO は 53 本(7 本余る)。LCSC C24262461(2026-11-26: JLC の倉庫 9、LCSC 5。2 台 + 予備で 4〜5 個を事前購入で確保する)
 - **ほかの候補**: STM32H743VIH6(JLC に 260 個、ソフトはほぼそのまま)は TFBGA100(0.8mm の BGA)で、2 層で引き出せるか分からず、MCU のまわりを作り直す。G474VEH6 は RAM が 128KB で足りない。H72x/H73x の小さいパッケージはどれも在庫がない
 - **CPU は足りる**(2026-11-26 に計算。下の「制御周期」と `docs/calc/cpu_est/`): 割り込みをレジスタを直接書く形にし、制御・電流・エンコーダのコードを -O2 にすれば、CPU は 2〜3 割
 - **変わったこと**:
   - 電源: SMPS がなく LDO だけ。VCAP 2 本に 2.2µF ずつ(下の「MCUの電源」)
-  - ピンの番号(機能の名前は同じ)。PD2 がないので IMU の INT1 を PB3、前の LED を PE0 へ(`docs/pinmap.md`)
+  - ピンの番号(機能の名前は同じ)。PD2 がないので IMU の INT1 を PB3、前の LED を PE0 へ。2026-11-27 に IMU を SPI1(PA5〜PA7)・CS PB10・INT1 PB11 へ移した(IMU のほうを向いた辺。`docs/pinmap.md`)
   - ADC は 12 ビット(H725 は 16 ビット)。ハードの平均(オーバーサンプリング)で細かくできる(下の「ファンの電流の計測」、`docs/control.md`)
   - データのキャッシュがない(内蔵の RAM はどこも待ちなし)。DMA は GPDMA。Flash は 8KB のセクタ、128 ビット単位で書く。決まりは `docs/firmware_memory.md`
   - クロックは 240MHz(上限 250MHz。TIM1 の 80kHz・20kHz がちょうど割り切れる)
