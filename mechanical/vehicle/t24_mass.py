@@ -7,7 +7,8 @@ main の機体(vehicle.py v4、56.06g)の作り方で機体を作り(FAST=1)、�
   vehicle.py が t24 の値で作るもの: フレーム(frame t24v10、0.8mm・吸引する面を埋めた、z 2.0〜2.8、2026-11-23)・スカート、基板(t24v1)、ねじ(新しい位置)、ファンの台(継ぎ目 (14, ±20.3))
   なくすもの: 電池のホルダ(BATTERY_HOLDER = False。電池は両面テープで基板に貼る)
   動かすもの: 電池を 1.5mm 上へ(BATTERY_LIFT。電池の下に高さ 1.2mm までの部品を置くので、スペーサーで浮かせる)
-  そのまま: 電池、ファン、壁センサ、配線、滑り板・スカート
+  そのまま: 電池、ファン(モーター・台)、壁センサ、配線、滑り板・スカート
+  羽根: 2026-11-26 から、作った羽根 t24v6(mechanical/impeller/impeller_t24v6.step)に入れ替える
 使い方(リポジトリの一番上で): python3 mechanical/vehicle/t24_mass.py → mechanical/vehicle/vehicle_t24_mass.json、mk4_vehicle_t24.step、vehicle_t24.png"""
 import os, sys, json
 import numpy as np
@@ -89,12 +90,15 @@ assert (dz.SX, dz.SY) == (40.0, 21.3), '吸引する面が 80 × 42.6mm でな�
 new_parts = {}   # 2026-11-23(frame t24v10): 塩ビのシートはない(t24v9 まではマウントが載る所を切ったシートをここで足していた)
 for k, (s, m) in right.items():
     new_parts[k + '_R'] = (s, m); new_parts[k + '_L'] = (mirror(s), m)
+# 2026-11-26: 吸引ファンの羽根を、vehicle.py の仮の形(φ32・8 枚)から、作った羽根 t24v6(mechanical/impeller/impeller_t24.py)に入れ替える
+_imp = cq.importers.importStep(os.path.join(HERE, '../impeller/impeller_t24v6.step')).val()
+new_parts['impeller'] = (_imp.translate(cq.Vector(dz.FAN_X, 0, 0)), 'resin')
 BATTERY_HOLDER = False      # 2026-11-21: 電池のホルダはやめ、電池の底を両面テープで基板に貼るだけにする(−0.46g)
 if BATTERY_HOLDER:
     for sy, nm in ((1, 'L'), (-1, 'R')):
         new_parts[f'battery_holder_{nm}'] = (bh.holder(sy, bht.P, z0=V['Z_PCBT']).val(), 'resin')
 
-DROP = ('pc_sheet', 'mount_', 'wheel_', 'tire_', 'spur41_', 'motor_', 'shaft_', 'pinion_', 'enc_board_', 'as5047p_', 'pin_', 'brg_', 'magnet_', 'battery_holder_')
+DROP = ('impeller', 'pc_sheet', 'mount_', 'wheel_', 'tire_', 'spur41_', 'motor_', 'shaft_', 'pinion_', 'enc_board_', 'as5047p_', 'pin_', 'brg_', 'magnet_', 'battery_holder_')
 rows = [dict(r) for r in rows_v if not any(r['name'].startswith(k) for k in DROP)]
 BATTERY_LIFT = 1.5     # 2026-11-23: 電池の下に背の低い部品(高さ 1.2mm まで)を置くので、電池を厚さ 1.5mm のスペーサーで浮かせる
 for r in rows:
