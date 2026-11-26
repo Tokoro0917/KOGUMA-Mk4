@@ -1,6 +1,6 @@
 # 吸引ファンの形の比べ(流体の計算、2026-11-24)
 
-xfa273 さんの X の投稿(DMM で印刷したファン)の形と、今の MK4 のファン、その組み合わせを、35,000rpm で比べた。報告の PDF(D を足した4つの比べ): [日本語](fan_cfd_report_ja.pdf)・[English](fan_cfd_report_en.pdf)
+xfa273 さんの X の投稿(DMM で印刷したファン)の形と、今の MK4 のファン、その組み合わせを、35,000rpm で比べた。報告の PDF(D を足した4つの比べと、スカートのすき間を変えた C・D の比べ): [日本語](fan_cfd_report_ja.pdf)・[English](fan_cfd_report_en.pdf)
 
 ![3つの形の断面](../../img/tire24/fan_cfd_shapes.png)
 
