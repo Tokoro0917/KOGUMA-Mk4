@@ -11,7 +11,8 @@
 | ファイル | 部品 |
 |---|---|
 | `MP6551_MPS.pdf` | MPS MP6551(モータードライバ、Rev.1.0) |
-| `STM32H725_DS13311.pdf` | ST STM32H725xE/G(MCU、DS13311) |
+| `STM32H725_DS13311.pdf` | ST STM32H725xE/G(MCU、DS13311)。2026-11-26 に H562 へ替えたので、今は使っていない |
+| `STM32H562_DS14258.pdf` | ST STM32H562xx/563xx(MCU、DS14258 Rev 6。LCSC C24262461 の資料)。2026-11-26 に H725 から替えた。VFQFPN68 は LDO だけ(図22: VCAP 2 本に 2.2µF ずつ、ESR 100mΩ 以下は表22)、ピン配置は図6、パッケージは 6.3 章(B029、パッド 6.4 × 6.4mm) |
 | `LXDC55FAAA_Murata.pdf` | 村田 LXDC55FAAA-203(3.3V の DC-DC) |
 | `CSTNE10M0G52Z000R0_Murata.pdf` | 村田 CSTNE10M0G52Z000R0(発振子、JGC42-8974A。推奨ランドはこれを見る) |
 | `CSTNE10M0G52A000R0_Murata.pdf` | 村田 CSTNE10M0G52A000R0(発振子、LCSC C907976 の資料。車載用、仕様は Z と同じ: 10.000MHz、±0.50%、−40〜125°C、温度で ±0.20%、経年 ±0.10%、40Ω 以下、10pF、3.2 × 1.3mm)。2026-11-26 に Y1 をこれに替えた |
