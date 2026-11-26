@@ -15,7 +15,7 @@ X = lambda v: pcbnew.ToMM(v) - 150; Y = lambda v: 100 - pcbnew.ToMM(v)
 # 名前: ref → (名前, 色)
 C_MCU, C_MOT, C_PWR, C_SEN, C_UI, C_FAN = '#4c78a8', '#e45756', '#f58518', '#54a24b', '#b279a2', '#9d755d'
 NAMES = {
- 'U4': ('マイコン\nSTM32H725', C_MCU), 'U76': ('IMU\n(ジャイロ・加速度)', C_MCU), 'Y1': ('発振子', C_MCU),
+ 'U4': ('マイコン\nSTM32H562', C_MCU), 'U76': ('IMU\n(ジャイロ・加速度)', C_MCU), 'Y1': ('発振子', C_MCU),
  'U2': ('左モーターの\nドライバ MP6551', C_MOT), 'U3': ('右モーターの\nドライバ MP6551', C_MOT),
  'U6': ('左モーターの電流\nINA241A3', C_MOT), 'U7': ('右モーターの電流\nINA241A3', C_MOT),
  'R22': ('左のシャント 5mΩ', C_MOT), 'R32': ('右のシャント 5mΩ', C_MOT),
