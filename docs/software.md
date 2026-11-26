@@ -70,7 +70,7 @@ software/
 
 | 層 | ファイル | 中身 | ToraNeko との違い |
 |---|---|---|---|
-| drv | `motor.c` | TIM1 の duty、MOT_EN、nFAULT | TIM1(センターアラインド、40kHz から) |
+| drv | `motor.c` | TIM1 の duty、MOT_EN、nFAULT | TIM1(センターアラインド、80kHz) |
 | drv | `current.c`(新) | ADC2(INA241A3 の電流 2 本・CMS 2 本・電池)を TIM1 で起動し、DMA で受ける | 新しい |
 | drv | `wall.c` | 壁センサの発光と ADC1 | 順番を 20kHz の割り込みで進める(4章) |
 | drv | `encoder.c` | MT6835 × 2(SPI2 + DMA、CRC) | AS5047P から変える |
@@ -122,8 +122,8 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 ### 4.1 TIM1
 
-- モーターの PWM(CH1〜CH4 = 左右の IN1・IN2)。**センターアラインド**。PWM の周波数は **40kHz から**(モーターのインダクタンスを測ってから 40〜80kHz で決める、`docs/control.md`)。400MHz のときタイマーのクロックは 200MHz で、ARR 2500(設定は `software/main-controller/CUBEMX_SETUP.md`)
-- 繰り返しのカウンタで **2 周期に 1 回(20kHz)** ADC2 を起動する
+- モーターの PWM(CH1〜CH4 = 左右の IN1・IN2)。**センターアラインド**。PWM の周波数は **80kHz**(2026-11-26 決定。コアレスモーターの電流の上下を小さくするため。`docs/spec.md` の「モーターの PWM の周波数」。前は 40kHz から始めて 40〜80kHz で決める予定だった、`docs/control.md`)。400MHz のときタイマーのクロックは 200MHz で、ARR 2500(設定は `software/main-controller/CUBEMX_SETUP.md`)
+- 繰り返しのカウンタで **4 周期に 1 回(20kHz)** ADC2 を起動する(400MHz のときタイマーのクロックは 200MHz で ARR 1250、Repetition Counter 7)
 - 吸引ファンの TIM16 は、TIM1 と**同じ周期にして同時にスタート**する(同じクロックなのでずれない)。壁センサを読む位置が、車輪とファンの PWM のいつも同じ所になる
 
 ### 4.2 ADC2(モーターの電流と電池、20kHz)
@@ -332,7 +332,6 @@ ToraNeko は 2kHz の割り込み 1 つで制御を回す。MK4 は電流の制�
 
 ## 15. まだ決めていないこと
 
-- PWM の周波数(40〜80kHz。インダクタンスを測ってから)
 - ブザーの音の割り当て
 - 吸引ありの探索の No.(KOGUMA のモード0 の吸引探索から何を持ってくるか)
 - ログの列の最終形と、1 回の走行で取る長さ
