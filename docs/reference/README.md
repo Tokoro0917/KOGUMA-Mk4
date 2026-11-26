@@ -31,11 +31,13 @@
 | `SFH229FA_ams-OSRAM.pdf` | ams OSRAM SFH 229 FA(壁センサの受光、Version 1.6)。**2025-11-28 に生産終了**。ユーザーから(2026-11-23) |
 | `APTD1608LSECK-J4-PF_Kingbright.pdf` | Kingbright APTD1608LSECK/J4-PF(LED、1608、高さ 0.95mm、1番がカソード)。ユーザーから(2026-11-23) |
 | `SMT-0540-S-R_PUI.pdf` | PUI Audio SMT-0540-S-R(ブザー、推奨ランド)。ユーザーから(2026-11-23) |
-| `TVAF06-A020B-R_Jianfu.pdf` | Jianfu TVAF06-A020B-R(タクトスイッチ、仕様書 2011101401)。ユーザーから(2026-11-23) |
+| `TVAF06-A020B-R_Jianfu.pdf` | Jianfu TVAF06-A020B-R(タクトスイッチ、仕様書 2011101401)。ユーザーから(2026-11-23)。2026-11-26 に TS-1088-AR02016 へ替えた |
+| `TS-1088-AR_XUNPU.pdf` | XUNPU TS-1088-AR シリーズ(タクトスイッチ SW2 の TS-1088-AR02016、LCSC C720477)。3.0 × 3.9mm(つめを入れて 5.0)、高さ 2.0mm、160gf、DC 12V 50mA、位置決めの足なし。推奨ランド 2.00 × 1.05mm を外 5.50・内 3.40mm。2026-11-26 |
 | `SSSS8_Alps.pdf` | Alps Alpine SSSS8 シリーズ(電源スイッチ SSSS810701 は図番 3。定格 0.3A 5V DC)。ユーザーから(2026-11-23) |
 | `GRM219R61E106KA12_Murata.pdf` | 村田 GRM219R61E106KA12(10µF 25V 0805、厚さ 0.85±0.1mm)。ユーザーから(2026-11-23) |
 | `AO4407A_AOS.pdf` | AOS AO4407A(電源スイッチの MOSFET Q1、Rev 11.1。SOA で電源を入れた瞬間を確かめた)。ユーザーから(2026-11-23) |
 | `T52x_KEMET_T2076.pdf` | KEMET T52x(ポリマータンタル、T521V476M025ATE040 は V ケース 1.9±0.1mm、ESR 40mΩ)。ユーザーから(2026-11-23) |
-| `PMR18_ROHM_ja.pdf` | ROHM PMR18EZP(モーターの電流のシャント 5mΩ、1W は端子 80°C まで、厚さ 0.42±0.15mm)。ユーザーから(2026-11-23) |
+| `PMR18_ROHM_ja.pdf` | ROHM PMR18EZP(モーターの電流のシャント 5mΩ、1W は端子 80°C まで、厚さ 0.42±0.15mm)。ユーザーから(2026-11-23)。5mΩ は 2026-11-26 に RLM12 へ替えた(10mΩ のファンの R43 はこのまま) |
+| `RLM12_TA-I.pdf` | TA-I RLM12 シリーズ(TRLM-120S032E。モーターの電流のシャント R22・R32 の RLM12FTCMR005、LCSC C316225)。金属板、1W、±50ppm/°C、−55〜170°C、AEC-Q200、3.2 × 1.6 × 0.6±0.2mm。2026-11-26 |
 | `MBR230LSFT1_onsemi.pdf` | onsemi MBR230LSFT1G(ファンの還流ダイオード D40、推奨パッド)。ユーザーから(2026-11-23) |
 | `BLM18PG_Murata_ENFA0003.pdf` | 村田 BLM18 シリーズ(フェライトビーズ FB1・FB2、BLM18PG221SN1D)。ユーザーから(2026-11-23) |
