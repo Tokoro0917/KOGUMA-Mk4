@@ -1,9 +1,11 @@
-"""吸引ファンの羽根(t24v4、C 案 φ30・9 枚・まっすぐ)が、遠心力でもげないかを立体の FEM で調べる
+"""吸引ファンの羽根(t24v5、C 案 φ30・9 枚・まっすぐ。t24v4 も同じやり方)が、遠心力でもげないかを立体の FEM で調べる
 (2026-11-26、ユーザー「はねはもげないですか?」)。
 使い方(gmsh と scikit-fem のある Python で。リポジトリの一番上から):
-    python docs/calc/fan_cfd/impeller_fem.py  → 数字と docs/img/tire24/impeller_fem_t24v4.png
+    python docs/calc/fan_cfd/impeller_fem.py  → 数字と docs/img/tire24/impeller_fem_t24v5.png
+    python docs/calc/fan_cfd/impeller_fem.py mechanical/impeller/impeller_t24v4.step t24v4 7.2  → 前の形
+結果(64,000rpm、高精細プラスチック): t24v4 は上の板の羽の内の端の角で 67MPa(安全率 0.9)。t24v5 は外の壁の下の端で 28MPa(2.1)
 やり方(docs/calc/t24_wheel_fem.py と同じ道具):
-  - 形は mechanical/impeller/impeller_t24v4.step(羽根の中心が原点、z は床から上)
+  - 形は mechanical/impeller/impeller_t24v5.step(羽根の中心が原点、z は床から上)
   - gmsh で四面体に分け、scikit-fem の 2 次の要素で線形の弾性を解く
   - 自由度が約 86 万あり、直接法(splu)ではメモリ(15GB)が足りないので、AMG(pyamg)で前処理した共役勾配法で解く
   - 力: 遠心力(体積あたり ρ ω² r、外向き)。空気が羽を押す力は、トルク 1.7mN·m(64,000rpm)を 9 枚で分けても
@@ -27,8 +29,8 @@ import matplotlib.pyplot as plt
 
 plt.rcParams['font.family'] = 'IPAGothic'
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../..')
-STEP = os.path.join(ROOT, 'mechanical/impeller/impeller_t24v4.step')
-TAG = 't24v4'
+STEP = os.path.join(ROOT, 'mechanical/impeller/impeller_t24v5.step')
+TAG = 't24v5'
 if len(sys.argv) > 2:          # 別の形を調べるとき: python impeller_fem.py <STEP> <名前>
     STEP = sys.argv[1]
     TAG = sys.argv[2]
@@ -135,7 +137,7 @@ def stresses(basis, u):
     return vm.max(axis=1), ev[..., 2].max(axis=1)
 
 
-Z_PLATE_BOTTOM = 7.2          # 上の板の下の面(main で形から読み直す)
+Z_PLATE_BOTTOM = 6.8          # 上の板の下の面(t24v5。t24v4 は 7.2: 3 番目の引数で変える)
 
 
 def where(c):
