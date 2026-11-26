@@ -9,13 +9,13 @@
   "iz": 265.0
  },
  "t24": {
-  "mass": 60.71,
+  "mass": 60.94,
   "cg": [
-   -0.14,
+   -0.15,
    -0.0,
-   13.74
+   13.66
   ],
-  "iz": 298.3,
+  "iz": 299.5,
   "groups": [
    {
     "group": "フレーム・シート・スカート・滑り板",
@@ -39,13 +39,13 @@
    },
    {
     "group": "吸引ファン",
-    "m": 7.82,
-    "iz": 21.1
+    "m": 8.43,
+    "iz": 23.2
    },
    {
     "group": "基板 + 部品",
-    "m": 6.14,
-    "iz": 45.2
+    "m": 5.76,
+    "iz": 44.3
    },
    {
     "group": "電池 + ホルダ",
@@ -94,7 +94,8 @@
    "brg_in_R": 0.191,
    "brg_in_L": 0.191,
    "magnet_R": 0.053,
-   "magnet_L": 0.053
+   "magnet_L": 0.053,
+   "impeller": 1.414
   }
  },
  "clearances": [
@@ -195,6 +196,12 @@
    "overlap": 0.55
   },
   {
+   "a": "fan_shaft",
+   "b": "impeller",
+   "gap": 0.0,
+   "overlap": 0.161
+  },
+  {
    "a": "frame",
    "b": "mount_R",
    "gap": 0.0,
@@ -267,6 +274,18 @@
    "overlap": 0.0
   },
   {
+   "a": "fan_motor",
+   "b": "impeller",
+   "gap": 0.2,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_case",
+   "b": "impeller",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
    "a": "mount_R",
    "b": "pinion_R",
    "gap": 0.3,
@@ -300,18 +319,6 @@
    "a": "mt6835_L",
    "b": "magnet_L",
    "gap": 0.3,
-   "overlap": 0.0
-  },
-  {
-   "a": "pcb",
-   "b": "tire_R",
-   "gap": 0.304,
-   "overlap": 0.0
-  },
-  {
-   "a": "pcb",
-   "b": "tire_L",
-   "gap": 0.304,
    "overlap": 0.0
   },
   {
