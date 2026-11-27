@@ -172,7 +172,7 @@ PC で `python tools/fw.py build/app.bin`(ビューアのボタンでもよい)�
 
 - 最初の1回だけ TP2・TP3(nRF52832 の SWD)で書く。Nordic のブートローダ(DFU)も一緒に入れておき、そのあとは BLE で書き換える(nRF Connect のアプリなど)
 - **HY0020 は中身が空で届く**(データシート: "blank radio module")。なので、橋渡しのプログラムを自分で書き込まないと何も動かない(2026-11-27 に確かめた)
-- 書き込み器(案、まだ決めていない): nRF52 DK(中の J-Link を、外の基板の書き込みに使える)か J-Link EDU Mini。STLINK でも OpenOCD で書ける場合があるが、nRF52832 の読み出しの禁止(APPROTECT)を外す操作ができないことがあるので、Nordic が勧める J-Link を使うのが確実
+- 書き込み器(案、まだ決めていない): **CMSIS-DAP の書き込み器**なら何でもよい(OpenOCD・pyOCD で nRF52832 を書け、読み出しの禁止(APPROTECT)を外す操作もできる)。安いのは Raspberry Pi Pico に公式の debugprobe を入れたもの。ESP32 で作る CMSIS-DAP(無線のものもある)も同じように使えるはず(未確認)。Nordic の道具(nRF Connect)をそのまま使うなら nRF52 DK か J-Link。STLINK は、APPROTECT を外す操作ができないことがあるので勧めない(2026-11-27、ユーザー: 知り合いは ESP で書き込んでいた)
 
 ## 7. 作るもの
 
