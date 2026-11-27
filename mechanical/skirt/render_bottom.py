@@ -2,8 +2,9 @@
 使い方(リポジトリの一番上で): python3 mechanical/skirt/render_bottom.py → mechanical/skirt/bottom_view_t24.png
 機体は mechanical/vehicle/mk4_vehicle_t24.step(部品の名前がないので、色は外形の位置で決める)。
 機体のモデルに入っている仮のスカート(吸引する面のふちのフィルム、z 0.5〜2.0)は描かない。
-二次スカートは、枠の下の面に貼った平らな所(厚さ 0.05mm)と、外のふちで下へ折って床まで垂らした所で表す"""
+二次スカート(袋 t24v2)は、枠の下の面に貼った平らな 1 枚(厚さ 0.05mm)で表す。実物は枠から外がやわらかく床の方へたれる"""
 import os
+import sys
 import numpy as np
 import cadquery as cq
 import matplotlib
@@ -56,16 +57,18 @@ skirt = cq.importers.importStep(SKIRT).val()
 T = tris(skirt)
 TT.append(T)
 CC += ['#f28e2b'] * len(T)
-# 二次スカート: 枠の下に貼った平らな輪 + 外のふちで床まで垂らした壁
-z_film = Z_SKIRT_BOTTOM - 0.15 - FILM_T          # 両面テープ 0.15mm の下
-flat = (cq.Workplane('XY').workplane(offset=z_film).rect(2 * X_OUT, 2 * Y_OUT).extrude(FILM_T)
-        .cut(cq.Workplane('XY').workplane(offset=z_film - 0.1).rect(2 * (X_OUT - W), 2 * (Y_OUT - W)).extrude(FILM_T + 0.2)))
-hang = (cq.Workplane('XY').rect(2 * X_OUT, 2 * Y_OUT).extrude(z_film)
-        .cut(cq.Workplane('XY').workplane(offset=-0.1).rect(2 * X_OUT - 2 * FILM_T, 2 * Y_OUT - 2 * FILM_T).extrude(z_film + 0.2)))
-for part in (flat, hang):
-    T = tris(part.val())
-    TT.append(T)
-    CC += ['#3a7bd5'] * len(T)
+# 二次スカート(袋 t24v2): film_t24.py の形を、枠の下の面(両面テープの下)に平らに置く
+sys.path.insert(0, HERE)
+import film_t24
+z_film = Z_SKIRT_BOTTOM - 0.15 - FILM_T
+film2d = film_t24.film_outline()
+film_wp = cq.Workplane('XY').workplane(offset=z_film).polyline(list(film2d.exterior.coords)[:-1]).close().extrude(FILM_T)
+for hole in film2d.interiors:
+    film_wp = film_wp.cut(cq.Workplane('XY').workplane(offset=z_film - 0.1).polyline(list(hole.coords)[:-1]).close().extrude(FILM_T + 0.2))
+flat = film_wp
+T = tris(flat.val())
+TT.append(T)
+CC += ['#3a7bd5'] * len(T)
 TT = np.concatenate(TT)
 
 plt.rcParams['font.family'] = 'IPAPGothic'
@@ -93,7 +96,6 @@ for s in veh.Solids():
         shapes.append((s, c))
 shapes.append((skirt, '#f28e2b'))
 shapes.append((flat.val(), '#3a7bd5'))
-shapes.append((hang.val(), '#3a7bd5'))
 for s, c in shapes:
     bb = s.BoundingBox()
     if bb.xmin > X_CUT or bb.xmax < X_CUT:
@@ -109,7 +111,7 @@ ax2.axhline(0, color='#888888', lw=1)
 ax2.text(24.2, 0.15, '床', fontsize=10, color='#555555')
 ax2.annotate('フレーム(z 2.0〜2.8)', xy=(20, 2.4), xytext=(20.5, 3.7), fontsize=9, arrowprops=dict(arrowstyle='->', lw=0.6))
 ax2.annotate('一次スカート(z 1.0〜1.85)\n上に両面テープ 0.15mm', xy=(14.8, 1.4), xytext=(9.3, 3.4), fontsize=9, arrowprops=dict(arrowstyle='->', lw=0.6))
-ax2.annotate('二次スカート(青い袋)\n枠の外のふちで下へ折って垂らす', xy=(16.2, 0.4), xytext=(9.3, -1.3), fontsize=9, arrowprops=dict(arrowstyle='->', lw=0.6))
+ax2.annotate('二次スカート(青い袋 t24v2)\n枠の下に貼る。枠から外はたれて床へ', xy=(19.0, 0.8), xytext=(9.3, -1.3), fontsize=9, arrowprops=dict(arrowstyle='->', lw=0.6))
 ax2.annotate('マウントのねじの頭\n(z 0.9〜2.0)', xy=(18.4, 1.0), xytext=(19.5, -1.3), fontsize=9, arrowprops=dict(arrowstyle='->', lw=0.6))
 ax2.set_xlim(9, 26)
 ax2.set_ylim(-1.8, 4.6)
@@ -117,7 +119,7 @@ ax2.set_aspect('equal')
 ax2.set_xlabel('中心から右への距離 [mm](−y)')
 ax2.set_ylabel('z [mm](床から)')
 ax2.set_title(f'右の横の断面(x = {X_CUT:g}、ねじの所。前から見る)', fontsize=12)
-fig.suptitle('機体の裏: 一次スカート t24v3(橙、枠 80 × 32.4mm・幅 2.5mm)と二次スカート(青、Digi-Key の袋、外へ 1.0mm 垂らす)', fontsize=12)
+fig.suptitle('機体の裏: 一次スカート t24v3(橙、枠 80 × 32.4mm・幅 2.5mm)と二次スカート(青、Digi-Key の袋 t24v2、96 × 44mm)', fontsize=12)
 fig.tight_layout(rect=(0, 0, 1, 0.95))
 out = os.path.join(HERE, 'bottom_view_t24.png')
 fig.savefig(out, dpi=110)
