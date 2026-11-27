@@ -15,7 +15,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 - そのピンに、割り当てた機能(タイマのチャンネル、ADCの入力、SPI、USARTなど)があるか
 - 同じピン、同じタイマのチャンネル、同じADCの入力を2回使っていないか
 
-**結果: OK**。使う46本、残り7本(2026-11-27、STM32H562RGVx。IMU を SPI1 へ移したあと)。
+**結果: OK**。使う52本、残り1本(2026-11-27、STM32H562RGVx。あまったピンに LED を 6 個足したあと)。
 
 確かめていないこと(CubeMXで.iocを作るときに確かめる): クロックの設定、DMAの割り当て、ADCを2つ同時に動かす設定、タイマの周波数。
 
@@ -23,6 +23,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 
 | ピン番号 | ピン | 機能 | ネット名 | 用途 |
 |---|---|---|---|---|
+| 2 | PC13 | GPIO_Output | LED_WALL_FR | 壁の表示 FR(D113、前の右の角。2026-11-27。PC13 は 3mA・2MHz まで) |
 | 3 | PC14-OSC32_IN | GPIO_Input | SW | スイッチ |
 | 4 | PC15-OSC32_OUT | GPIO_Output | ENC_CAL | エンコーダの校正(MT6835 の CAL_EN、左右共通) |
 | 5 | PH0-OSC_IN | RCC_OSC_IN | OSC_IN | 発振子(HSE、10MHz) |
@@ -31,9 +32,9 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 | 9 | PC1 | ADC1_INP11 | WALL_L | 壁センサ 左 |
 | 10 | PC2 | ADC1_INP12 | WALL_R | 壁センサ 右。2026-11-27 に PA6 から(前を向いた辺) |
 | 11 | PC3 | ADC1_INP13 | WALL_FR | 壁センサ 右前。2026-11-27 に PA7 から(前を向いた辺) |
-| 14 | PA0 | GPIO_Output | LED_MODE0 | モード ビット0 |
-| 15 | PA1 | GPIO_Output | LED_MODE1 | モード ビット1 |
-| 16 | PA2 | GPIO_Output | LED_MODE2 | モード ビット2 |
+| 14 | PA0 | GPIO_Output | LED_WALL_FL | 壁の表示 FL(D110、前の左の角。2026-11-27) |
+| 15 | PA1 | GPIO_Output | LED_WALL_L | 壁の表示 L(D111、左の横。2026-11-27) |
+| 16 | PA2 | GPIO_Output | LED_WALL_R | 壁の表示 R(D112、右の横。2026-11-27) |
 | 17 | PA3 | ADC2_INP15 | MOT_R_CMS | 右の MP6551 の CM1 + CM2(下の FET の電流の和 ≒ 電池から出る電流、2026-11-23)。2026-11-27 に PA5 から |
 | 20 | PA4 | ADC2_INP18 | MOT_R_I | 右モーターの電流(INA241A3 の出力、2026-11-23。それまでは MP6551 の CM1) |
 | 21 | PA5 | SPI1_SCK | IMU_SCK | IMU SPIクロック。2026-11-27 に SPI3(PC10)から SPI1 へ(IMU のほうを向いた辺) |
@@ -54,6 +55,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 | 39 | PD12 | GPIO_Output | LED_NUM0 | ナンバー ビット0。2026-11-27 に PA3 から(LED のある後ろを向いた辺) |
 | 40 | PC6 | GPIO_Output | ENC_L_CS | 左エンコーダ チップセレクト |
 | 41 | PC7 | GPIO_Output | ENC_R_CS | 右エンコーダ チップセレクト |
+| 42 | PC8 | GPIO_Output | LED_MODE0 | モード ビット0。2026-11-27 に PA0 から(後ろを向いた辺) |
 | 43 | PC9 | GPIO_Input | MOT_nFAULT | ドライバ2個のnFAULT(オープンドレインを共通に) |
 | 44 | PA8 | TIM1_CH1 | MOT_L_IN1 | 左モーター IN1(PWM) |
 | 45 | PA9 | TIM1_CH2 | MOT_L_IN2 | 左モーター IN2(PWM) |
@@ -62,6 +64,10 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 | 48 | PA12 | SPI2_SCK | ENC_SCK | エンコーダ SPIクロック |
 | 49 | PA13(JTMS/SWDIO) | DEBUG_JTMS-SWDIO | SWDIO | 書き込み・デバッグ |
 | 52 | PA14(JTCK/SWCLK) | DEBUG_JTCK-SWCLK | SWCLK | 書き込み・デバッグ |
+| 53 | PA15(JTDI) | GPIO_Output | LED_MODE1 | モード ビット1。2026-11-27 に PA1 から |
+| 54 | PC10 | GPIO_Output | LED_MODE2 | モード ビット2。2026-11-27 に PA2 から |
+| 55 | PC11 | GPIO_Output | LED_STATUS0 | 状態の LED 0(D114、前の LED の左。2026-11-27) |
+| 56 | PC12 | GPIO_Output | LED_STATUS1 | 状態の LED 1(D115、前の LED の右。2026-11-27) |
 | 58 | PB4(NJTRST) | GPIO_Output | WALL_LED_FL_R | 壁センサの発光 FL と R(NJU6080 2個のPWM端子。MK3 の WallLED_12) |
 | 59 | PB5 | GPIO_Output | WALL_LED_L_FR | 壁センサの発光 L と FR(NJU6080 2個のPWM端子。MK3 の WallLED_34) |
 | 60 | PB6 | USART1_TX | UART_TX | PCへ(USBシリアル変換)と BLE モジュール HY0020 の受信(P0.08、2026-11-23) |
@@ -72,7 +78,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 
 ## 残りのピン
 
-**7本**(2026-11-27): PC13(2番)、PC8(42番)、PA15(53番)、PC10・PC11・PC12(54〜56番)、PB3(57番)。2026-11-26 に H562 にして増えた分(PC2・PC3・PB11・PD11・PD12)は、2026-11-27 に IMU を SPI1 へ移したときに使った。回路図では × にしてある。ソフトで出力の L にしておく(浮かせない)。H725 のとき(2026-10-31〜11-26)は46本すべて使っていた。**SWO は使わない**: ログは今までどおり UART(J7 の STLINK-V3MODS の仮想COMポート)で出す。MK3 のビューア(`tools/viewer.html`)が USB シリアルで読むため。ピンが足りなくなったら、LED 8個をシフトレジスタ(3本)にすれば5本空く
+**1本**(2026-11-27): PB3(57番。TIM2_CH2、I2C2_SDA、UART7_RX、SPI1・3 の SCK にもなる)。回路図では × にしてある。ソフトで出力の L にしておく。2026-11-27 に、あまっていた 7 本と、モードの LED を移してあいた PA0〜PA2 を、壁の表示 LED 4個・状態の LED 2個・モードの LED 3個に使った(ユーザー)。
 
 ## 割り当ての考え方
 
@@ -84,7 +90,7 @@ python3 docs/calc/check_pins.py STM32_open_pin_data/mcu/STM32H562RGVx.xml
 - **吸引ファン・ブザー**: TIM16・TIM17
 - **IMU**: **SPI1(PA5 SCK・PA6 MISO・PA7 MOSI)、CS は PB10(GPIO)、INT1 は PB11(EXTI11)**(2026-11-27。前は SPI3(PC10〜12)・CS PA15・INT1 PB3 で、IMU(回転の中心のそば)と反対の辺から出ていたので、5本が MCU を回り込んでいた。ユーザー: 部品配置の見直し。INT1 は 2026-10-31 に PD2 で決め、H562 で PB3 になっていた): 新しい値ができたら割り込みで知らせる(データ準備完了)。同じ値を2回読んだり、古い値を使ったりしないため。使わないときはソフトで無視すればよい。EXTI の2番を使う入力はほかにない(スイッチ PC14 は14番、nFAULT PC9 は9番)。INT2 はつながない
 - **UART**: USART1(PB6・PB7)。PA9・PA10はモーターのPWMに、PB14・PB15はエンコーダのSPI2に使うので、USART1の3つ目の組にした
-- **LED**: モード3ビットはPA0〜PA2、ナンバー4ビットはPD12・PD11・PB12・PB13(2026-11-27 に PA3・PB10 から。LED のある後ろを向いた辺へ)、前の LED は PE0(2026-10-31 に PB3、2026-11-26 に PE0 へ)
+- **LED**: モード3ビットはPC8・PA15・PC10(2026-11-27 に PA0〜PA2 から。LED のある後ろを向いた辺へ)、ナンバー4ビットはPD12・PD11・PB12・PB13(2026-11-27 に PA3・PB10 から。LED のある後ろを向いた辺へ)、前の LED は PE0(2026-10-31 に PB3、2026-11-26 に PE0 へ)。**壁の表示 LED**(2026-11-27)は PA0・PA1・PA2・PC13(FL・L・R・FR、前を向いた辺)、**状態の LED** は PC11・PC12
 - **スイッチ**: PC14(OSC32_IN)。入力なので、流せる電流が小さくても問題ない
 - **発振子(HSE)**: 10MHz のセラミック発振子(CSTNE10M0G52A000R0。MK3 の CSTNE10M0G52Z000R0 と同じ仕様で、2026-11-26 に在庫のある品に替えた)を PH0・PH1 に付ける(2026-10-29)。PLL で 240MHz にする(例: 10MHz ÷ 1 × 48 ÷ 2。2026-11-26: H562 の上限は 250MHz だが、TIM1 の 80kHz・20kHz がちょうど割り切れる 240MHz にする。H725 のときは 550MHz の予定だった)。2026-10-12 には付けず HSI にしていた
 

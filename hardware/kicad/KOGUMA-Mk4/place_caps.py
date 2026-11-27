@@ -292,9 +292,9 @@ def try_place(ref, x, y, placed):
 LED_R = {}
 for f in FP.values():
     r = f.GetReference()
-    if r.startswith('R9') and r not in ('R97', 'R98'):
+    if (r.startswith('R9') and r not in ('R97', 'R98')) or (T24 and r in ('R110', 'R111', 'R112', 'R113', 'R114', 'R115')):   # R110〜R115 は 2026-11-27 に足した LED の抵抗(t24 だけ。main の基板では D110〜D115 の場所を決めていないので置かない)
         led = [q.GetParentFootprint().GetReference() for p in f.Pads() for q in board.GetPads()
-               if q.GetNetCode() == p.GetNetCode() and q.GetParentFootprint().GetReference().startswith('D9')]
+               if q.GetNetCode() == p.GetNetCode() and (q.GetParentFootprint().GetReference().startswith('D9') or q.GetParentFootprint().GetReference().startswith('D11'))]
         if led:
             LED_R[r] = led[0]
 for r, led in sorted(LED_R.items()):
