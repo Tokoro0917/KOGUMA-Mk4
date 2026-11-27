@@ -193,6 +193,10 @@ PC で `python tools/fw.py build/app.bin`(ビューアのボタンでもよい)�
 
 ## 9. 有線と無線のぶつかり(回路で防ぐ。2026-11-23)
 
+![BLE・有線とマイコンのつながり](img/ble_uart.png)
+
+(図は `docs/img/ble_uart.py` で作る。2026-11-27)
+
 ユーザーの決定: **ぶつかりは回路で防ぎ、書き込みのタイミングを人が気にしなくてよいようにする**。回路は `hardware/kicad/KOGUMA-Mk4/ui.kicad_sch`。
 
 | ぶつかり | 防ぎ方 |
