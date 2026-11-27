@@ -174,6 +174,31 @@ PC で `python tools/fw.py build/app.bin`(ビューアのボタンでもよい)�
 - **HY0020 は中身が空で届く**(データシート: "blank radio module")。なので、橋渡しのプログラムを自分で書き込まないと何も動かない(2026-11-27 に確かめた)
 - 書き込み器(案、まだ決めていない): **CMSIS-DAP の書き込み器**なら何でもよい(OpenOCD・pyOCD で nRF52832 を書け、読み出しの禁止(APPROTECT)を外す操作もできる)。安いのは Raspberry Pi Pico に公式の debugprobe を入れたもの。ESP32 で作る CMSIS-DAP(無線のものもある)も同じように使えるはず(未確認)。Nordic の道具(nRF Connect)をそのまま使うなら nRF52 DK か J-Link。STLINK は、APPROTECT を外す操作ができないことがあるので勧めない(2026-11-27、ユーザー: 知り合いは ESP で書き込んでいた)
 
+### 6.6 HY0020 の最初の書き込みの手順(2026-11-27。道具は Raspberry Pi Pico の debugprobe の場合)
+
+HY0020 は中身が空で届くので、基板に載せたあと、最初に1回だけ SWD で書く。2回目からは BLE で書き換える(DFU)。
+
+**HY0020 の中で使う端子**(データシートの表と回路図 `ui.kicad_sch` の U5): P0.08 = 受信(マイコンの UART_TX から)、P0.06 = 送信(D99 → UART_RX)、P0.04 = UART_RX を見るだけ、P0.07 = マイコンの NRST を L に引く(D101)。
+32MHz と 32.768kHz の水晶は中にある(データシートの図3-1)。nRESET(P0.21)はつないでいない(中のプルアップのまま)。
+
+**プログラム**(`software/ble/`、まだ作っていない): nRF Connect SDK の見本 `peripheral_uart`(Nordic UART Service)を元に、ボードは `nrf52dk/nrf52832` で作る。
+nRF52 DK の UART のピンは TX P0.06・RX P0.08 で HY0020 の使い方と同じなので、そのまま使える。ただし **DK の初めの設定のハードの流れ制御(RTS P0.05・CTS P0.07)は切る**(P0.07 はマイコンのリセットに使うため)。DC/DC を ON(`CONFIG_BOARD_ENABLE_DCDC=y`)、名前は `KOGUMA-MK4`。
+ビルドすると、DFU 用のブートローダ(MCUboot)も入った `merged.hex` ができる。
+
+**作者がやること**(上から順に):
+
+1. 書き込み器を作る: Raspberry Pi Pico の BOOTSEL のボタンを押しながら PC の USB に挿す → 出てきたドライブに、Raspberry Pi の公式の `debugprobe_on_pico.uf2`(GitHub の raspberrypi/debugprobe の Releases)をコピーする。ドライブが消えれば成功
+2. PC に pyOCD を入れる: `pip install pyocd` → `pyocd list` で Pico(「CMSIS-DAP」と出る)が見えれば成功
+3. 線をつなぐ(3本): Pico の **GP2 → TP3(BLE_SWDCLK)**、**GP3 → TP2(BLE_SWDIO)**、**GND → 機体の GND**(J7 の5番など)。TP2・TP3 は前の BLE モジュール U5 の右の 1mm の丸いパッド。細い線をはんだ付けするか、ばねのピンを当てる
+4. 機体の電源を入れる(電池。Pico から機体に電気は送らない)
+5. 消す: `pyocd erase -t nrf52832 --mass -f 1m`。「locked」などと出たら、`--mass` のまま、もう一度(読み出しの禁止を外しながら全部消す)
+6. 書く: `pyocd flash -t nrf52832 -f 1m merged.hex`。最後に「Programmed」などと出れば成功
+7. 確かめる: スマホに Nordic の「nRF Connect」アプリを入れ、SCAN を押す → **KOGUMA-MK4** が出れば成功。CONNECT → 「Nordic UART Service」が見えれば、マイコンとの橋渡しが動いている
+8. 線を外す(2回目からは BLE で書き換える)
+
+- pyOCD の代わりに OpenOCD(`interface/cmsis-dap.cfg` と `target/nrf52.cfg`)でも書ける。nRF52 DK や J-Link があれば、Nordic の nRF Connect for Desktop の「Programmer」で書いてもよい
+- 書き込みの間、マイコン(STM32)は動いていてよい(HY0020 の SWD はマイコンとつながっていない)
+
 ## 7. 作るもの
 
 | ソフト | 中身 | もと |
