@@ -232,3 +232,60 @@ ax.set_title('ファンの中心を通る断面(y = 0、右から見る)。羽�
 fig.suptitle(f'タイヤ24mm の機体 t24: {M:.1f}g、重心 ({CG[0]:.2f}, {CG[1]:.2f}, {CG[2]:.2f}) mm、慣性モーメント {Izz:.0f} g·cm²', fontsize=12)
 fig.tight_layout(rect=(0, 0, 1, 0.97)); fig.savefig(os.path.join(HERE, 'vehicle_t24.png'), dpi=100)
 print('絵', os.path.join(HERE, 'vehicle_t24.png'))
+
+# ---- 絵(2026-11-27、ユーザー「今わかってる色で機体を見せて」): 注文した材料の色で描く。一次スカート・二次スカート(袋)も足す ----
+# 色が決まっていないもの(基板・一次スカートのフィラメント・電池など)は仮の色。部品の名前の頭で色を決める
+REAL = [('frame', '#262626'),                      # カーボン
+        ('mount_', '#e6d39a'), ('fan_case', '#e6d39a'),   # JLC Temp Resin(薄い黄色)
+        ('wheel_', '#1a1a1a'), ('sensor_holder_', '#1a1a1a'),   # JLC Black Resin
+        ('impeller', '#f4f4f4'),                   # DMM 高精細プラスチック(白、仮)
+        ('tire_', '#3b3b3b'), ('spur71_', '#f0f0f0'),     # タイヤ(ゴム)、71T(白、仮)
+        ('motor_', '#b8b8b8'), ('fan_motor', '#b8b8b8'),
+        ('pcb', '#2e8b57'), ('enc_board_', '#2e8b57'), ('mt6835_', '#202020'),   # 基板(色は未定、仮に緑)
+        ('battery', '#9aa0a6'),                    # 電池(仮)
+        ('sensor_', '#5aa0ff'),
+        ('skid_', '#f5f5f5'),                      # カグスベール
+        ('screw_', '#777777'), ('nut_', '#777777'), ('pin_', '#9a9a9a'), ('shaft_', '#9a9a9a'), ('fan_shaft', '#9a9a9a'),
+        ('brg_', '#9a9a9a'), ('magnet_', '#8a8a8a'), ('pinion_', '#c9a227'),
+        ('skirt1', '#a0a0a0'),                     # 一次スカート(PETG、色は未定)
+        ('film', '#7fb3e6')]                       # 二次スカート(Digi-Key の青い袋)
+
+
+def real_color(name):
+    for head, c in REAL:
+        if name.startswith(head):
+            return c
+    return '#cccccc'
+
+
+shapes2 = {k: v for k, v in shapes.items() if k != 'skirt'}       # 機体のモデルの仮のスカートは描かない
+shapes2['skirt1'] = cq.importers.importStep(os.path.join(HERE, '../skirt/skirt_t24v3.step')).val()
+sys.path.insert(0, os.path.join(HERE, '../skirt'))
+import film_t24
+_film2d = film_t24.film_outline()
+_zf = 1.0 - 0.15 - 0.05
+_film = cq.Workplane('XY').workplane(offset=_zf).polyline(list(_film2d.exterior.coords)[:-1]).close().extrude(0.05)
+for _h in _film2d.interiors:
+    _film = _film.cut(cq.Workplane('XY').workplane(offset=_zf - 0.1).polyline(list(_h.coords)[:-1]).close().extrude(0.25))
+shapes2['film'] = _film.val()
+TT2, CC2 = [], []
+for k, s in shapes2.items():
+    T = tris(s)
+    if len(T):
+        a = 1.0
+        if k == 'pcb':
+            a = 0.45
+        if k == 'film':
+            a = 0.75
+        TT2.append(T); CC2 += [to_rgba(real_color(k), a)] * len(T)
+TT2 = np.concatenate(TT2)
+fig = plt.figure(figsize=(16, 12))
+for i, (el, az, ttl) in enumerate(((26, -130, '斜め前(右)から(基板はすかして描く)'), (32, 50, '斜め後ろ(左)から'), (0, -90, '右から(横)'), (-90, -90, '真下から(右が前)'))):
+    ax = fig.add_subplot(2, 2, i + 1, projection='3d')
+    ax.add_collection3d(Poly3DCollection(TT2, facecolors=CC2, edgecolor='none'))
+    ax.set_xlim(-52, 52); ax.set_ylim(-40, 40); ax.set_zlim(0, 35); ax.set_box_aspect((104, 80, 35), zoom=1.2)
+    ax.view_init(el, az); ax.set_title(ttl, fontsize=11); ax.set_axis_off()
+fig.suptitle('注文した材料の色: カーボン(黒)、Temp Resin(薄い黄: マウント・ファンの台)、Black Resin(黒: ホイール・壁センサのホルダ)、'
+             '羽根(白、仮)、青い袋(二次スカート)。\n基板(緑)・一次スカート(灰)・電池・71T(白)は色が決まっていない仮の色', fontsize=11)
+fig.tight_layout(rect=(0, 0, 1, 0.95)); fig.savefig(os.path.join(HERE, 'vehicle_t24_colors.png'), dpi=100)
+print('絵', os.path.join(HERE, 'vehicle_t24_colors.png'))
