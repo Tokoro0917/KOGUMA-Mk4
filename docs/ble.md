@@ -171,6 +171,8 @@ PC で `python tools/fw.py build/app.bin`(ビューアのボタンでもよい)�
 ### 6.5 HY0020 自身の書き込み
 
 - 最初の1回だけ TP2・TP3(nRF52832 の SWD)で書く。Nordic のブートローダ(DFU)も一緒に入れておき、そのあとは BLE で書き換える(nRF Connect のアプリなど)
+- **HY0020 は中身が空で届く**(データシート: "blank radio module")。なので、橋渡しのプログラムを自分で書き込まないと何も動かない(2026-11-27 に確かめた)
+- 書き込み器(案、まだ決めていない): nRF52 DK(中の J-Link を、外の基板の書き込みに使える)か J-Link EDU Mini。STLINK でも OpenOCD で書ける場合があるが、nRF52832 の読み出しの禁止(APPROTECT)を外す操作ができないことがあるので、Nordic が勧める J-Link を使うのが確実
 
 ## 7. 作るもの
 
