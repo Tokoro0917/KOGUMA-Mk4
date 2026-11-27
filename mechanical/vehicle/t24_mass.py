@@ -241,7 +241,7 @@ REAL = [('frame', '#262626'),                      # カーボン
         ('impeller', '#f4f4f4'),                   # DMM 高精細プラスチック(白、仮)
         ('tire_', '#3b3b3b'), ('spur71_', '#f0f0f0'),     # タイヤ(ゴム)、71T(白、仮)
         ('motor_', '#b8b8b8'), ('fan_motor', '#b8b8b8'),
-        ('pcb', '#2e8b57'), ('enc_board_', '#2e8b57'), ('mt6835_', '#202020'),   # 基板(色は未定、仮に緑)
+        ('pcb', '#f2f2f2'), ('enc_board_', '#f2f2f2'), ('mt6835_', '#202020'),   # 基板(2026-11-27: 白のレジストで描く、ユーザー「基板白にしてみて」)
         ('battery', '#9aa0a6'),                    # 電池(仮)
         ('sensor_', '#5aa0ff'),
         ('skid_', '#f5f5f5'),                      # カグスベール
@@ -274,18 +274,19 @@ for k, s in shapes2.items():
     if len(T):
         a = 1.0
         if k == 'pcb':
-            a = 0.45
+            a = 0.85     # 白い基板は、ほとんどすかさない(下のファンの台が少し見える程度)
         if k == 'film':
             a = 0.75
         TT2.append(T); CC2 += [to_rgba(real_color(k), a)] * len(T)
 TT2 = np.concatenate(TT2)
-fig = plt.figure(figsize=(16, 12))
-for i, (el, az, ttl) in enumerate(((26, -130, '斜め前(右)から(基板はすかして描く)'), (32, 50, '斜め後ろ(左)から'), (0, -90, '右から(横)'), (-90, -90, '真下から(右が前)'))):
+fig = plt.figure(figsize=(16, 12), facecolor='#dfe5ea')     # 白い基板が見えるよう、背景をうすい灰色に
+for i, (el, az, ttl) in enumerate(((26, -130, '斜め前(右)から'), (32, 50, '斜め後ろ(左)から'), (0, -90, '右から(横)'), (-90, -90, '真下から(右が前)'))):
     ax = fig.add_subplot(2, 2, i + 1, projection='3d')
+    ax.set_facecolor('#dfe5ea')
     ax.add_collection3d(Poly3DCollection(TT2, facecolors=CC2, edgecolor='none'))
     ax.set_xlim(-52, 52); ax.set_ylim(-40, 40); ax.set_zlim(0, 35); ax.set_box_aspect((104, 80, 35), zoom=1.2)
     ax.view_init(el, az); ax.set_title(ttl, fontsize=11); ax.set_axis_off()
 fig.suptitle('注文した材料の色: カーボン(黒)、Temp Resin(薄い黄: マウント・ファンの台)、Black Resin(黒: ホイール・壁センサのホルダ)、'
-             '羽根(白、仮)、青い袋(二次スカート)。\n基板(緑)・一次スカート(灰)・電池・71T(白)は色が決まっていない仮の色', fontsize=11)
-fig.tight_layout(rect=(0, 0, 1, 0.95)); fig.savefig(os.path.join(HERE, 'vehicle_t24_colors.png'), dpi=100)
+             '羽根(白、仮)、青い袋(二次スカート)、基板(白のレジスト、ためし)。\n一次スカート(灰)・電池・71T(白)は色が決まっていない仮の色', fontsize=11)
+fig.tight_layout(rect=(0, 0, 1, 0.95)); fig.savefig(os.path.join(HERE, 'vehicle_t24_colors.png'), dpi=100, facecolor=fig.get_facecolor())
 print('絵', os.path.join(HERE, 'vehicle_t24_colors.png'))
