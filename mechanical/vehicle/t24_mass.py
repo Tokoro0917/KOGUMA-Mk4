@@ -290,3 +290,6 @@ fig.suptitle('注文した材料の色: カーボン(黒)、Temp Resin(薄い黄
              '羽根(白、仮)、青い袋(二次スカート)、基板(白のレジスト、ためし)。\n一次スカート(灰)・電池・71T(白)は色が決まっていない仮の色', fontsize=11)
 fig.tight_layout(rect=(0, 0, 1, 0.95)); fig.savefig(os.path.join(HERE, 'vehicle_t24_colors.png'), dpi=100, facecolor=fig.get_facecolor())
 print('絵', os.path.join(HERE, 'vehicle_t24_colors.png'))
+# 2026-11-27: 色の図の三角(TT2)と色(CC2)を書き出す(mechanical/vehicle/led_colors.py が LED の色を変えて描くのに使う)
+np.savez_compressed(os.path.join(SCRATCH, 'vehicle_t24_colors.npz'), tris=TT2, colors=np.array(CC2))
+print('三角と色', os.path.join(SCRATCH, 'vehicle_t24_colors.npz'))
