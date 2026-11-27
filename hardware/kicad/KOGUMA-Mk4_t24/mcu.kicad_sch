@@ -3346,19 +3346,292 @@
 			)
 		)
 	)
-	(no_connect
-		(at 124.46 76.2)
-		(uuid "db44fe00-26ab-40b1-be84-687c117e8259")
+	
+	
+	
+	
+	
+	
+	
+	(wire
+		(pts
+			(xy 124.46 139.7) (xy 119.38 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1ac894c6-88fa-4abc-a2cd-7ca698b939bc")
 	)
-	
-	
-	(no_connect
-		(at 124.46 139.7)
-		(uuid "0303b68a-5310-4646-baf9-4c67a36fb6c0")
+	(global_label "LED_MODE0"
+		(shape output)
+		(at 119.38 139.7 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c9a4de03-80bd-4218-b699-df3ff26973c6")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 	)
-	
-	
-	
+	(wire
+		(pts
+			(xy 180.34 104.14) (xy 185.42 104.14)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "33dc32a8-248c-4c4b-b5b3-ac528df04b75")
+	)
+	(global_label "LED_MODE1"
+		(shape output)
+		(at 185.42 104.14 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a389efb7-8f23-4a0b-8e79-d3fb5ba07eef")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 104.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 116.84) (xy 119.38 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "c6425c18-35fe-4b1f-b6af-eeecb3de0724")
+	)
+	(global_label "LED_MODE2"
+		(shape output)
+		(at 119.38 116.84 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "9ef21a12-8ff6-409d-a9be-b31485404427")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 116.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 180.34 66.04) (xy 185.42 66.04)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "639a8289-1506-4d9c-80a8-54c84262a71f")
+	)
+	(global_label "LED_WALL_FL"
+		(shape output)
+		(at 185.42 66.04 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "28420c4b-002c-44c3-bdb1-40d80f221477")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 66.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 180.34 68.58) (xy 185.42 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f88e9443-cc21-4d02-948e-ab0db54c35a1")
+	)
+	(global_label "LED_WALL_L"
+		(shape output)
+		(at 185.42 68.58 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6da854fa-7853-4c87-b56e-9dce5ac8d05e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 180.34 71.12) (xy 185.42 71.12)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "34486bf2-2870-485e-a2b1-1b4ac456ef8e")
+	)
+	(global_label "LED_WALL_R"
+		(shape output)
+		(at 185.42 71.12 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "b1590fcc-9ee6-4a56-8a0a-f001daefae0b")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 185.42 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 76.2) (xy 119.38 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bdb98cc3-51f7-48cc-9da3-07c05b537371")
+	)
+	(global_label "LED_WALL_FR"
+		(shape output)
+		(at 119.38 76.2 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "41ed8503-d20c-4bf7-a55c-afffcdad4a18")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 119.38) (xy 119.38 119.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3164527e-2aa6-455c-a16d-383bd6b17ae0")
+	)
+	(global_label "LED_STATUS0"
+		(shape output)
+		(at 119.38 119.38 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "299fd6e5-9062-41f6-a52b-158642268b09")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 119.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 124.46 121.92) (xy 119.38 121.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "42bd9011-9d20-491e-9faf-38b7a6bb72dd")
+	)
+	(global_label "LED_STATUS1"
+		(shape output)
+		(at 119.38 121.92 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0a5df300-a79f-4459-bbee-8b8635eea993")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 119.38 121.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
 	(wire
 		(pts
 			(xy 180.34 73.66) (xy 185.42 73.66)
@@ -3669,22 +3942,10 @@
 			)
 		)
 	)
-	(no_connect
-		(at 180.34 104.14)
-		(uuid "e1c49fe3-ceba-4633-817e-7e8f792d29f4")
-	)
-	(no_connect
-		(at 124.46 116.84)
-		(uuid "21e0a47d-13ac-48f0-ae86-697aa645bffa")
-	)
-	(no_connect
-		(at 124.46 119.38)
-		(uuid "6e964e86-721b-4fcf-9f93-ceeca302e87b")
-	)
-	(no_connect
-		(at 124.46 121.92)
-		(uuid "a2db4697-abe1-4655-bed9-d4298036950c")
-	)
+	
+	
+	
+	
 	(no_connect
 		(at 124.46 93.98)
 		(uuid "588780ca-1650-42aa-9501-2440ef290ae5")
@@ -3782,99 +4043,12 @@
 			)
 		)
 	)
-	(wire
-		(pts
-			(xy 180.34 66.04) (xy 185.42 66.04)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1ac927ce-d024-400f-9729-f812d4c77aea")
-	)
-	(global_label "LED_MODE0"
-		(shape output)
-		(at 185.42 66.04 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "11d4791a-1e7e-4b92-bb80-8bd71cfdd231")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 180.34 68.58) (xy 185.42 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7fd74bff-5fa8-46ee-a6bf-8f45a81e6fa0")
-	)
-	(global_label "LED_MODE1"
-		(shape output)
-		(at 185.42 68.58 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "9a90671d-5e2a-42b1-bc6c-9b41f6b2284c")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
-	(wire
-		(pts
-			(xy 180.34 71.12) (xy 185.42 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8091ff2b-8b18-4f1c-9bd0-1c7691476721")
-	)
-	(global_label "LED_MODE2"
-		(shape output)
-		(at 185.42 71.12 0)
-		(fields_autoplaced yes)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "a844b1c8-c3ec-499f-bebf-921118da7006")
-		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 185.42 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-	)
+	
+	
+	
+	
+	
+	
 	
 	
 	(wire
@@ -7400,7 +7574,7 @@
 		)
 		(uuid "482a5eee-9c01-487c-a2d6-6ce1f29b5dc4")
 	)
-	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15 はエンコーダの校正(ENC_CAL)。IMU は SPI1(PA5・PA6・PA7)、CS は PB10、INT1 は PB11(2026-11-27。IMU のほうを向いた辺のピンにして、線が MCU を回り込まないように)。PE0 は前の LED(LED_FRONT)。\n壁センサ R・FR は PC2・PC3、MOT_R_CMS は PA3、LED_NUM0・1 は PD12・PD11(2026-11-27)。使わないピン(PC13・PC8・PC10〜12・PA15・PB3)は × にした。ソフトで出力の L にしておく。PH0・PH1 は水晶(HSE)。"
+	(text "ピンの割り当ては docs/pinmap.md。ラベルはほかのシートとつながる(MCU から見た向き)。PC15 はエンコーダの校正(ENC_CAL)。IMU は SPI1(PA5・PA6・PA7)、CS は PB10、INT1 は PB11(2026-11-27。IMU のほうを向いた辺のピンにして、線が MCU を回り込まないように)。PE0 は前の LED(LED_FRONT)。\n壁センサ R・FR は PC2・PC3、MOT_R_CMS は PA3、LED_NUM0・1 は PD12・PD11(2026-11-27)。あまったピンは LED に(2026-11-27): モードの LED を PC8・PA15・PC10(後ろ寄り)、壁の表示 LED を PA0・PA1・PA2・PC13(前を向いた辺)、状態の LED を PC11・PC12。使わないピン(PB3)は ×。ソフトで出力の L にしておく。PH0・PH1 は水晶(HSE)。"
 		(exclude_from_sim no)
 		(at 25.4 25.4 0)
 		(effects

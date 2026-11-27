@@ -48,6 +48,9 @@ class ps:
 # UI の LED を ps.LEDS の順(左の角2つ、V 字の先3つ、右の角2つ)に置く。割り当ては ToraNeko.Mk3 と同じ(2026-11-23 決定、docs/software.md の 6.2):
 # 左の角 = No. の 8・4(LED_NUM3 D96・LED_NUM2 D95)、V 字の先 = モードの 4・2・1(LED_MODE2 D92・MODE1 D91・MODE0 D90)、右の角 = No. の 2・1(LED_NUM1 D94・LED_NUM0 D93)
 UI_LEDS = ['D96', 'D95', 'D92', 'D91', 'D90', 'D94', 'D93']
+# 壁の表示 LED(D110 FL・D111 L・D112 R・D113 FR)と状態の LED(D114・D115)の位置 (x, y, 向き)(2026-11-27)
+EXTRA_LEDS = {'D110': (22.25, 28.5, 0.0), 'D113': (22.25, -28.5, 0.0), 'D111': (38.25, 16.25, 90.0), 'D112': (38.25, -16.25, 90.0),
+              'D114': (36.25, 5.5, 90.0), 'D115': (36.25, -5.5, 90.0)}
 SENSORS = {'FL': ('D70', 'D74'), 'L': ('D71', 'D77'), 'R': ('D72', 'D75'), 'FR': ('D73', 'D76')}   # (発光, 受光)。回路図の値の (FL) などから
 
 # ---- 1. プロジェクト ----
@@ -268,6 +271,11 @@ def build():
     for ref, (x, y) in zip(UI_LEDS, ps.LEDS):
         fps[ref].SetPosition(P(x, y)); fps[ref].SetOrientationDegrees(0.0); placed.add(ref)
     fps['D98'].SetPosition(P(*ps.LED_FRONT)); fps['D98'].SetOrientationDegrees(0.0); placed.add('D98')
+    # 2026-11-27(ユーザー: あまったピンを LED に): 壁の表示 LED 4個と状態の LED 2個。上の面の空いた所に、左右対称に置く。
+    # 壁の表示は「その側の壁」の所に: 前の左右の角に FL・FR、横に L・R(横のセンサ R・L は交差して反対側の壁を見るので、
+    # 表示はセンサではなく壁の側に置く。+y が左)。状態の LED は前の LED(D98)の左右
+    for ref, (x, y, rot) in EXTRA_LEDS.items():
+        fps[ref].SetPosition(P(x, y)); fps[ref].SetOrientationDegrees(rot); placed.add(ref)
     # ねじの穴(基板だけの部品)
     for i, (x, y) in enumerate(ps.SCREWS):
         h = load_fp('MountingHole:MountingHole_2.2mm_M2'); h.SetReference(f'H{i + 1}'); h.SetValue('M2'); h.Reference().SetVisible(False)

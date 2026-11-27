@@ -32,7 +32,7 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 | 項目 | 設定 | 備考 |
 |---|---|---|
-| Debug | **Serial Wire** | これを設定しないと PB4(JTAG と兼用のピン)が WALL_LED_FL_R に使えない(PA15・PB3 は 2026-11-27 から使わない) |
+| Debug | **Serial Wire** | これを設定しないと PA15・PB4(JTAG と兼用のピン)が LED_MODE1・WALL_LED_FL_R に使えない |
 | Timebase Source | SysTick | |
 
 ### RCC・PWR
@@ -55,9 +55,15 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 | ピン | モード | 初めの出力 | プル | 速さ | User Label | 備考 |
 |---|---|---|---|---|---|---|
-| PA0 | GPIO_Output | Low | なし | Low | `LED_MODE0` | モードの 1 |
-| PA1 | GPIO_Output | Low | なし | Low | `LED_MODE1` | モードの 2 |
-| PA2 | GPIO_Output | Low | なし | Low | `LED_MODE2` | モードの 4 |
+| PC8 | GPIO_Output | Low | なし | Low | `LED_MODE0` | モードの 1(2026-11-27 に PA0 から) |
+| PA15 | GPIO_Output | Low | なし | Low | `LED_MODE1` | モードの 2(2026-11-27 に PA1 から) |
+| PC10 | GPIO_Output | Low | なし | Low | `LED_MODE2` | モードの 4(2026-11-27 に PA2 から) |
+| PA0 | GPIO_Output | Low | なし | Low | `LED_WALL_FL` | 壁の表示 FL(2026-11-27) |
+| PA1 | GPIO_Output | Low | なし | Low | `LED_WALL_L` | 壁の表示 L |
+| PA2 | GPIO_Output | Low | なし | Low | `LED_WALL_R` | 壁の表示 R |
+| PC13 | GPIO_Output | Low | なし | **Low**(PC13〜15 は 2MHz 以下) | `LED_WALL_FR` | 壁の表示 FR |
+| PC11 | GPIO_Output | Low | なし | Low | `LED_STATUS0` | 状態の LED 0(前の LED の左) |
+| PC12 | GPIO_Output | Low | なし | Low | `LED_STATUS1` | 状態の LED 1(前の LED の右) |
 | PD12 | GPIO_Output | Low | なし | Low | `LED_NUM0` | No. の 1(2026-11-27 に PA3 から) |
 | PD11 | GPIO_Output | Low | なし | Low | `LED_NUM1` | No. の 2(2026-11-27 に PB10 から) |
 | PB12 | GPIO_Output | Low | なし | Low | `LED_NUM2` | No. の 4 |
@@ -73,7 +79,7 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 | PC14 | GPIO_Input | - | なし(外付けの 10k で引き上げ。押すと L) | - | `SW` | スイッチ SW2 |
 | PC9 | GPIO_Input | - | なし(外付けの R40 10k で引き上げ) | - | `MOT_nFAULT` | L で異常 |
 | PB11 | GPIO_EXTI11 | - | なし | - | `IMU_INT` | **External Interrupt Mode with Rising edge**。LSM6DSR の INT1(データの準備ができた)。2026-11-26 に PD2 から PB3、2026-11-27 に PB11 へ(IMU のほうを向いた辺) |
-| PC13・PC8・PA15・PC10・PC11・PC12・PB3 | GPIO_Output | Low | なし | Low | - | 使わないピン(回路図では ×)。浮かせないように出力の L にする |
+| PB3 | GPIO_Output | Low | なし | Low | - | 使わないピン(回路図では ×)。浮かせないように出力の L にする |
 
 - CS は High で始める。Low で始めると、電源を入れた直後に IMU・エンコーダが選ばれた状態になる(ToraNeko と同じ)
 - 壁センサの発光と MOT_EN は Low で始める(消灯・モーターは止まったまま)
