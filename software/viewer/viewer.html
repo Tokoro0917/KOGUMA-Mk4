@@ -585,7 +585,10 @@ async function sendCommand() {
 let dirHandle = null;
 function fileName(b) {
   const v = b.type === "EDGE" && +b.params.border >= 0 ? `_v${b.params.v}` : "";
-  return `${stamp(b.time)}_${b.type.toLowerCase()}${v}.txt`;
+  /* MK4 のログは種類も名前に付ける(20261128-061247_log_run.txt。tools/mouse.py と同じ) */
+  let kind = "";
+  if (b.type === "LOG" && b.params.kind) { kind = "_" + b.params.kind; }
+  return `${stamp(b.time)}_${b.type.toLowerCase()}${kind}${v}.txt`;
 }
 async function pickDir() {
   if (!window.showDirectoryPicker) { alert("このブラウザではフォルダに保存できません。各データの「ファイルに保存」を使ってください。"); return; }

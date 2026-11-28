@@ -30,10 +30,10 @@ NUS_TX = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'   # 機体 → PC(通知)
 class SerialLink:
     """有線(シリアル)でつなぐ"""
 
-    def __init__(self, port):
+    def __init__(self, port, baud=115200):
         import serial
         # serial_for_url: COM5・/dev/ttyACM0 のほか、試験用の socket://localhost:5000 も開ける
-        self.port = serial.serial_for_url(port, 115200, timeout=0.05)
+        self.port = serial.serial_for_url(port, baud, timeout=0.05)
         self.buffer = b''
         self.is_ble = False
 

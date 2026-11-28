@@ -9,6 +9,7 @@ KOGUMA MK4 メイン基板(STM32H562RGV6。2026-11-26 に STM32H725RGV6 から�
 - RAM・キャッシュ・DMA の決まり: [../../docs/firmware_memory.md](../../docs/firmware_memory.md)
 - 無線(BLE)とブートローダ: [../../docs/ble.md](../../docs/ble.md)。ブートローダは [../bootloader/](../bootloader/README.md)、HY0020 は [../ble/](../ble/README.md)、無線で書き込む道具は [tools/fw.py](tools/fw.py)
 - ビューア(ログを見る・コマンドを送る・書き込む。Chrome・Edge で開く): [../viewer/](../viewer/README.md)
+- コマンドで動かす道具: [tools/mouse.py](tools/mouse.py)(状態・コマンド・走らせてログを取る・書き込み・ログのまとめ。Claude が作者の PC の上で動かせるように作った)。試すときは、にせの機体 [tools/fake_mouse.py](tools/fake_mouse.py) を相手にする
 - コードの書き方: リポジトリの一番上の [CLAUDE.md](../../CLAUDE.md)(ToraNeko と同じ)
 
 ## 決定事項
