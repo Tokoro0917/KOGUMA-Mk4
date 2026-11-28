@@ -7,7 +7,7 @@ KOGUMA MK4 メイン基板(STM32H562RGV6。2026-11-26 に STM32H725RGV6 から�
 - [MODES.md](MODES.md): 機体の操作、LED・ブザーの表し方、モードの割り当て
 - ピン: [../../docs/pinmap.md](../../docs/pinmap.md)
 - RAM・キャッシュ・DMA の決まり: [../../docs/firmware_memory.md](../../docs/firmware_memory.md)
-- 無線(BLE)とブートローダ: [../../docs/ble.md](../../docs/ble.md)
+- 無線(BLE)とブートローダ: [../../docs/ble.md](../../docs/ble.md)。ブートローダは [../bootloader/](../bootloader/README.md)、HY0020 は [../ble/](../ble/README.md)、無線で書き込む道具は [tools/fw.py](tools/fw.py)
 - コードの書き方: リポジトリの一番上の [CLAUDE.md](../../CLAUDE.md)(ToraNeko と同じ)
 
 ## 決定事項
@@ -43,4 +43,4 @@ KOGUMA MK4 メイン基板(STM32H562RGV6。2026-11-26 に STM32H725RGV6 から�
 | 10 | コマンドと値の保存 | |
 | 11 | BLE | |
 | 12 | ターンの自動調整 | |
-| 13 | ブートローダと無線の書き込み | |
+| 13 | ブートローダと無線の書き込み | **ブートローダ(`software/bootloader/`)と PC の道具(`tools/fw.py`)を作った**(2026-11-28。ビルドと、PC の上での試験まで。実機は未確認)。HY0020 のプログラムは `software/ble/`。走るプログラムの側(リンカの番地・VTOR・`fw begin`)はまだ |
