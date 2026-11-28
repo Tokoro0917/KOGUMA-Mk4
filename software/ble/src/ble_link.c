@@ -105,6 +105,11 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		bt_conn_unref(current_conn);
 		current_conn = NULL;
 	}
+	/* 送りきれなかった分は捨てる(残すと列が埋まったままになり、STM32 に XON を送れない) */
+	k_spinlock_key_t key = k_spin_lock(&to_pc_lock);
+
+	ring_buf_reset(&to_pc);
+	k_spin_unlock(&to_pc_lock, key);
 	stm32_uart_send_own_line("@link down\n");
 }
 
@@ -145,7 +150,8 @@ static void to_pc_thread(void *p1, void *p2, void *p3)
 	while (true) {
 		k_sem_take(&to_pc_sem, K_MSEC(10));
 		while (current_conn != NULL) {
-			struct bt_conn *conn = current_conn;
+			/* つながりを借りる(送っている途中に切れても、後片付けが終わらないように。最後に返す) */
+			struct bt_conn *conn = bt_conn_ref(current_conn);
 			uint32_t mtu = bt_nus_get_mtu(conn);   /* 今のつながりで 1 回に送れる量 */
 			uint32_t want = sizeof(chunk);
 
@@ -157,6 +163,7 @@ static void to_pc_thread(void *p1, void *p2, void *p3)
 
 			k_spin_unlock(&to_pc_lock, key);
 			if (got == 0) {
+				bt_conn_unref(conn);
 				break;   /* 送るものがない */
 			}
 			/* 送る。BLE のバッファがいっぱい(-ENOMEM)なら、少し待って同じものを送り直す */
@@ -170,6 +177,7 @@ static void to_pc_thread(void *p1, void *p2, void *p3)
 				/* PC が受け取りの準備をしていない(通知を有効にしていない)など。捨てる */
 				LOG_DBG("NUS で送れない (%d)", err);
 			}
+			bt_conn_unref(conn);
 		}
 	}
 }
