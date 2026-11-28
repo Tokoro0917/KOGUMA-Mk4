@@ -1,0 +1,78 @@
+name: firmware-build
+
+# KOGUMA MK4 の STM32 のプログラム(software/main-controller/KOGUMA-Mk4)とブートローダ(software/bootloader)が
+# ARM 向けにビルドできることと、App/ の PC 上のテスト(software/main-controller/test の make)が通ることを確かめる。
+# ToraNeko.Mk3 の .github/workflows/firmware-build.yml と同じ形(2026-11-28)。
+on:
+  push:
+    paths: ['software/main-controller/KOGUMA-Mk4/**', 'software/main-controller/test/**', 'software/bootloader/**', '.github/workflows/firmware-build.yml']
+  pull_request:
+    paths: ['software/main-controller/KOGUMA-Mk4/**', 'software/main-controller/test/**', 'software/bootloader/**', '.github/workflows/firmware-build.yml']
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: software/main-controller/KOGUMA-Mk4
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ツールチェーンのインストール
+        run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi ninja-build
+
+      - name: ビルド (Debug)
+        shell: bash  # パイプ(| tee)の前のビルドが失敗したときに、このステップを失敗にする(pipefail が付く)
+        run: |
+          cmake --preset Debug
+          cmake --build --preset Debug 2>&1 | tee build.log
+
+      - name: 警告がないこと(CLAUDE.md のルール。警告が 1 つでもあれば失敗にする)
+        run: |
+          if grep -q "warning:" build.log; then
+            grep "warning:" build.log
+            exit 1
+          fi
+
+      - name: サイズ(プログラムは 0x08010000 からの 448KB に収める。先頭の 64KB はブートローダ、バンク 2 は保存の場所)
+        shell: bash
+        run: |
+          arm-none-eabi-size build/Debug/KOGUMA-Mk4.elf
+          # Flash に入る大きさ = text(プログラムと定数)+ data(変数の初めの値)
+          flash_bytes=$(arm-none-eabi-size build/Debug/KOGUMA-Mk4.elf | awk 'NR == 2 { print $1 + $2 }')
+          if [ "$flash_bytes" -gt 458752 ]; then
+            echo "プログラムが 448KB を超えた(${flash_bytes} バイト)"
+            exit 1
+          fi
+
+  bootloader:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: software/bootloader
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: ツールチェーンのインストール
+        run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi ninja-build
+
+      - name: ビルド (Release)
+        shell: bash
+        run: |
+          cmake --preset Release
+          cmake --build --preset Release 2>&1 | tee build.log
+          if grep -q "warning:" build.log; then
+            grep "warning:" build.log
+            exit 1
+          fi
+
+  maze-test:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: software/main-controller/test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: PC 上のテスト(test_mode・test_current・test_cmd・test_trajectory・test_wall_dist・test_turn・test_control・test_wall_ctrl・test_output・test_flash・test_maze)
+        run: make

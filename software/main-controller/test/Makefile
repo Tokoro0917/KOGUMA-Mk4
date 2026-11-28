@@ -1,0 +1,101 @@
+# App/ の PC 上でのテスト
+#   make        ビルドしてテストを実行する
+#   make clean  ビルドしたものを消す
+#
+#   test_maze  迷路（App/maze/）と探索走行（App/sys/explore.c）、最短走行の大回り・斜め（App/sys/shortest.c）
+#   test_mode  モード選択と操作（App/sys/mode.c、ui.c、goal.c）
+#   test_output  出力と走行ログ（App/sys/output.c、log.c）。./test_output --dump ファイル で実機の出力を確かめる
+#   test_flash  迷路とゴールの位置の保存（App/sys/flash.c）。Flash は仮の配列
+#   test_trajectory  目標の速さを作る処理（App/ctrl/trajectory.c）
+#   test_wall_dist  壁センサの値を距離 [mm] に直す処理（App/ctrl/wall_dist.c）
+#   test_turn  最短走行のターンが決めた位置で終わるか（App/config/turn_params.h）。./test_turn --calc で値を計算する。./test_turn --slip で空回りの式を調べる
+#   test_control  制御のフェイルセーフの見つけ方と、吸引中の摩擦の分の電流、斜めの補正、向きを戻す、目標の向き(App/ctrl/control.c。センサ・モーターは仮)
+#   test_current  電流の制御(App/ctrl/current_ctrl.c)。モーターは PC の上の式(MK4 で足した)
+#   test_cmd  コマンドと、コマンドで変える値・保存(App/sys/cmd.c、params.c。MK4 で足した)
+#   test_wall_ctrl  壁の終わりの見分け（App/ctrl/wall_ctrl.c）、壁の終わり・柱の端（App/ctrl/side_edge.c）。壁センサは仮。
+#                   ./test_wall_ctrl --replay ファイル… で、実機の走行ログから端を見つける
+
+APP_DIR = ../KOGUMA-Mk4/App
+
+CFLAGS = -std=c11 -Wall -Wextra -Werror -O2 -g -I$(APP_DIR)
+
+# App/ のヘッダ全部。どれかを書き換えたら、全部のテストを作り直す（古いテストのまま通ってしまわないように）
+APP_HEADERS = $(wildcard $(APP_DIR)/*/*.h)
+
+MAZE_SOURCES = \
+	$(APP_DIR)/maze/maze_map.c \
+	$(APP_DIR)/maze/search.c \
+	$(APP_DIR)/maze/path.c \
+	$(APP_DIR)/sys/explore.c \
+	$(APP_DIR)/sys/shortest.c \
+	$(APP_DIR)/ctrl/trajectory.c
+
+MODE_SOURCES = \
+	$(APP_DIR)/sys/mode.c \
+	$(APP_DIR)/sys/ui.c \
+	$(APP_DIR)/sys/goal.c \
+	$(APP_DIR)/maze/maze_map.c
+
+OUTPUT_SOURCES = \
+	$(APP_DIR)/sys/output.c \
+	$(APP_DIR)/sys/log.c \
+	$(APP_DIR)/maze/maze_map.c \
+	$(APP_DIR)/maze/search.c \
+	$(APP_DIR)/maze/path.c \
+	$(APP_DIR)/maze/dijkstra.c
+
+FLASH_SOURCES = \
+	$(APP_DIR)/sys/flash.c \
+	$(APP_DIR)/maze/maze_map.c
+
+test: test_maze test_mode test_output test_flash test_trajectory test_wall_dist test_turn test_control test_wall_ctrl test_current test_cmd
+	./test_mode
+	./test_current
+	./test_cmd
+	./test_trajectory
+	./test_wall_dist
+	./test_turn
+	./test_control
+	./test_wall_ctrl
+	./test_output
+	./test_flash
+	./test_maze
+
+# dijkstra.c は test_maze.c の中で #include している（テストで中の関数を使うため）
+test_maze: test_maze.c $(MAZE_SOURCES) $(APP_DIR)/maze/dijkstra.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_maze.c $(MAZE_SOURCES) -lm
+
+test_mode: test_mode.c $(MODE_SOURCES) $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_mode.c $(MODE_SOURCES)
+
+test_output: test_output.c $(OUTPUT_SOURCES) $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_output.c $(OUTPUT_SOURCES) -lm
+
+test_trajectory: test_trajectory.c $(APP_DIR)/ctrl/trajectory.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_trajectory.c $(APP_DIR)/ctrl/trajectory.c -lm
+
+test_wall_dist: test_wall_dist.c $(APP_DIR)/ctrl/wall_dist.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_wall_dist.c $(APP_DIR)/ctrl/wall_dist.c -lm
+
+test_turn: test_turn.c $(APP_DIR)/ctrl/trajectory.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_turn.c $(APP_DIR)/ctrl/trajectory.c -lm
+
+test_control: test_control.c $(APP_DIR)/ctrl/control.c $(APP_DIR)/ctrl/trajectory.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_control.c $(APP_DIR)/ctrl/control.c $(APP_DIR)/ctrl/trajectory.c -lm
+
+test_wall_ctrl: test_wall_ctrl.c $(APP_DIR)/ctrl/wall_ctrl.c $(APP_DIR)/ctrl/wall_dist.c $(APP_DIR)/ctrl/side_edge.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_wall_ctrl.c $(APP_DIR)/ctrl/wall_ctrl.c $(APP_DIR)/ctrl/wall_dist.c $(APP_DIR)/ctrl/side_edge.c -lm
+
+test_flash: test_flash.c $(FLASH_SOURCES) $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_flash.c $(FLASH_SOURCES)
+
+test_current: test_current.c $(APP_DIR)/ctrl/current_ctrl.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_current.c $(APP_DIR)/ctrl/current_ctrl.c -lm
+
+test_cmd: test_cmd.c $(APP_DIR)/sys/cmd.c $(APP_DIR)/sys/params.c $(APP_HEADERS)
+	$(CC) $(CFLAGS) -o $@ test_cmd.c $(APP_DIR)/sys/cmd.c $(APP_DIR)/sys/params.c -lm
+
+clean:
+	rm -f test_maze test_mode test_output test_flash test_trajectory test_wall_dist test_turn test_control test_wall_ctrl test_current test_cmd
+
+.PHONY: test clean

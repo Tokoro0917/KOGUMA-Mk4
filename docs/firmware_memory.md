@@ -1,5 +1,7 @@
 # STM32H562 の RAM・DMA の決まり(2026-11-26。前は STM32H725)
 
+**2026-11-28: 今の走るプログラム(`software/main-controller/KOGUMA-Mk4/`)は DMA を使っていない**(ADC は injected、SPI は 4kHz の処理の中で直接、UART は割り込み。`software/main-controller/CUBEMX_SETUP.md` の 0 章)。なので `.dma_buf` と `dma_check()` はまだ作っていない。DMA を使い始めるときに、下の決まりのとおり入れる。ログ(256KB)は SRAM3 に置いた(リンカの `.sram3`、`App/config/memory_place.h` の `SRAM3_DATA`)。
+
 **2026-11-26: MCU を STM32H725 から STM32H562 に替えた**(`docs/spec.md` の「MCU」)。H725 で怖かった2つ(DMA が届かない RAM、データのキャッシュに古い値が残る)は、**H562 では起きない**。それでも、DMA の配列の置き場所を1か所に決めて、外れたら止まる仕組みは残す(CLAUDE.md の決まり: DMA の配列は `DMA_BUF`、DMA を動かす前に `dma_check()`)。H725 のときの文書は下の「付録」に残す。
 
 ## 1. H562 の RAM

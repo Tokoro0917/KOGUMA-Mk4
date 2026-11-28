@@ -1,0 +1,117 @@
+/*
+ * wall_ctrl.h
+ * 壁のあり・なしの判定と、壁に沿って走るための補正
+ * ToraNeko.Mk3 の App/ctrl/wall_ctrl.h から。クラシックの寸法に合わせてコメントを直した（2026-11-28）
+ *
+ * 中身（wall_ctrl.c）は、壁のあり・なし、手の判定、横の壁からのずれ（壁に沿って走る補正に使う）。
+ * PC のテストでは、test/ の中の仮の関数（test_maze.c の「仮の機体」、test_mode.c）がこの関数を持っている。
+ *
+ * ■ 壁があるか
+ * 区画の入口の辺に着いたときに、その区画の前・左・右の壁があるかを答える（KOGUMA の G_Wall_data にあたる）。
+ *
+ * ■ 前センサに手がかざされているか
+ * 前の壁よりずっと近くに何かある（手をかざしている）ときに true（KOGUMA の Sensor_Enter にあたる）。
+ * モードを選んだあとのスタートに使う（sys/ui.c）。フェイルセーフの解除は、2026-10-15 からスイッチ。
+ */
+#ifndef CTRL_WALL_CTRL_H
+#define CTRL_WALL_CTRL_H
+
+#include <stdbool.h>
+#include <stdint.h>
+
+bool wall_ctrl_has_wall_front(void);
+bool wall_ctrl_has_wall_left(void);
+bool wall_ctrl_has_wall_right(void);
+bool wall_ctrl_is_hand_front(void);
+
+/* 横の壁からのずれ（区画のまん中にいるときの値との差）と、そのとき使った壁（0 なし、1 左、2 右、3 両方）。
+ * + なら左の壁に近い。壁に沿って走る補正（ctrl/control.c）で使う */
+float wall_ctrl_get_side_error(void);
+int wall_ctrl_get_side_walls_used(void);
+
+/* 壁の終わりの見分け（壁の終わりでは、その壁を補正に使わない。ctrl/wall_ctrl.c の WALL_END_*）。
+ * 制御を始めるときに reset、制御周期ごとに update を、走った距離 [mm] を渡して呼ぶ（ctrl/control.c） */
+void wall_ctrl_reset_end_check(float distance_mm);
+void wall_ctrl_update_end_check(float distance_mm);
+
+/* 斜めの補正（斜めの直進で、柱や壁に近づいたら離れる。ctrl/control.c） */
+float wall_ctrl_get_diag_error(void);
+int wall_ctrl_get_diag_used(void);
+
+/* 前の壁からのずれ（前壁合わせに使う。区画のまん中にいるときの値との差）。
+ *   距離のずれ：+ なら前の壁に近すぎる（下がるとよい）
+ *   向きのずれ：+ なら左前のほうが近い＝右を向いている（左へ回すとよい） */
+float wall_ctrl_get_front_distance_error(void);
+float wall_ctrl_get_front_angle_error(void);
+
+/* 4 つの壁センサの値（ON−OFF。LED の光の分だけ）。センサ値の表示などで使う。
+ * 会場ごとの感度の倍率（下）で割って、表やしきい値を決めた迷路での値に直してある */
+int32_t wall_ctrl_get_front_left(void);
+int32_t wall_ctrl_get_left(void);
+int32_t wall_ctrl_get_right(void);
+int32_t wall_ctrl_get_front_right(void);
+
+/* 倍率で割る前の、そのままの値（会場ごとの倍率合わせ・壁制御の目標を測るときに使う。sys/venue.c） */
+int32_t wall_ctrl_get_front_left_raw(void);
+int32_t wall_ctrl_get_left_raw(void);
+int32_t wall_ctrl_get_right_raw(void);
+int32_t wall_ctrl_get_front_right_raw(void);
+
+/* 会場ごとの感度の倍率（会場の区画のまん中の値 ÷ 表を作った迷路での区画のまん中の値）。4 つのセンサで 1 つずつ。
+ * 会場の壁の塗装で、センサの値がどの距離でもほぼ同じ割合で変わるので、この倍率で割って、もとの迷路の値に直す
+ * （KOGUMA の WallDist_Scale と同じ考え方。1 なら直さない）。はじめは 1。sys/venue.c が Flash から読んで入れる */
+typedef struct {
+  float front_left;   /* 左前 */
+  float left;         /* 左 */
+  float right;        /* 右 */
+  float front_right;  /* 右前 */
+} sensor_scale_t;
+
+/* 家の迷路で、区画の境目（入口の辺）に、タイヤの軸を境目に合わせ、左右の壁のまん中に置いたときのセンサの値（倍率 1）。
+ * 前の壁は 174mm 先（その区画の前の壁。ToraNeko は 87mm）、左右には壁がある。走っているときに壁を見るのと同じ位置なので、
+ * 会場ごとの倍率合わせ（モード7 No.2。sys/venue.c）の基準にする。
+ * 仮。下の値は ToraNeko で決めた値のまま。MK4 で、この置き方で測り直す。
+ *   左前・右前：前の壁まで 87mm のときの、距離の表（ctrl/wall_dist.c。左右の壁ありで測った）の値（ToraNeko）
+ *   左・右：これまでの横の壁の目標（2026-11-02 に止めて測った左 1426・1495 の平均と、2026-11-03 に探索の走行ログで、
+ *          まん中を走っているときの右 805〜830 から決めた値）
+ * 家で、モード7 No.4 で元に戻してから、この置き方でモード5 No.2 を測ったら、その平均をここに入れる */
+#define WALL_HOME_EDGE_FRONT_LEFT  905
+#define WALL_HOME_EDGE_LEFT        1460
+#define WALL_HOME_EDGE_RIGHT       815
+#define WALL_HOME_EDGE_FRONT_RIGHT 1255
+
+void wall_ctrl_set_sensor_scale(sensor_scale_t scale);
+sensor_scale_t wall_ctrl_get_sensor_scale(void);
+
+/* 家の迷路で、区画の中心にいるときの左右のセンサの値（倍率 1。仮。ToraNeko の値）。横の壁に沿って走る補正の目標で、会場で測っていない
+ * （下の wall_reference_t の is_set が false の）ときに使う。中身と決め方は wall_ctrl.c の LEFT_WALL_REFERENCE のコメント */
+#define WALL_HOME_CENTER_LEFT  1460
+#define WALL_HOME_CENTER_RIGHT 815
+
+/* 横の壁に沿って走る補正の目標（区画の中心にいるときの、左右のセンサの値。2026-11-10 に倍率合わせと分けた）。
+ * 会場で、区画の中心に置いて測った「そのままの値（倍率で割る前）」を入れる（モード7 No.3。sys/venue.c が Flash から読んで入れる）。
+ * is_set が false のあいだは、家の迷路の値（WALL_HOME_CENTER_LEFT・RIGHT）を使う */
+typedef struct {
+  bool is_set;  /* 会場で測った値が入っているか */
+  float left;   /* 左のセンサの、そのままの値 */
+  float right;  /* 右のセンサの、そのままの値 */
+} wall_reference_t;
+
+void wall_ctrl_set_wall_reference(wall_reference_t reference);
+wall_reference_t wall_ctrl_get_wall_reference(void);
+
+/* 4 つの壁センサの値を、壁までの距離 [mm] に直したもの（ctrl/wall_dist.c。区画のまん中で 84mm） */
+float wall_ctrl_get_front_left_mm(void);
+float wall_ctrl_get_left_mm(void);
+float wall_ctrl_get_right_mm(void);
+float wall_ctrl_get_front_right_mm(void);
+float wall_ctrl_get_front_distance_mm(void);  /* 左前と右前の平均 */
+
+/* 横の壁が近すぎるか（探索の横壁合わせ。config/run_params.h の SIDE_*）と、その記録 */
+bool wall_ctrl_is_left_too_close(void);
+bool wall_ctrl_is_right_too_close(void);
+void wall_ctrl_clear_too_close(void);
+int wall_ctrl_get_too_close_count(void);
+float wall_ctrl_get_too_close_min_mm(void);
+
+#endif /* CTRL_WALL_CTRL_H */
