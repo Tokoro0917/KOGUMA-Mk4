@@ -3,6 +3,9 @@
 フレームの上面 z = 3.0。部品の並び(外側から): タイヤ -31.8〜-28.3、41T -28.3〜-26.3、
 LF-630 外 -26.7〜-24.7(つばが外)、LF-630 内 -24.5〜-22.5(つばが内)、磁石 -23.7〜-22.7、
 AS5047P -22.2〜-21.0、エンコーダ基板 -21.06〜-20.46(ToraNeko.Mk3 と同じ並び)。"""
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+import cq_arcs     # 丸い所を本当の円弧にする(2026-11-24)
 import math
 import cadquery as cq
 
@@ -80,7 +83,13 @@ P_V9 = dict(P, bore_clear=0.0, brg_clear=0.0)
 #   基板の後ろの端の受けを x -2.8 → -3.1 にした(v10 は 5.3mm 幅の基板のままで、6.0mm 幅の基板と x -3.0〜-2.8 で重なっていた)
 P.update(enc_slot=(-21.0, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-3.1))
 P_V10 = dict(P, enc_slot=(-21.1, -20.4, 3.05), enc_face=dict(P['enc_face'], x0=-2.8))
-VER = 'v11'
+# v12(2026-11-02): エンコーダ基板をメイン基板に**表と裏の両面**ではんだ付けするため、マウントの面の上の端に逃げを切る。
+#   チップの面のパッド(上の辺から 0.2〜0.9mm、z 12.7〜13.4)とメイン基板の裏のパッド(基板の面から外へ 0.3〜1.1mm)の間に
+#   はんだのフィレットができる所: x -3.1〜3.1、y -22.2〜-21.0(面から外へ 1.2mm)、z 12.6 から上。
+#   面に当たる所は z 11.3〜12.6 の帯と下の z 3.0〜3.8 が残る。モーターの穴の上の端は z 12.5 なので、逃げとはつながらない
+P_V11 = dict(P)
+P.update(enc_relief=dict(x0=-3.1, x1=3.1, depth=1.2, z0=12.6))
+VER = 'v12'
 
 def motor_center(P):
     a = math.radians(P['motor_angle'])
@@ -149,16 +158,23 @@ def build(P=P):
     if ef:   # v9: エンコーダ基板をマウントの面に当てて接着する(裏から支えない)
         # 面の縁を作る肉(くぼみの上・前): 内の軸受の壁から基板の面まで
         body = body.union(box(ax + ef.get('bx0', ef['x0']), ax + ef['x1'], P['brg_seat_in'] - 0.01, P['enc_slot'][0], ft, ef['ztop']))
+        # 2026-11-24: 上の箱を軸受の壁に 0.01mm 重ねるので、内の軸受の穴の奥に厚さ 0.01mm の膜が残る。穴の所を抜き直す(面取りがあるときは面取りで消えていた)
+        body = body.cut(ycyl(P['brg_od'] / 2, P['brg_seat_in'] - 0.011, P['brg_seat_in'] + 0.001, ax, az))
         body = body.cut(ycyl(P['motor_d'] / 2 + P.get('pad_relief', 0.0), P['brg_seat_in'] - 0.02, P['enc_slot'][0] + 0.02, mx, mz))   # 足した肉がモーターの穴を埋めないように
         # くぼみ(AS5047P・部品・内の軸受のつば): 上は z ef['pz1'] で閉じ、前は ef['px1'] まで
         body = body.cut(box(ax - px, ax + ef['px1'], P['brg_seat_in'], P['enc_slot'][0], pz0, ef['pz1']))
         # 基板の面より内側は、基板の外形の所をすべて開ける(裏の壁をなくす)
         body = body.cut(box(ax + ef['x0'], ax + ef['wx1'], P['enc_slot'][0], P['inner_face'] + 1.0, ft - 0.01, 20.0))   # 前は x wx1 で止め、基板の前の端を受ける
+        er = P.get('enc_relief')
+        if er:   # v12: チップの面のはんだのフィレットの逃げ(面の上の端)
+            body = body.cut(box(ax + er['x0'], ax + er['x1'], P['enc_slot'][0] - er['depth'], P['enc_slot'][0] + 0.01, er['z0'], 20.0))
     else:
         # ポケットは基板の溝の手前まで(基板の裏は壁で受ける)。前側は開ける(薄い壁を残さない)
         body = body.cut(box(ax - px, ax + px + 1.0, P['brg_seat_in'], P['enc_slot'][0], pz0, pz1))
         sy0, sy1, sx = P['enc_slot']
         body = body.cut(box(ax - sx, ax + sx, sy0, sy1, ft - 0.01, 14.0))
+    for (fx0, fx1, fy0, fy1, fz0, fz1) in P.get('extra_fills', ()):   # 2026-11-24(t24v10): 辺だけでつながっていた所を埋める箱
+        body = body.union(box(fx0, fx1, fy0, fy1, fz0, fz1))
     # 外側の面より外に出た所を削る(41T・ピニオンとのすき間)
     body = body.cut(box(-40, 40, -40, y_out, 0, 30).cut(ycyl(P['seat_r'], P['brg_seat_out'], y_out, ax, az)))
     for (sx_, sy_) in (P['screw_front'], P['screw_rear']):
@@ -186,14 +202,107 @@ def build(P=P):
             return cq.Workplane().add(cq.Solid.makeCone(r + c, r, c, cq.Vector(x, y, z), cq.Vector(0, 0, sgn)))
         body = body.cut(cone_y(P['brg_od'] / 2, P['brg_seat_out'], 1, ax, az))          # 外の軸受(外から入れる)
         body = body.cut(cone_y(P['brg_od'] / 2, P['brg_seat_in'], -1, ax, az))          # 内の軸受(内から入れる)
-        body = body.cut(cone_y(P['motor_d'] / 2, P['cradle_end'], -1, mx, mz))          # モーター(内から入れる)
+        if P.get('chamfer_motor', True):   # 2026-11-24(t24 v11): t24 はモーターの穴の入口を面取りしない(ユーザー)
+            body = body.cut(cone_y(P['motor_d'] / 2, P['cradle_end'], -1, mx, mz))      # モーター(内から入れる)
         holes = [(P['screw_front'], ft, P['pcb_post'] if P.get('pcb_post_front') else P['ear_top']),
                  (P['screw_rear'], ft, P['pcb_post'] if P.get('pcb_post') else P['ear_top'])]
         if P.get('fan_joint'):
             holes.append((P['fan_joint'], P['joint_z'][0], P['joint_z'][1]))
         for (hx, hy), z0, z1 in holes:   # タップの下穴の上下
             body = body.cut(cone_z(P['hole_d'] / 2, z0, 1, hx, hy)).cut(cone_z(P['hole_d'] / 2, z1, -1, hx, hy))
+    for pts, y0, y1 in P.get('windows', ()):   # 肉抜きの窓(xz 面の多角形を y0〜y1 に抜く。mount_t24.py)
+        lo, hi = min(y0, y1), max(y0, y1)
+        body = body.cut(cq_arcs.prism_xz(pts, lo, hi))      # 2026-11-24: 窓の角の丸みを本当の円弧に(STEP がギザギザにならないように)
+    for (cx0, cx1, cy0, cy1, cz0, cz1) in P.get('extra_cuts', ()):   # 2026-11-24(t24v7): 残った薄いかけらを消す箱
+        body = body.cut(box(cx0, cx1, cy0, cy1, cz0, cz1))
+    tc = P.get('top_cut')
+    if tc:   # タイヤ24mm(mount_t24.py): メイン基板の下面 z より上を削る。ただしメイン基板の切り欠き(x ±tc['x']、y < tc['y'])の中は残す
+        body = body.cut(box(-40, 40, -40, 0, tc['z'], 40).cut(box(-tc['x'], tc['x'], -40, tc['y'], tc['z'] - 1, 41)))
+    if P.get('fillet'):
+        body = cq.Workplane().add(fillet_edges(body.val(), P))
     return body
+
+
+def fillet_candidates(solid, P):
+    """フィレットをかける角(直線の辺)の、真ん中の点の一覧。寸法が大事な所は除く:
+    フレーム・基板に当たる面(z = frame_top、z = 基板の下面)の辺、モーター・軸受の穴の中(当たり面と逃げ)の辺、
+    P['fillet_keep'] の箱(エンコーダ基板を貼る面とくぼみなど)の中の辺"""
+    mx, mz = motor_center(P)
+    ax, az = P['axle']
+    ft = P['frame_top']
+    z_top = P.get('pcb_post') or 99.0
+    out = []
+    for e in solid.Edges():
+        if e.geomType() != 'LINE':
+            continue
+        c = e.Center()
+        p0 = e.startPoint()
+        p1 = e.endPoint()
+        if abs(p0.z - ft) < 1e-3 and abs(p1.z - ft) < 1e-3:
+            continue            # フレームに当たる面の辺
+        if abs(p0.z - z_top) < 1e-3 and abs(p1.z - z_top) < 1e-3:
+            continue            # 基板に当たる面の辺
+        if math.hypot(c.x - mx, c.z - mz) < P['motor_d'] / 2 + 0.5:
+            continue            # モーターの穴の中
+        if math.hypot(c.x - ax, c.z - az) < P['brg_od'] / 2 + 0.5:
+            continue            # 軸受の穴の中
+        holes = [P['screw_front'], P['screw_rear']] + ([P['fan_joint']] if P.get('fan_joint') else [])
+        if any(math.hypot(c.x - hx, c.y - hy) < P['hole_d'] / 2 + 0.05 for hx, hy in holes):
+            continue            # ねじの下穴の中(穴の継ぎ目の線)
+        keep = False
+        for (x0, x1, y0, y1, z0, z1) in P.get('fillet_keep', ()):
+            if x0 <= c.x <= x1 and y0 <= c.y <= y1 and z0 <= c.z <= z1:
+                keep = True
+        if keep:
+            continue
+        out.append((c.x, c.y, c.z))
+    return out
+
+
+def fillet_edges(solid, P):
+    """角に半径 P['fillet'] のフィレットをかける(2026-11-24)。
+    まとめてかけて失敗したら、辺を1本ずつかける。1本ずつでも失敗する辺(短すぎる辺など)は半径を 1/2、1/4 にして試し、だめなら残す"""
+    from OCP.BRepFilletAPI import BRepFilletAPI_MakeFillet
+    r = P['fillet']
+    points = fillet_candidates(solid, P)
+
+    def find(shape, pt):
+        for e in shape.Edges():
+            c = e.Center()
+            if e.geomType() == 'LINE' and abs(c.x - pt[0]) < 1e-4 and abs(c.y - pt[1]) < 1e-4 and abs(c.z - pt[2]) < 1e-4:
+                return e
+        return None
+
+    def attempt(shape, edges, radius):
+        mk = BRepFilletAPI_MakeFillet(shape.wrapped)
+        for e in edges:
+            mk.Add(radius, e.wrapped)
+        try:
+            mk.Build()
+        except Exception:
+            return None
+        if not mk.IsDone():
+            return None
+        new = cq.Shape.cast(mk.Shape())
+        if not new.isValid() or abs(new.Volume() - shape.Volume()) > 0.05 * shape.Volume():
+            return None
+        return new
+
+    edges = [find(solid, p) for p in points]
+    whole = attempt(solid, [e for e in edges if e is not None], r)
+    if whole is not None:
+        return whole
+    shape = solid
+    for p in points:
+        e = find(shape, p)
+        if e is None:
+            continue        # 前のフィレットで消えた辺
+        for radius in (r, r / 2, r / 4):
+            new = attempt(shape, [e], radius)
+            if new is not None:
+                shape = new
+                break
+    return shape
 
 def wedge(R, y0, y1, x, z, a, hw):
     """(x, z) から角度 a ± hw の扇形(半径 R)を y 方向に伸ばした形"""

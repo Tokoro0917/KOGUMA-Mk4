@@ -1,0 +1,85 @@
+* 01 Wall-sensor TIA noise (.noise) - KOGUMA MK4
+* Circuit (netlist): D74 SFH 229 FA (anode GND, cathode -> U74 -IN)
+*   R74 820k || C74 0.5p C0G feedback, +IN = PD_BIAS (R78 1k / R79 47, C80 10u)
+*   U74 OPA2354 on +3V3A. Output WALL_FL -> STM32H725 ADC1 (16 bit, VREF = VDDA)
+* Output: out/noise_<tag>.txt  (frequency, onoise_spectrum [V/rtHz],
+*         inoise_spectrum [A/rtHz] = output noise / |Zt|)
+* Run:  cd docs/calc/noise && ngspice -b 01_tia_noise.cir
+.include lib/models.lib
+
+.param cf=0.5p ish=0.1n ken=1 kin=1 radc=1m cadc=1f cpcb=1p
+
+V33  v3a 0 DC 3.3
+R78  v3a pdb 1k
+R79  pdb 0 47
+XC80 pdb 0 MLCC C=10u esr=5m esl=0.6n
+
+XU   pdb inn out v3a 0 OPA2354B ken={ken} kin={kin}
+R74  inn out 820k
+C74  inn out {cf}
+Cpcb inn 0 {cpcb}
+XPD  0 inn SFH229FA Cj=11.5p Ish={ish}
+* photocurrent (signal) source - also the input-referral source for .noise
+Iph  inn 0 DC 0 AC 1
+* optional RC at the ADC pin (default: none)
+Radc out adc {radc}
+Cadc adc 0 {cadc}
+
+.control
+set wr_singlescale
+set wr_vecnames
+* ---------- feedback-capacitor sweep (all noise sources on, dark) --------
+foreach val 0.2p 0.5p 0.8p 1.0p
+  alterparam cf = $val
+  reset
+  destroy all
+  noise v(out) Iph dec 20 1 1G
+  setplot noise1
+  set fn = "out/noise_cf{$val}.txt"
+  wrdata $fn onoise_spectrum inoise_spectrum
+end
+alterparam cf = 0.5p
+* ---------- contributions at Cf = 0.5p ----------
+* (a) all on = noise_cf0.5p ; (b) en off ; (c) en,in off ; (d) en,in,shot off
+alterparam ken = 0
+reset
+destroy all
+noise v(out) Iph dec 20 1 1G
+setplot noise1
+wrdata out/noise_b_noen.txt onoise_spectrum inoise_spectrum
+alterparam kin = 0
+reset
+destroy all
+noise v(out) Iph dec 20 1 1G
+setplot noise1
+wrdata out/noise_c_noenin.txt onoise_spectrum inoise_spectrum
+alterparam ish = 1e-30
+reset
+destroy all
+noise v(out) Iph dec 20 1 1G
+setplot noise1
+wrdata out/noise_d_rfonly.txt onoise_spectrum inoise_spectrum
+alterparam ken = 1
+alterparam kin = 1
+* ---------- photocurrent shot noise (lit, strong reflection) ----------
+foreach val 0.5u 2u
+  alterparam ish = $val
+  reset
+  destroy all
+  noise v(out) Iph dec 20 1 1G
+  setplot noise1
+  set fn = "out/noise_ish{$val}.txt"
+  wrdata $fn onoise_spectrum inoise_spectrum
+end
+alterparam ish = 0.1n
+* ---------- RC at ADC pin: 220 ohm + 1 nF (723 kHz) ----------
+alterparam radc = 220
+alterparam cadc = 1n
+reset
+destroy all
+noise v(adc) Iph dec 20 1 1G
+setplot noise1
+wrdata out/noise_adcrc.txt onoise_spectrum inoise_spectrum
+quit
+.endc
+.end

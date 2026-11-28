@@ -1,0 +1,373 @@
+{
+ "main": {
+  "mass": 56.06,
+  "cg": [
+   0.68,
+   0.0,
+   12.71
+  ],
+  "iz": 265.0
+ },
+ "t24": {
+  "mass": 60.94,
+  "cg": [
+   -0.15,
+   -0.0,
+   13.66
+  ],
+  "iz": 299.5,
+  "groups": [
+   {
+    "group": "フレーム・シート・スカート・滑り板",
+    "m": 5.68,
+    "iz": 59.1
+   },
+   {
+    "group": "モーターマウント × 2",
+    "m": 2.4,
+    "iz": 12.2
+   },
+   {
+    "group": "走行用モーター × 2",
+    "m": 10.6,
+    "iz": 32.5
+   },
+   {
+    "group": "車輪・タイヤ・71T・ピニオン・軸・軸受・磁石・エンコーダ",
+    "m": 9.05,
+    "iz": 65.1
+   },
+   {
+    "group": "吸引ファン",
+    "m": 8.43,
+    "iz": 23.2
+   },
+   {
+    "group": "基板 + 部品",
+    "m": 5.76,
+    "iz": 44.3
+   },
+   {
+    "group": "電池 + ホルダ",
+    "m": 14.5,
+    "iz": 21.9
+   },
+   {
+    "group": "壁センサ × 4",
+    "m": 1.71,
+    "iz": 28.2
+   },
+   {
+    "group": "ねじ・ナット",
+    "m": 2.21,
+    "iz": 13.0
+   },
+   {
+    "group": "配線",
+    "m": 0.6,
+    "iz": 0.0
+   }
+  ],
+  "new_parts": {
+   "mount_R": 1.199,
+   "mount_L": 1.199,
+   "wheel_R": 0.999,
+   "wheel_L": 0.999,
+   "tire_R": 1.41,
+   "tire_L": 1.41,
+   "spur71_R": 0.869,
+   "spur71_L": 0.869,
+   "motor_R": 5.3,
+   "motor_L": 5.3,
+   "shaft_R": 0.025,
+   "shaft_L": 0.025,
+   "pinion_R": 0.251,
+   "pinion_L": 0.251,
+   "enc_board_R": 0.058,
+   "enc_board_L": 0.058,
+   "mt6835_R": 0.032,
+   "mt6835_L": 0.032,
+   "pin_R": 0.444,
+   "pin_L": 0.444,
+   "brg_out_R": 0.191,
+   "brg_out_L": 0.191,
+   "brg_in_R": 0.191,
+   "brg_in_L": 0.191,
+   "magnet_R": 0.053,
+   "magnet_L": 0.053,
+   "impeller": 1.414
+  }
+ },
+ "clearances": [
+  {
+   "a": "screw_mountF_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 4.75
+  },
+  {
+   "a": "screw_mountR_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 4.75
+  },
+  {
+   "a": "screw_mountF_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 4.75
+  },
+  {
+   "a": "screw_mountR_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 4.75
+  },
+  {
+   "a": "screw_post_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 3.845
+  },
+  {
+   "a": "screw_fan_L",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 3.845
+  },
+  {
+   "a": "screw_post_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 3.845
+  },
+  {
+   "a": "screw_fan_R",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 3.845
+  },
+  {
+   "a": "screw_fanjoint_0",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 3.393
+  },
+  {
+   "a": "screw_fanjoint_1",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 3.393
+  },
+  {
+   "a": "mount_R",
+   "b": "motor_R",
+   "gap": 0.0,
+   "overlap": 1.53
+  },
+  {
+   "a": "mount_L",
+   "b": "motor_L",
+   "gap": 0.0,
+   "overlap": 1.53
+  },
+  {
+   "a": "mount_R",
+   "b": "brg_out_R",
+   "gap": 0.0,
+   "overlap": 0.554
+  },
+  {
+   "a": "mount_L",
+   "b": "brg_out_L",
+   "gap": 0.0,
+   "overlap": 0.554
+  },
+  {
+   "a": "mount_R",
+   "b": "brg_in_R",
+   "gap": 0.0,
+   "overlap": 0.55
+  },
+  {
+   "a": "mount_L",
+   "b": "brg_in_L",
+   "gap": 0.0,
+   "overlap": 0.55
+  },
+  {
+   "a": "fan_shaft",
+   "b": "impeller",
+   "gap": 0.0,
+   "overlap": 0.161
+  },
+  {
+   "a": "frame",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "frame",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_case",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_case",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "mount_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "mount_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "enc_board_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "enc_board_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "spur71_R",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "spur71_L",
+   "gap": 0.0,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "enc_board_R",
+   "gap": 0.1,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "enc_board_L",
+   "gap": 0.1,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_motor",
+   "b": "impeller",
+   "gap": 0.2,
+   "overlap": 0.0
+  },
+  {
+   "a": "fan_case",
+   "b": "impeller",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "pinion_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "pinion_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_R",
+   "b": "brg_in_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_R",
+   "b": "magnet_R",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_L",
+   "b": "brg_in_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mt6835_L",
+   "b": "magnet_L",
+   "gap": 0.3,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_R",
+   "b": "spur71_R",
+   "gap": 0.361,
+   "overlap": 0.0
+  },
+  {
+   "a": "mount_L",
+   "b": "spur71_L",
+   "gap": 0.361,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "shaft_R",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_R",
+   "b": "pinion_R",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "shaft_L",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "tire_L",
+   "b": "pinion_L",
+   "gap": 0.4,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "spur71_R",
+   "gap": 0.499,
+   "overlap": 0.0
+  },
+  {
+   "a": "pcb",
+   "b": "spur71_L",
+   "gap": 0.499,
+   "overlap": 0.0
+  }
+ ]
+}

@@ -20,6 +20,8 @@ from OCP.BRepGProp import BRepGProp
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '../../docs/calc/frame'))
 sys.path.insert(0, os.path.join(HERE, '../motor_mount'))
+sys.path.insert(0, os.path.join(HERE, '..'))
+import cq_arcs                 # 丸い所を本当の円弧にする(2026-11-24)
 import design as dz
 import mount as mm
 
@@ -69,6 +71,12 @@ def zcyl(r, z0, z1, x=0.0, y=0.0):
     return cq.Workplane().center(x, y).circle(r).extrude(z1 - z0).translate((0, 0, z0))
 
 def poly_solid(poly, z0, z1):
+    """shapely の多角形を z0〜z1 の板にする。2026-11-24: 丸い所を本当の円弧にする(STEP がギザギザにならないように、cq_arcs.py)。
+    円弧にできない形のときだけ、今までどおり折れ線で作る"""
+    try:
+        return cq_arcs.poly_solid(poly, z0, z1, min_area=0.5)
+    except Exception:
+        pass
     out = []
     for p in getattr(poly, 'geoms', [poly]):
         if p.area < 0.5:
@@ -324,7 +332,8 @@ add('pcb', poly_solid(pcb_poly, Z_PCB, Z_PCBT), 'fr4')
 
 # ---------------- 電池 ----------------
 b = BAT
-add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + b['lz'] / 2)), 'battery')
+BAT_LIFT = 2.1     # 2026-10-31: 電池は基板の部品の上に載せる(電池の下は高さ 2.1mm まで: タンタル 2.0mm、SO-8 1.75mm)
+add('battery', cq.Workplane().box(b['lx'], b['ly'], b['lz']).translate((b['x'], 0, Z_PCBT + BAT_LIFT + b['lz'] / 2)), 'battery')
 # 2026-10-31: 電池のホルダ(左右、mechanical/battery_holder)。基板の上のねじ4本の頭の下に耳をはさむ
 sys.path.insert(0, os.path.join(HERE, '../battery_holder'))
 import battery_holder as bh

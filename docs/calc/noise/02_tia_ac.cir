@@ -1,0 +1,54 @@
+* 02 Wall-sensor TIA: closed-loop transimpedance and loop gain (.ac)
+* Closed loop: Zt = V(out)/Iph.
+* Loop gain: the loop is broken at the op-amp -input (high-impedance node,
+*   so the break is exact): Vx drives -IN of XUb, the feedback network
+*   (R74b||C74b, PD, PCB and the op-amp input capacitance replica) is loaded
+*   on node nb.  T = -V(nb)/V(xinn); 1/beta = V(outb)/V(nb); A = -V(outb)/V(xinn)
+* Output: out/ac_cf<val>.txt
+.include lib/models.lib
+.param cf=0.5p cpcb=1p
+
+V33  v3a 0 DC 3.3
+R78  v3a pdb 1k
+R79  pdb 0 47
+XC80 pdb 0 MLCC C=10u esr=5m esl=0.6n
+
+* ---- closed-loop TIA ----
+XU   pdb inn out v3a 0 OPA2354B
+R74  inn out 820k
+C74  inn out {cf}
+Cpcb inn 0 {cpcb}
+XPD  0 inn SFH229FA Cj=11.5p
+Iph  inn 0 DC 0 AC 1
+
+* ---- broken loop ----
+XUb  pdb xinn outb v3a 0 OPA2354B
+Vx   xinn 0 DC 0 AC 1
+R74b nb outb 820k
+C74b nb outb {cf}
+Cpcbb nb 0 {cpcb}
+XPDb 0 nb SFH229FA Cj=11.5p
+* replica of the op-amp -IN capacitance (2p CM + 2p diff to +IN = AC ground)
+Cinb nb 0 4p
+
+.control
+set wr_singlescale
+set wr_vecnames
+foreach val 0.2p 0.5p 0.8p 1.0p
+  alterparam cf = $val
+  reset
+  destroy all
+  ac dec 50 10 1G
+  let zt  = mag(v(out))
+  let ztp = cph(v(out))
+  let tl  = -v(nb)/v(xinn)
+  let tm  = mag(tl)
+  let tp  = cph(tl)
+  let am  = mag(v(outb)/v(xinn))
+  let ng  = mag(v(outb)/v(nb))
+  set fn = "out/ac_cf{$val}.txt"
+  wrdata $fn zt ztp tm tp am ng
+end
+quit
+.endc
+.end
