@@ -1,0 +1,43 @@
+/*
+ * HY0020(nRF52832)を、nRF52 DK のボードの設定で動かすための上書き(デバイスツリー)
+ *
+ * - uart0: P0.06 送る(→ D99 → STM32 の UART_RX)、P0.08 受ける(← STM32 の UART_TX)。
+ *   DK の初めの設定にある流れ制御の線(RTS P0.05・CTS P0.07)は外す(P0.07 は STM32 のリセットに使う)
+ * - 速さは 115200(STM32 の USART1 と同じにする。1Mbaud にするときは両方を変える。docs/ble.md の 8 章)
+ * - zephyr,user: このプログラムが使うピン(stm32_uart.c)
+ */
+&pinctrl {
+	uart0_default: uart0_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 6)>,
+				<NRF_PSEL(UART_RX, 0, 8)>;
+		};
+	};
+
+	uart0_sleep: uart0_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 0, 8)>;
+			low-power-enable;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(UART_TX, 0, 6)>;
+			low-power-enable;
+		};
+	};
+};
+
+&uart0 {
+	current-speed = <115200>;
+};
+
+/ {
+	zephyr,user {
+		/* STM32 の NRST(D101 を通して L に引くだけ) */
+		stm32-nrst-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+		/* STM32 の UART_RX を見るだけ(有線が送っているかを知る) */
+		uart-rx-watch-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+		/* @flash のときに、UART から外して L にする送る端子(P0.06) */
+		uart-tx-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+	};
+};
