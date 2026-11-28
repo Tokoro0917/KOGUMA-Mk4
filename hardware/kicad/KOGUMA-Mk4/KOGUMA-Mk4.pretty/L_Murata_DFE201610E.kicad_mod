@@ -1,0 +1,170 @@
+(footprint "L_Murata_DFE201610E"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "Murata DFE201610E power inductor 2.0x1.6x1.0mm, recommended land from Murata spec JETE243A: pads 0.8x1.8, gap 0.8, span 2.4")
+	(tags "inductor Murata DFE201610E")
+	(property "Reference" "REF**"
+		(at 0 -1.9 0)
+		(layer "F.SilkS")
+		(uuid "22c06820-5b07-4ae9-ada6-c06ecc274788")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "L_Murata_DFE201610E"
+		(at 0 1.9 0)
+		(layer "F.Fab")
+		(uuid "756acdfc-4e48-484d-bc4d-e2e22f8627b0")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "e286dd0b-84ba-416c-a446-abdde8b49a9f")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "61d7c005-1f3b-47a1-a29a-a1ff8b05e494")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(pad "1" smd roundrect
+		(at -0.8 0)
+		(size 0.8 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "d3354689-7788-485f-80cb-4e51242ce9ec")
+	)
+	(pad "2" smd roundrect
+		(at 0.8 0)
+		(size 0.8 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "1af4937c-30ac-43f5-aded-93caa3d43dbe")
+	)
+	(fp_line
+		(start -1 -0.8)
+		(end 1 -0.8)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "9a142aab-66f2-49f8-925f-68f7b24df0d7")
+	)
+	(fp_line
+		(start 1 -0.8)
+		(end 1 0.8)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "7f13b3a4-350c-40f6-bbb4-76323d964998")
+	)
+	(fp_line
+		(start 1 0.8)
+		(end -1 0.8)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "b2a7de2a-2379-4a50-836c-f6202986893d")
+	)
+	(fp_line
+		(start -1 0.8)
+		(end -1 -0.8)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+		(uuid "f50c05f6-d494-4447-a9f8-db125a623eee")
+	)
+	(fp_line
+		(start -1.45 -1.15)
+		(end 1.45 -1.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "fd51abd8-830b-42d1-b243-4032eee72f42")
+	)
+	(fp_line
+		(start 1.45 -1.15)
+		(end 1.45 1.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "a459aa75-faaf-491a-85a7-2d3859031081")
+	)
+	(fp_line
+		(start 1.45 1.15)
+		(end -1.45 1.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "0ca2e82e-7dad-4dfc-87b5-460223e99e93")
+	)
+	(fp_line
+		(start -1.45 1.15)
+		(end -1.45 -1.15)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(layer "F.CrtYd")
+		(uuid "1db9c09f-ad17-4f35-9906-0b8586eb0d52")
+	)
+	(fp_line
+		(start -0.25 -1.06)
+		(end 0.25 -1.06)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "bdbbd299-2f32-4645-952d-5a11e40f0e5e")
+	)
+	(fp_line
+		(start -0.25 1.06)
+		(end 0.25 1.06)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+		(uuid "170cf9e0-feb2-4827-bd1d-b4724aa72ad7")
+	)
+	(embedded_fonts no)
+)

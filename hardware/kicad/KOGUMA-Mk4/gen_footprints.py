@@ -1,0 +1,189 @@
+"""KOGUMA-Mk4.pretty の手で寸法を入れるフットプリントを作る(2026-10-31)
+寸法はメーカーの図面の推奨ランド(下のそれぞれの descr)。原点は部品の真ん中。
+使い方(このフォルダで): python3 gen_footprints.py"""
+import os, uuid
+
+U = lambda: str(uuid.uuid4())
+f = lambda v: f'{v:.4f}'.rstrip('0').rstrip('.')
+
+def text(kind, val, x, y, layer, hide=False):
+    return f'''	(property "{kind}" "{val}"
+		(at {f(x)} {f(y)} 0)
+		(layer "{layer}")
+{'		(hide yes)' + chr(10) if hide else ''}		(uuid "{U()}")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+'''
+
+def line(x0, y0, x1, y1, layer, w):
+    return f'''	(fp_line
+		(start {f(x0)} {f(y0)})
+		(end {f(x1)} {f(y1)})
+		(stroke
+			(width {w})
+			(type solid)
+		)
+		(layer "{layer}")
+		(uuid "{U()}")
+	)
+'''
+
+def poly(pts, layer, w):
+    return ''.join(line(*pts[i], *pts[(i + 1) % len(pts)], layer, w) for i in range(len(pts)))
+
+def rect(x0, y0, x1, y1, layer, w):
+    return poly([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], layer, w)
+
+def smd(num, x, y, w, h):
+    return f'''	(pad "{num}" smd roundrect
+		(at {f(x)} {f(y)})
+		(size {f(w)} {f(h)})
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(uuid "{U()}")
+	)
+'''
+
+def npth(x, y, d):
+    return f'''	(pad "" np_thru_hole circle
+		(at {f(x)} {f(y)})
+		(size {f(d)} {f(d)})
+		(drill {f(d)})
+		(layers "*.Cu" "*.Mask")
+		(uuid "{U()}")
+	)
+'''
+
+def footprint(name, descr, tags, ref_y, val_y, body, attr='smd'):
+    return f'''(footprint "{name}"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "{descr}")
+	(tags "{tags}")
+{text('Reference', 'REF**', 0, ref_y, 'F.SilkS')}{text('Value', name, 0, val_y, 'F.Fab')}{text('Datasheet', '', 0, 0, 'F.Fab', True)}{text('Description', '', 0, 0, 'F.Fab', True)}	(attr {attr})
+{body}	(embedded_fonts no)
+)
+'''
+
+FP = {}
+
+# ---- SW1 電源スイッチ: Alps Alpine SSSS810701(SSSS8、横に動かすスライド、1回路2接点)----
+# 製品ページの Dimensions・Land Dimensions(tech.alpsalpine.com、SSSS810701)。
+# 原点は位置決めの穴2つの真ん中。端子(1・2・3、2 が共通)は -y 側、つまみは +y 側に出る(基板の縁に向ける)。
+# 端子: 1 は x −2.25、2 は +0.75、3 は +2.25(1 と 2 の間 3、2 と 3 の間 1.5、2 は真ん中から 0.75)。
+# パッド 0.7 × 1.5、穴の線から 1〜2.5mm。穴 φ0.9 × 2(間 3)。本体 6.7 × 2.6(穴の線が本体の真ん中)、つまみ 1.3 幅・1.5 出る、動き 1.5
+b = ''.join(smd(n, x, -1.75, 0.7, 1.5) for n, x in (('1', -2.25), ('2', 0.75), ('3', 2.25)))
+b += npth(-1.5, 0, 0.9) + npth(1.5, 0, 0.9)
+b += rect(-3.35, -1.3, 3.35, 1.3, 'F.Fab', 0.1) + rect(-0.65 - 0.75, 1.3, 0.65 - 0.75, 2.8, 'F.Fab', 0.1)   # つまみ(1 側に寄せた位置で描く)
+b += line(-3.47, -0.6, -3.47, 1.42, 'F.SilkS', 0.12) + line(3.47, -0.6, 3.47, 1.42, 'F.SilkS', 0.12)
+b += line(-3.47, 1.42, -1.5, 1.42, 'F.SilkS', 0.12) + line(-0.0, 1.42, 3.47, 1.42, 'F.SilkS', 0.12)
+b += rect(-3.6, -2.75, 3.6, 4.4, 'F.CrtYd', 0.05)
+FP['SW_Slide_SPDT_Alps_SSSS8'] = footprint(
+    'SW_Slide_SPDT_Alps_SSSS8',
+    'Alps Alpine SSSS8 (SSSS810701) SMD slide switch SPDT, 6.7x2.6x1.4mm, land pattern from the product page (Land Dimensions). '
+    'Pads 1-2-3 (2 = common) on -y, actuator on +y (toward the board edge), 2 locating holes 0.9mm',
+    'switch slide SPDT Alps SSSS8', -3.6, 3.6 + 1.5, b)
+
+# ---- SW2 スイッチ: Zhejiang Jianfu TVAF06-A020B-R(2.9 × 3.9mm、上から押す)----
+# 仕様書 2011101401 の P.C.B LAND DIMENSION: パッド 1.6 × 1.05(外 5.5、内 3.4)、穴 φ0.75 × 2(間 1.8)
+b = smd('1', 0, -2.225, 1.6, 1.05) + smd('2', 0, 2.225, 1.6, 1.05)
+b += npth(-0.9, 0, 0.75) + npth(0.9, 0, 0.75)
+b += rect(-1.45, -1.95, 1.45, 1.95, 'F.Fab', 0.1)
+b += line(-1.57, -1.4, -1.57, 1.4, 'F.SilkS', 0.12) + line(1.57, -1.4, 1.57, 1.4, 'F.SilkS', 0.12)
+b += rect(-1.85, -3.0, 1.85, 3.0, 'F.CrtYd', 0.05)
+FP['SW_Push_Jianfu_TVAF06'] = footprint(
+    'SW_Push_Jianfu_TVAF06',
+    'Zhejiang Jianfu TVAF06-A020B-R SMD tact switch 2.9x3.9mm, H2.0mm, land pattern from spec 2011101401 (P.C.B LAND DIMENSION): pads 1.6x1.05 at +-2.225, 2 holes 0.75mm',
+    'switch tact push Jianfu TVAF06', -3.8, 3.8, b)
+
+# ---- BZ1 ブザー: PUI Audio SMT-0540-S-R(5 × 5 × 2mm、横に音が出る)----
+# データシートの Suggested Land Pattern: パッド 1.30 × 1.50、左の列は x −2.25〜−0.95、右は 1.25〜2.55、上の行は y −3.0〜−1.5、下は 1.5〜3.0。
+# 上から見て、左上が +、左下が −、右上は電気的につながらない足(DUMMY LEAD)。音の出る穴は +x の面
+b = smd('1', -1.6, -2.25, 1.3, 1.5) + smd('2', -1.6, 2.25, 1.3, 1.5) + smd('', 1.9, -2.25, 1.3, 1.5)
+b += poly([(-2.5, -2.5), (2.5, -2.5), (2.5, 1.5), (1.5, 2.5), (-2.5, 2.5)], 'F.Fab', 0.1)
+b += line(-0.7, -2.62, 1.0, -2.62, 'F.SilkS', 0.12) + line(-0.7, 2.62, 1.6, 2.62, 'F.SilkS', 0.12)
+b += line(2.62, -1.25, 2.62, 1.55, 'F.SilkS', 0.12) + line(-2.62, -1.35, -2.62, 1.35, 'F.SilkS', 0.12)
+b += line(-3.3, -2.25, -3.3, -1.6, 'F.SilkS', 0.12) + line(-3.6, -1.95, -3.0, -1.95, 'F.SilkS', 0.12)   # + の印
+b += rect(-3.75, -3.25, 3.05, 3.25, 'F.CrtYd', 0.05)
+FP['Buzzer_PUI_SMT-0540'] = footprint(
+    'Buzzer_PUI_SMT-0540',
+    'PUI Audio SMT-0540-S-R magnetic buzzer 5x5x2mm, side sound hole (+x), suggested land pattern from the datasheet: pads 1.30x1.50, 1 = +, 2 = -, unnumbered pad = dummy lead',
+    'buzzer magnetic transducer PUI SMT-0540', -4.1, 4.1, b)
+
+# ---- U5 BLE モジュール: FDK HY0020(nRF52832、3.5 × 10 × 1.05mm、LGA 29、2026-11-23)----
+# データシート Ver.3.0 の Figure 2-1 Outline(下から見た図)と Figure 4-1 Pinout(下から見た図)。下から見た図は長い辺を軸に裏返した形
+# (上から見たときの 1 番の印は左上)なので、上から見た KiCad の座標は (x, y) = (図の x, 図の上向きの y)。
+# 列 B〜M は 0.7mm おき(G が真ん中)、A は x −4.31、N は x +4.335。パッド: 真ん中 22個 0.3 × 0.55、A の3つ 0.6 × 0.3、N の4つ 0.55 × 0.35。
+# 行: 1 は y −1.075(A1・N1 は −1.175)、上の行 E4〜M4 は +0.975、B3〜D3 は +0.525、A2 −0.275・A3 +0.625、N2 −0.4・N3 +0.3・N4 +1.075。
+# アンテナはシールドの上のスロット(「大きな禁止の範囲は要らない」)。上に電池などの金属をかぶせない
+COL = {c: (i - 5) * 0.7 for i, c in enumerate('BCDEFGHJKLM')}
+b = ''.join(smd(f'{c}1', COL[c], -1.075, 0.3, 0.55) for c in 'BCDEFGHJKLM')
+b += ''.join(smd(f'{c}3', COL[c], 0.525, 0.3, 0.55) for c in 'BCD')
+b += ''.join(smd(f'{c}4', COL[c], 0.975, 0.3, 0.55) for c in 'EFGHJKLM')
+b += ''.join(smd(n, -4.31, y, 0.6, 0.3) for n, y in (('A1', -1.175), ('A2', -0.275), ('A3', 0.625)))
+b += ''.join(smd(n, 4.335, y, 0.55, 0.35) for n, y in (('N1', -1.175), ('N2', -0.4), ('N3', 0.3), ('N4', 1.075)))
+b += rect(-5.0, -1.75, 5.0, 1.75, 'F.Fab', 0.1)
+b += line(-5.12, -1.87, 5.12, -1.87, 'F.SilkS', 0.12) + line(-5.12, 1.87, 5.12, 1.87, 'F.SilkS', 0.12)
+b += line(-5.12, -1.87, -5.12, -1.4, 'F.SilkS', 0.12) + line(-5.4, -2.1, -4.8, -2.1, 'F.SilkS', 0.12)   # 1 番(A1)の印
+b += rect(-5.25, -2.0, 5.25, 2.0, 'F.CrtYd', 0.05)
+FP['FDK_HY0020'] = footprint(
+    'FDK_HY0020',
+    'FDK HY0020 Bluetooth LE module (Nordic nRF52832), 3.5x10x1.05mm LGA-29, slot antenna on the shield (no large keep-out required; keep metal such as a battery off the top). '
+    'Pads from datasheet Ver.3.0 Figure 2-1 (bottom view mirrored about the long axis): columns B-M at 0.7mm pitch, A at x -4.31, N at x +4.335',
+    'BLE Bluetooth nRF52832 FDK HY0020 module', -2.9, 2.9, b)
+
+# ---- U2・U3 モータードライバ: MPS MP6551GQB(QFN-14 2.5 × 3mm、2026-11-23 に作り直し)----
+# データシート Rev.1.0 の p.14 RECOMMENDED LAND PATTERN(docs/reference/datasheets/MP6551_MPS.pdf)。上から見た図。
+# 上下の短いパッド: 0.25 × 0.80、間 0.5、中心 y ±1.40(「2.80」は上下のパッドの中心の間)。
+# 横の長いパッド: 0.25 × 1.30(「1.30」はパッドの長さ)、間 0.5。内側の端は ±0.25(足の内側の端。本体 2.5 の端から足の長さ 0.95〜1.05)、外側の端は ±1.55。
+# 1 番だけ 1.20(内側の端が ±0.35)で、内側の上の角を 0.15 × 45° 落とす。左右の列の間は 0.5(前の版は 0.2 で、VIN(2)と GND(9)がはんだでつながるおそれがあった)
+b = ''
+for i, n in enumerate(('14', '13', '12', '11')):
+    b += smd(n, -0.75 + 0.5 * i, -1.4, 0.25, 0.8)
+for i, n in enumerate(('4', '5', '6', '7')):
+    b += smd(n, -0.75 + 0.5 * i, 1.4, 0.25, 0.8)
+b += f"""	(pad "1" smd roundrect
+		(at -0.95 -0.5)
+		(size 1.2 0.25)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.1)
+		(chamfer_ratio 0.6)
+		(chamfer top_right)
+		(uuid "{U()}")
+	)
+"""
+b += smd('2', -0.9, 0.0, 1.3, 0.25) + smd('3', -0.9, 0.5, 1.3, 0.25)
+b += smd('10', 0.9, -0.5, 1.3, 0.25) + smd('9', 0.9, 0.0, 1.3, 0.25) + smd('8', 0.9, 0.5, 1.3, 0.25)
+b += poly([(-1.25, -1.0), (-0.75, -1.5), (1.25, -1.5), (1.25, 1.5), (-1.25, 1.5)], 'F.Fab', 0.1)     # 本体(1 番の角を落とす)
+b += rect(-1.8, -2.05, 1.8, 2.05, 'F.CrtYd', 0.05)
+for sx in (-1, 1):
+    for sy in (-1, 1):
+        b += line(sx * 1.05, sy * 1.62, sx * 1.37, sy * 1.62, 'F.SilkS', 0.12)
+b += line(-1.37, -1.62, -1.37, -0.95, 'F.SilkS', 0.12)          # 1 番の印(左上の角を L の字に)
+FP['MPS_QFN-14_2.5x3mm'] = footprint(
+    'MPS_QFN-14_2.5x3mm',
+    'MPS QFN-14 2.5x3mm (MP6551GQB), recommended land pattern from the MP6551 datasheet Rev.1.0 p.14: short pads 0.25x0.80 at y +-1.40, long pads 0.25x1.30 from x +-0.25 to +-1.55 (pin 1 1.20 long, 0.15x45 deg chamfer). Pin 1 = top-left long pad',
+    'QFN MPS MP6551', -2.6, 2.6, b)
+
+# ---- L1 SMPS のインダクタ: 村田 DFE201610E-2R2M(2.0 × 1.6 × 1.0mm、2026-11-23)----
+# 村田の仕様書 JETE243A の推奨ランド: パッド 0.8 × 1.8、間 0.8、外の端 2.4(KiCad の L_Murata_DFE201610P は 0.55 × 1.6 で小さい)
+b = smd('1', -0.8, 0, 0.8, 1.8) + smd('2', 0.8, 0, 0.8, 1.8)
+b += rect(-1.0, -0.8, 1.0, 0.8, 'F.Fab', 0.1) + rect(-1.45, -1.15, 1.45, 1.15, 'F.CrtYd', 0.05)
+b += line(-0.25, -1.06, 0.25, -1.06, 'F.SilkS', 0.12) + line(-0.25, 1.06, 0.25, 1.06, 'F.SilkS', 0.12)
+FP['L_Murata_DFE201610E'] = footprint(
+    'L_Murata_DFE201610E',
+    'Murata DFE201610E power inductor 2.0x1.6x1.0mm, recommended land from Murata spec JETE243A: pads 0.8x1.8, gap 0.8, span 2.4',
+    'inductor Murata DFE201610E', -1.9, 1.9, b)
+
+if __name__ == '__main__':
+    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'KOGUMA-Mk4.pretty')
+    for n, s in FP.items():
+        open(os.path.join(here, n + '.kicad_mod'), 'w').write(s)
+        print(n)
