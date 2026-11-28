@@ -96,7 +96,8 @@ turn90.entry_acc=0.7
 
 | 行 | 向き | 意味 |
 |---|---|---|
-| `@link up`・`@link down` | nRF → STM32 | PC とつながった・切れた |
+| `@link up`・`@link down` | nRF → STM32 | PC とつながった・切れた(nRF が起動したときも `@link down`) |
+| `@link?` | STM32 → nRF | 今つながっているかを聞く → `@link up` か `@link down` が返る(STM32 が再起動したあと用。2026-11-28) |
 | `@quiet on`・`@quiet off` | STM32 → nRF | 電波を止める・戻す |
 | `@reset` | PC → nRF | STM32 の NRST を 10ms L にする(STM32 には届けない) |
 | `@flash` | PC → nRF | STM32 をブートローダの書き込みの待ちに入れる: UART_RX を L にしたまま NRST を 10ms L、放してから 50ms 後に UART_RX を放す(6.2) |
@@ -106,7 +107,7 @@ turn90.entry_acc=0.7
 
 UART には RTS・CTS の線がない(MCU のピンが足りない)。そこで **XON・XOFF**(0x11・0x13、テキストには出てこない文字)を使う。
 
-- nRF52832 の送り待ちのバッファ(32KB)が 3/4 を超えたら、nRF52832 が STM32 に XOFF を送る。STM32 は送るのを止める。1/4 を下回ったら XON
+- nRF52832 の送り待ちのバッファ(**8KB**。2026-11-28: nRF52832 の RAM 64KB に入る大きさにした。前の案は 32KB)が 3/4 を超えたら、nRF52832 が STM32 に XOFF を送る。STM32 は送るのを止める。1/4 を下回ったら XON
 - 有線(USB シリアル)のときは XOFF が来ないので、そのまま流れる
 - 速さの目安: UART 1Mbaud で約 90kB/s。BLE は PC の Bluetooth しだいで 20〜100kB/s(2M PHY、データ長の拡張、MTU 247)。迷路(数KB)は一瞬、ログ 256KB は 3〜13秒
 
@@ -181,9 +182,9 @@ HY0020 は中身が空で届くので、基板に載せたあと、最初に1回
 **HY0020 の中で使う端子**(データシートの表と回路図 `ui.kicad_sch` の U5): P0.08 = 受信(マイコンの UART_TX から)、P0.06 = 送信(D99 → UART_RX)、P0.04 = UART_RX を見るだけ、P0.07 = マイコンの NRST を L に引く(D101)。
 32MHz と 32.768kHz の水晶は中にある(データシートの図3-1)。nRESET(P0.21)はつないでいない(中のプルアップのまま)。
 
-**プログラム**(`software/ble/`、まだ作っていない): nRF Connect SDK の見本 `peripheral_uart`(Nordic UART Service)を元に、ボードは `nrf52dk/nrf52832` で作る。
+**プログラム**(`software/ble/`、2026-11-28 に作った。中身とビルドの仕方は `software/ble/README.md`): nRF Connect SDK v3.4.2、ボードは `nrf52dk/nrf52832` で作る。
 nRF52 DK の UART のピンは TX P0.06・RX P0.08 で HY0020 の使い方と同じなので、そのまま使える。ただし **DK の初めの設定のハードの流れ制御(RTS P0.05・CTS P0.07)は切る**(P0.07 はマイコンのリセットに使うため)。DC/DC を ON(`CONFIG_BOARD_ENABLE_DCDC=y`)、名前は `KOGUMA-MK4`。
-ビルドすると、DFU 用のブートローダ(MCUboot)も入った `merged.hex` ができる。
+ビルドすると、ブートローダ `build/mcuboot/zephyr/zephyr.hex` と、このプログラム `build/ble/zephyr/zephyr.signed.hex` の 2 つができる(最初は両方書く)。
 
 **作者がやること**(上から順に):
 
@@ -192,7 +193,7 @@ nRF52 DK の UART のピンは TX P0.06・RX P0.08 で HY0020 の使い方と同
 3. 線をつなぐ(3本): Pico の **GP2 → TP3(BLE_SWDCLK)**、**GP3 → TP2(BLE_SWDIO)**、**GND → 機体の GND**(J7 の5番など)。TP2・TP3 は前の BLE モジュール U5 の右の 1mm の丸いパッド。細い線をはんだ付けするか、ばねのピンを当てる
 4. 機体の電源を入れる(電池。Pico から機体に電気は送らない)
 5. 消す: `pyocd erase -t nrf52832 --mass -f 1m`。「locked」などと出たら、`--mass` のまま、もう一度(読み出しの禁止を外しながら全部消す)
-6. 書く: `pyocd flash -t nrf52832 -f 1m merged.hex`。最後に「Programmed」などと出れば成功
+6. 書く(2 つを順に): `pyocd flash -t nrf52832 -f 1m build/mcuboot/zephyr/zephyr.hex` → `pyocd flash -t nrf52832 -f 1m build/ble/zephyr/zephyr.signed.hex`。どちらも最後に書けたという表示が出れば成功
 7. 確かめる: スマホに Nordic の「nRF Connect」アプリを入れ、SCAN を押す → **KOGUMA-MK4** が出れば成功。CONNECT → 「Nordic UART Service」が見えれば、マイコンとの橋渡しが動いている
 8. 線を外す(2回目からは BLE で書き換える)
 
@@ -203,7 +204,7 @@ nRF52 DK の UART のピンは TX P0.06・RX P0.08 で HY0020 の使い方と同
 
 | ソフト | 中身 | もと |
 |---|---|---|
-| nRF52832(HY0020) | NUS の UART の橋渡し、`@` の行、XON・XOFF、NRST・`@flash`、有線が送っている間は待つ(9章)、DFU | Nordic nRF5 SDK または nRF Connect SDK の見本(peripheral_uart / ble_app_uart)。最初の書き込みは TP2・TP3(SWD) |
+| nRF52832(HY0020) | NUS の UART の橋渡し、`@` の行、XON・XOFF、NRST・`@flash`、有線が送っている間は待つ(9章)、DFU。**2026-11-28 に作った**(`software/ble/`、nRF Connect SDK v3.4.2。ビルドは通った、実機は未確認) | Nordic nRF5 SDK または nRF Connect SDK の見本(peripheral_uart / ble_app_uart)。最初の書き込みは TP2・TP3(SWD) |
 | STM32(走るプログラム) | コマンド、状態、Flash への保存、ログ・迷路の送信 | MK3 のコマンドとログの形 |
 | STM32(ブートローダ) | 6章 | 新しく作る |
 | PC | MK3 のビューアに **「BLE でつなぐ」**(Web Bluetooth で NUS)を足す。ターンの調整は Python(bleak)で別に作るか、ビューアに足す | `KOGUMA.MkIIl/tools/viewer.html`(Web Serial) |
