@@ -1,0 +1,467 @@
+/*
+ * ui.c
+ * 機体の操作：LED の表示と合図、タイヤ・スイッチ・前センサの読み取り（MODES.md の 1〜3）
+ *
+ * ■ LED の並び（上から見た図。上が機体の前）
+ *
+ *             LED3  LED4  LED5          ← モード（4・2・1）
+ *      SW
+ *      LED1  LED2        LED6  LED7     ← No.（8・4・2・1）
+ *
+ * ■ 入力の読み方
+ *   - タイヤ：エンコーダの「回った量」の差を足していき、UI_TIRE_COUNT_PER_STEP ごとに 1 段とする
+ *   - スイッチ：押した瞬間に 1 回だけ「押された」と答える。2 回続けて同じ値を読んだときだけ変わったとみなし、
+ *               チャタリング（押した瞬間に入ったり切れたりすること）を取り除く
+ *   - 前センサの手：HAND_STABLE_COUNT 回続けて同じ値を読んだときだけ、かざした／離したとみなす
+ *
+ * ■ MK4 で足したもの(2026-11-28。ToraNeko.Mk3 の App/sys/ui.c から)
+ *   - ブザー: 合図と一緒に短い音を出す(決定・スタート・うまくいった・できなかった・フェイルセーフ。MODES.md)
+ *   - 待っているあいだ(ui_wait_ms)に、PC・BLE から届いたコマンドを処理する(sys/cmd.c)
+ *   - 状態の LED 0(D114): BLE の状態(点灯 = PC とつながっている、ゆっくり点滅 = PC を待っている)
+ *     状態の LED 1(D115): 機体の状態(速い点滅 = フェイルセーフで止まった、ゆっくり点滅 = 電池が少ない)
+ *   - 壁の表示 LED(D110〜D113): 壁センサが壁を見ていれば点ける
+ */
+#include "sys/ui.h"
+
+#include "ctrl/wall_ctrl.h"
+#include "config/robot_params.h"
+#include "drv/buzzer.h"
+#include "drv/current.h"
+#include "drv/encoder.h"
+#include "drv/led.h"
+#include "drv/switch.h"
+#include "drv/timebase.h"
+#include "sys/cmd.h"
+#include "sys/failsafe.h"
+
+#define BLINK_MS           150   /* 全部を点滅させるときの、点けている時間・消している時間 [ms] */
+#define WAIT_BLINK_MS      250   /* スタート待ちで、モードと No. を点滅させる間隔 [ms] */
+#define SIGNAL_OK_MS       1000  /* 「うまくいった」で全部を点けておく時間 [ms] */
+#define SIGNAL_ERROR_MS    80    /* 「できなかった」で外側の 4 個を速く点滅させる間隔 [ms] */
+#define SIGNAL_ERROR_TIMES 5     /* 「できなかった」の点滅の回数 */
+#define START_DELAY_MS     1000  /* 手を離してから走り出すまで [ms] */
+#define HAND_STABLE_COUNT  3     /* 手をかざした／離したとみなすまでに、同じ値が続く回数（UI_POLL_MS ごと） */
+#define SWITCH_START_MS    1000  /* スタート待ちで、スイッチをこれ以上押し続けたら、手のかわりにスタートする [ms] */
+#define FAILSAFE_BLINK_MS  500   /* フェイルセーフで止まったときに、全部を点滅させる間隔 [ms] */
+#define LOADING_STEP_MS    150   /* 「ロード中」で、LED を 1 個ずつ点けていく間隔 [ms]（7 個で約 1 秒） */
+#define STATUS_SLOW_BLINK_MS 500  /* 状態の LED のゆっくり点滅(1 秒に 1 回) */
+#define STATUS_FAST_BLINK_MS 100  /* 状態の LED の速い点滅 */
+
+/* ブザーの音(高さ [Hz]・長さ [ms])。仮(docs/software.md の 15 章「ブザーの音の割り当て」) */
+#define BEEP_DECIDE_HZ   2000
+#define BEEP_DECIDE_MS   60
+#define BEEP_START_HZ    2500
+#define BEEP_START_MS    120
+#define BEEP_OK_HZ       3000
+#define BEEP_OK_MS       200
+#define BEEP_ERROR_HZ    500
+#define BEEP_ERROR_MS    400
+#define BEEP_FAILSAFE_HZ 1000
+#define BEEP_FAILSAFE_MS 600
+
+/* タイヤ：前に読んだときの回った量と、まだ 1 段にならない回転量 [カウント] */
+static int32_t s_left_last_count = 0;
+static int32_t s_left_rest = 0;
+static int32_t s_right_last_count = 0;
+static int32_t s_right_rest = 0;
+
+/* スイッチ：前に読んだ値と、チャタリングを取り除いたあとの状態（true なら押されている） */
+static bool s_switch_last_read = false;
+static bool s_switch_state = false;
+
+/* 起動時に 1 回呼ぶ。LED を消し、今のタイヤとスイッチの状態を覚える */
+void ui_init(void)
+{
+  led_all_off();
+  ui_forget_tire_rotation();
+  s_switch_last_read = switch_is_pressed();
+  s_switch_state = s_switch_last_read;
+}
+
+/* ---------------------------------------------------------------------------
+ * LED の表示
+ * ------------------------------------------------------------------------- */
+
+/* 2 進数の 1 桁を LED に出す。残りの値 rest がその桁の重み weight 以上なら LED を点けて、
+ * 重みを引いた残りを返す。小さければ LED を消して、rest をそのまま返す（上の桁から順に呼ぶ） */
+static int show_digit(uint8_t led_num, int rest, int weight)
+{
+  if (rest >= weight) {
+    led_set(led_num, true);
+    return rest - weight;
+  }
+  led_set(led_num, false);
+  return rest;
+}
+
+/* モード（0〜7）を真ん中の 3 個に、No.（0〜15）を外側の 4 個に、2 進数で出す */
+void ui_show_mode_number(int mode, int number)
+{
+  int rest = mode;
+  rest = show_digit(3, rest, 4);
+  rest = show_digit(4, rest, 2);
+  show_digit(5, rest, 1);
+
+  rest = number;
+  rest = show_digit(1, rest, 8);
+  rest = show_digit(2, rest, 4);
+  rest = show_digit(6, rest, 2);
+  show_digit(7, rest, 1);
+}
+
+/* 0〜31 の値を、LED3〜LED7 に 2 進数で出す(LED3 = 16、LED4 = 8、LED5 = 4、LED6 = 2、LED7 = 1。16×16 の迷路のゴールは 0〜14 なので LED3 は使わない)。
+ * ゴールの位置を入れるときに使う。LED1・LED2 は消す */
+void ui_show_value(int value)
+{
+  led_set(1, false);
+  led_set(2, false);
+  int rest = value;
+  rest = show_digit(3, rest, 16);
+  rest = show_digit(4, rest, 8);
+  rest = show_digit(5, rest, 4);
+  rest = show_digit(6, rest, 2);
+  show_digit(7, rest, 1);
+}
+
+/* 7 個全部を点ける */
+void ui_all_on(void)
+{
+  for (uint8_t num = 1; num <= LED_COUNT; num++) {
+    led_set(num, true);
+  }
+}
+
+/* 7 個全部を消す */
+void ui_all_off(void)
+{
+  led_all_off();
+}
+
+/* 外側の 4 個（LED1・LED2・LED6・LED7）を点ける／消す */
+static void set_outer_leds(bool on)
+{
+  led_set(1, on);
+  led_set(2, on);
+  led_set(6, on);
+  led_set(7, on);
+}
+
+/* ---------------------------------------------------------------------------
+ * 合図
+ * ------------------------------------------------------------------------- */
+
+/* 7 個全部を times 回点滅させる（決定したとき 1 回、ゴールの y の入力に移るとき 2 回） */
+void ui_blink_all(int times)
+{
+  buzzer_beep(BEEP_DECIDE_HZ, BEEP_DECIDE_MS);
+  for (int i = 0; i < times; i++) {
+    ui_all_on();
+    ui_wait_ms(BLINK_MS);
+    ui_all_off();
+    ui_wait_ms(BLINK_MS);
+  }
+}
+
+/* 「うまくいった」：7 個全部を 1 秒点ける */
+void ui_signal_ok(void)
+{
+  buzzer_beep(BEEP_OK_HZ, BEEP_OK_MS);
+  ui_all_on();
+  ui_wait_ms(SIGNAL_OK_MS);
+  ui_all_off();
+}
+
+/* 「できなかった」：外側の 4 個を速く 5 回点滅させる */
+void ui_signal_error(void)
+{
+  buzzer_beep(BEEP_ERROR_HZ, BEEP_ERROR_MS);
+  ui_all_off();
+  for (int i = 0; i < SIGNAL_ERROR_TIMES; i++) {
+    set_outer_leds(true);
+    ui_wait_ms(SIGNAL_ERROR_MS);
+    set_outer_leds(false);
+    ui_wait_ms(SIGNAL_ERROR_MS);
+  }
+}
+
+/* 時刻 until_ms [ms] になるまで待つ。待っているあいだに押されたスイッチは読み捨てる（あとで「押された」と答えないようにする）。
+ * 待つ回数ではなく時刻で決めるのは、実機の 1 回の待ち（HAL_Delay）が少し長くなることがあり、回数で数えるとずれがたまるため */
+static void wait_until_ignoring_switch(uint32_t until_ms)
+{
+  while (timebase_get_ms() < until_ms) {
+    ui_switch_pushed();  /* 読むだけで、答えは使わない */
+    ui_wait_ms(UI_POLL_MS);
+  }
+}
+
+/* 「ロード中」：LED1 から LED7 へ 1 個ずつ順に点けていき（左下 → 上 → 右下）、全部点いたら消す（約 1 秒）。
+ * このあいだはスイッチを押しても何も起きない（続けて押したときに、次の決定にならないようにする） */
+void ui_show_loading(void)
+{
+  ui_all_off();
+  uint32_t next_ms = timebase_get_ms();
+  for (uint8_t num = 1; num <= LED_COUNT; num++) {
+    led_set(num, true);
+    next_ms = next_ms + LOADING_STEP_MS;
+    wait_until_ignoring_switch(next_ms);
+  }
+  ui_all_off();
+}
+
+/* ---------------------------------------------------------------------------
+ * 入力
+ * ------------------------------------------------------------------------- */
+
+/* これまでにタイヤを回した量を忘れる。モードを選び始めるときに呼ぶ
+ * （走っているあいだにタイヤが回った量で、モードや No. が変わらないようにするため） */
+void ui_forget_tire_rotation(void)
+{
+  s_left_last_count = encoder_get_left_total();
+  s_left_rest = 0;
+  s_right_last_count = encoder_get_right_total();
+  s_right_rest = 0;
+}
+
+/* 回転量 rest [カウント] が何段ぶんか。前に回したら正、後ろに回したら負。
+ * 1 段に足りない分は数えない（C の割り算は、0 の方へ切り捨てる。例：-350 / 300 = -1） */
+static int steps_in(int32_t rest)
+{
+  return rest / UI_TIRE_COUNT_PER_STEP;
+}
+
+/* 前に読んでから、左タイヤが何段回ったか（前に回したら正、後ろに回したら負） */
+int ui_read_left_steps(void)
+{
+  int32_t count = encoder_get_left_total();
+  s_left_rest = s_left_rest + (count - s_left_last_count);
+  s_left_last_count = count;
+
+  int steps = steps_in(s_left_rest);
+  s_left_rest = s_left_rest - steps * UI_TIRE_COUNT_PER_STEP;
+  return steps;
+}
+
+/* 前に読んでから、右タイヤが何段回ったか（前に回したら正、後ろに回したら負） */
+int ui_read_right_steps(void)
+{
+  int32_t count = encoder_get_right_total();
+  s_right_rest = s_right_rest + (count - s_right_last_count);
+  s_right_last_count = count;
+
+  int steps = steps_in(s_right_rest);
+  s_right_rest = s_right_rest - steps * UI_TIRE_COUNT_PER_STEP;
+  return steps;
+}
+
+/* スイッチが押された瞬間なら true（押しっぱなしでも、1 回押すごとに 1 回だけ true）。
+ * UI_POLL_MS ごとに呼ぶ。2 回続けて同じ値を読んだときだけ、状態が変わったとみなす（チャタリングを取り除く） */
+bool ui_switch_pushed(void)
+{
+  bool now_read = switch_is_pressed();
+  bool pushed = false;
+
+  if (now_read == s_switch_last_read && now_read != s_switch_state) {
+    s_switch_state = now_read;
+    if (s_switch_state) {
+      pushed = true;  /* 離れた状態から、押された状態に変わった */
+    }
+  }
+  s_switch_last_read = now_read;
+  return pushed;
+}
+
+/* period_ms ごとに点ける・消すを入れ替える点滅で、今が点けるときなら true。
+ * 起動してからの時刻を period_ms で割った数(何回目の区切りか)が偶数なら点ける(2 で割って 2 倍して戻れば偶数) */
+static bool blink_is_on(uint32_t period_ms)
+{
+  uint32_t count = timebase_get_ms() / period_ms;
+  if ((count / 2) * 2 == count) {
+    return true;
+  }
+  return false;
+}
+
+/* 状態の LED 0・1 と壁の表示 LED を、今の状態にする(待っているあいだにくり返し呼ぶ) */
+void ui_update_status_leds(void)
+{
+  bool slow_lit = blink_is_on(STATUS_SLOW_BLINK_MS);
+  bool fast_lit = blink_is_on(STATUS_FAST_BLINK_MS);
+
+  /* 状態の LED 0: BLE */
+  if (cmd_is_link_up()) {
+    led_set_status0(true);
+  } else {
+    led_set_status0(slow_lit);
+  }
+  /* 状態の LED 1: 機体 */
+  if (failsafe_is_stopped()) {
+    led_set_status1(fast_lit);
+  } else if (current_get_battery_v() < BATTERY_LOW_V) {
+    led_set_status1(slow_lit);
+  } else {
+    led_set_status1(false);
+  }
+  /* 壁の表示 LED(前の壁は左前・右前の両方に出す) */
+  bool front = wall_ctrl_has_wall_front();
+  led_set_wall(front, wall_ctrl_has_wall_left(), wall_ctrl_has_wall_right(), front);
+}
+
+/* wait_ms [ms] 待つ。待っているあいだに、コマンドを処理し、状態の LED を新しくする(UI_POLL_MS ごと) */
+void ui_wait_ms(uint32_t wait_ms)
+{
+  uint32_t start_ms = timebase_get_ms();
+  while (timebase_get_ms() - start_ms < wait_ms) {
+    cmd_poll();
+    ui_update_status_leds();
+    uint32_t rest_ms = wait_ms - (timebase_get_ms() - start_ms);
+    if (rest_ms > wait_ms) {
+      break;  /* 待っているあいだに時間を過ぎた(引き算がマイナスになり、大きな数になった) */
+    }
+    if (rest_ms > UI_POLL_MS) {
+      rest_ms = UI_POLL_MS;
+    }
+    timebase_wait_ms(rest_ms);
+  }
+}
+
+/* 走り出すときの音 */
+void ui_beep_start(void)
+{
+  buzzer_beep(BEEP_START_HZ, BEEP_START_MS);
+}
+
+/* ---------------------------------------------------------------------------
+ * 待つ
+ * ------------------------------------------------------------------------- */
+
+/* 前センサに手がかざされる（want_hand が true）、または手が離れる（false）まで待つ。
+ * HAND_STABLE_COUNT 回続けて同じ値を読んだら、そうなったとみなす */
+static void wait_hand(bool want_hand)
+{
+  int stable_count = 0;
+  while (stable_count < HAND_STABLE_COUNT) {
+    if (wall_ctrl_is_hand_front() == want_hand) {
+      stable_count = stable_count + 1;
+    } else {
+      stable_count = 0;
+    }
+    ui_wait_ms(UI_POLL_MS);
+  }
+}
+
+/* スイッチが離されるまで待つ（離されたかは ui_switch_pushed() が覚えている s_switch_state で見る） */
+static void wait_switch_released(void)
+{
+  while (s_switch_state) {
+    ui_switch_pushed();  /* 読むと、押されているか（s_switch_state）が新しくなる */
+    ui_wait_ms(UI_POLL_MS);
+  }
+}
+
+/* スタート待ち（MODES.md の 2 の 3〜5）。走り出してよくなったら true、選び直すなら false。
+ *   1. 選んだモードと No. を点滅させて、前センサに手がかざされるのを待つ。
+ *      スイッチを短く押して離したら false（選び直し）。SWITCH_START_MS 以上押し続けたら、手のかわりにスタートする
+ *      （区画のまん中で前に壁があると、前センサは壁を見ていて、手をかざして離したのがわからない。2026-11-02 に足した）
+ *   2. 手がかざされたら（スイッチを押し続けたら）7 個全部を点けて、手が離れる（スイッチが離される）のを待つ
+ *   3. 全部消して、1 秒待ってから true（このあいだに、走り出す処理がジャイロの 0 点を測り直す） */
+bool ui_wait_start(int mode, int number)
+{
+  bool lit = true;
+  uint32_t next_toggle_ms = timebase_get_ms() + WAIT_BLINK_MS;
+  int hand_count = 0;
+  bool switch_held = false;      /* スイッチが押されているあいだ true */
+  uint32_t switch_pushed_ms = 0; /* スイッチが押された時刻 [ms] */
+
+  /* 1. 手がかざされるのを待つ */
+  while (hand_count < HAND_STABLE_COUNT) {
+    if (ui_switch_pushed()) {
+      switch_held = true;
+      switch_pushed_ms = timebase_get_ms();
+    }
+    if (switch_held && !s_switch_state) {
+      ui_all_off();
+      return false;  /* 短く押して離した：選び直し */
+    }
+    if (switch_held && timebase_get_ms() - switch_pushed_ms >= SWITCH_START_MS) {
+      /* 押し続けた：スタートする。全部点けて、スイッチが離されるのを待つ */
+      ui_all_on();
+      wait_switch_released();
+      ui_all_off();
+      ui_beep_start();
+      ui_wait_ms(START_DELAY_MS);
+      return true;
+    }
+    if (wall_ctrl_is_hand_front()) {
+      hand_count = hand_count + 1;
+    } else {
+      hand_count = 0;
+    }
+
+    /* WAIT_BLINK_MS ごとに、点ける・消すを入れ替える */
+    if (timebase_get_ms() >= next_toggle_ms) {
+      lit = !lit;
+      next_toggle_ms = next_toggle_ms + WAIT_BLINK_MS;
+    }
+    if (lit) {
+      ui_show_mode_number(mode, number);
+    } else {
+      ui_all_off();
+    }
+    ui_wait_ms(UI_POLL_MS);
+  }
+
+  /* 2. 全部点けて、手が離れるのを待つ */
+  ui_all_on();
+  wait_hand(false);
+
+  /* 3. 全部消して、1 秒待つ */
+  ui_all_off();
+  ui_beep_start();
+  ui_wait_ms(START_DELAY_MS);
+  return true;
+}
+
+/* フェイルセーフで止まったあと（MODES.md の 3）。
+ *   7 個全部を FAILSAFE_BLINK_MS ごとに点滅させて、スイッチが押されるのを待つ。押されたら全部消して戻る。
+ *   「ロード中」は、モード選択に戻るときに sys/mode.c が出す（どの道から戻るときも同じように出すため） */
+void ui_wait_failsafe_reset(void)
+{
+  bool lit = true;
+  uint32_t next_toggle_ms = timebase_get_ms() + FAILSAFE_BLINK_MS;
+  buzzer_beep(BEEP_FAILSAFE_HZ, BEEP_FAILSAFE_MS);
+
+  /* 1. スイッチが押されるのを待つ(PC・BLE の clear でフェイルセーフが解かれたときも終わる。sys/cmd.c) */
+  while (!ui_switch_pushed() && failsafe_is_stopped()) {
+    /* FAILSAFE_BLINK_MS ごとに、点ける・消すを入れ替える */
+    if (timebase_get_ms() >= next_toggle_ms) {
+      lit = !lit;
+      next_toggle_ms = next_toggle_ms + FAILSAFE_BLINK_MS;
+    }
+    if (lit) {
+      ui_all_on();
+    } else {
+      ui_all_off();
+    }
+    ui_wait_ms(UI_POLL_MS);
+  }
+
+  ui_all_off();
+}
+
+/* 電池が少ないとき（MODES.md の 2-1・3）。外側の 4 個（LED1・2・6・7）を FAILSAFE_BLINK_MS ごとに点滅させ続ける。
+ * 何もできないようにするため、戻らない。電池を替えて電源を入れ直す */
+void ui_stop_for_low_battery(void)
+{
+  bool lit = true;
+  while (true) {
+    ui_all_off();
+    if (lit) {
+      led_set(1, true);
+      led_set(2, true);
+      led_set(6, true);
+      led_set(7, true);
+    }
+    lit = !lit;
+    ui_wait_ms(FAILSAFE_BLINK_MS);
+  }
+}

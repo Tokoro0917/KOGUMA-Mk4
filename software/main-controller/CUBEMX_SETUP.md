@@ -7,7 +7,25 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 - RAM・DMA の決まりは [../../docs/firmware_memory.md](../../docs/firmware_memory.md)
 - 「ToraNeko」列は参考用に ToraNeko.Mk3(F411、100MHz)の設定を載せています
 
-## 0. MCU を替えた(2026-11-26)
+## 0. Core/ は手で書いた(2026-11-28)
+
+CubeMX を使える環境がなかったので、**`KOGUMA-Mk4/Core/` は Claude が、CubeMX が作るのと同じ形で手で書いた**(ユーザーの決定)。
+ファイルの名前・関数の名前(`MX_xxx_Init`、`HAL_xxx_MspInit`)・`USER CODE` 欄の形は CubeMX と同じなので、
+あとで CubeMX で `.ioc` を作って生成し直しても、`USER CODE` 欄と `App/` はそのまま残る。中身の設定は、この文書の値のとおり。
+
+作ったときに、次の所をこの文書の前の案から変えた(**DMA を使わない**。H5 の GPDMA の回し続ける設定(linked-list)は難しく、確かめる手段もないため):
+
+| 所 | 前の案 | 今(`Core/`) |
+|---|---|---|
+| ADC1・ADC2 | 5 本の regular + DMA(GPDMA の linked-list) | **4 本の injected**(結果が JDR1〜4 に別々に入るので DMA が要らない)を TIM1 の TRGO で起動。5 本目(ファンの電流・電池)は regular で、20kHz の処理の中でソフトで起動して次の回に読む。割り込みは ADC2 の JEOS(4 本の終わり) |
+| SPI1・SPI2 | DMA、10kHz | DMA なし。4kHz の処理の中で `HAL_SPI_TransmitReceive`(ToraNeko と同じ読み方) |
+| USART1 | DMA | 送る・受けるとも割り込み(`HAL_UART_Transmit_IT`・`HAL_UART_Receive_IT`) |
+| NVIC | GPDMA1 Ch1 が 20kHz の処理 | **ADC2 の割り込み(優先度 0)が 20kHz の処理**、TIM6(2)が 4kHz の処理、USART1(5) |
+| IMU_INT(PB11) | EXTI11 の割り込み | ふつうの入力(今は使わない。4kHz の処理で読む) |
+| リンカの設定 | `.dma_buf`(SRAM2) | **`.sram3`**(SRAM3 にログ 256KB。`App/config/memory_place.h` の `SRAM3_DATA`)。`.dma_buf` は DMA を使うまで作らない |
+| プログラムの番地 | 先頭(0x08000000)から | **0x08010000 から**(ブートローダのあと。`CMakeLists.txt` の `VECT_TAB_OFFSET`) |
+
+## 0.1 MCU を替えた(2026-11-26)
 
 **STM32H725RGVx から STM32H562RGVx に替えた**(H725 はどこにも在庫がない。`docs/spec.md` の「MCU」)。この文書は H562 の設定に書き直した。数値はデータシート DS14258 Rev 6 で確かめたもの。**H5 の CubeMX は作者も Claude もまだ使ったことがない**ので、「確かめる」と書いた所は、CubeMX の画面を見て決め、決めたらこの文書を直す。
 
@@ -118,6 +136,8 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 ## 5. ADC
 
+> **2026-11-28: 今の `Core/` は DMA を使わない形**(0 章の表)。下の DMA の行は前の案として残す。
+
 どちらの ADC も **TIM1 の TRGO(20kHz)で同時に起動**し、DMA で `DMA_BUF` の配列に入れる。壁センサの発光は、20kHz の処理の中で「次に読む組」に切り替えておく(点けてから読むまで約 50µs あるので、受光のアンプは十分に落ち着く。`docs/software.md` の 4.3)。**H562 の ADC は 12 ビット**(H725 は 16 ビット)。細かさが要る値は、20kHz の処理の中で足し合わせて平均する(ファンの電流など。`docs/spec.md` の「ファンの電流の計測」)。
 
 | 項目 | ADC1(壁センサ・ファンの電流) | ADC2(モーターの電流・電池) |
@@ -154,6 +174,8 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 ## 6. SPI
 
+> **2026-11-28: 今の `Core/` は DMA を使わない形**(0 章の表)。下の DMA の行は前の案として残す。
+
 | 項目 | SPI2(エンコーダ MT6835 × 2) | **SPI1**(IMU LSM6DSR。2026-11-27 に SPI3 から) | ToraNeko |
 |---|---|---|---|
 | ピン | PA12 SCK / PB14 MISO / PB15 MOSI(CubeMX の初めのピンから付け替える) | PA5 SCK / PA6 MISO / PA7 MOSI | |
@@ -170,6 +192,8 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 
 ## 7. USART1(PC・BLE との通信)
 
+> **2026-11-28: 今の `Core/` は DMA を使わない形**(0 章の表)。下の DMA の行は前の案として残す。
+
 | 項目 | 設定 | ToraNeko |
 |---|---|---|
 | Mode | **Asynchronous** | Single Wire(送るだけ) |
@@ -184,6 +208,8 @@ STM32CubeMX で `KOGUMA-Mk4` プロジェクトを新しく作るときの `.ioc
 - 有線(TP1)と BLE(HY0020)はどちらもこの 1 本に入る(ダイオードのワイヤード AND、`docs/ble.md` の9章)
 
 ## 8. NVIC(割り込みの優先度)
+
+> **2026-11-28: 今の `Core/` は DMA を使わない形**(0 章の表)。下の DMA の行は前の案として残す。
 
 | 割り込み | 優先度 | 用途 |
 |---|---|---|

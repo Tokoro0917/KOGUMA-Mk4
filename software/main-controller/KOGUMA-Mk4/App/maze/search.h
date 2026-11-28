@@ -1,0 +1,66 @@
+/*
+ * search.h
+ * 探索（足立法）：歩数マップを作って、次にどちらへ進むかを決める
+ *
+ * ■ 位置の考え方（path.h、sys/explore.c も同じ）
+ * ロボットは区画 (x, y) の入口の辺にいて、向き dir でその区画に入るところ。センサはここでその区画の前・左・右の壁を見る。
+ * 1 つの動き（直進・左・右）は、その区画を通って次の区画の入口の辺まで進む。U ターンは、区画の真ん中で止まって向きを変える。
+ *
+ * ■ 使い方（sys/explore.c から、1 区画進むたびに）
+ *   1. maze_map_record_walls() で、センサで見た壁を記録する
+ *   2. search_is_in_target() で、目的地に着いたかを調べる
+ *   3. search_update_step_map() で、歩数マップを作り直す
+ *   4. search_decide_action() で、次の動き（直進・左・右・Uターン）を決める
+ *
+ * ■ 未知壁探索（KOGUMA のモード0 No.6・No.7。ゴールに着いたあと、最短経路の上の見ていない壁を見に行く）
+ * ダイクストラの計算は重い（数十 ms の見込み）ので、止まっているときだけ計算する（KOGUMA と同じ）。
+ *   - 止まっているとき：search_plan_unknown_walls() でダイクストラを計算し、経路を覚える
+ *   - 走りながら      ：search_check_unknown_walls() で、覚えた経路の壁を見直す（軽い）
+ *       UNKNOWN_WALL_FOUND ：見ていない壁がある。その手前の区画を目的地にして、壁を見るまで走る（止まらない）
+ *       UNKNOWN_WALL_BLOCKED：経路の上に壁があった（ふさがれた）。次の区画で止まって計算し直す
+ *       UNKNOWN_WALL_NONE  ：経路の壁を全部見た。止まらずにスタートへ戻る
+ *       UNKNOWN_WALL_NO_PLAN：経路を覚えていない。search_plan_unknown_walls() が false だった（ゴールへの道がない）など
+ * U ターンするときも止まるので、そのときにも計算し直す。
+ *
+ * ■ 全面探索（2026-11-21。KOGUMA の全面探索と同じ考え方）
+ * search_set_target_unknown_cells() で、まだ見ていない壁がある区画を全部目的地にして、足立法でいちばん近いところへ進む。
+ * 入った区画の壁を見ると、その区画は目的地でなくなる。行ける目的地がなくなると search_decide_action() が ACTION_STOP を返す。
+ * ダイクストラは使わないので、止まって計算することはない（止まるのは U ターンのときだけ）。
+ */
+#ifndef MAZE_SEARCH_H
+#define MAZE_SEARCH_H
+
+#include <stdbool.h>
+#include <stdint.h>
+
+#include "maze/maze_map.h"
+
+#define STEP_MAX 9999  /* 歩数マップで「たどり着けない」を表す値 */
+
+/* 未知壁探索で、覚えた経路を見直した結果 */
+typedef enum {
+  UNKNOWN_WALL_FOUND,    /* 経路の上に見ていない壁がある */
+  UNKNOWN_WALL_BLOCKED,  /* 経路の上に壁があった（経路がふさがれた）。止まって計算し直す */
+  UNKNOWN_WALL_NONE,     /* 経路の壁を全部見た（未知壁探索は終わり） */
+  UNKNOWN_WALL_NO_PLAN,  /* 経路を覚えていない（計算していない、またはゴールへの道がなかった） */
+} unknown_wall_result_t;
+
+/* 次の動き */
+typedef enum {
+  ACTION_FORWARD,     /* 直進 */
+  ACTION_TURN_LEFT,   /* 左に曲がる */
+  ACTION_TURN_RIGHT,  /* 右に曲がる */
+  ACTION_UTURN,       /* Uターン */
+  ACTION_STOP,        /* どこにも進めない（目的地にたどり着けない） */
+} action_t;
+
+void search_set_target(int x, int y, int width, int height);
+void search_set_target_unknown_cells(void);
+bool search_is_in_target(int x, int y);
+void search_update_step_map(void);
+uint16_t search_get_step(int x, int y);
+action_t search_decide_action(int x, int y, direction_t dir);
+bool search_plan_unknown_walls(int goal_x, int goal_y, int goal_width, int goal_height);
+unknown_wall_result_t search_check_unknown_walls(int *cell_x, int *cell_y, direction_t *wall_dir);
+
+#endif /* MAZE_SEARCH_H */

@@ -12,8 +12,8 @@
 
 | 種類(`kind`) | 速さ | 1 回分 | 長さ(RAM 256KB) | 使い方 |
 |---|---|---|---|---|
-| `run` 走行ログ | **1kHz**(4kHz の処理を 4 回に 1 回) | 60 バイト | **直前の約 4.4 秒**(4369 回分) | ふだん。探索・最短走行でいつも取る |
-| `tune` 調整のログ | **4kHz**(4kHz の処理の毎回) | 60 バイト(`run` と同じ列) | 約 1.1 秒 | ターン 1 回・前壁合わせ。ターンの自動の調整(`run turn_test`、`docs/ble.md` の 5 章) |
+| `run` 走行ログ | **1kHz**(4kHz の処理を 4 回に 1 回) | 64 バイト | **直前の約 4.1 秒**(4096 回分) | ふだん。探索・最短走行でいつも取る |
+| `tune` 調整のログ | **4kHz**(4kHz の処理の毎回) | 64 バイト(`run` と同じ列) | 約 1.0 秒 | ターン 1 回・前壁合わせ。ターンの自動の調整(`run turn_test`、`docs/ble.md` の 5 章) |
 | `current` 電流のログ | **20kHz**(電流の制御の毎回) | 18 バイト | 約 0.7 秒 | 電流の制御の調整、モーターの同定(巻線の抵抗・インダクタンス・Kt) |
 | `sensor` 壁センサの生の値 | **4kHz**(壁センサの 1 巡ごと) | 28 バイト | 約 2.3 秒 | 壁センサの調整、光のもれ・ノイズの確かめ。止まって手で動かしてもよい |
 | `explore` 探索の判断 | **区画ごと** | 24 バイト | 2000 区画(48KB、別の場所) | 探索のまちがいを探す。`run` と同時に取る |
@@ -21,9 +21,11 @@
 - `run`・`tune`・`current`・`sensor` は **同じ 256KB(SRAM3)を使うので、1 回にどれか 1 つ**。走る前に `log <種類>` で選ぶ(初めは `run`)
 - `explore` は別の 48KB(SRAM3 の残り)なので、`run` と一緒に取れる
 - 値は RAM を節約するため、**決まった単位の整数(int16)** で持ち、送るときに元の単位に戻す(MK3 と同じ)。走った距離だけは float
-- 走り終わったら Flash に書き(`run`・`tune`・`current`・`sensor` のうち最後の 1 つと、`explore`)、つながっていれば送る
+- 走り終わったら Flash に書き(`run`・`tune`・`current`・`sensor` のうち最後の 1 つと、`explore`)、つながっていれば送る。**2026-11-28: Flash に書くのと `explore` はまだ作っていない**(RAM に残し、BLE でつながっていれば走り終わりに送る)
 
-## 2. `run`・`tune` の列(60 バイト)
+## 2. `run`・`tune` の列(64 バイト)
+
+2026-11-28 に作った(`App/sys/log.c`)。走り方ごとの間隔(探索 8ms など、ToraNeko と同じ)が初めの値で、`log div <ms>` で変えられる。いっぱいになったら古い行から上書きする(一周したら出力の 1 行目が `full=1`)。
 
 MK3 の列(t、x、v、v_target、w、w_target、angle、sensor_L/R、dist_L/R、wall、wall_err/p/d/out、volt_L/R、batt、phase)に、MK4 の電流・加速度・車輪ごとの速度などを足した。
 
@@ -32,23 +34,24 @@ MK3 の列(t、x、v、v_target、w、w_target、angle、sensor_L/R、dist_L/R�
 | `t` | 時刻 | s(送るときに、何回目か × 間隔で作る。持たない) |
 | `x` | 走った距離(ログの始めから) | mm(float) |
 | `v`・`v_target` | 推定の速度・目標 | mm/s |
-| `a`・`a_target` | 前後の加速度(IMU)・軌道の加速度 | mm/s² |
+| `a`・`a_target` | 前後の加速度(IMU)・軌道の加速度 | mm/s²(持つのは 10 mm/s² 単位) |
 | `v_L`・`v_R` | 左右の車輪の速度(エンコーダ) | mm/s |
 | `w`・`w_target` | 角速度(ジャイロ)・目標 | 0.1 deg/s |
-| `angle` | 角度(動作ごとに 0 から) | 0.1 deg |
+| `angle` | 角度(制御を始めたときを 0。ToraNeko と同じ) | 0.1 deg |
+| `angle_target` | 目標の向き(`angle` と同じく始めを 0。2026-11-28 に足した。`angle` との差がターンのずれ) | 0.1 deg |
 | `i_L_target`・`i_R_target` | 左右の電流の目標 | mA |
 | `i_L`・`i_R` | 左右の測った電流(4kHz の 1 周期の平均) | mA |
-| `duty_L`・`duty_R` | 左右の duty | 0.1 %(±1000) |
-| `batt` | 電池の電圧 | mV |
+| `duty_L`・`duty_R` | 左右の duty | 0.1 %(±1000)。出すときは %(45.3 など) |
+| `batt` | 電池の電圧 | mV。出すときは V |
 | `s_FL`・`s_L`・`s_R`・`s_FR` | 壁センサの値(点灯 − 消灯) | ADC の値 |
 | `dist_L`・`dist_R`・`dist_F` | 横の壁・前の壁までの距離 | 0.1 mm |
-| `wall_err`・`wall_out` | 横壁の制御の誤差・出力(P + D) | 0.01 mm・0.1 deg/s |
+| `wall_err`・`wall_out` | 横壁の制御の誤差(センサの値の差。ToraNeko と同じ)・出力(P + D、+ なら右へ曲げた) | 0.1・0.1 deg/s |
 | `fan_i` | ファンの電流 | mA |
 | `wall` | 使った壁(1 左、2 右、3 両方、0 なし) | int8 |
 | `phase` | 動作(直線・斜め・前距離・ターン・後距離・その場旋回・止まる・壁合わせ。MK3 の `LOG_PH_*`) | int8 |
 | `flags` | 異常の印(エンコーダ・IMU の読み取りのエラー、過電流、電流の頭打ち)。1 つずつ別の数で足し合わせる | int8 |
 
-(4 + 2 × 26 + 3 = 59 バイト。そろえて 60 バイト)
+(4 + 2 × 27 + 3 = 61 バイト。そろえて 64 バイト)
 
 ## 3. `current` の列(18 バイト、20kHz)
 
@@ -57,7 +60,7 @@ MK3 の列(t、x、v、v_target、w、w_target、angle、sensor_L/R、dist_L/R�
 | `t` | 時刻 | s(持たない) |
 | `i_L_target`・`i_L`・`i_R_target`・`i_R` | 電流の目標・測った値(その回の ADC の値) | mA |
 | `duty_L`・`duty_R` | duty | 0.1 % |
-| `batt` | 電池の電圧 | mV |
+| `batt` | 電池の電圧 | mV。出すときは V |
 | `v_L`・`v_R` | 車輪の速度(10kHz のエンコーダの最新) | mm/s |
 
 - モーターの同定は、止まった機体で電圧のステップを入れて、電流の立ち上がり(インダクタンス)と落ち着いた値(巻線の抵抗)を見る(`docs/control.md`)
@@ -93,8 +96,8 @@ MK3 の列(t、x、v、v_target、w、w_target、angle、sensor_L/R、dist_L/R�
 |---|---|
 | `log <種類>` | 次に走るときに取るログを選ぶ(`run`・`tune`・`current`・`sensor`)。初めは `run` |
 | `log div <n>` | `run` を n 回に 1 回にする(n = 4 なら 4ms ごと、約 17 秒) |
-| `get log [id]` | ログを送る(`#BEGIN LOG kind=… dt=… n=… div=…` から) |
-| `get explore` | 探索の判断を送る(`#BEGIN EXPLORE …`) |
+| `get log [id]` | ログを送る(`#BEGIN LOG kind=… dt=… n=… div=… full=…` から)。今は RAM の最後の 1 つだけ(id はまだ使わない) |
+| `get explore` | 探索の判断を送る(`#BEGIN EXPLORE …`)。**まだ作っていない** |
 
 ## 7. まだ決めていないこと
 
